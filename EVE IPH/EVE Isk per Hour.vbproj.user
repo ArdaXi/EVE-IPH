@@ -15,7 +15,7 @@
     <StartWorkingDirectory>C:\Users\Brian\EVE Stuff\EVE VB Project\Root Directory\</StartWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <StartWorkingDirectory>C:\Users\Brian\EVE Stuff\EVE VB Project\Root Directory\</StartWorkingDirectory>
+    <StartWorkingDirectory>C:\Users\Brian\EVE Stuff\EVE IPH Project\Root Directory\</StartWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <StartWorkingDirectory>C:\Users\Brian\EVE Stuff\EVE VB Project\Root Directory\</StartWorkingDirectory>
