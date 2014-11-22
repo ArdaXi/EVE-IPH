@@ -1,0 +1,58 @@
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\bin\Debug\MyListView.Designer.vb
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\bin\Debug\MyListView.vb
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\bin\Debug\EVE Isk per Hour.exe.config
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\bin\Debug\EVE Isk per Hour.exe
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\bin\Debug\EVE Isk per Hour.pdb
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\bin\Debug\EVE Isk per Hour.xml
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\bin\Debug\en-US\EVE Isk per Hour.resources.dll
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\bin\Debug\System.Data.SQLite.dll
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmMLPLCalc.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmRefinery.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmInventionREMats.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmCopyandPaste.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmAbout.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmAPIError.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmAssetsViewer.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmBlueprintManagement.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmCharacterSkills.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmCharacterStandings.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmError.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmIndustryBeltFlip.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmIndustryJobsViewer.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmInventionMonitor.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmLoadCharacterAPI.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmMain.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmManageAccounts.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmManualPriceUpdate.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmMineMinerals.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmPatchNotes.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmPOSSettings.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmReqSkills.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmResearchAgents.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmSelectIndustryJobColumns.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmSetCharacterDefault.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmSettings.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmShoppingList.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.Resources.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.SplashScreen.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmPatchNotes.en-US.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE Isk per Hour.vbproj.GenerateResource.Cache
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\en-US\EVE Isk per Hour.resources.dll
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE Isk per Hour.exe
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE Isk per Hour.xml
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE Isk per Hour.pdb
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmCRESTStatus.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE_Isk_per_Hour.frmSelectManufacturingTabColumns.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\Root Directory\EVE Isk per Hour.exe.config
+C:\Users\Brian\EVE Stuff\EVE VB Project\Root Directory\MyListView.Designer.vb
+C:\Users\Brian\EVE Stuff\EVE VB Project\Root Directory\MyListView.vb
+C:\Users\Brian\EVE Stuff\EVE VB Project\Root Directory\EVE Isk per Hour.exe
+C:\Users\Brian\EVE Stuff\EVE VB Project\Root Directory\EVE Isk per Hour.pdb
+C:\Users\Brian\EVE Stuff\EVE VB Project\Root Directory\EVE Isk per Hour.xml
+C:\Users\Brian\EVE Stuff\EVE VB Project\Root Directory\en-US\EVE Isk per Hour.resources.dll
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVE Isk per Hour\obj\x86\Debug\EVE Isk per Hour.vbprojResolveAssemblyReference.cache
+C:\Users\Brian\Desktop\Root Directory\EVE Isk per Hour.exe.config
+C:\Users\Brian\Desktop\EVE Isk per Hour\obj\x86\Debug\EVE Isk per Hour.exe
+C:\Users\Brian\Desktop\EVE Isk per Hour\obj\x86\Debug\EVE Isk per Hour.xml
+C:\Users\Brian\Desktop\EVE Isk per Hour\obj\x86\Debug\EVE Isk per Hour.pdb
