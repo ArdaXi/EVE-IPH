@@ -22,3 +22,12 @@ C:\Users\Brian\EVE Stuff\EVE VB Project\Root Directory\EVEIPH Updater.xml
 C:\Users\Brian\EVE Stuff\EVE IPH Project\EVE IPH Updater\obj\x86\Debug\EVEIPH Updater.exe
 C:\Users\Brian\EVE Stuff\EVE IPH Project\EVE IPH Updater\obj\x86\Debug\EVEIPH Updater.xml
 C:\Users\Brian\EVE Stuff\EVE IPH Project\EVE IPH Updater\obj\x86\Debug\EVEIPH Updater.pdb
+C:\Users\Brian\EVE Stuff\EVE IPH Project\Root Directory\EVEIPH Updater.exe
+C:\Users\Brian\EVE Stuff\EVE IPH Project\Root Directory\EVEIPH Updater.pdb
+C:\Users\Brian\EVE Stuff\EVE IPH Project\Root Directory\EVEIPH Updater.xml
+C:\Users\Brian\EVE Stuff\EVE IPH Project\EVE IPH Updater\obj\x86\Debug\EVEIPH Updater.vbprojResolveAssemblyReference.cache
+C:\Users\Brian\EVE Stuff\EVE IPH Project\EVE IPH Updater\obj\x86\Debug\EVEIPH_Updater.frmErrorDB.resources
+C:\Users\Brian\EVE Stuff\EVE IPH Project\EVE IPH Updater\obj\x86\Debug\EVEIPH_Updater.frmNotify.resources
+C:\Users\Brian\EVE Stuff\EVE IPH Project\EVE IPH Updater\obj\x86\Debug\EVEIPH_Updater.frmUpdaterMain.resources
+C:\Users\Brian\EVE Stuff\EVE IPH Project\EVE IPH Updater\obj\x86\Debug\EVEIPH_Updater.Resources.resources
+C:\Users\Brian\EVE Stuff\EVE IPH Project\EVE IPH Updater\obj\x86\Debug\EVEIPH Updater.vbproj.GenerateResource.Cache
