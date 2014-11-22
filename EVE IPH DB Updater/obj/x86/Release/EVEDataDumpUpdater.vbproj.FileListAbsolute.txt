@@ -1,0 +1,28 @@
+C:\Documents and Settings\Brian\My Documents\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\bin\Release\EVEDataDumpUpdater.exe
+C:\Documents and Settings\Brian\My Documents\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\bin\Release\EVEDataDumpUpdater.pdb
+C:\Documents and Settings\Brian\My Documents\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\bin\Release\EVEDataDumpUpdater.xml
+C:\Documents and Settings\Brian\My Documents\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\obj\x86\Release\ResolveAssemblyReference.cache
+C:\Documents and Settings\Brian\My Documents\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\obj\x86\Release\Interop.ADOX.dll
+C:\Documents and Settings\Brian\My Documents\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\obj\x86\Release\EVEDataDumpUpdater.vbproj.ResolveComReference.cache
+C:\Documents and Settings\Brian\My Documents\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\obj\x86\Release\EVEDataDumpUpdater.frmMain.resources
+C:\Documents and Settings\Brian\My Documents\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\obj\x86\Release\EVEDataDumpUpdater.Resources.resources
+C:\Documents and Settings\Brian\My Documents\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\obj\x86\Release\GenerateResource.read.1.tlog
+C:\Documents and Settings\Brian\My Documents\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\obj\x86\Release\GenerateResource.write.1.tlog
+C:\Documents and Settings\Brian\My Documents\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\obj\x86\Release\EVEDataDumpUpdater.exe
+C:\Documents and Settings\Brian\My Documents\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\obj\x86\Release\EVEDataDumpUpdater.xml
+C:\Documents and Settings\Brian\My Documents\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\obj\x86\Release\EVEDataDumpUpdater.pdb
+C:\Documents and Settings\Brian\My Documents\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\obj\x86\Release\Interop.DAO.dll
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\obj\x86\Release\Interop.ADOX.dll
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\obj\x86\Release\EVEDataDumpUpdater.vbproj.ResolveComReference.cache
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\obj\x86\Release\EVEDataDumpUpdater.exe
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\obj\x86\Release\EVEDataDumpUpdater.xml
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\obj\x86\Release\EVEDataDumpUpdater.pdb
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\bin\Release\EVEDataDumpUpdater.exe
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\bin\Release\EVEDataDumpUpdater.pdb
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\bin\Release\EVEDataDumpUpdater.xml
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\bin\Release\ZipForge.dll
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\obj\x86\Release\EVEDataDumpUpdater.frmMain.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\obj\x86\Release\EVEDataDumpUpdater.Resources.resources
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\bin\Release\System.Data.SQLite.dll
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\obj\x86\Release\EVEDataDumpUpdater.vbprojResolveAssemblyReference.cache
+C:\Users\Brian\EVE Stuff\EVE VB Project\EVEDataDumpUpdater\obj\x86\Release\EVEDataDumpUpdater.vbproj.GenerateResource.Cache
