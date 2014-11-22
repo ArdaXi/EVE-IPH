@@ -19,3 +19,6 @@ C:\Users\Brian\EVE Stuff\EVE VB Project\EVE IPH Updater\obj\x86\Debug\EVEIPH_Upd
 C:\Users\Brian\EVE Stuff\EVE VB Project\Root Directory\EVEIPH Updater.exe
 C:\Users\Brian\EVE Stuff\EVE VB Project\Root Directory\EVEIPH Updater.pdb
 C:\Users\Brian\EVE Stuff\EVE VB Project\Root Directory\EVEIPH Updater.xml
+C:\Users\Brian\EVE Stuff\EVE IPH Project\EVE IPH Updater\obj\x86\Debug\EVEIPH Updater.exe
+C:\Users\Brian\EVE Stuff\EVE IPH Project\EVE IPH Updater\obj\x86\Debug\EVEIPH Updater.xml
+C:\Users\Brian\EVE Stuff\EVE IPH Project\EVE IPH Updater\obj\x86\Debug\EVEIPH Updater.pdb
