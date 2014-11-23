@@ -1082,7 +1082,7 @@ Public Class Blueprint
         Dim SQL As String
         Dim InventionMat As Material = Nothing
 
-        Dim TempInventionMats As New Materials
+        Dim BaseInventionREMats As New Materials
         Dim NumInventionRESessions As Long = 0 ' How many sessions (runs per set of lines) ie. 10 runs 5 lines = 2 sessions
 
         ' First select the datacores needed
@@ -1100,7 +1100,7 @@ Public Class Blueprint
                 ' Add this to the invention materials - add price for data cores, 0 cost for interfaces
                 InventionMat = New Material(readerBP.GetInt64(0), readerBP.GetString(1), readerBP.GetString(2), _
                                            readerBP.GetInt64(3), readerBP.GetDouble(4), If(readerBP.IsDBNull(5), 0, readerBP.GetDouble(5)), "")
-                TempInventionMats.InsertMaterial(InventionMat)
+                BaseInventionREMats.InsertMaterial(InventionMat)
             End If
 
         End While
@@ -1130,7 +1130,7 @@ Public Class Blueprint
             DBCommand = Nothing
 
             InventionMat = New Material(InventionREDecryptor.TypeID, InventionREDecryptor.Name, "Decryptors", 1, 0.1, DecryptorCost, "")
-            TempInventionMats.InsertMaterial(InventionMat)
+            BaseInventionREMats.InsertMaterial(InventionMat)
 
         End If
 
@@ -1144,7 +1144,7 @@ Public Class Blueprint
 
             If readerCost.Read Then
                 InventionMat = New Material(InventionT3BPCTypeID, readerCost.GetString(1), "Ancient Relics", 1, 100, readerCost.GetDouble(0), "")
-                TempInventionMats.InsertMaterial(InventionMat)
+                BaseInventionREMats.InsertMaterial(InventionMat)
             End If
 
             readerCost.Close()
@@ -1197,14 +1197,14 @@ Public Class Blueprint
             ' Set the usage for these invention jobs
             InventionREUsage = GetInventionFees(NumInventionREJobs)
 
-            ' Update the invention mats to reflect the number of invention runs we will do
-            For i = 0 To TempInventionMats.GetMaterialList.Count - 1
-                TempInventionMats.GetMaterialList(i).SetQuantity(TempInventionMats.GetMaterialList(i).GetQuantity * NumInventionREJobs)
+            ' Update the invention mats to reflect the number of invention runs we will do and save into the final list
+            For i = 0 To BaseInventionREMats.GetMaterialList.Count - 1
+                BaseInventionREMats.GetMaterialList(i).SetQuantity(BaseInventionREMats.GetMaterialList(i).GetQuantity * NumInventionREJobs)
             Next
 
             ' Now insert all the materials in a new list to get the correct cost (kind of a hack, need a better process - no automatic way to update the total price in a material list)
-            For i = 0 To TempInventionMats.GetMaterialList.Count - 1
-                InventionREMaterials.InsertMaterial(TempInventionMats.GetMaterialList(i))
+            For i = 0 To BaseInventionREMats.GetMaterialList.Count - 1
+                InventionREMaterials.InsertMaterial(BaseInventionREMats.GetMaterialList(i))
             Next
 
             ' Add the type of T1 BPC we will need to the invention materials
@@ -1216,7 +1216,7 @@ Public Class Blueprint
 
             ' Set the total cost for the sent runs by totaling all to get success needed, then dividing it by the runs invented
             ' (some bps have more runs than 1 - i.e. Drones = 10) to get the cost per run, then multiply that cost by the number of runs
-            TotalInventionRECost = (TempInventionMats.GetTotalMaterialsCost + InventionREUsage) / InventedREdRuns * UserRuns
+            TotalInventionRECost = (InventionREMaterials.GetTotalMaterialsCost + InventionREUsage) / InventedREdRuns * UserRuns
         Else
             InventionREUsage = 0
             TotalInventionRECost = 0

@@ -684,10 +684,6 @@ Public Class ShoppingList
             ' Parse the sort order fields
             Dim ItemColumns As String() = ItemNamesSortOrder(i).Split(New [Char]() {"|"c})
 
-            If ItemColumns(5) = "" Then
-                ItemColumns(5) = "0"
-            End If
-
             ' For each item, find it in the current buy list and replace
             ' Item sort order - Name, Quantity, ME, Build, Decryptor/Relic
             For j = 0 To FullItemList.GetMaterialList.Count - 1
@@ -696,7 +692,7 @@ Public Class ShoppingList
                     Dim GroupNameItems As String() = .GetMaterialGroup.Split(New [Char]() {"|"c})
 
                     If ItemColumns(0) = .GetMaterialName And CLng(ItemColumns(1)) = .GetQuantity And ItemColumns(2) = .GetItemME _
-                     And ItemColumns(3) = GroupNameItems(0) And ItemColumns(4) = GroupNameItems(1) And CLng(ItemColumns(5)) = CLng(GroupNameItems(2)) Then
+                     And ItemColumns(3) = GroupNameItems(0) And ItemColumns(4) = GroupNameItems(1) Then
                         ' Found it, so insert into temp list
                         TempMatList.InsertMaterial(FullItemList.GetMaterialList(j))
                         Exit For

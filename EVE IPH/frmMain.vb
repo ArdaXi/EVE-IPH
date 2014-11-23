@@ -16999,10 +16999,9 @@ ExitCalc:
             If chkCalcT2.Checked Then
                 ' Select all the T2 bps that we can invent from our owned bps and save them
                 SQL = "SELECT productTypeID FROM INDUSTRY_ACTIVITY_PRODUCTS "
-                SQL = SQL & "INNER JOIN META_TYPES ON INDUSTRY_ACTIVITY_PRODUCTS.productTypeID = META_TYPES.parentTypeID "
                 SQL = SQL & "WHERE activityID = 8 AND blueprintTypeID IN "
                 SQL = SQL & "(SELECT BP_ID FROM " & USER_BLUEPRINTS & " WHERE X.USER_ID = " & SelectedCharacter.ID & " AND X.OWNED = 1 "
-                SQL = SQL & "AND X.ITEM_TYPE = 1) AND metaGroupID = 2 GROUP BY productTypeID"
+                SQL = SQL & "AND X.ITEM_TYPE = 1) GROUP BY productTypeID"
 
                 DBCommand = New SQLiteCommand(SQL, DB)
                 DBCommand.Parameters.AddWithValue("@ALLUSERBP_USERID", CStr(SelectedCharacter.ID))
@@ -17016,7 +17015,6 @@ ExitCalc:
                         ' Save the T2 BPID for later lookup to display
                         InventedBPs.Add(CLng(readerT1s.GetValue(0)))
                     End While
-
                 End If
 
                 ' If we have T2 blueprints and they selected to only have T2 they have T1 blueprints for to invent

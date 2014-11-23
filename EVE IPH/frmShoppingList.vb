@@ -953,8 +953,7 @@ Public Class frmShoppingList
                             End If
                             OutputText = OutputText & ListItem.SubItems(3).Text & Separator
                             OutputText = OutputText & ListItem.SubItems(4).Text & Separator
-                            OutputText = OutputText & ListItem.SubItems(5).Text & Separator
-                            OutputText = OutputText & ListItem.SubItems(6).Text
+                            OutputText = OutputText & ListItem.SubItems(5).Text 
                             MyStream.Write(OutputText & Environment.NewLine)
                         Next
 

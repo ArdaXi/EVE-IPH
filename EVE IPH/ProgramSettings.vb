@@ -1037,7 +1037,7 @@ Public Class ProgramSettings
             If File.Exists(SettingsFolder & ShoppingListSettingsFileName) Then
                 'Get the settings
                 With TempSettings
-                    .DataExportFormat = CStr(GetSettingValue(ShoppingListSettingsFileName, SettingTypes.TypeBoolean, "ShoppingListSettings", "DataExportFormat", DefaultDataExportFormat))
+                    .DataExportFormat = CStr(GetSettingValue(ShoppingListSettingsFileName, SettingTypes.TypeString, "ShoppingListSettings", "DataExportFormat", DefaultDataExportFormat))
                     .AlwaysonTop = CBool(GetSettingValue(ShoppingListSettingsFileName, SettingTypes.TypeBoolean, "ShoppingListSettings", "AlwaysonTop", DefaultAlwaysonTop))
                     .UpdateAssetsWhenUsed = CBool(GetSettingValue(ShoppingListSettingsFileName, SettingTypes.TypeBoolean, "ShoppingListSettings", "UpdateAssetsWhenUsed", DefaultUpdateAssetsWhenUsed))
                     .Fees = CBool(GetSettingValue(ShoppingListSettingsFileName, SettingTypes.TypeBoolean, "ShoppingListSettings", "Fees", DefaultFees))
