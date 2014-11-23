@@ -1322,8 +1322,8 @@ InvalidDate:
         Dim TempMat As Material
         Dim T1BPID As Long = 0
 
-        ' Look up the blueprint name from the sent blueprint ID
-        SQL = "SELECT T1_BP_ID from INVENTED_BLUEPRINTS WHERE T2_BP_ID =" & BlueprintID
+        ' Look up the blueprint we used to invent from the sent blueprint ID
+        SQL = "SELECT blueprintTypeID from INDUSTRY_ACTIVITY_PRODUCTS WHERE productTypeID = " & BlueprintID & " AND activityID = 8"
 
         DBCommand = New SQLiteCommand(SQL, DB)
         readerLookup = DBCommand.ExecuteReader
@@ -1349,41 +1349,6 @@ InvalidDate:
         readerLookup.Close()
 
         Return TempMat
-
-    End Function
-
-    ' Returns a string that states what type of T1 BPC the sent T2 BPID is for invention purposes. Also returns the Max Runs and name of the BPC
-    Public Function GetT1BPCType(ByVal BPID As Long, ByRef MaxBPCRuns As Integer, ByRef BPName As String) As String
-        Dim SQL As String
-        Dim readerBP As SQLiteDataReader
-        Dim T1MatGroupName As String
-        Dim T1MatCategoryName As String
-
-        SQL = "SELECT ITEM_CATEGORY, ITEM_GROUP, MAX_PRODUCTION_LIMIT, BLUEPRINT_NAME FROM ALL_BLUEPRINTS "
-        SQL = SQL & "WHERE BLUEPRINT_ID IN (SELECT T1_BP_ID FROM INVENTED_BLUEPRINTS WHERE T2_BP_ID = " & BPID & ")"
-        DBCommand = New SQLiteCommand(SQL, DB)
-        readerBP = DBCommand.ExecuteReader
-
-        If readerBP.Read() Then
-            T1MatCategoryName = readerBP.GetString(0)
-            T1MatGroupName = readerBP.GetString(1)
-            MaxBPCRuns = readerBP.GetInt32(2)
-            BPName = readerBP.GetString(3)
-
-            ' Based on their default settings, select the number of runs in the BPC used to invent this Blueprint - TO DO - check this logic
-            If T1MatGroupName.Substring(0, 3) = "Rig" Or T1MatCategoryName = "Ship" Then
-                ' Ships
-                Return "Ship"
-            Else
-                ' Modules
-                Return "Module"
-            End If
-        Else
-            MaxBPCRuns = 0
-            BPName = ""
-            Return ""
-
-        End If
 
     End Function
 

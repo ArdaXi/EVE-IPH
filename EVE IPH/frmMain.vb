@@ -3964,7 +3964,7 @@ NoBonus:
         End If
     End Sub
 
-    Private Sub chkBPCopyCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkBPIncludeCopyCosts.CheckedChanged
+    Private Sub chkBPIncludeCopyCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkBPIncludeCopyCosts.CheckedChanged
         If Not FirstLoad Then
             ' Include copy costs
             SelectedBPCopyFacility.IncludeActivityCost = chkBPIncludeCopyCosts.Checked
@@ -3974,7 +3974,9 @@ NoBonus:
             Else
                 SelectedBPCopyFacility.IncludeActivityCost = False
             End If
-            Call UpdateBPGrids(SelectedBlueprint.GetBPTypeID, SelectedBlueprint.GetTechLevel, False, SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID)
+            If Not IsNothing(SelectedBlueprint) Then
+                Call UpdateBPGrids(SelectedBlueprint.GetBPTypeID, SelectedBlueprint.GetTechLevel, False, SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID)
+            End If
         End If
     End Sub
 
@@ -4005,7 +4007,9 @@ NoBonus:
             Else
                 SelectedBPInventionFacility.IncludeActivityCost = False
             End If
-            Call UpdateBPGrids(SelectedBlueprint.GetBPTypeID, SelectedBlueprint.GetTechLevel, False, SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID)
+            If Not IsNothing(SelectedBlueprint) Then
+                Call UpdateBPGrids(SelectedBlueprint.GetBPTypeID, SelectedBlueprint.GetTechLevel, False, SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID)
+            End If
         End If
     End Sub
 
@@ -4019,7 +4023,9 @@ NoBonus:
             Else
                 SelectedBPT3InventionFacility.IncludeActivityTime = False
             End If
-            Call UpdateBPGrids(SelectedBlueprint.GetBPTypeID, SelectedBlueprint.GetTechLevel, False, SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID)
+            If Not IsNothing(SelectedBlueprint) Then
+                Call UpdateBPGrids(SelectedBlueprint.GetBPTypeID, SelectedBlueprint.GetTechLevel, False, SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID)
+            End If
         End If
     End Sub
 
@@ -4033,7 +4039,9 @@ NoBonus:
             Else
                 SelectedBPT3InventionFacility.IncludeActivityCost = False
             End If
-            Call UpdateBPGrids(SelectedBlueprint.GetBPTypeID, SelectedBlueprint.GetTechLevel, False, SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID)
+            If Not IsNothing(SelectedBlueprint) Then
+                Call UpdateBPGrids(SelectedBlueprint.GetBPTypeID, SelectedBlueprint.GetTechLevel, False, SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID)
+            End If
         End If
     End Sub
 
@@ -4600,7 +4608,7 @@ Tabs:
             ' Set the type build facility
             BuildFacility = GetManufacturingFacility(GetProductionType(ActivityManufacturing, SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID, cmbBPFacilityType.Text), BPTab)
 
-            Call LoadBPfromDoubleClick(CLng(rsBP.GetValue(0)), BuildType, "", "Blueprint Tab", _
+            Call LoadBPfromDoubleClick(CLng(rsBP.GetValue(0)), BuildType, "Raw", "Blueprint Tab", _
                                        SelectedBPManufacturingTeam, SelectedBPComponentManufacturingTeam, SelectedBPCopyTeam, _
                                        BuildFacility, SelectedBPComponentManufacturingFacility, SelectedBPInventionFacility, SelectedBPCopyFacility,
                                        chkBPTaxes.Checked, chkBPBrokerFees.Checked, chkBPFacilityIncludeCosts.Checked, _
@@ -5323,20 +5331,27 @@ Tabs:
 
     Private Sub chkBPBuildBuy_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles chkBPBuildBuy.CheckedChanged
         ' Disable the choice for raw or components for shopping list and just add components
-
-        If chkBPBuildBuy.Checked Then
-            rbtnBPComponentCopy.Enabled = False
-            rbtnBPRawmatCopy.Enabled = False
-        Else
-            If Not IsNothing(SelectedBlueprint) Then
-                If SelectedBlueprint.HasComponents Then
-                    rbtnBPComponentCopy.Enabled = True
-                    rbtnBPRawmatCopy.Enabled = True
-                Else
-                    rbtnBPComponentCopy.Enabled = False
-                    rbtnBPRawmatCopy.Enabled = False
+        If Not FirstLoad Then
+            If chkBPBuildBuy.Checked Then
+                rbtnBPComponentCopy.Enabled = False
+                rbtnBPRawmatCopy.Enabled = False
+            Else
+                If Not IsNothing(SelectedBlueprint) Then
+                    If SelectedBlueprint.HasComponents Then
+                        rbtnBPComponentCopy.Enabled = True
+                        rbtnBPRawmatCopy.Enabled = True
+                    Else
+                        rbtnBPComponentCopy.Enabled = False
+                        rbtnBPRawmatCopy.Enabled = False
+                    End If
                 End If
             End If
+
+            ' Refresh
+            If Not IsNothing(SelectedBlueprint) Then
+                Call UpdateBPGrids(SelectedBlueprint.GetBPTypeID, SelectedBlueprint.GetTechLevel, False, SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID)
+            End If
+
         End If
 
     End Sub
@@ -15041,7 +15056,6 @@ CheckTechs:
 
             RecordIDIterator = 0
 
-
             btnCalculate.Enabled = True
             lstManufacturing.Enabled = True
 
@@ -15224,6 +15238,7 @@ CheckTechs:
 
     End Sub
 
+    ' Switches button to calculate
     Public Sub ResetRefresh()
         RefreshCalcData = False
         btnCalculate.Text = "Calculate"
@@ -15280,7 +15295,6 @@ CheckTechs:
 
         ' BPC stuff
         Dim CopyPricePerSecond As Double = 0
-        Dim BPCRuns As Integer = 0
         Dim T1BPCType As String = ""
         Dim T1BPCName As String = ""
         Dim T1BPCMaxRuns As Integer = 0
@@ -15525,6 +15539,7 @@ CheckTechs:
                 ' 16-BP_TYPE, 17-UNIQUE_BP_ITEM_ID, 18-FAVORITE, 19-VOLUME, 20-MARKET_GROUP_ID, 21-ADDITIONAL_COSTS, 
                 ' 22-LOCATION_ID, 23-QUANTITY, 24-FLAG_ID, 25-RUNS
                 InsertItem = New ManufacturingItem
+                InsertItem.RecordID = 0 ' This is set later
 
                 ' Reset
                 MultiUsePOSArrays = New List(Of IndustryFacility)
@@ -15970,10 +15985,6 @@ CheckTechs:
                             SelectedDecryptor = InventionDecryptors.GetDecryptor(InputText)
                         End If
 
-                        ' Select the runs for the BPC to make this T2 Item
-                        'T1BPCType = GetT1BPCType(InsertItem.BPID, T1BPCMaxRuns, T1BPCName)
-                        BPCRuns = 1
-
                         ' Construct the T2/T3 BP
                         ManufacturingBlueprint = New Blueprint(InsertItem.BPID, CInt(txtCalcRuns.Text), InsertItem.BPME, InsertItem.BPTE, _
                                                                CInt(txtCalcProdLines.Text), CInt(txtCalcProdLines.Text), CInt(txtCalcLabLines.Text), SelectedCharacter, _
@@ -16024,7 +16035,7 @@ CheckTechs:
                         If rbtnCalcCompareAll.Checked Then
                             ' Need to add a record for each of the three types
 
-                            ' For components, only add if it has buildable components
+                            ' *** For components, only add if it has buildable components
                             If ManufacturingBlueprint.HasComponents Then
                                 ' Components first
                                 InsertItem.ItemMarketPrice = ManufacturingBlueprint.GetItemMarketPrice
@@ -16060,7 +16071,7 @@ CheckTechs:
                                 Call InsertManufacturingItem(InsertItem, SVRThresholdValue, chkCalcSVRIncludeNull.Checked, ManufacturingList)
                             End If
 
-                            ' Raw Mats - always add
+                            ' *** Raw Mats - always add
                             InsertItem.ItemMarketPrice = ManufacturingBlueprint.GetItemMarketPrice
                             InsertItem.ProfitPercent = ManufacturingBlueprint.GetTotalRawProfitPercent
                             InsertItem.Profit = ManufacturingBlueprint.GetTotalRawProfit
@@ -16093,13 +16104,13 @@ CheckTechs:
                             ' Insert Raw Mats item
                             Call InsertManufacturingItem(InsertItem, SVRThresholdValue, chkCalcSVRIncludeNull.Checked, ManufacturingList)
 
-                            ' For Build/Buy we need to construct a new BP and add that
+                            ' *** For Build/Buy we need to construct a new BP and add that
                             If InsertItem.TechLevel = "T1" Then
 
                                 ' Construct the T1 BP
                                 ManufacturingBlueprint = New Blueprint(InsertItem.BPID, CInt(txtCalcRuns.Text), InsertItem.BPME, InsertItem.BPTE, _
                                                CInt(txtCalcProdLines.Text), CInt(txtCalcProdLines.Text), SelectedCharacter, _
-                                               UserApplicationSettings, rbtnCalcCompareBuildBuy.Checked, 0, InsertItem.ManufacturingTeam, _
+                                               UserApplicationSettings, True, 0, InsertItem.ManufacturingTeam, _
                                                InsertItem.ManufacturingFacility, InsertItem.ComponentTeam, InsertItem.ComponentManufacturingFacility)
 
                             ElseIf InsertItem.TechLevel = "T2" Or InsertItem.TechLevel = "T3" Then
@@ -16109,12 +16120,11 @@ CheckTechs:
                                                                        CInt(txtCalcProdLines.Text), CInt(txtCalcProdLines.Text), CInt(txtCalcLabLines.Text), SelectedCharacter, _
                                                                        UserApplicationSettings, 0, InsertItem.ManufacturingTeam, InsertItem.ManufacturingFacility, _
                                                                        InsertItem.ComponentTeam, InsertItem.ComponentManufacturingFacility, _
-                                                                       rbtnCalcCompareBuildBuy.Checked, SelectedDecryptor, _
+                                                                       True, SelectedDecryptor, _
                                                                        InsertItem.InventionREFacility, InsertItem.InventionRETeam, _
                                                                        InsertItem.CopyFacility, InsertItem.CopyTeam, GetInventItemTypeID(InsertItem.BPID, InsertItem.Relic))
 
                             End If
-
 
                             ' Get the list of materials
                             Call ManufacturingBlueprint.BuildItem(chkCalcTaxes.Checked, chkCalcFees.Checked, chkCalcBaseFacilityIncludeCosts.Checked)
@@ -16195,7 +16205,6 @@ CheckTechs:
 
                             InsertItem.ManufacturingTeamUsage = ManufacturingBlueprint.GetManufacturingTeamFee
                             InsertItem.ComponentTeamUsage = ManufacturingBlueprint.GetComponentTeamFee
-
 
                             InsertItem.TotalCopyCost = ManufacturingBlueprint.GetCopyUsage
                             InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetCopyUsage
@@ -16660,15 +16669,11 @@ ExitCalc:
             For i = 0 To FacilityList.Count - 1
                 TempItem2 = CType(TempItem.Clone, ManufacturingItem)
                 TempItem2.ManufacturingFacility = FacilityList(i)
-                RecordIDIterator += 1
-                TempItem2.RecordID = RecordIDIterator
                 ManufacturingItemList.Add(TempItem)
                 ' If we want to add No Team, make sure the current team isn't no team and then add it as well
                 Call InsertItemNoTeamCalcType(ManufacturingItemList, TempItem2, AddManufacturingNoTeam, AddComponentsNoTeam, AddCopyingNoTeam)
             Next
         Else
-            RecordIDIterator += 1
-            TempItem.RecordID = RecordIDIterator
             ManufacturingItemList.Add(TempItem)
             ' If we want to add No Team, make sure the current team isn't no team and then add it as well
             Call InsertItemNoTeamCalcType(ManufacturingItemList, TempItem, AddManufacturingNoTeam, AddComponentsNoTeam, AddCopyingNoTeam)
@@ -16686,25 +16691,19 @@ ExitCalc:
         If AddManufacturingNoTeam And BaseItem.ManufacturingTeam.TeamName <> NoTeam.TeamName Then
             TempItem = CType(BaseItem.Clone, ManufacturingItem)
             TempItem.ManufacturingTeam = NoTeam
-            RecordIDIterator += 1
-            TempItem.RecordID = RecordIDIterator
             ManufacturingItemList.Add(TempItem)
         End If
 
         If AddComponentsNoTeam And BaseItem.ComponentTeam.TeamName <> NoTeam.TeamName Then
             TempItem = CType(BaseItem.Clone, ManufacturingItem)
             TempItem.ComponentTeam = NoTeam
-            RecordIDIterator += 1
-            TempItem.RecordID = RecordIDIterator
-            ManufacturingItemList.Add(BaseItem)
+            ManufacturingItemList.Add(TempItem)
         End If
 
         If AddCopyingNoTeam And BaseItem.CopyTeam.TeamName <> NoTeam.TeamName Then
             TempItem = CType(BaseItem.Clone, ManufacturingItem)
             TempItem.CopyTeam = NoTeam
-            RecordIDIterator += 1
-            TempItem.RecordID = RecordIDIterator
-            ManufacturingItemList.Add(BaseItem)
+            ManufacturingItemList.Add(TempItem)
         End If
 
     End Sub
@@ -16999,9 +16998,11 @@ ExitCalc:
         If chkCalcT2.Enabled Then
             If chkCalcT2.Checked Then
                 ' Select all the T2 bps that we can invent from our owned bps and save them
-                SQL = "SELECT T2_BP_ID FROM INVENTED_BLUEPRINTS WHERE T1_BP_ID IN "
+                SQL = "SELECT productTypeID FROM INDUSTRY_ACTIVITY_PRODUCTS "
+                SQL = SQL & "INNER JOIN META_TYPES ON INDUSTRY_ACTIVITY_PRODUCTS.productTypeID = META_TYPES.parentTypeID "
+                SQL = SQL & "WHERE activityID = 8 AND blueprintTypeID IN "
                 SQL = SQL & "(SELECT BP_ID FROM " & USER_BLUEPRINTS & " WHERE X.USER_ID = " & SelectedCharacter.ID & " AND X.OWNED = 1 "
-                SQL = SQL & "AND X.ITEM_TYPE = 1) AND META_GROUP_ID = 2 GROUP BY T2_BP_ID"
+                SQL = SQL & "AND X.ITEM_TYPE = 1) AND metaGroupID = 2 GROUP BY productTypeID"
 
                 DBCommand = New SQLiteCommand(SQL, DB)
                 DBCommand.Parameters.AddWithValue("@ALLUSERBP_USERID", CStr(SelectedCharacter.ID))
@@ -17168,19 +17169,24 @@ ExitCalc:
 
     ' Checks SVR data and options whether we insert the item
     Private Sub InsertManufacturingItem(ByVal SentItem As ManufacturingItem, ByVal SVRThreshold As Double, ByVal InsertBlankSVR As Boolean, ByRef SentList As List(Of ManufacturingItem))
+        Dim TempItem As New ManufacturingItem
+
+        TempItem = CType(SentItem.Clone, ManufacturingItem)
+        RecordIDIterator += 1
+        TempItem.RecordID = RecordIDIterator
 
         ' See if we want to ignore low SVR items
-        If Not IsNothing(SentItem.SVR) Then
+        If Not IsNothing(TempItem.SVR) Then
             If IsNothing(SVRThreshold) Then
                 ' Insert the ListItem
-                SentList.Add(SentItem)
-            ElseIf CDbl(SentItem.SVR) >= SVRThreshold Then
+                SentList.Add(TempItem)
+            ElseIf CDbl(TempItem.SVR) >= SVRThreshold Then
                 ' Insert the ListItem
-                SentList.Add(SentItem)
+                SentList.Add(TempItem)
             End If
         ElseIf InsertBlankSVR Then
             ' Insert the blank svr item into the List
-            SentList.Add(SentItem)
+            SentList.Add(TempItem)
         End If
 
     End Sub

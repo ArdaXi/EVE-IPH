@@ -273,7 +273,7 @@ Public Class Blueprint
 
         NumInventionREJobs = 0
 
-        ' Can do build/buy 
+        ' Do build/buy 
         BuildBuy = BPBuildBuy
 
         iME = InitBPME
@@ -303,9 +303,6 @@ Public Class Blueprint
 
         ' Add production implant from settings
         AIImplantValue = 1 - InitBPUserSettings.ManufacturingImplantValue
-
-        ' Build/Buy default is false for all types till set true (T2/T3)
-        BuildBuy = False
 
         ' Teams
         ManufacturingTeam = InitBPProductionTeam
@@ -363,7 +360,6 @@ Public Class Blueprint
         Dim CurrentMaterial As Material
         Dim CurrentMatQuantity As Long
         Dim T1BaseItem As Boolean = False
-        Dim T1BPCRuns As Integer = 0
 
         ' Temp Materials for passing
         Dim TempMaterials As New Materials
@@ -447,14 +443,6 @@ Public Class Blueprint
                         Case Else
                             T1BaseItem = False
                     End Select
-
-                    ' Build a new blueprint for this component - assume they only have 1 blueprint and only 1 production line is needed
-                    ' If the item is a T2 item (Augmented drones for instance) then add data for that
-                    If TechLevel = BlueprintTechLevel.T2 Then
-                        Call GetT1BPCType(readerME.GetInt64(0), T1BPCRuns, "")
-                    Else
-                        T1BPCRuns = 0
-                    End If
 
                     ' Build the T1 component
                     ComponentBlueprint = New Blueprint(readerME.GetInt64(0), CLng(CurrentMaterial.GetQuantity), TempME, TempTE, _
@@ -1044,6 +1032,41 @@ Public Class Blueprint
         Next
 
         Return LevelSum
+
+    End Function
+
+    ' Returns a string that states what type of T1 BPC the sent T2 BPID is for invention purposes. Also returns the Max Runs and name of the BPC
+    Public Function GetT1BPCType(ByVal BPID As Long, ByRef MaxBPCRuns As Integer, ByRef BPName As String) As String
+        Dim SQL As String
+        Dim readerBP As SQLiteDataReader
+        Dim T1MatGroupName As String
+        Dim T1MatCategoryName As String
+
+        SQL = "SELECT ITEM_CATEGORY, ITEM_GROUP, MAX_PRODUCTION_LIMIT, BLUEPRINT_NAME FROM ALL_BLUEPRINTS "
+        SQL = SQL & "WHERE BLUEPRINT_ID IN (SELECT blueprintTypeID FROM INDUSTRY_ACTIVITY_PRODUCTS WHERE productTypeID = " & BPID & " AND activityID = 8)"
+        DBCommand = New SQLiteCommand(SQL, DB)
+        readerBP = DBCommand.ExecuteReader
+
+        If readerBP.Read() Then
+            T1MatCategoryName = readerBP.GetString(0)
+            T1MatGroupName = readerBP.GetString(1)
+            MaxBPCRuns = readerBP.GetInt32(2)
+            BPName = readerBP.GetString(3)
+
+            ' Based on their default settings, select the number of runs in the BPC used to invent this Blueprint - TO DO - check this logic
+            If T1MatGroupName.Substring(0, 3) = "Rig" Or T1MatCategoryName = "Ship" Then
+                ' Ships
+                Return "Ship"
+            Else
+                ' Modules
+                Return "Module"
+            End If
+        Else
+            MaxBPCRuns = 0
+            BPName = ""
+            Return ""
+
+        End If
 
     End Function
 
