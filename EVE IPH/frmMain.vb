@@ -13806,6 +13806,14 @@ CheckTechs:
         End If
     End Sub
 
+    Private Sub chkCalcIncludeT2Owned_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcIncludeT2Owned.CheckedChanged
+        Call ResetRefresh()
+    End Sub
+
+    Private Sub chkCalcIncludeT3Owned_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcIncludeT3Owned.CheckedChanged
+        Call ResetRefresh()
+    End Sub
+
     Private Sub chkCalcRaceAmarr_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles chkCalcRaceAmarr.CheckedChanged
         Call ResetRefresh()
     End Sub
