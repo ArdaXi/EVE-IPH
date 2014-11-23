@@ -13,16 +13,16 @@ Public Class frmMain
     Public Const DatabaseName As String = "Phoebe_1.0_107269" ' also folder name to update YAML and Universe DB stuff
 
     ' DB
-    Public Const DatabasePath As String = "C:\Users\Brian\EVE Stuff\EVE VB Project\DataDump Working\"
+    Public Const DatabasePath As String = "C:\Users\Brian\EVE Stuff\EVE IPH Project\DataDump Working\"
 
     ' Working
-    Public Const WorkingImageFolder As String = "C:\Users\Brian\EVE Stuff\EVE VB Project\Root Directory\EVEIPH Images"
+    Public Const WorkingImageFolder As String = "C:\Users\Brian\EVE Stuff\EVE IPH Project\Root Directory\EVEIPH Images"
 
     ' Images
-    Public Const NewImageFolder As String = "C:\Users\Brian\EVE Stuff\EVE VB Project\DataDump Working\Types"
-    Public Const OldImageFolder As String = "C:\Users\Brian\EVE Stuff\EVE VB Project\DataDump Working\Archive\EVEIPH Images Old"
-    Public Const EVEIPHImageFolder As String = "C:\Users\Brian\EVE Stuff\EVE VB Project\DataDump Working\EVEIPH Images"
-    Public Const MissingImagesFilePath As String = "C:\Users\Brian\EVE Stuff\EVE VB Project\DataDump Working\" & DatabaseName & " Missing Images.txt"
+    Public Const NewImageFolder As String = "C:\Users\Brian\EVE Stuff\EVE IPH Project\DataDump Working\Types"
+    Public Const OldImageFolder As String = "C:\Users\Brian\EVE Stuff\EVE IPH Project\DataDump Working\Archive\EVEIPH Images Old"
+    Public Const EVEIPHImageFolder As String = "C:\Users\Brian\EVE Stuff\EVE IPH Project\DataDump Working\EVEIPH Images"
+    Public Const MissingImagesFilePath As String = "C:\Users\Brian\EVE Stuff\EVE IPH Project\DataDump Working\" & DatabaseName & " Missing Images.txt"
 
     ' YAML files
     Public Const YAMLBlueprints As String = "blueprints.yaml"
@@ -251,9 +251,9 @@ Public Class frmMain
         Me.Cursor = Cursors.WaitCursor
 
         ' Open connections
-        SQLExpressConnection = New SqlConnection("Server=MAIN\SQLEXPRESS;Database=" & DatabaseName & ";Trusted_Connection=True; Connection Timeout=300;")
+        SQLExpressConnection = New SqlConnection("Server=" & Environment.MachineName & "\EVESDE;Database=" & DatabaseName & ";Trusted_Connection=True; Connection Timeout=300;")
         SQLExpressConnection.Open()
-        SQLExpressConnection2 = New SqlConnection("Server=MAIN\SQLEXPRESS;Database=" & DatabaseName & ";Trusted_Connection=True; Connection Timeout=300;")
+        SQLExpressConnection2 = New SqlConnection("Server=" & Environment.MachineName & "\EVESDE;Database=" & DatabaseName & ";Trusted_Connection=True; Connection Timeout=300;")
         SQLExpressConnection2.Open()
 
         ' SQL Lite DB
