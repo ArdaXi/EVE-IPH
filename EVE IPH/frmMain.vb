@@ -7173,7 +7173,7 @@ ExitForm:
             ElseIf .rbtnBPDroneBlueprints.Checked Then
                 SQL = SQL & "AND ITEM_CATEGORY = 'Drone' "
             ElseIf .rbtnBPModuleBlueprints.Checked Then
-                SQL = SQL & "AND (ITEM_CATEGORY ='Module' AND ITEM_GROUP NOT LIKE 'Rig%')"
+                SQL = SQL & "AND (ITEM_CATEGORY ='Module' AND ITEM_GROUP NOT LIKE 'Rig%') "
             ElseIf .rbtnBPShipBlueprints.Checked Then
                 SQL = SQL & "AND ITEM_CATEGORY = 'Ship' "
             ElseIf .rbtnBPSubsystemBlueprints.Checked Then
@@ -7191,7 +7191,7 @@ ExitForm:
             ElseIf .rbtnBPStructureBlueprints.Checked Then
                 SQL = SQL & "AND ITEM_CATEGORY = 'Structure' "
             ElseIf .rbtnBPStationPartsBlueprints.Checked Then
-                SQL = SQL & "ANDITEM_GROUP = 'Station Components' "
+                SQL = SQL & "AND ITEM_GROUP = 'Station Components' "
             ElseIf .rbtnBPRigBlueprints.Checked Then
                 SQL = SQL & "AND BLUEPRINT_GROUP = 'Rig Blueprint' "
             ElseIf .rbtnBPOwnedBlueprints.Checked Then
