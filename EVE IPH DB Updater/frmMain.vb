@@ -418,12 +418,6 @@ Public Class frmMain
         lblTableName.Text = "Building: RESEARCH_AGENTS"
         Call Build_Research_Agents()
 
-        lblTableName.Text = "Building: INVENTED_BLUEPRINTS"
-        Call Build_Invented_Blueprints()
-
-        'lblTableName.Text = "Building: SUBSYSTEM_PROFITABILITY"
-        'Call Build_Subsystem_Profitability()
-
         lblTableName.Text = "Building: INDUSTRY_JOBS"
         Call Build_Industry_Jobs()
 
@@ -435,9 +429,6 @@ Public Class frmMain
 
         lblTableName.Text = "Building: ASSET_LOCATIONS"
         Call Build_Asset_Locations()
-
-        'lblTableName.Text = "Building: CONTROL_TOWER_RESOURCES"
-        'Call Build_Control_Tower_Resources()
 
         lblTableName.Text = "Building: CURRENT_RESEARCH_AGENTS"
         Call Build_Current_Research_Agents()
@@ -466,39 +457,43 @@ Public Class frmMain
         ' After we are done with everything, use the following tables to update the RACE ID value in the ALL_BLUEPRINTS table
         lblTableName.Text = "Updating the Race ID's"
 
-        ' 1 = Caldari (Esoteric)
+        ' 1 = Caldari
         SQL = "UPDATE ALL_BLUEPRINTS SET RACE_ID = 1 "
-        SQL = SQL & "WHERE ((BLUEPRINT_ID IN (SELECT T2_BP_ID FROM ALL_BLUEPRINT_MATERIALS, INVENTED_BLUEPRINTS "
-        SQL = SQL & "WHERE INVENTED_BLUEPRINTS.T1_BP_ID = ALL_BLUEPRINT_MATERIALS.BLUEPRINT_ID AND Material Like ('Esoteric%'))) "
-        SQL = SQL & "OR  (BLUEPRINT_ID IN (SELECT BLUEPRINT_ID FROM ALL_BLUEPRINT_MATERIALS WHERE Material Like ('Esoteric%'))) "
-        SQL = SQL & "OR MARKET_GROUP ='Caldari' OR BLUEPRINT_NAME LIKE 'Esoteric%' OR  BLUEPRINT_GROUP IN ('Missile Blueprint','Missile Launcher Blueprint')) "
+        SQL = SQL & "WHERE "
+        SQL = SQL & "BLUEPRINT_ID IN (SELECT DISTINCT BLUEPRINT_ID FROM ALL_BLUEPRINT_MATERIALS WHERE MATERIAL = 'Caldari Encryption Methods') OR "
+        SQL = SQL & "BLUEPRINT_ID IN (SELECT DISTINCT productTypeID FROM INDUSTRY_ACTIVITY_PRODUCTS WHERE blueprintTypeID IN "
+        SQL = SQL & "(SELECT DISTINCT BLUEPRINT_ID FROM ALL_BLUEPRINT_MATERIALS WHERE MATERIAL = 'Caldari Encryption Methods')) "
+        SQL = SQL & "OR MARKET_GROUP ='Caldari' OR BLUEPRINT_GROUP IN ('Missile Blueprint','Missile Launcher Blueprint') "
         SQL = SQL & "AND RACE_ID IS NULL "
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
-        ' 2 = Minmatar (Cryptic)
+        ' 2 = Minmatar
         SQL = "UPDATE ALL_BLUEPRINTS SET RACE_ID = 2 "
-        SQL = SQL & "WHERE ((BLUEPRINT_ID IN (SELECT T2_BP_ID FROM ALL_BLUEPRINT_MATERIALS, INVENTED_BLUEPRINTS "
-        SQL = SQL & "WHERE INVENTED_BLUEPRINTS.T1_BP_ID = ALL_BLUEPRINT_MATERIALS.BLUEPRINT_ID AND Material Like ('Cryptic%'))) "
-        SQL = SQL & "OR  (BLUEPRINT_ID IN (SELECT BLUEPRINT_ID FROM ALL_BLUEPRINT_MATERIALS WHERE Material Like ('Cryptic%'))) "
-        SQL = SQL & "OR MARKET_GROUP ='Minmatar' OR BLUEPRINT_NAME LIKE 'Cryptic%' OR  BLUEPRINT_GROUP IN ('Projectile Ammo Blueprint','Projectile Weapon Blueprint')) "
+        SQL = SQL & "WHERE "
+        SQL = SQL & "BLUEPRINT_ID IN (SELECT DISTINCT BLUEPRINT_ID FROM ALL_BLUEPRINT_MATERIALS WHERE MATERIAL = 'Minmatar Encryption Methods') OR "
+        SQL = SQL & "BLUEPRINT_ID IN (SELECT DISTINCT productTypeID FROM INDUSTRY_ACTIVITY_PRODUCTS WHERE blueprintTypeID IN "
+        SQL = SQL & "(SELECT DISTINCT BLUEPRINT_ID FROM ALL_BLUEPRINT_MATERIALS WHERE MATERIAL = 'Minmatar Encryption Methods')) "
+        SQL = SQL & "OR MARKET_GROUP ='Minmatar' OR BLUEPRINT_GROUP IN ('Projectile Ammo Blueprint','Projectile Weapon Blueprint') "
         SQL = SQL & "AND RACE_ID IS NULL "
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
-        ' 4 = Amarr (Occult)
+        ' 4 = Amarr
         SQL = "UPDATE ALL_BLUEPRINTS SET RACE_ID = 4 "
-        SQL = SQL & "WHERE ((BLUEPRINT_ID IN (SELECT T2_BP_ID FROM ALL_BLUEPRINT_MATERIALS, INVENTED_BLUEPRINTS "
-        SQL = SQL & "WHERE INVENTED_BLUEPRINTS.T1_BP_ID = ALL_BLUEPRINT_MATERIALS.BLUEPRINT_ID AND Material Like ('Occult%'))) "
-        SQL = SQL & "OR  (BLUEPRINT_ID IN (SELECT BLUEPRINT_ID FROM ALL_BLUEPRINT_MATERIALS WHERE Material Like ('Occult%'))) "
-        SQL = SQL & "OR MARKET_GROUP ='Amarr' OR BLUEPRINT_NAME LIKE 'Occult%' OR  BLUEPRINT_GROUP IN ('Energy Weapon Blueprint','Frequency Crystal Blueprint')) "
+        SQL = SQL & "WHERE "
+        SQL = SQL & "BLUEPRINT_ID IN (SELECT DISTINCT BLUEPRINT_ID FROM ALL_BLUEPRINT_MATERIALS WHERE MATERIAL = 'Amarr Encryption Methods') OR "
+        SQL = SQL & "BLUEPRINT_ID IN (SELECT DISTINCT productTypeID FROM INDUSTRY_ACTIVITY_PRODUCTS WHERE blueprintTypeID IN "
+        SQL = SQL & "(SELECT DISTINCT BLUEPRINT_ID FROM ALL_BLUEPRINT_MATERIALS WHERE MATERIAL = 'Amarr Encryption Methods')) "
+        SQL = SQL & "OR MARKET_GROUP ='Amarr' OR BLUEPRINT_GROUP IN ('Energy Weapon Blueprint','Frequency Crystal Blueprint') "
         SQL = SQL & "AND RACE_ID IS NULL "
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
-        ' 8 = Gallente (Incognito)
+        ' 8 = Gallente
         SQL = "UPDATE ALL_BLUEPRINTS SET RACE_ID = 8 "
-        SQL = SQL & "WHERE ((BLUEPRINT_ID IN (SELECT T2_BP_ID FROM ALL_BLUEPRINT_MATERIALS, INVENTED_BLUEPRINTS "
-        SQL = SQL & "WHERE INVENTED_BLUEPRINTS.T1_BP_ID = ALL_BLUEPRINT_MATERIALS.BLUEPRINT_ID AND Material Like ('Incognito%'))) "
-        SQL = SQL & "OR  (BLUEPRINT_ID IN (SELECT BLUEPRINT_ID FROM ALL_BLUEPRINT_MATERIALS WHERE Material Like ('Incognito%'))) "
-        SQL = SQL & "OR MARKET_GROUP ='Gallente' OR BLUEPRINT_NAME LIKE 'Incognito%' OR  BLUEPRINT_GROUP IN ('Hybrid Ammo Blueprint','Hybrid Weapon Blueprint')) "
+        SQL = SQL & "WHERE "
+        SQL = SQL & "BLUEPRINT_ID IN (SELECT DISTINCT BLUEPRINT_ID FROM ALL_BLUEPRINT_MATERIALS WHERE MATERIAL = 'Gallente Encryption Methods') OR "
+        SQL = SQL & "BLUEPRINT_ID IN (SELECT DISTINCT productTypeID FROM INDUSTRY_ACTIVITY_PRODUCTS WHERE blueprintTypeID IN "
+        SQL = SQL & "(SELECT DISTINCT BLUEPRINT_ID FROM ALL_BLUEPRINT_MATERIALS WHERE MATERIAL = 'Gallente Encryption Methods')) "
+        SQL = SQL & "OR MARKET_GROUP ='Gallente' OR BLUEPRINT_GROUP IN ('Hybrid Ammo Blueprint','Hybrid Weapon Blueprint') "
         SQL = SQL & "AND RACE_ID IS NULL "
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
@@ -3974,84 +3969,84 @@ Public Class frmMain
     End Sub
 
     ' INVENTED_BLUEPRINTS
-    Private Sub Build_Invented_Blueprints()
-        Dim SQL As String
+    'Private Sub Build_Invented_Blueprints()
+    '    Dim SQL As String
 
-        ' MS SQL variables
-        Dim mySQLQuery As New SqlCommand
-        Dim mySQLReader As SqlDataReader
-        Dim mySQLReader2 As SqlDataReader
-        Dim msSQL As String
-        Dim msSQL2 As String
+    '    ' MS SQL variables
+    '    Dim mySQLQuery As New SqlCommand
+    '    Dim mySQLReader As SqlDataReader
+    '    Dim mySQLReader2 As SqlDataReader
+    '    Dim msSQL As String
+    '    Dim msSQL2 As String
 
-        Dim i As Integer
+    '    Dim i As Integer
 
-        SQL = "CREATE TABLE INVENTED_BLUEPRINTS ("
-        SQL = SQL & "T1_BP_ID INTEGER NOT NULL,"
-        SQL = SQL & "T1_BP VARCHAR(100) NOT NULL,"
-        SQL = SQL & "T2_BP_ID INTEGER NOT NULL,"
-        SQL = SQL & "T2_BP VARCHAR(100) NOT NULL,"
-        SQL = SQL & "META_GROUP_ID INTEGER"
-        SQL = SQL & ")"
+    '    SQL = "CREATE TABLE INVENTED_BLUEPRINTS ("
+    '    SQL = SQL & "T1_BP_ID INTEGER NOT NULL,"
+    '    SQL = SQL & "T1_BP VARCHAR(100) NOT NULL,"
+    '    SQL = SQL & "T2_BP_ID INTEGER NOT NULL,"
+    '    SQL = SQL & "T2_BP VARCHAR(100) NOT NULL,"
+    '    SQL = SQL & "META_GROUP_ID INTEGER"
+    '    SQL = SQL & ")"
 
-        Call Execute_SQLiteSQL(SQL, SQLiteDB)
+    '    Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
-        ' Pull new data and insert
-        msSQL = "SELECT industryActivityProducts.blueprintTypeID, "
-        msSQL = msSQL & "invTypes.typeName, "
-        msSQL = msSQL & "industryActivityProducts_1.blueprintTypeID, "
-        msSQL = msSQL & "invTypes_1.typeName, "
-        msSQL = msSQL & "invMetaTypes.metaGroupID "
-        msSQL2 = "FROM (((industryActivityProducts "
-        msSQL2 = msSQL2 & "INNER JOIN invMetaTypes ON industryActivityProducts.productTypeID = invMetaTypes.parentTypeID) "
-        msSQL2 = msSQL2 & "INNER JOIN invTypes ON industryActivityProducts.blueprintTypeID = invTypes.typeID) "
-        msSQL2 = msSQL2 & "INNER JOIN industryActivityProducts AS industryActivityProducts_1 ON invMetaTypes.typeID = industryActivityProducts_1.productTypeID) "
-        msSQL2 = msSQL2 & "INNER JOIN invTypes AS invTypes_1 ON industryActivityProducts_1.blueprintTypeID = invTypes_1.typeID "
+    '    ' Pull new data and insert
+    '    msSQL = "SELECT industryActivityProducts.blueprintTypeID, "
+    '    msSQL = msSQL & "invTypes.typeName, "
+    '    msSQL = msSQL & "industryActivityProducts_1.blueprintTypeID, "
+    '    msSQL = msSQL & "invTypes_1.typeName, "
+    '    msSQL = msSQL & "invMetaTypes.metaGroupID "
+    '    msSQL2 = "FROM (((industryActivityProducts "
+    '    msSQL2 = msSQL2 & "INNER JOIN invMetaTypes ON industryActivityProducts.productTypeID = invMetaTypes.parentTypeID) "
+    '    msSQL2 = msSQL2 & "INNER JOIN invTypes ON industryActivityProducts.blueprintTypeID = invTypes.typeID) "
+    '    msSQL2 = msSQL2 & "INNER JOIN industryActivityProducts AS industryActivityProducts_1 ON invMetaTypes.typeID = industryActivityProducts_1.productTypeID) "
+    '    msSQL2 = msSQL2 & "INNER JOIN invTypes AS invTypes_1 ON industryActivityProducts_1.blueprintTypeID = invTypes_1.typeID "
 
-        ' Get the count
-        mySQLQuery = New SqlCommand("SELECT COUNT(*) " & msSQL2, SQLExpressConnection)
-        mySQLReader2 = mySQLQuery.ExecuteReader()
-        mySQLReader2.Read()
-        pgMain.Maximum = mySQLReader2.GetValue(0)
-        pgMain.Value = 0
-        i = 0
-        pgMain.Visible = True
-        mySQLReader2.Close()
+    '    ' Get the count
+    '    mySQLQuery = New SqlCommand("SELECT COUNT(*) " & msSQL2, SQLExpressConnection)
+    '    mySQLReader2 = mySQLQuery.ExecuteReader()
+    '    mySQLReader2.Read()
+    '    pgMain.Maximum = mySQLReader2.GetValue(0)
+    '    pgMain.Value = 0
+    '    i = 0
+    '    pgMain.Visible = True
+    '    mySQLReader2.Close()
 
-        mySQLQuery = New SqlCommand(msSQL & msSQL2, SQLExpressConnection)
-        mySQLReader = mySQLQuery.ExecuteReader()
+    '    mySQLQuery = New SqlCommand(msSQL & msSQL2, SQLExpressConnection)
+    '    mySQLReader = mySQLQuery.ExecuteReader()
 
-        Call BeginSQLiteTransaction(SQLiteDB)
+    '    Call BeginSQLiteTransaction(SQLiteDB)
 
-        ' Add to Access table
-        While mySQLReader.Read
-            SQL = "INSERT INTO INVENTED_BLUEPRINTS VALUES ("
-            SQL = SQL & BuildInsertFieldString(mySQLReader.GetValue(0)) & ","
-            SQL = SQL & BuildInsertFieldString(mySQLReader.GetValue(1)) & ","
-            SQL = SQL & BuildInsertFieldString(mySQLReader.GetValue(2)) & ","
-            SQL = SQL & BuildInsertFieldString(mySQLReader.GetValue(3)) & ","
-            SQL = SQL & BuildInsertFieldString(mySQLReader.GetValue(4)) & ")"
+    '    ' Add to Access table
+    '    While mySQLReader.Read
+    '        SQL = "INSERT INTO INVENTED_BLUEPRINTS VALUES ("
+    '        SQL = SQL & BuildInsertFieldString(mySQLReader.GetValue(0)) & ","
+    '        SQL = SQL & BuildInsertFieldString(mySQLReader.GetValue(1)) & ","
+    '        SQL = SQL & BuildInsertFieldString(mySQLReader.GetValue(2)) & ","
+    '        SQL = SQL & BuildInsertFieldString(mySQLReader.GetValue(3)) & ","
+    '        SQL = SQL & BuildInsertFieldString(mySQLReader.GetValue(4)) & ")"
 
-            Call Execute_SQLiteSQL(SQL, SQLiteDB)
+    '        Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
-            i += 1
-            pgMain.Value = i
+    '        i += 1
+    '        pgMain.Value = i
 
-        End While
+    '    End While
 
-        Call CommitSQLiteTransaction(SQLiteDB)
+    '    Call CommitSQLiteTransaction(SQLiteDB)
 
-        mySQLReader.Close()
+    '    mySQLReader.Close()
 
-        SQL = "CREATE INDEX IDX_IBP_T2BP_ID ON INVENTED_BLUEPRINTS (T2_BP_ID)"
-        Call Execute_SQLiteSQL(SQL, SQLiteDB)
+    '    SQL = "CREATE INDEX IDX_IBP_T2BP_ID ON INVENTED_BLUEPRINTS (T2_BP_ID)"
+    '    Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
-        SQL = "CREATE INDEX IDX_IBP_BP_META_ID ON INVENTED_BLUEPRINTS (T1_BP_ID, META_GROUP_ID)"
-        Call Execute_SQLiteSQL(SQL, SQLiteDB)
+    '    SQL = "CREATE INDEX IDX_IBP_BP_META_ID ON INVENTED_BLUEPRINTS (T1_BP_ID, META_GROUP_ID)"
+    '    Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
-        pgMain.Visible = False
+    '    pgMain.Visible = False
 
-    End Sub
+    'End Sub
 
     '' REVERSE_ENGINEERING
     'Private Sub Build_REVERSE_ENGINEERING()
