@@ -305,7 +305,7 @@ Public Class frmUpdaterMain
                     EVEDBLocalFileVersion = EVE_DB
                 End If
             Else
-                ' All files other than the DB and Updater are run from the Root folder - Images a special exception above
+                ' All files other than the DB and Updater are run from the Root folder - Images and db a special exception above
                 LocalFileMD5 = MD5CalcFile(ROOT_FOLDER & ServerFileList(i).Name)
             End If
 
@@ -329,7 +329,11 @@ Public Class frmUpdaterMain
                     ' Check the file MD5 to make sure we got a good download. If not, try one more time
                     ' If they don't have a local file (which will have a blank MD5) then just go with what they got
                     If ServerFileList(i).MD5 <> NO_LOCAL_XML_FILE Then
-                        If MD5CalcFile(CheckFile) <> ServerFileList(i).MD5 Then
+                        ' Get the file size to check
+                        Dim infoReader As System.IO.FileInfo
+                        infoReader = My.Computer.FileSystem.GetFileInfo(CheckFile)
+                        ' Still bad MD5 or the file is 0 bytes
+                        If MD5CalcFile(CheckFile) <> ServerFileList(i).MD5 Or infoReader.Length = 0 Then
                             CheckFile = DownloadFileFromServer(ServerFileList(i).URL, UPDATES_FOLDER & ServerFileList(i).Name)
 
                             If (worker.CancellationPending = True) Then
@@ -1655,20 +1659,20 @@ Public Class frmUpdaterMain
 
                 ' If an OLD file exists, delete it
                 If File.Exists(ROOT_FOLDER & OLD_PREFIX & UpdateFileList(i).Name) Then
-                    ProgramErrorLocation = "Error Deleting Old EXE file"
+                    ProgramErrorLocation = "Error Deleting Old " & UpdateFileList(i).Name & "file"
                     File.Delete(ROOT_FOLDER & OLD_PREFIX & UpdateFileList(i).Name)
                     Application.DoEvents()
                 End If
 
                 ' Rename old file if it exists to old prefix
                 If File.Exists(ROOT_FOLDER & UpdateFileList(i).Name) Then
-                    ProgramErrorLocation = "Error Moving Old EXE file"
+                    ProgramErrorLocation = "Error Moving Old " & UpdateFileList(i).Name & "file"
                     File.Move(ROOT_FOLDER & UpdateFileList(i).Name, ROOT_FOLDER & OLD_PREFIX & UpdateFileList(i).Name)
                     Application.DoEvents()
                 End If
 
                 ' Move new file
-                ProgramErrorLocation = "Error Moving New EXE file"
+                ProgramErrorLocation = "Error Moving New " & UpdateFileList(i).Name & "file"
                 File.Move(UPDATES_FOLDER & UpdateFileList(i).Name, ROOT_FOLDER & UpdateFileList(i).Name)
                 Application.DoEvents()
 
