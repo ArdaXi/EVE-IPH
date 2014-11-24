@@ -423,9 +423,6 @@ Public Class frmMain
         lblTableName.Text = "Building: INDUSTRY_JOBS"
         Call Build_Industry_Jobs()
 
-        lblTableName.Text = "Building: FACILITY_NAMES"
-        Call Build_Facility_Names()
-
         lblTableName.Text = "Building: ASSETS"
         Call Build_Assets()
 
@@ -1504,7 +1501,6 @@ Public Class frmMain
         Dim SQL As String
 
         SQL = "CREATE TABLE EVEIPH_DATA ("
-        SQL = SQL & "OUTPOSTS_CACHED_UNTIL VARCHAR(23)," ' Date
         SQL = SQL & "CREST_INDUSTRY_SPECIALIZATIONS_CACHED_UNTIL VARCHAR(23)," ' Date
         SQL = SQL & "CREST_INDUSTRY_TEAMS_CACHED_UNTIL VARCHAR(23)," ' Date
         SQL = SQL & "CREST_INDUSTRY_TEAM_AUCTIONS_CACHED_UNTIL VARCHAR(23)," ' Date
@@ -2105,7 +2101,7 @@ Public Class frmMain
 
     End Sub
 
-    ' STATIONS
+    ' STATIONS - Temp table, update with CREST
     Private Sub Build_Stations()
         Dim SQL As String
 
@@ -2117,14 +2113,12 @@ Public Class frmMain
         Dim i As Integer
 
         SQL = "CREATE TABLE STATIONS ("
-        SQL = SQL & "stationID INTEGER PRIMARY KEY,"
-        SQL = SQL & "security FLOAT NOT NULL,"
-        SQL = SQL & "stationTypeID INTEGER NOT NULL,"
-        SQL = SQL & "corporationID INTEGER NOT NULL,"
-        SQL = SQL & "solarSystemID INTEGER,"
-        SQL = SQL & "constellationID FLOAT NOT NULL,"
-        SQL = SQL & "regionID INTEGER NOT NULL,"
-        SQL = SQL & "stationName VARCHAR(100) NOT NULL"
+        SQL = SQL & "FACILITY_ID INTEGER PRIMARY KEY,"
+        SQL = SQL & "FACILITY_NAME VARCHAR(100) NOT NULL,"
+        SQL = SQL & "FACILITY_TYPE_ID INTEGER NOT NULL,"
+        SQL = SQL & "SOLAR_SYSTEM_ID INTEGER,"
+        SQL = SQL & "SOLAR_SYSTEM_SECURITY FLOAT NOT NULL,"
+        SQL = SQL & "REGION_ID INTEGER NOT NULL"
         SQL = SQL & ")"
 
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
@@ -2132,7 +2126,7 @@ Public Class frmMain
         Call SetProgressBarValues("staStations")
 
         ' Pull new data and insert
-        msSQL = "SELECT stationID, security, stationTypeID, corporationID, solarSystemID, constellationID, regionID, stationName FROM staStations"
+        msSQL = "SELECT stationID, stationName, stationTypeID, solarSystemID, security, regionID FROM staStations"
         mySQLQuery = New SqlCommand(msSQL, SQLExpressConnection)
         mySQLReader = mySQLQuery.ExecuteReader()
 
@@ -2148,9 +2142,7 @@ Public Class frmMain
             SQL = SQL & BuildInsertFieldString(mySQLReader.GetValue(2)) & ","
             SQL = SQL & BuildInsertFieldString(mySQLReader.GetValue(3)) & ","
             SQL = SQL & BuildInsertFieldString(mySQLReader.GetValue(4)) & ","
-            SQL = SQL & BuildInsertFieldString(mySQLReader.GetValue(5)) & ","
-            SQL = SQL & BuildInsertFieldString(mySQLReader.GetValue(6)) & ","
-            SQL = SQL & BuildInsertFieldString(mySQLReader.GetString(7)) & ")"
+            SQL = SQL & BuildInsertFieldString(mySQLReader.GetValue(5)) & ")"
 
             Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
@@ -4037,49 +4029,6 @@ Public Class frmMain
         SQL = SQL & ")"
 
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
-
-    End Sub
-
-    ' FACILITY_NAMES - Temp Table
-    Private Sub Build_Facility_Names()
-        Dim SQL As String
-
-        ' MS SQL variables
-        Dim mySQLQuery As New SqlCommand
-        Dim mySQLReader As SqlDataReader
-        Dim msSQL As String
-
-        SQL = "CREATE TABLE FACILITY_NAMES ("
-        SQL = SQL & "FACILITY_ID INTEGER PRIMARY KEY, "
-        SQL = SQL & "FACILITY_NAME VARCHAR(100) NOT NULL"
-        SQL = SQL & ")"
-
-        Call Execute_SQLiteSQL(SQL, SQLiteDB)
-
-        Application.DoEvents()
-
-        msSQL = "SELECT stationID, stationName FROM staStations ORDER BY stationID"
-        mySQLQuery = New SqlCommand(msSQL, SQLExpressConnection)
-        mySQLReader = mySQLQuery.ExecuteReader()
-
-        Call BeginSQLiteTransaction(SQLiteDB)
-
-        While mySQLReader.Read
-            Application.DoEvents()
-            SQL = "INSERT INTO FACILITY_NAMES VALUES ("
-            Dim bob As String = mySQLReader.GetValue(1)
-            SQL = SQL & BuildInsertFieldString(mySQLReader.GetValue(0)) & ","
-            SQL = SQL & BuildInsertFieldString(mySQLReader.GetValue(1)) & ")"
-
-            Call Execute_SQLiteSQL(SQL, SQLiteDB) ' add db table
-
-        End While
-
-        Call CommitSQLiteTransaction(SQLiteDB)
-
-        mySQLReader.Close()
-        mySQLReader = Nothing
-        mySQLQuery = Nothing
 
     End Sub
 

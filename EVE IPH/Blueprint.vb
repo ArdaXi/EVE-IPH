@@ -1216,7 +1216,7 @@ Public Class Blueprint
 
             ' Set the total cost for the sent runs by totaling all to get success needed, then dividing it by the runs invented
             ' (some bps have more runs than 1 - i.e. Drones = 10) to get the cost per run, then multiply that cost by the number of runs
-            TotalInventionRECost = (InventionREMaterials.GetTotalMaterialsCost + InventionREUsage) / InventedREdRuns * UserRuns
+            TotalInventionRECost = (InventionREMaterials.GetTotalMaterialsCost + InventionREUsage) / InventedREdRuns
         Else
             InventionREUsage = 0
             TotalInventionRECost = 0

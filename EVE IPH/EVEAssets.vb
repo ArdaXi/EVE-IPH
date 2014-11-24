@@ -89,7 +89,7 @@ Public Class EVEAssets
                 ' See if it's a station
                 If CStr(TempAsset.LocationID).Substring(0, 1) = "6" Then
 
-                    SQL = "SELECT stationName FROM STATIONS WHERE stationID = " & CStr(TempAsset.LocationID)
+                    SQL = "SELECT FACILITY_NAME FROM STATIONS WHERE FACILITY_ID = " & CStr(TempAsset.LocationID)
                     DBCommand = New SQLiteCommand(SQL, DB)
                     readerData = DBCommand.ExecuteReader
 
@@ -195,9 +195,8 @@ Public Class EVEAssets
 
         ' Only update if we need to 
         If CacheDate < Date.UtcNow Then
-            ' First update the stations with outpost data - only do this each time we run assets since it's used in the asset names
-            Call UpdateOutpostData()
 
+            ' Get the assets
             Assets = AssetAPI.GetAssets(KeyData, AssetType, CacheDate)
 
             If Not NoAPIError(AssetAPI.GetErrorText, "Character") Then
@@ -242,113 +241,6 @@ Public Class EVEAssets
                 SQL = SQL & CStr(Assets(i).RawQuantity) & ")"
 
                 Call ExecuteNonQuerySQL(SQL)
-
-            Next
-
-            Call CommitSQLiteTransaction()
-
-        End If
-
-    End Sub
-
-    ' Updates the local STATIONS table with new outpost data
-    Public Sub UpdateOutpostData()
-        Dim API As New EVEAPI
-        Dim OutpostList As List(Of Station)
-        Dim CacheDate As Date
-        Dim RefreshDate As Date
-        Dim TempStation As Station
-
-        Dim SQL As String
-        Dim readerOutposts As SQLiteDataReader
-        Dim readerData As SQLiteDataReader
-
-        Dim StationRegionID As Long
-        Dim StationSecurity As Double
-        Dim StationConstellationID As Long
-
-        ' First look up the CacheDate
-        SQL = "SELECT OUTPOSTS_CACHED_UNTIL FROM EVEIPH_DATA"
-        DBCommand = New SQLiteCommand(SQL, DB)
-        readerOutposts = DBCommand.ExecuteReader
-
-        If readerOutposts.Read Then
-            If Not IsDBNull(readerOutposts.GetValue(0)) Then
-                If readerOutposts.GetString(0) = "" Then
-                    RefreshDate = NoDate
-                Else
-                    RefreshDate = CDate(readerOutposts.GetString(0))
-                End If
-            Else
-                RefreshDate = NoDate
-            End If
-        Else
-            RefreshDate = NoDate
-        End If
-
-        readerOutposts.Close()
-
-        ' Only update if we need to 
-        If RefreshDate < Date.UtcNow Then
-
-            OutpostList = API.GetOutpostList(CacheDate)
-
-            Call BeginSQLiteTransaction()
-
-            ' Update the cache date - see if entered yet
-            SQL = "SELECT OUTPOSTS_CACHED_UNTIL FROM EVEIPH_DATA"
-            DBCommand = New SQLiteCommand(SQL, DB)
-            readerData = DBCommand.ExecuteReader
-
-            If readerData.Read Then
-                SQL = "UPDATE EVEIPH_DATA SET OUTPOSTS_CACHED_UNTIL = '" & Format(CacheDate, SQLiteDateFormat) & "'"
-                ExecuteNonQuerySQL(SQL)
-            Else
-                SQL = "INSERT INTO EVEIPH_DATA (OUTPOSTS_CACHED_UNTIL) VALUES ('" & Format(CacheDate, SQLiteDateFormat) & "')"
-                ExecuteNonQuerySQL(SQL)
-            End If
-
-            readerData.Close()
-
-            ' Loop through all the outposts - if they aren't in stations, add them, if they are then update them
-            For Each TempStation In OutpostList
-                SQL = "SELECT stationName FROM STATIONS WHERE stationID =" & TempStation.stationID
-                DBCommand = New SQLiteCommand(SQL, DB)
-                readerOutposts = DBCommand.ExecuteReader
-
-                With TempStation
-                    ' Look up security, regionID first
-                    SQL = "SELECT security, regionID, constellationID FROM SOLAR_SYSTEMS WHERE solarsystemID =" & TempStation.solarSystemID
-                    DBCommand = New SQLiteCommand(SQL, DB)
-                    readerData = DBCommand.ExecuteReader
-
-                    ' If system found, process, else just ignore
-                    If readerData.Read Then
-                        StationSecurity = readerData.GetDouble(0)
-                        StationRegionID = readerData.GetInt64(1)
-                        StationConstellationID = readerData.GetInt64(2)
-
-                        If readerOutposts.Read Then
-                            ' Update it
-                            SQL = "UPDATE STATIONS SET "
-                            SQL = SQL & "security = " & CStr(StationSecurity) & ", "
-                            SQL = SQL & "stationTypeID = " & CStr(.stationTypeID) & ", corporationID = " & CStr(.corporationID) & ", "
-                            SQL = SQL & "solarsystemID = " & CStr(.solarSystemID) & ", constellationID = " & CStr(StationConstellationID) & ", "
-                            SQL = SQL & "regionID = " & CStr(StationRegionID) & ", stationName = '" & FormatDBString(.stationName) & "'"
-                            SQL = SQL & "WHERE stationID = " & CStr(.stationID)
-                        Else ' Add it
-                            SQL = "INSERT INTO STATIONS VALUES (" & CStr(.stationID) & "," & CStr(StationSecurity) & "," & CStr(.stationTypeID) & ","
-                            SQL = SQL & CStr(.corporationID) & "," & CStr(.solarSystemID) & "," & CStr(StationConstellationID) & ","
-                            SQL = SQL & CStr(StationRegionID) & ",'" & FormatDBString(.stationName) & "')"
-                        End If
-
-                        ExecuteNonQuerySQL(SQL)
-
-                    End If
-
-                    readerData.Close()
-
-                End With
 
             Next
 

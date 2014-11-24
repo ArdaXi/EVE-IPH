@@ -845,15 +845,15 @@ Public Class EVECREST
 
                     ' Finally, make the facility names table for easy look ups
                     ' First drop the table if it exists
-                    SQL = "DROP TABLE IF EXISTS FACILITY_NAMES"
+                    SQL = "DROP TABLE IF EXISTS STATIONS"
                     Call ExecuteNonQuerySQL(SQL)
 
                     ' Create it
-                    SQL = "CREATE TABLE FACILITY_NAMES AS SELECT DISTINCT FACILITY_ID, FACILITY_NAME FROM STATION_FACILITIES "
+                    SQL = "CREATE TABLE STATIONS AS SELECT DISTINCT FACILITY_ID, FACILITY_NAME, FACILITY_TYPE_ID, SOLAR_SYSTEM_ID, SOLAR_SYSTEM_SECURITY, REGION_ID FROM STATION_FACILITIES "
                     Call ExecuteNonQuerySQL(SQL)
 
                     ' Index the ID
-                    SQL = "CREATE INDEX IDX_FN_FID ON STATION_FACILITIES (FACILITY_ID)"
+                    SQL = "CREATE INDEX IDX_FN_FID ON STATIONS (FACILITY_ID)"
                     Call ExecuteNonQuerySQL(SQL)
 
                     ' Set the Cache Date to now plus the length since it's not sent in the file

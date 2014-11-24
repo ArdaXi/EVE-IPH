@@ -45,6 +45,7 @@ Partial Class frmMain
         Me.mnuResetAgents = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuResetIndustryJobs = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuResetAssets = New System.Windows.Forms.ToolStripMenuItem()
+        Me.mnuResetCRESTDates = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator4 = New System.Windows.Forms.ToolStripSeparator()
         Me.mnuResetAllData = New System.Windows.Forms.ToolStripMenuItem()
         Me.ViewToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
@@ -1321,7 +1322,7 @@ Partial Class frmMain
         '
         'mnuResetData
         '
-        Me.mnuResetData.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuResetBlueprintData, Me.mnuResetPriceData, Me.mnuResetAgents, Me.mnuResetIndustryJobs, Me.mnuResetAssets, Me.ToolStripSeparator4, Me.mnuResetAllData})
+        Me.mnuResetData.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.mnuResetBlueprintData, Me.mnuResetPriceData, Me.mnuResetAgents, Me.mnuResetIndustryJobs, Me.mnuResetAssets, Me.mnuResetCRESTDates, Me.ToolStripSeparator4, Me.mnuResetAllData})
         Me.mnuResetData.Name = "mnuResetData"
         Me.mnuResetData.Size = New System.Drawing.Size(206, 22)
         Me.mnuResetData.Text = "Reset Data"
@@ -1329,42 +1330,48 @@ Partial Class frmMain
         'mnuResetBlueprintData
         '
         Me.mnuResetBlueprintData.Name = "mnuResetBlueprintData"
-        Me.mnuResetBlueprintData.Size = New System.Drawing.Size(192, 22)
+        Me.mnuResetBlueprintData.Size = New System.Drawing.Size(224, 22)
         Me.mnuResetBlueprintData.Text = "Reset Blueprint Data"
         '
         'mnuResetPriceData
         '
         Me.mnuResetPriceData.Name = "mnuResetPriceData"
-        Me.mnuResetPriceData.Size = New System.Drawing.Size(192, 22)
+        Me.mnuResetPriceData.Size = New System.Drawing.Size(224, 22)
         Me.mnuResetPriceData.Text = "Reset Price Data"
         '
         'mnuResetAgents
         '
         Me.mnuResetAgents.Name = "mnuResetAgents"
-        Me.mnuResetAgents.Size = New System.Drawing.Size(192, 22)
+        Me.mnuResetAgents.Size = New System.Drawing.Size(224, 22)
         Me.mnuResetAgents.Text = "Reset Research Agents"
         '
         'mnuResetIndustryJobs
         '
         Me.mnuResetIndustryJobs.Name = "mnuResetIndustryJobs"
-        Me.mnuResetIndustryJobs.Size = New System.Drawing.Size(192, 22)
+        Me.mnuResetIndustryJobs.Size = New System.Drawing.Size(224, 22)
         Me.mnuResetIndustryJobs.Text = "Reset Industry Jobs"
         '
         'mnuResetAssets
         '
         Me.mnuResetAssets.Name = "mnuResetAssets"
-        Me.mnuResetAssets.Size = New System.Drawing.Size(192, 22)
+        Me.mnuResetAssets.Size = New System.Drawing.Size(224, 22)
         Me.mnuResetAssets.Text = "Reset Assets"
+        '
+        'mnuResetCRESTDates
+        '
+        Me.mnuResetCRESTDates.Name = "mnuResetCRESTDates"
+        Me.mnuResetCRESTDates.Size = New System.Drawing.Size(224, 22)
+        Me.mnuResetCRESTDates.Text = "Reset All CREST Cache Dates"
         '
         'ToolStripSeparator4
         '
         Me.ToolStripSeparator4.Name = "ToolStripSeparator4"
-        Me.ToolStripSeparator4.Size = New System.Drawing.Size(189, 6)
+        Me.ToolStripSeparator4.Size = New System.Drawing.Size(221, 6)
         '
         'mnuResetAllData
         '
         Me.mnuResetAllData.Name = "mnuResetAllData"
-        Me.mnuResetAllData.Size = New System.Drawing.Size(192, 22)
+        Me.mnuResetAllData.Size = New System.Drawing.Size(224, 22)
         Me.mnuResetAllData.Text = "Reset All Data"
         '
         'ViewToolStripMenuItem
@@ -13879,5 +13886,6 @@ End Sub
     Friend WithEvents cmbCalcT3InventionFacilityType As System.Windows.Forms.ComboBox
     Friend WithEvents lblCalcT3InventionFacilityManualME As System.Windows.Forms.Label
     Friend WithEvents lblCalcT3InventionFacilityBonus As System.Windows.Forms.Label
+    Friend WithEvents mnuResetCRESTDates As System.Windows.Forms.ToolStripMenuItem
 
 End Class

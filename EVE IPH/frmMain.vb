@@ -2295,7 +2295,7 @@ NoBonus:
                     If SentTM <> Defaults.FacilityDefaultTM Then
                         TimeMultiplier = SentTM
                     Else
-                        TimeMultiplier = rsLoader.GetDouble(1)
+                        TimeMultiplier = rsLoader.GetDouble(3)
                     End If
                 Else ' For POS and Stations, this is already set
                     MaterialMultiplier = rsLoader.GetDouble(2)
@@ -3380,6 +3380,10 @@ NoBonus:
             SQL = "DELETE FROM EMD_UPDATE_HISTORY"
             ExecuteNonQuerySQL(SQL)
 
+            ' Reset all the cache dates
+            SQL = "DELETE FROM EVEIPH_DATA"
+            ExecuteNonQuerySQL(SQL)
+
             CharactersLoaded = False ' Just deleted all the data
             FirstLoad = True ' Temporarily just to get screen to show correctly
 
@@ -3439,6 +3443,17 @@ NoBonus:
         End If
 
         Call UpdateProgramPrices()
+
+    End Sub
+
+    Private Sub mnuResetCRESTDates_Click(sender As System.Object, e As System.EventArgs) Handles mnuResetCRESTDates.Click
+        Dim SQL As String
+
+        ' Simple update, just set all the CREST cache dates to null (or delete all records - should rename this table)
+        SQL = "DELETE FROM EVEIPH_DATA"
+        ExecuteNonQuerySQL(SQL)
+
+        MsgBox("CREST cache dates reset", vbInformation, Application.ProductName)
 
     End Sub
 
@@ -11141,6 +11156,7 @@ ExitSub:
             Call ResetRefresh()
         End If
     End Sub
+
     ' CalcCopyFacility functions
     Private Sub cmbCalcCopyFacilityType_DropDown(sender As Object, e As System.EventArgs) Handles cmbCalcCopyFacilityType.DropDown
         PreviousCalcCopyFacilityType = cmbCalcCopyFacilityType.Text

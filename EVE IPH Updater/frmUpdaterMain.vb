@@ -192,6 +192,7 @@ Public Class frmUpdaterMain
         Dim HavePrecentiles As Boolean = False
         Dim HaveNewAPIFields As Boolean = False
         Dim HaveNewEVEIPHFields As Boolean = False
+        Dim HasOldOutpostDataField As Boolean = False
         Dim HaveNewIndustryJobsTable As Boolean = False
         Dim HaveNewItemPricesFields As Boolean = False
         Dim HaveNewOwnedBPTable As Boolean = False
@@ -761,57 +762,49 @@ Public Class frmUpdaterMain
                     ' EVEIPH_DATA
                     On Error Resume Next
                     ProgramErrorLocation = "Cannot copy EVEIPH Data table"
-                    SQL = "SELECT * FROM EVEIPH_DATA"
+
+                    ' See if they have the new fields for CREST updates first
+                    SQL = "SELECT CREST_INDUSTRY_SPECIALIZATIONS_CACHED_UNTIL, CREST_INDUSTRY_TEAMS_CACHED_UNTIL, "
+                    SQL = SQL & "CREST_INDUSTRY_TEAM_AUCTIONS_CACHED_UNTIL, CREST_INDUSTRY_SYSTEMS_CACHED_UNTIL, "
+                    SQL = SQL & "CREST_INDUSTRY_FACILITIES_CACHED_UNTIL, CREST_MARKET_PRICES_CACHED_UNTIL FROM EVEIPH_DATA"
                     DBCommand = New SQLiteCommand(SQL, DBOLD)
                     readerUpdate = DBCommand.ExecuteReader
+
+                    ' If it didn't error, they have the fields
+                    If Err.Number = 0 Then
+                        HaveNewEVEIPHFields = True
+                    Else
+                        HaveNewEVEIPHFields = False
+                    End If
+
                     On Error GoTo 0
 
-                    ' They might not have this table yet.
-                    If Not IsNothing(readerUpdate) Then
-                        Call BeginSQLiteTransaction(DBNEW)
+                    Call BeginSQLiteTransaction(DBNEW)
 
-                        ' See if they have the new fields for crest updates first
-                        On Error Resume Next
-                        SQL = "SELECT CREST_MARKET_PRICES_CACHED_UNTIL FROM EVEIPH_DATA"
-                        DBCommand = New SQLiteCommand(SQL, DBOLD)
-                        readerCheck = DBCommand.ExecuteReader
-                        ' If it didn't error, they have the fields
-                        If Err.Number = 0 Then
-                            HaveNewEVEIPHFields = True
-                            readerCheck.Close()
-                        Else
-                            HaveNewEVEIPHFields = False
-                        End If
-                        On Error GoTo 0
-
-                        readerCheck = Nothing
-
+                    ' If they have the fields, then insert
+                    If HaveNewEVEIPHFields Then
                         While readerUpdate.Read
                             SQL = "INSERT INTO EVEIPH_DATA VALUES ("
                             SQL = SQL & BuildInsertFieldString(readerUpdate.Item(0)) & ","
-                            If HaveNewEVEIPHFields Then
-                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(1)) & ","
-                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(2)) & ","
-                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(3)) & ","
-                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(4)) & ","
-                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(5)) & ","
-                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(6))
-                            Else
-                                SQL = SQL & "NULL,NULL,NULL,NULL,NULL,NULL"
-                            End If
-                            SQL = SQL & ")"
+                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(1)) & ","
+                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(2)) & ","
+                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(3)) & ","
+                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(4)) & ","
+                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(5)) & ")"
 
                             Call ExecuteNonQuerySQL(SQL, DBNEW)
 
                         End While
 
-                        Call CommitSQLiteTransaction(DBNEW)
-
                         readerUpdate.Close()
+                        readerUpdate = Nothing
+                        DBCommand = Nothing
+                    Else
+                        SQL = "INSERT INTO EVEIPH_DATA VALUES (NULL,NULL,NULL,NULL,NULL,NULL)"
+                        Call ExecuteNonQuerySQL(SQL, DBNEW)
                     End If
 
-                    readerUpdate = Nothing
-                    DBCommand = Nothing
+                    Call CommitSQLiteTransaction(DBNEW)
 
                     ' INDUSTRY_JOBS
                     On Error Resume Next
@@ -1131,9 +1124,7 @@ Public Class frmUpdaterMain
                             SQL = SQL & BuildInsertFieldString(readerUpdate.Item(2)) & ","
                             SQL = SQL & BuildInsertFieldString(readerUpdate.Item(3)) & ","
                             SQL = SQL & BuildInsertFieldString(readerUpdate.Item(4)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(5)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(6)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(7))
+                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(5)) 
                             SQL = SQL & ")"
 
                             Call ExecuteNonQuerySQL(SQL, DBNEW)
@@ -1485,7 +1476,7 @@ Public Class frmUpdaterMain
                             SQL = SQL & BuildInsertFieldString(readerUpdate.Item(2)) & ","
                             SQL = SQL & BuildInsertFieldString(readerUpdate.Item(3)) & ","
                             SQL = SQL & BuildInsertFieldString(readerUpdate.Item(4)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(5)) 
+                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(5))
                             SQL = SQL & ")"
 
                             Call ExecuteNonQuerySQL(SQL, DBNEW)
