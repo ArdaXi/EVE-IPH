@@ -1285,7 +1285,7 @@ NoBonus:
                         If Not IsNothing(SentGroupIDList) Then
                             If SentGroupIDList.Contains(rsSearch.GetInt32(1)) Then
                                 ' Save the bonus to the bonus label
-                                BonusLabel = BonusLabel & rsSearch.GetString(0) & " " & FormatPercent(rsLookUp.GetDouble(1) / 100, 0) & " " & rsLookUp.GetString(0) & vbCrLf
+                                BonusLabel = BonusLabel & rsSearch.GetString(0) & " " & FormatPercent(rsLookUp.GetDouble(1) / 100, 1) & " " & rsLookUp.GetString(0) & vbCrLf
                             End If
                         End If
                     End While
@@ -1295,12 +1295,12 @@ NoBonus:
                     DBCommand = Nothing
                 Else
                     ' Save all the bonuses to the bonus label for manufacturing tab 
-                    BonusLabel = BonusLabel & rsLookUp.GetString(3) & " - " & FormatPercent(rsLookUp.GetDouble(1) / 100, 0) & " " & rsLookUp.GetString(0) & vbCrLf
+                    BonusLabel = BonusLabel & rsLookUp.GetString(3) & " - " & FormatPercent(rsLookUp.GetDouble(1) / 100, 1) & " " & rsLookUp.GetString(0) & vbCrLf
                 End If
 
                 ' Always add all bonuses to the tool tip
                 If Tab <> CalcTab Then
-                    ToolTipLabel = ToolTipLabel & rsLookUp.GetString(3) & " - " & FormatPercent(rsLookUp.GetDouble(1) / 100, 0) & " " & rsLookUp.GetString(0) & vbCrLf
+                    ToolTipLabel = ToolTipLabel & rsLookUp.GetString(3) & " - " & FormatPercent(rsLookUp.GetDouble(1) / 100, 1) & " " & rsLookUp.GetString(0) & vbCrLf
                 End If
 
             End While
