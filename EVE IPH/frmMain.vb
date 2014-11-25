@@ -62,6 +62,7 @@ Public Class frmMain
 
     ' BP List for Previous/Next
     Private BPHistory As New List(Of Blueprint)
+    Private CurrentBPHistoryIndex As Integer
 
     ' BP Combo processing
     Private ComboMenuDown As Boolean
@@ -6248,6 +6249,12 @@ Tabs:
         MouseWheelSelection = False
         ComboBoxArrowKeys = False
 
+        ' BP History
+        BPHistory = New List(Of Blueprint)
+        CurrentBPHistoryIndex = -1 ' Nothing added yet
+        btnBPBack.Enabled = False
+        btnBPForward.Enabled = False
+
         ' Clear grids
         lstBPComponentMats.Items.Clear()
         lstBPRawMats.Items.Clear()
@@ -6461,6 +6468,7 @@ Tabs:
         ' We are loading a new blueprint, always save the previous blueprint in the history whenever they select a new one
         If Not IsNothing(SelectedBlueprint) Then
             Call BPHistory.Add(SelectedBlueprint)
+            CurrentBPHistoryIndex = BPHistory.Count - 1
         End If
 
         SQL = "SELECT ALL_BLUEPRINTS.BLUEPRINT_ID, TECH_LEVEL, ITEM_TYPE, ITEM_GROUP_ID, ITEM_CATEGORY_ID "
@@ -6637,19 +6645,24 @@ Tabs:
             Call LoadRelicTypes(BPTypeID)
         End If
 
-        ' Make sure everything is enabled
-        btnBPRefreshBP.Enabled = True
-        btnBPCopyMatstoClip.Enabled = True
-        btnBPAddBPMatstoShoppingList.Enabled = True
-        txtBPRuns.Enabled = True
-        txtBPAddlCosts.Enabled = True
-        chkBPBuildBuy.Enabled = True
-        txtBPNumBPs.Enabled = True
-        txtBPLines.Enabled = True
-        chkBPFacilityIncludeCosts.Enabled = True
-        chkBPTaxes.Enabled = True
-        chkBPBrokerFees.Enabled = True
-        chkBPPricePerUnit.Enabled = True
+        ' Make sure everything is enabled on first BP load
+        If IsNothing(SelectedBlueprint) Then
+            btnBPRefreshBP.Enabled = True
+            btnBPCopyMatstoClip.Enabled = True
+            btnBPAddBPMatstoShoppingList.Enabled = True
+            txtBPRuns.Enabled = True
+            txtBPAddlCosts.Enabled = True
+            chkBPBuildBuy.Enabled = True
+            txtBPNumBPs.Enabled = True
+            txtBPLines.Enabled = True
+            chkBPFacilityIncludeCosts.Enabled = True
+            chkBPTaxes.Enabled = True
+            chkBPBrokerFees.Enabled = True
+            chkBPPricePerUnit.Enabled = True
+
+            btnBPBack.Enabled = True
+            btnBPForward.Enabled = True
+        End If
 
         readerBP.Close()
         readerBP = Nothing
@@ -7645,12 +7658,16 @@ ExitForm:
 
     ' Loads the previous blueprint - stops at index 0 (won't load) - TO DO
     Private Sub LoadPreviousBlueprint()
+        If CurrentBPHistoryIndex <> 0 Then
 
+        End If
     End Sub
 
     ' Loads the next blueprint if they used previous (won't load if no bps in list or index = 1) - TO DO
     Private Sub LoadNextBlueprint()
+        If BPHistory.Count > 0 And CurrentBPHistoryIndex - 1 < BPHistory.Count Then
 
+        End If
     End Sub
 
 #End Region
@@ -16590,7 +16607,8 @@ ExitCalc:
             Case "Equipment"
                 Return "Equipment Assembly Array"
             Case "Rapid"
-                Return "Rapid Equipment Assembly Array"            Case "Ammunition"
+                Return "Rapid Equipment Assembly Array"
+            Case "Ammunition"
                 Return "Ammunition Assembly Array"
             Case "Component"
                 Return "Component Assembly Array"
@@ -16613,7 +16631,8 @@ ExitCalc:
             Case "Equipment Assembly Array"
                 Return "Equipment"
             Case "Rapid Equipment Assembly Array"
-                Return "Rapid"            Case "Ammunition Assembly Array"
+                Return "Rapid"
+            Case "Ammunition Assembly Array"
                 Return "Ammunition"
             Case "Component Assembly Array"
                 Return "Component"
