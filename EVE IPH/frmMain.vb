@@ -4720,6 +4720,7 @@ Tabs:
             ' Anytime this changes, set all the other ME/TE boxes to not viewed
             Call HideFacilityBonusBoxes(lblBPFacilityBonus, lblBPFacilityTaxRate, lblBPFacilityManualME, lblBPFacilityManualTE, txtBPFacilityManualME, txtBPFacilityManualTE)
             FullyLoadedBPFacility = False
+            PreviousFacilityType = cmbBPFacilityType.Text
         End If
     End Sub
 
@@ -4747,6 +4748,7 @@ Tabs:
             Call cmbBPFacilitySystem.Focus()
             Call HideFacilityBonusBoxes(lblBPFacilityBonus, lblBPFacilityTaxRate, lblBPFacilityManualME, lblBPFacilityManualTE, txtBPFacilityManualME, txtBPFacilityManualTE)
             FullyLoadedBPFacility = False
+            PreviousFacilityRegion = cmbBPFacilityRegion.Text
         End If
     End Sub
 
@@ -4761,16 +4763,6 @@ Tabs:
                                      cmbBPFacilityActivities.Text, cmbBPFacilityType, cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, _
                                      lblBPFacilityBonus, lblBPFacilityTaxRate, lblBPFacilityManualME, txtBPFacilityManualME, _
                                      lblBPFacilityManualTE, txtBPFacilityManualTE, lblBPFacilityDefault, btnBPFacilitySave, BPTab)
-        End If
-    End Sub
-
-    Private Sub cmbBPFacilityorArray_DropDown(sender As Object, e As System.EventArgs) Handles cmbBPFacilityorArray.DropDown
-        If Not BPFacilitiesLoaded And Not FirstLoad Then
-            Call LoadFacilities(SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID, False, _
-                                cmbBPFacilityActivities.Text, cmbBPFacilityType, cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, _
-                                lblBPFacilityBonus, lblBPFacilityDefault, lblBPFacilityManualME, txtBPFacilityManualME, _
-                                lblBPFacilityManualTE, txtBPFacilityManualTE, btnBPFacilitySave, lblBPFacilityTaxRate, BPTab, chkBPFacilityIncludeCosts, Nothing, Nothing)
-            PreviousFacilityEquipment = cmbBPFacilityorArray.Text
         End If
     End Sub
 
@@ -4807,6 +4799,8 @@ Tabs:
 
                 Call cmbBPFacilityorArray.Focus()
 
+                PreviousFacilitySystem = cmbBPFacilitySystem.Text
+
             End If
         End If
 
@@ -4814,6 +4808,16 @@ Tabs:
 
     Private Sub cmbBPFacilityorArray_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles cmbBPFacilityorArray.KeyPress
         e.Handled = True
+    End Sub
+
+    Private Sub cmbBPFacilityorArray_DropDown(sender As Object, e As System.EventArgs) Handles cmbBPFacilityorArray.DropDown
+        If Not BPFacilitiesLoaded And Not FirstLoad Then
+            Call LoadFacilities(SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID, False, _
+                                cmbBPFacilityActivities.Text, cmbBPFacilityType, cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, _
+                                lblBPFacilityBonus, lblBPFacilityDefault, lblBPFacilityManualME, txtBPFacilityManualME, _
+                                lblBPFacilityManualTE, txtBPFacilityManualTE, btnBPFacilitySave, lblBPFacilityTaxRate, BPTab, chkBPFacilityIncludeCosts, Nothing, Nothing)
+            PreviousFacilityEquipment = cmbBPFacilityorArray.Text
+        End If
     End Sub
 
     Private Sub cmbBPFacilityArrayName_SelectedIndexChanged(sender As System.Object, e As System.EventArgs) Handles cmbBPFacilityorArray.SelectedIndexChanged
@@ -10127,6 +10131,7 @@ ExitSub:
             Call cmbCalcBaseFacilitySystem.Focus()
             Call HideFacilityBonusBoxes(lblCalcBaseFacilityBonus, lblCalcBaseFacilityTaxRate, lblCalcBaseFacilityManualME, lblCalcBaseFacilityManualTE, txtCalcBaseFacilityManualME, txtCalcBaseFacilityManualTE)
             CalcBaseFacilityLoaded = False
+            PreviousCalcBaseFacilityRegion = cmbCalcBaseFacilityRegion.Text
         End If
     End Sub
 
@@ -10202,7 +10207,7 @@ ExitSub:
             End If
 
             Call cmbCalcBaseFacilityorArray.Focus()
-
+            PreviousCalcBaseFacilitySystem = cmbCalcBaseFacilitySystem.Text
         End If
 
     End Sub
