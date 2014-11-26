@@ -869,7 +869,7 @@ Public Module Public_Variables
                 SizesClause = SizesClause & "OR (ITEM_CATEGORY = 'Drone' AND volume = 5 ) "
                 SizesClause = SizesClause & "OR (ITEM_GROUP = 'Propulsion Module' AND ITEM_NAME Like '1MN%') "
                 SizesClause = SizesClause & "OR (ITEM_CATEGORY = 'Module' AND marketGroupID IN (561,564,567,570,574,577,1671,1672)) "
-                SizesClause = SizesClause & "OR (ITEM_CATEGORY IN ('Charge','Module') AND (ITEM_NAME Like '%Rocket%' OR ITEM_NAME Like '%Light Missile%') AND ITEM_GROUP <> 'Propulsion Module') "
+                SizesClause = SizesClause & "OR (ITEM_CATEGORY IN ('Charge','Module') AND (ITEM_NAME Like '%Rocket%' OR ITEM_NAME Like '%Light Missile%') AND ITEM_GROUP NOT IN ('Propulsion Module', 'Rig Launcher')) "
                 SizesClause = SizesClause & "OR (ITEM_CATEGORY = 'Ship' AND volume < 10000)) OR "
             Case ItemSize.Medium
                 ' Drones are medium, missiles are heavys and hams
