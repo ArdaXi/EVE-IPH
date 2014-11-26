@@ -5134,6 +5134,7 @@ Public Structure FacilitySettings
     Dim ActivityCostperSecond As Double ' For pos costs
     Dim IncludeActivityCost As Boolean
     Dim IncludeActivityTime As Boolean
+    Dim IncludeActivityUsage As Boolean
 
 End Structure
 

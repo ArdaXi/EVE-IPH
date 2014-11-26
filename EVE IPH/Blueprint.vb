@@ -98,7 +98,7 @@ Public Class Blueprint
     Private InventionREMaterials As Materials
     Private InventionREChance As Double
     Private InventionREDecryptor As Decryptor
-    Private InventedREdRuns As Integer ' Number of runs an invention job will produce
+    Private TotalInventedREdRuns As Integer ' Number of runs an invention job will produce
     Private NumInventionREJobs As Integer ' Number of invention jobs we will do
 
     Private CopyCost As Double ' Total Cost of the BPCs for the T2 item 
@@ -110,6 +110,7 @@ Public Class Blueprint
     Private InventionRETime As Double ' Total time in seconds to invent this bp
     Private IncludeInventionRECosts As Boolean
     Private IncludeInventionRETime As Boolean
+    Private IncludeInventionREUsage As Boolean ' just the facility usage, not the full cost
 
     Private InventionT3BPCTypeID As Long ' BP used to invent the BP we are building
 
@@ -185,6 +186,7 @@ Public Class Blueprint
         IncludeInventionRECosts = InventionREFacility.IncludeActivityCost
         IncludeCopyCosts = CopyFacility.IncludeActivityCost
         IncludeInventionRETime = InventionREFacility.IncludeActivityTime
+        IncludeInventionREUsage = InventionREFacility.IncludeActivityCost
         IncludeCopyTime = CopyFacility.IncludeActivityTime
 
         ' Save teams
@@ -269,7 +271,7 @@ Public Class Blueprint
         TotalManufacturingCost = 0
 
         InventionREDecryptor = NoDecryptor
-        InventedREdRuns = 0
+        TotalInventedREdRuns = 0
 
         NumInventionREJobs = 0
 
@@ -1081,7 +1083,7 @@ Public Class Blueprint
 
         Dim SQL As String
         Dim InventionMat As Material = Nothing
-
+        Dim SingleInventedREdBPCRuns As Integer
         Dim BaseInventionREMats As New Materials
         Dim NumInventionRESessions As Long = 0 ' How many sessions (runs per set of lines) ie. 10 runs 5 lines = 2 sessions
 
@@ -1102,7 +1104,6 @@ Public Class Blueprint
                                            readerBP.GetInt64(3), readerBP.GetDouble(4), If(readerBP.IsDBNull(5), 0, readerBP.GetDouble(5)), "")
                 BaseInventionREMats.InsertMaterial(InventionMat)
             End If
-
         End While
 
         readerBP.Close()
@@ -1156,14 +1157,17 @@ Public Class Blueprint
         ' Get and set the invention chance
         InventionREChance = SetInventionChance(UseTypical)
 
-        ' Use the max runs for the T2 item and this should be the invented runs for the bpc
-        InventedREdRuns = MaxProductionLimit + InventionREDecryptor.RunMod
+        ' Use the max runs for the T2 item and this should be the invented runs for one bpc
+        SingleInventedREdBPCRuns = MaxProductionLimit + InventionREDecryptor.RunMod
 
         ' Averages and final cost per run
         AvgRunsforSuccess = 1 / InventionREChance
 
-        ' Set how many total invention runs we will need to do
-        NumInventionREJobs = CInt(Math.Ceiling(AvgRunsforSuccess * Math.Ceiling(UserRuns / InventedREdRuns)))
+        ' Set how many total invention runs we will need to do - take the number of bpc's we'll need and multiply by how many runs for a success - round up
+        NumInventionREJobs = CInt(Math.Ceiling(AvgRunsforSuccess * Math.Ceiling(UserRuns / SingleInventedREdBPCRuns)))
+
+        ' Now set thet total runs we will get from all jobs
+        TotalInventedREdRuns = CInt(Math.Ceiling(UserRuns / SingleInventedREdBPCRuns) * SingleInventedREdBPCRuns)
 
         ' Find the number of invention sessions we'll need to invent the number of runs for this item. This will be used in the copy and invention times
         ' Basically, the number avg number of runs for success times the total runs wanted is the total invention runs needed for single runs. Divide this
@@ -1193,10 +1197,14 @@ Public Class Blueprint
             InventionRETime = 0
         End If
 
-        If IncludeInventionRECosts Then
+        If IncludeInventionREUsage Then
             ' Set the usage for these invention jobs
             InventionREUsage = GetInventionFees(NumInventionREJobs)
+        Else
+            InventionREUsage = 0
+        End If
 
+        If IncludeInventionRECosts Then
             ' Update the invention mats to reflect the number of invention runs we will do and save into the final list
             For i = 0 To BaseInventionREMats.GetMaterialList.Count - 1
                 BaseInventionREMats.GetMaterialList(i).SetQuantity(BaseInventionREMats.GetMaterialList(i).GetQuantity * NumInventionREJobs)
@@ -1216,9 +1224,8 @@ Public Class Blueprint
 
             ' Set the total cost for the sent runs by totaling all to get success needed, then dividing it by the runs invented
             ' (some bps have more runs than 1 - i.e. Drones = 10) to get the cost per run, then multiply that cost by the number of runs
-            TotalInventionRECost = (InventionREMaterials.GetTotalMaterialsCost + InventionREUsage) / InventedREdRuns
+            TotalInventionRECost = (InventionREMaterials.GetTotalMaterialsCost + InventionREUsage) / TotalInventedREdRuns * UserRuns
         Else
-            InventionREUsage = 0
             TotalInventionRECost = 0
         End If
 
@@ -1431,7 +1438,7 @@ Public Class Blueprint
 
     ' Gets the total invented runs for each BPC
     Public Function GetInventedREdRuns() As Integer
-        Return InventedREdRuns
+        Return TotalInventedREdRuns
     End Function
 
     ' Returns the number of jobs we'll have to do
@@ -1476,10 +1483,10 @@ Public Class Blueprint
         If TechLevel = 1 Then
             Return MaxProductionLimit
         ElseIf TechLevel = 2 Then
-            If InventedREdRuns = 0 Then
+            If TotalInventedREdRuns = 0 Then
                 Return MaxProductionLimit
             Else
-                Return InventedREdRuns
+                Return TotalInventedREdRuns
             End If
         Else
             Return MaxProductionLimit

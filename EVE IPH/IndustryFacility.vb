@@ -21,8 +21,9 @@ Public Class IndustryFacility
     Public CostIndex As Double ' Cost index for the system and activity from CREST
     Public ActivityCostPerSecond As Double ' The cost to conduct the activity for this facility per second - my setting for POS data
     Public IsDefault As Boolean
-    Public IncludeActivityCost As Boolean
-    Public IncludeActivityTime As Boolean
+    Public IncludeActivityCost As Boolean ' This is the total cost of materials to do the activiy
+    Public IncludeActivityTime As Boolean ' This is the time for doing the activity
+    Public IncludeActivityUsage As Boolean ' This is the cost of using the facility only
 
     Public Sub New()
 
@@ -43,6 +44,7 @@ Public Class IndustryFacility
 
         IncludeActivityCost = False
         IncludeActivityTime = False
+        IncludeActivityUsage = False
 
         IsDefault = False
     End Sub
@@ -144,6 +146,7 @@ Public Class IndustryFacility
 
                     IncludeActivityCost = .IncludeActivityCost
                     IncludeActivityTime = .IncludeActivityTime
+                    IncludeActivityUsage = .IncludeActivityUsage
 
                     rsLoader.Close()
                     rsLoader = Nothing
@@ -246,6 +249,7 @@ Public Class IndustryFacility
 
             IncludeActivityCost = SearchFacilitySettings.IncludeActivityCost
             IncludeActivityTime = SearchFacilitySettings.IncludeActivityTime
+            IncludeActivityUsage = SearchFacilitySettings.IncludeActivityUsage
 
             rsLoader.Close()
             rsLoader = Nothing
@@ -271,7 +275,11 @@ Public Class IndustryFacility
             .RegionID = RegionID
             .RegionName = RegionName
             .ActivityCostperSecond = ActivityCostPerSecond
-            .IncludeActivityCost = IncludeActivityCost
+
+            .IncludeActivityUsage = IncludeActivityUsage
+            If Not IsNothing(IncludeActivityCost) Then
+                .IncludeActivityCost = IncludeActivityCost
+            End If
             If Not IsNothing(IncludeActivityTime) Then
                 .IncludeActivityTime = IncludeActivityTime
             End If
@@ -282,7 +290,7 @@ Public Class IndustryFacility
     End Sub
 
     ' Compares the sent facility to the current one and returns a boolean on equivlancy
-    Public Function IsEqual(CompareFacility As IndustryFacility, Optional CompareTimeCheck As Boolean = False) As Boolean
+    Public Function IsEqual(CompareFacility As IndustryFacility, Optional CompareCostCheck As Boolean = False, Optional CompareTimeCheck As Boolean = False) As Boolean
 
         With CompareFacility
             If .FacilityType <> FacilityType Then
@@ -309,9 +317,11 @@ Public Class IndustryFacility
                 Return False
             ElseIf .TimeMultiplier <> TimeMultiplier And .FacilityType <> POSFacility Then ' Only for non-pos
                 Return False
-            ElseIf .IncludeActivityCost <> IncludeActivityCost Then
+            ElseIf .IncludeActivityCost <> IncludeActivityCost And CompareCostCheck Then
                 Return False
             ElseIf .IncludeActivityTime <> IncludeActivityTime And CompareTimeCheck Then
+                Return False
+            ElseIf .IncludeActivityUsage <> IncludeActivityUsage Then
                 Return False
             End If
         End With
@@ -342,6 +352,7 @@ Public Class IndustryFacility
         CopyOfMe.IsDefault = IsDefault
         CopyOfMe.IncludeActivityCost = IncludeActivityCost
         CopyOfMe.IncludeActivityTime = IncludeActivityTime
+        CopyOfMe.IncludeActivityUsage = IncludeActivityUsage
 
         Return CopyOfMe
 
