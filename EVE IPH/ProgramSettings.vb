@@ -189,6 +189,7 @@ Public Class ProgramSettings
     Public DefaultNullFacilityRegion As String = "Providence"
 
     Public FacilityDefaultActivityCostperSecond As Double = 0
+    Public FacilityDefaultIncludeUsage As Boolean = False
     Public FacilityDefaultIncludeCost As Boolean = False
     Public FacilityDefaultIncludeTime As Boolean = False ' Only for Invention, Copy, and RE so let this get set 
 
@@ -3935,6 +3936,7 @@ Public Class ProgramSettings
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "ManufacturingFacilitySettings", "RegionID", FacilityDefaultRegionID))
                             .RegionName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "ManufacturingFacilitySettings", "RegionName", FacilityDefaultRegion))
                             .ActivityCostperSecond = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "ManufacturingFacilitySettings", "ActivityCostperSecond", FacilityDefaultActivityCostperSecond))
+                            .IncludeActivityUsage = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "ManufacturingFacilitySettings", "IncludeActivityUsage", FacilityDefaultIncludeUsage))
                             .IncludeActivityCost = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "ManufacturingFacilitySettings", "IncludeActivityCost", FacilityDefaultIncludeCost))
                             .IncludeActivityTime = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "ManufacturingFacilitySettings", "IncludeActivityTime", FacilityDefaultIncludeTime))
                         Case IndustryType.ComponentManufacturing
@@ -3949,6 +3951,7 @@ Public Class ProgramSettings
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "ComponentsManufacturingFacilitySettings", "RegionID", FacilityDefaultRegionID))
                             .RegionName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "ComponentsManufacturingFacilitySettings", "RegionName", FacilityDefaultRegion))
                             .ActivityCostperSecond = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "ComponentsManufacturingFacilitySettings", "ActivityCostperSecond", FacilityDefaultActivityCostperSecond))
+                            .IncludeActivityUsage = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "ComponentsManufacturingFacilitySettings", "IncludeActivityUsage", FacilityDefaultIncludeUsage))
                             .IncludeActivityCost = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "ComponentsManufacturingFacilitySettings", "IncludeActivityCost", FacilityDefaultIncludeCost))
                             .IncludeActivityTime = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "ComponentsManufacturingFacilitySettings", "IncludeActivityTime", FacilityDefaultIncludeTime))
                         Case IndustryType.CapitalManufacturing
@@ -3963,6 +3966,8 @@ Public Class ProgramSettings
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "CapitalManufacturingFacilitySettings", "RegionID", FacilityDefaultRegionID))
                             .RegionName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "CapitalManufacturingFacilitySettings", "RegionName", FacilityDefaultRegion))
                             .ActivityCostperSecond = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "CapitalManufacturingFacilitySettings", "ActivityCostperSecond", FacilityDefaultActivityCostperSecond))
+                            .IncludeActivityUsage = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "CapitalManufacturingFacilitySettings", "IncludeActivityUsage", FacilityDefaultIncludeUsage))
+                            .IncludeActivityCost = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "CapitalManufacturingFacilitySettings", "IncludeActivityCost", FacilityDefaultIncludeCost))
                             .IncludeActivityTime = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "CapitalManufacturingFacilitySettings", "IncludeActivityTime", FacilityDefaultIncludeTime))
                         Case IndustryType.SuperManufacturing
                             .Facility = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "SuperManufacturingFacilitySettings", "Facility", DefaultSuperManufacturingFacility))
@@ -3976,6 +3981,7 @@ Public Class ProgramSettings
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "SuperManufacturingFacilitySettings", "RegionID", FacilityDefaultRegionID))
                             .RegionName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "SuperManufacturingFacilitySettings", "RegionName", FacilityDefaultRegion))
                             .ActivityCostperSecond = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "SuperManufacturingFacilitySettings", "ActivityCostperSecond", FacilityDefaultActivityCostperSecond))
+                            .IncludeActivityUsage = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "SuperManufacturingFacilitySettings", "IncludeActivityUsage", FacilityDefaultIncludeUsage))
                             .IncludeActivityCost = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "SuperManufacturingFacilitySettings", "IncludeActivityCost", FacilityDefaultIncludeCost))
                             .IncludeActivityTime = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "SuperManufacturingFacilitySettings", "IncludeActivityTime", FacilityDefaultIncludeTime))
                         Case IndustryType.BoosterManufacturing
@@ -3990,6 +3996,7 @@ Public Class ProgramSettings
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "BoosterManufacturingFacilitySettings", "RegionID", FacilityDefaultRegionID))
                             .RegionName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "BoosterManufacturingFacilitySettings", "RegionName", FacilityDefaultRegion))
                             .ActivityCostperSecond = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "BoosterManufacturingFacilitySettings", "ActivityCostperSecond", FacilityDefaultActivityCostperSecond))
+                            .IncludeActivityUsage = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "BoosterManufacturingFacilitySettings", "IncludeActivityUsage", FacilityDefaultIncludeUsage))
                             .IncludeActivityCost = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "BoosterManufacturingFacilitySettings", "IncludeActivityCost", FacilityDefaultIncludeCost))
                             .IncludeActivityTime = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "BoosterManufacturingFacilitySettings", "IncludeActivityTime", FacilityDefaultIncludeTime))
                         Case IndustryType.T3Manufacturing
@@ -4004,6 +4011,7 @@ Public Class ProgramSettings
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "T3ManufacturingFacilitySettings", "RegionID", FacilityDefaultRegionID))
                             .RegionName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "T3ManufacturingFacilitySettings", "RegionName", FacilityDefaultRegion))
                             .ActivityCostperSecond = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "T3ManufacturingFacilitySettings", "ActivityCostperSecond", FacilityDefaultActivityCostperSecond))
+                            .IncludeActivityUsage = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "T3ManufacturingFacilitySettings", "IncludeActivityUsage", FacilityDefaultIncludeUsage))
                             .IncludeActivityCost = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "T3ManufacturingFacilitySettings", "IncludeActivityCost", FacilityDefaultIncludeCost))
                             .IncludeActivityTime = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "T3ManufacturingFacilitySettings", "IncludeActivityTime", FacilityDefaultIncludeTime))
                         Case IndustryType.SubsystemManufacturing
@@ -4018,6 +4026,7 @@ Public Class ProgramSettings
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "SubsystemManufacturingFacilitySettings", "RegionID", FacilityDefaultRegionID))
                             .RegionName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "SubsystemManufacturingFacilitySettings", "RegionName", FacilityDefaultRegion))
                             .ActivityCostperSecond = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "SubsystemManufacturingFacilitySettings", "ActivityCostperSecond", FacilityDefaultActivityCostperSecond))
+                            .IncludeActivityUsage = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "SubsystemManufacturingFacilitySettings", "IncludeActivityUsage", FacilityDefaultIncludeUsage))
                             .IncludeActivityCost = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "SubsystemManufacturingFacilitySettings", "IncludeActivityCost", FacilityDefaultIncludeCost))
                             .IncludeActivityTime = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "SubsystemManufacturingFacilitySettings", "IncludeActivityTime", FacilityDefaultIncludeTime))
                         Case IndustryType.Copying
@@ -4032,6 +4041,7 @@ Public Class ProgramSettings
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "CopyFacilitySettings", "RegionID", FacilityDefaultRegionID))
                             .RegionName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "CopyFacilitySettings", "RegionName", FacilityDefaultRegion))
                             .ActivityCostperSecond = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "CopyFacilitySettings", "ActivityCostperSecond", FacilityDefaultActivityCostperSecond))
+                            .IncludeActivityUsage = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "CopyFacilitySettings", "IncludeActivityUsage", FacilityDefaultIncludeUsage))
                             .IncludeActivityCost = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "CopyFacilitySettings", "IncludeActivityCost", FacilityDefaultIncludeCost))
                             .IncludeActivityTime = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "CopyFacilitySettings", "IncludeActivityTime", FacilityDefaultIncludeTime))
                         Case IndustryType.Invention
@@ -4046,6 +4056,7 @@ Public Class ProgramSettings
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "InventionFacilitySettings", "RegionID", FacilityDefaultRegionID))
                             .RegionName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "InventionFacilitySettings", "RegionName", FacilityDefaultRegion))
                             .ActivityCostperSecond = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "InventionFacilitySettings", "ActivityCostperSecond", FacilityDefaultActivityCostperSecond))
+                            .IncludeActivityUsage = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "InventionFacilitySettings", "IncludeActivityUsage", FacilityDefaultIncludeUsage))
                             .IncludeActivityCost = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "InventionFacilitySettings", "IncludeActivityCost", FacilityDefaultIncludeCost))
                             .IncludeActivityTime = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "InventionFacilitySettings", "IncludeActivityTime", FacilityDefaultIncludeTime))
                         Case IndustryType.T3Invention
@@ -4060,6 +4071,7 @@ Public Class ProgramSettings
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "T3InventionFacilitySettings", "RegionID", FacilityDefaultRegionID))
                             .RegionName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "T3InventionFacilitySettings", "RegionName", FacilityDefaultRegion))
                             .ActivityCostperSecond = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "T3InventionFacilitySettings", "ActivityCostperSecond", FacilityDefaultActivityCostperSecond))
+                            .IncludeActivityUsage = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "T3InventionFacilitySettings", "IncludeActivityUsage", FacilityDefaultIncludeUsage))
                             .IncludeActivityCost = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "T3InventionFacilitySettings", "IncludeActivityCost", FacilityDefaultIncludeCost))
                             .IncludeActivityTime = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "T3InventionFacilitySettings", "IncludeActivityTime", FacilityDefaultIncludeTime))
                         Case IndustryType.NoPOSManufacturing
@@ -4074,6 +4086,7 @@ Public Class ProgramSettings
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "NoPOSFacilitySettings", "RegionID", FacilityDefaultRegionID))
                             .RegionName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "NoPOSFacilitySettings", "RegionName", FacilityDefaultRegion))
                             .ActivityCostperSecond = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "NoPOSFacilitySettings", "ActivityCostperSecond", FacilityDefaultActivityCostperSecond))
+                            .IncludeActivityUsage = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "NoPOSFacilitySettings", "IncludeActivityUsage", FacilityDefaultIncludeUsage))
                             .IncludeActivityCost = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "NoPOSFacilitySettings", "IncludeActivityCost", FacilityDefaultIncludeCost))
                             .IncludeActivityTime = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "NoPOSFacilitySettings", "IncludeActivityTime", FacilityDefaultIncludeTime))
                         Case IndustryType.POSFuelBlockManufacturing
@@ -4088,6 +4101,7 @@ Public Class ProgramSettings
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "POSFuelBlockManufacturingFacilitySettings", "RegionID", FacilityDefaultRegionID))
                             .RegionName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "POSFuelBlockManufacturingFacilitySettings", "RegionName", FacilityDefaultRegion))
                             .ActivityCostperSecond = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "POSFuelBlockManufacturingFacilitySettings", "ActivityCostperSecond", FacilityDefaultActivityCostperSecond))
+                            .IncludeActivityUsage = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "POSFuelBlockManufacturingFacilitySettings", "IncludeActivityUsage", FacilityDefaultIncludeUsage))
                             .IncludeActivityCost = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "POSFuelBlockManufacturingFacilitySettings", "IncludeActivityCost", FacilityDefaultIncludeCost))
                             .IncludeActivityTime = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "POSFuelBlockManufacturingFacilitySettings", "IncludeActivityTime", FacilityDefaultIncludeTime))
                         Case IndustryType.POSModuleManufacturing
@@ -4102,6 +4116,7 @@ Public Class ProgramSettings
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "POSModuleManufacturingFacilitySettings", "RegionID", FacilityDefaultRegionID))
                             .RegionName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "POSModuleManufacturingFacilitySettings", "RegionName", FacilityDefaultRegion))
                             .ActivityCostperSecond = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "POSModuleManufacturingFacilitySettings", "ActivityCostperSecond", FacilityDefaultActivityCostperSecond))
+                            .IncludeActivityUsage = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "POSModuleManufacturingFacilitySettings", "IncludeActivityUsage", FacilityDefaultIncludeUsage))
                             .IncludeActivityCost = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "POSModuleManufacturingFacilitySettings", "IncludeActivityCost", FacilityDefaultIncludeCost))
                             .IncludeActivityTime = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "POSModuleManufacturingFacilitySettings", "IncludeActivityTime", FacilityDefaultIncludeTime))
                         Case IndustryType.POSLargeShipManufacturing
@@ -4116,6 +4131,7 @@ Public Class ProgramSettings
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "POSLargeShipManufacturingFacilitySettings", "RegionID", FacilityDefaultRegionID))
                             .RegionName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "POSLargeShipManufacturingFacilitySettings", "RegionName", FacilityDefaultRegion))
                             .ActivityCostperSecond = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "POSLargeShipManufacturingFacilitySettings", "ActivityCostperSecond", FacilityDefaultActivityCostperSecond))
+                            .IncludeActivityUsage = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "POSLargeShipManufacturingFacilitySettings", "IncludeActivityUsage", FacilityDefaultIncludeUsage))
                             .IncludeActivityCost = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "POSLargeShipManufacturingFacilitySettings", "IncludeActivityCost", FacilityDefaultIncludeCost))
                             .IncludeActivityTime = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "POSLargeShipManufacturingFacilitySettings", "IncludeActivityTime", FacilityDefaultIncludeTime))
                     End Select
@@ -4168,7 +4184,7 @@ Public Class ProgramSettings
 
     ' Saves the Facility Settings to XML
     Public Sub FacilitySaveSettings(SentSettings As FacilitySettings, ProductionType As IndustryType, Tab As String)
-        Dim FacilitySettingsList(12) As Setting
+        Dim FacilitySettingsList(13) As Setting
 
         Try
             FacilitySettingsList(0) = New Setting("Facility", CStr(SentSettings.Facility))
@@ -4182,8 +4198,9 @@ Public Class ProgramSettings
             FacilitySettingsList(8) = New Setting("SolarSystemName", CStr(SentSettings.SolarSystemName))
             FacilitySettingsList(9) = New Setting("RegionID", CStr(SentSettings.RegionID))
             FacilitySettingsList(10) = New Setting("RegionName", CStr(SentSettings.RegionName))
-            FacilitySettingsList(11) = New Setting("IncludeActivityCost", CStr(SentSettings.IncludeActivityCost))
-            FacilitySettingsList(12) = New Setting("IncludeActivityTime", CStr(SentSettings.IncludeActivityTime))
+            FacilitySettingsList(11) = New Setting("IncludeActivityUsage", CStr(SentSettings.IncludeActivityUsage))
+            FacilitySettingsList(12) = New Setting("IncludeActivityCost", CStr(SentSettings.IncludeActivityCost))
+            FacilitySettingsList(13) = New Setting("IncludeActivityTime", CStr(SentSettings.IncludeActivityTime))
 
             Select Case ProductionType
                 Case IndustryType.Manufacturing
@@ -4268,6 +4285,7 @@ Public Class ProgramSettings
         TempSettings.MaterialMultiplier = FacilityDefaultMM
         TempSettings.TimeMultiplier = FacilityDefaultTM
         TempSettings.ActivityCostperSecond = FacilityDefaultActivityCostperSecond
+        TempSettings.IncludeActivityUsage = FacilityDefaultIncludeUsage
         TempSettings.IncludeActivityCost = FacilityDefaultIncludeCost
         TempSettings.IncludeActivityTime = FacilityDefaultIncludeTime
 

@@ -673,7 +673,7 @@ Public Class frmMain
         ' Tool Tips
         If UserApplicationSettings.ShowToolTips Then
             ttMain.SetToolTip(lblBPInventionCost, "Invention Cost for Runs entered = (Datacores + Decryptors + Install Fees) / Invented Runs * Runs")
-            ttMain.SetToolTip(lblBPTotalInstallationCost, "Install Fee + Usage Fees to build this item at NPC Station")
+            ttMain.SetToolTip(lblBPTotalInstallationUsage, "Install Fee + Usage Fees to build this item at NPC Station")
             ttMain.SetToolTip(lblBPRuns, "Total number of items to produce. I.e. If you have 5 blueprints with 4 runs each, then enter 20.")
             ttMain.SetToolTip(lblBPTaxes, "Sales Taxes and Broker's Fees to set up a sell order at an NPC Station")
             ttMain.SetToolTip(lblBPTotalCompCost, "Cost of Component Mats + Buy Taxes + Invention Costs + Build Costs (if building)")
@@ -1400,7 +1400,7 @@ NoBonus:
                              ByRef FacilityManualMELabel As Label, ByRef FacilityManualMETextBox As TextBox, _
                              ByRef FacilityManualTELabel As Label, ByRef FacilityManualTETextBox As TextBox,
                              ByRef FacilitySaveButton As Button, ByRef FacilityTaxRateLabel As Label, Tab As String, _
-                             ByRef FacilityUsageCheck As CheckBox, _
+                             ByRef FacilityUsageCheck As CheckBox, ByRef FacilityIncludeLabel As Label, _
                              ByRef FacilityActivityCostCheck As CheckBox, ByRef FacilityActivityTimeCheck As CheckBox, _
                              ByRef FacilityLoaded As Boolean, _
                              Optional ByRef FacilityActivityCombo As ComboBox = Nothing, Optional BPTech As Integer = 1, Optional ItemGroupID As Long = 0, _
@@ -1626,7 +1626,7 @@ NoBonus:
         If SelectedFacility.FacilityType = None Then
             ' Just hide the boxes and exit
             Call HideFacilityBonusBoxes(FacilityBonusLabel, FacilityTaxRateLabel, FacilityManualMELabel, FacilityManualTELabel, FacilityManualMETextBox, FacilityManualTETextBox)
-            Call SetNoFacility(FacilityRegionCombo, FacilitySystemCombo, FacilityCombo, Nothing, FacilityActivityCostCheck, FacilityActivityTimeCheck)
+            Call SetNoFacility(FacilityRegionCombo, FacilitySystemCombo, FacilityCombo, Nothing, FacilityActivityCostCheck, FacilityActivityTimeCheck, FacilityIncludeLabel)
             FacilityLoaded = True ' Even with none, it's loaded
             Exit Sub
         End If
@@ -1661,12 +1661,16 @@ NoBonus:
                     FacilityActivity, FacilityTypeCombo, FacilityRegionCombo, FacilitySystemCombo, FacilityCombo, _
                     FacilityBonusLabel, FacilityDefaultLabel, FacilityManualMELabel, FacilityManualMETextBox, _
                     FacilityManualTELabel, FacilityManualTETextBox, FacilitySaveButton, FacilityTaxRateLabel, Tab, _
-                    FacilityActivityCostCheck, FacilityActivityTimeCheck, AutoLoad, SelectedFacility.FacilityName)
+                    FacilityUsageCheck, FacilityActivityCostCheck, FacilityActivityTimeCheck, AutoLoad, SelectedFacility.FacilityName)
         End If
         LoadingFacilities = False
 
         ' Usage checks
-        FacilityActivityCostCheck.Checked = SelectedFacility.IncludeActivityCost
+        FacilityUsageCheck.Checked = SelectedFacility.IncludeActivityUsage
+        If Not IsNothing(FacilityActivityCostCheck) Then
+            FacilityActivityCostCheck.Checked = SelectedFacility.IncludeActivityCost
+        End If
+
         If Not IsNothing(FacilityActivityTimeCheck) Then
             FacilityActivityTimeCheck.Checked = SelectedFacility.IncludeActivityTime
         End If
@@ -1689,7 +1693,7 @@ NoBonus:
         ' If this is the BP tab, then refresh the BP prices
         If Not FirstLoad And SetTaxFeeChecks And Tab = BPTab And RefreshBP Then
             If Not IsNothing(SelectedBlueprint) Then
-                Call SelectedBlueprint.SetPriceData(chkBPTaxes.Checked, chkBPBrokerFees.Checked, chkBPFacilityIncludeCosts.Checked)
+                Call SelectedBlueprint.SetPriceData(chkBPTaxes.Checked, chkBPBrokerFees.Checked)
                 Call UpdateBPPriceLabels()
             End If
         End If
@@ -2225,7 +2229,7 @@ NoBonus:
                                      ByRef FacilityManualMELabel As Label, ByRef FacilityManualMEText As TextBox, _
                                      ByRef FacilityManualTELabel As Label, ByRef FacilityManualTEText As TextBox, _
                                      ByRef FacilitySaveButton As Button, ByRef FacilityTaxRateLabel As Label, _
-                                     ByRef UsageCheckBox As CheckBox, _
+                                     ByRef UsageCheck As CheckBox, _
                                      ByRef ActivityCostCheck As CheckBox, ByRef ActivityTimeCheck As CheckBox, _
                                      Tab As String, ByRef FacilityLoaded As Boolean)
         Dim SQL As String = ""
@@ -2242,8 +2246,8 @@ NoBonus:
         Dim TempDefaultFacility As New IndustryFacility
 
         Dim SelectedFacility As New IndustryFacility
-        Dim CompareCostCheck As Boolean
-        Dim CompareTimeCheck As Boolean
+        Dim CompareCostCheck As Boolean = False
+        Dim CompareTimeCheck As Boolean = False
 
         If FacilityType <> None Then
             Select Case FacilityType
@@ -2381,8 +2385,14 @@ NoBonus:
             .RegionName = FacilityRegionCombo.Text
             .SolarSystemName = FacilitySystemCombo.Text
             .ProductionType = ProductionType
-            .IncludeActivityCost = ActivityCostCheck.Checked
+            .IncludeActivityUsage = UsageCheck.Checked
             .TaxRate = Tax
+
+            If Not IsNothing(ActivityCostCheck) Then
+                .IncludeActivityCost = ActivityCostCheck.Checked
+            Else
+                .IncludeActivityTime = False
+            End If
 
             If Not IsNothing(ActivityTimeCheck) Then
                 .IncludeActivityTime = ActivityTimeCheck.Checked
@@ -2436,6 +2446,7 @@ NoBonus:
             SelectedFacility.IncludeActivityCost = ActivityCostCheck.Checked
             CompareTimeCheck = True
         Else
+            ' Don't compare this value
             CompareCostCheck = False
         End If
 
@@ -2463,8 +2474,8 @@ NoBonus:
     Private Sub SetFacilityandDefault(ByVal SelectedFacility As IndustryFacility, ProductionType As IndustryType, Tab As String, _
                                       ByRef FacilityType As String, ByRef FacilityCombo As ComboBox, _
                                       ByRef FacilityDefaultLabel As Label, ByRef FacilitySaveButton As Button, _
-                                      Optional CompareIncludeCostCheck As Boolean = False, _
-                                      Optional CompareIncludeTimeCheck As Boolean = False)
+                                      ByVal CompareIncludeCostCheck As Boolean, _
+                                      ByVal CompareIncludeTimeCheck As Boolean)
 
         ' Based on the type of activity, set the selected facility for that type
         If Tab = BPTab Then
@@ -2792,8 +2803,8 @@ NoBonus:
 
     ' Sets all the combos to unenabled and base text to show no facility for stuff like Invention, Copy and RE where they might buy the item
     Private Sub SetNoFacility(ByRef RegionCombo As ComboBox, ByRef SystemCombo As ComboBox, ByRef FacilityorArray As ComboBox, _
-                              Optional ByRef CheckInstallCosts As CheckBox = Nothing, Optional IncludeCostCheck As CheckBox = Nothing, _
-                              Optional IncludeTimeCheck As CheckBox = Nothing)
+                              Optional ByRef CheckUsage As CheckBox = Nothing, Optional IncludeCostCheck As CheckBox = Nothing, _
+                              Optional IncludeTimeCheck As CheckBox = Nothing, Optional IncludeLabel As Label = Nothing)
         RegionCombo.Items.Clear()
         RegionCombo.Text = "Select Region"
         RegionCombo.Enabled = False
@@ -2803,8 +2814,11 @@ NoBonus:
         FacilityorArray.Items.Clear()
         FacilityorArray.Text = "Select Facility / Array"
         FacilityorArray.Enabled = False
-        If Not IsNothing(CheckInstallCosts) Then
-            CheckInstallCosts.Enabled = False
+        If Not IsNothing(IncludeLabel) Then
+            IncludeLabel.Enabled = False
+        End If
+        If Not IsNothing(CheckUsage) Then
+            CheckUsage.Enabled = False
         End If
         If Not IsNothing(IncludeCostCheck) Then
             IncludeCostCheck.Enabled = False
@@ -2814,7 +2828,7 @@ NoBonus:
         End If
     End Sub
 
-    ' Returns the facility for manufacturing with sent indytype of BP facilities
+    ' Returns the facility with sent indytype of facilities
     Private Function GetManufacturingFacility(IndyType As IndustryType, Tab As String) As IndustryFacility
 
         If Tab = BPTab Then
@@ -2841,6 +2855,12 @@ NoBonus:
                     Return SelectedBPPOSModuleFacility
                 Case IndustryType.NoPOSManufacturing
                     Return SelectedBPNoPOSFacility
+                Case IndustryType.Invention
+                    Return SelectedBPInventionFacility
+                Case IndustryType.T3Invention
+                    Return SelectedBPT3InventionFacility
+                Case IndustryType.Copying
+                    Return SelectedBPCopyFacility
                 Case Else
                     Return SelectedBPManufacturingFacility
             End Select
@@ -2868,6 +2888,12 @@ NoBonus:
                     Return SelectedCalcPOSModuleFacility
                 Case IndustryType.NoPOSManufacturing
                     Return SelectedCalcNoPOSFacility
+                Case IndustryType.Invention
+                    Return SelectedCalcInventionFacility
+                Case IndustryType.T3Invention
+                    Return SelectedCalcT3InventionFacility
+                Case IndustryType.Copying
+                    Return SelectedCalcCopyFacility
                 Case Else
                     Return SelectedCalcBaseManufacturingFacility
             End Select
@@ -2875,10 +2901,10 @@ NoBonus:
     End Function
 
     ' Sets the default based on the cost check change
-    Private Sub SetDefaultFacilitybyCheck(ProductionType As IndustryType, IncludeCostsCheck As CheckBox, Tab As String, _
+    Private Sub SetDefaultFacilitybyCheck(ProductionType As IndustryType, IncludeUsageCheck As CheckBox, Tab As String, _
                                           FacilityType As String, FacilityArrayCombo As ComboBox, FacilityDefaultLabel As Label, _
-                                          FacilitySaveButton As Button, UsageCheck As CheckBox, _
-                                          Optional IncludeCostCheck As CheckBox = Nothing, Optional IncludeTimeCheck As CheckBox = Nothing)
+                                          FacilitySaveButton As Button, Optional IncludeCostCheck As CheckBox = Nothing, _
+                                          Optional IncludeTimeCheck As CheckBox = Nothing)
         Dim SelectedFacility As IndustryFacility
         Dim CompareTime As Boolean = False
         Dim CompareCost As Boolean = False
@@ -2906,14 +2932,11 @@ NoBonus:
                 Case IndustryType.ComponentManufacturing
                     SelectedFacility = SelectedBPComponentManufacturingFacility
                 Case IndustryType.Invention
-                    CompareTime = True
                     SelectedFacility = SelectedBPInventionFacility
                 Case IndustryType.T3Invention
                     SelectedFacility = SelectedBPT3InventionFacility
-                    CompareTime = True
                 Case IndustryType.Copying
                     SelectedFacility = SelectedBPCopyFacility
-                    CompareTime = True
                 Case IndustryType.NoPOSManufacturing
                     SelectedFacility = SelectedBPNoPOSFacility
                 Case Else
@@ -2942,13 +2965,10 @@ NoBonus:
                 Case IndustryType.ComponentManufacturing
                     SelectedFacility = SelectedCalcComponentManufacturingFacility
                 Case IndustryType.Invention
-                    CompareTime = True
                     SelectedFacility = SelectedCalcInventionFacility
                 Case IndustryType.T3Invention
-                    CompareTime = True
                     SelectedFacility = SelectedCalcT3InventionFacility
                 Case IndustryType.Copying
-                    CompareTime = True
                     SelectedFacility = SelectedCalcCopyFacility
                 Case IndustryType.NoPOSManufacturing
                     SelectedFacility = SelectedCalcNoPOSFacility
@@ -2957,10 +2977,10 @@ NoBonus:
             End Select
         End If
 
-        SelectedFacility.IncludeActivityUsage = UsageCheck.checked
+        SelectedFacility.IncludeActivityUsage = IncludeUsageCheck.Checked
 
-        If Not IsNothing(IncludeCostsCheck) Then
-            SelectedFacility.IncludeActivityCost = IncludeCostsCheck.Checked
+        If Not IsNothing(IncludeCostCheck) Then
+            SelectedFacility.IncludeActivityCost = IncludeCostCheck.Checked
             CompareCost = True
         Else
             CompareCost = False
@@ -2975,10 +2995,6 @@ NoBonus:
         End If
 
         ' Set the default based on the checkbox 
-        SelectedFacility.IncludeActivityCost = IncludeCostsCheck.Checked
-        If Not IsNothing(IncludeTimeCheck) Then
-            SelectedFacility.IncludeActivityTime = IncludeTimeCheck.Checked
-        End If
         Call SetFacilityandDefault(SelectedFacility, ProductionType, Tab, FacilityType, FacilityArrayCombo, _
                                    FacilityDefaultLabel, FacilitySaveButton, CompareCost, CompareTime)
 
@@ -3282,7 +3298,7 @@ NoBonus:
             SelectedBPCopyTeam = CType(CopyTeam.Clone, IndustryTeam)
 
             ' Check usage box
-            chkBPFacilityIncludeCosts.Checked = BuildFacility.IncludeActivityCost
+            chkBPFacilityIncludeUsage.Checked = BuildFacility.IncludeActivityCost
 
             ' Always start with manufacturing team
             cmbBPTeamActivities.Text = ActivityManufacturing
@@ -3292,7 +3308,7 @@ NoBonus:
             SentFromManufacturingTab = False
             SentFromShoppingList = True
 
-            chkBPFacilityIncludeCosts.Checked = IncludeUsage
+            chkBPFacilityIncludeUsage.Checked = IncludeUsage
             chkBPTaxes.Checked = IncludeTaxes
             chkBPBrokerFees.Checked = IncludeFees
 
@@ -4003,11 +4019,6 @@ NoBonus:
         If Not FirstLoad Then
             ' Set the copy time check
             SelectedBPCopyFacility.IncludeActivityTime = chkBPIncludeCopyTime.Checked
-            If chkBPIncludeCopyTime.Checked Then
-                SelectedBPCopyFacility.IncludeActivityTime = True
-            Else
-                SelectedBPCopyFacility.IncludeActivityTime = False
-            End If
             If Not IsNothing(SelectedBlueprint) Then
                 ' Use the original ME and TE values when they change the meta level
                 Call UpdateBPGrids(SelectedBlueprint.GetBPTypeID, SelectedBlueprint.GetTechLevel, False, SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID)
@@ -4020,12 +4031,6 @@ NoBonus:
         If Not FirstLoad Then
             ' Include copy costs
             SelectedBPCopyFacility.IncludeActivityCost = chkBPIncludeCopyCosts.Checked
-            ' Use the original ME and TE values when they change the meta level
-            If chkBPIncludeCopyCosts.Checked Then
-                SelectedBPCopyFacility.IncludeActivityCost = True
-            Else
-                SelectedBPCopyFacility.IncludeActivityCost = False
-            End If
             If Not IsNothing(SelectedBlueprint) Then
                 Call UpdateBPGrids(SelectedBlueprint.GetBPTypeID, SelectedBlueprint.GetTechLevel, False, SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID)
             End If
@@ -4036,13 +4041,6 @@ NoBonus:
         If Not FirstLoad Then
             ' Include invention time
             SelectedBPInventionFacility.IncludeActivityTime = chkBPIncludeInventionTime.Checked
-
-            ' Use the original ME and TE values when they change the meta level
-            If chkBPIncludeInventionTime.Checked Then
-                SelectedBPInventionFacility.IncludeActivityTime = True
-            Else
-                SelectedBPInventionFacility.IncludeActivityTime = False
-            End If
             If Not IsNothing(SelectedBlueprint) Then
                 Call UpdateBPGrids(SelectedBlueprint.GetBPTypeID, SelectedBlueprint.GetTechLevel, False, SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID)
             End If
@@ -4069,12 +4067,6 @@ NoBonus:
         If Not FirstLoad Then
             ' Set the time for T3 invention
             SelectedBPT3InventionFacility.IncludeActivityTime = chkBPIncludeT3Time.Checked
-            ' Use the original ME and TE values when they change the meta level
-            If chkBPIncludeT3Time.Checked Then
-                SelectedBPT3InventionFacility.IncludeActivityTime = True
-            Else
-                SelectedBPT3InventionFacility.IncludeActivityTime = False
-            End If
             If Not IsNothing(SelectedBlueprint) Then
                 Call UpdateBPGrids(SelectedBlueprint.GetBPTypeID, SelectedBlueprint.GetTechLevel, False, SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID)
             End If
@@ -4085,12 +4077,6 @@ NoBonus:
         If Not FirstLoad Then
             ' Set the usage for T3 invention
             SelectedBPT3InventionFacility.IncludeActivityCost = chkBPIncludeT3Costs.Checked
-            ' Use the original ME and TE values when they change the meta level
-            If chkBPIncludeT3Costs.Checked Then
-                SelectedBPT3InventionFacility.IncludeActivityCost = True
-            Else
-                SelectedBPT3InventionFacility.IncludeActivityCost = False
-            End If
             If Not IsNothing(SelectedBlueprint) Then
                 Call UpdateBPGrids(SelectedBlueprint.GetBPTypeID, SelectedBlueprint.GetTechLevel, False, SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID)
             End If
@@ -4663,7 +4649,7 @@ Tabs:
             Call LoadBPfromDoubleClick(CLng(rsBP.GetValue(0)), BuildType, "Raw", "Blueprint Tab", _
                                        SelectedBPManufacturingTeam, SelectedBPComponentManufacturingTeam, SelectedBPCopyTeam, _
                                        BuildFacility, SelectedBPComponentManufacturingFacility, SelectedBPInventionFacility, SelectedBPCopyFacility,
-                                       chkBPTaxes.Checked, chkBPBrokerFees.Checked, chkBPFacilityIncludeCosts.Checked, _
+                                       chkBPTaxes.Checked, chkBPBrokerFees.Checked, chkBPFacilityIncludeUsage.Checked, _
                                        lstBPComponentMats.SelectedItems(0).SubItems(2).Text, lstBPComponentMats.SelectedItems(0).SubItems(1).Text)
         End If
 
@@ -4702,11 +4688,29 @@ Tabs:
 
             ' If they switch the activity and it changed from the previous, then load the selected facility for this activity
             If CurrentIndustryType <> PreviousIndustryType Then
+                Dim CostCheck As CheckBox
+                Dim TimeCheck As CheckBox
+
+                Select Case CurrentIndustryType
+                    Case IndustryType.Invention, IndustryType.T3Invention
+                        CostCheck = chkBPIncludeInventionCosts
+                        TimeCheck = chkBPIncludeInventionTime
+                    Case IndustryType.Copying
+                        CostCheck = chkBPIncludeCopyCosts
+                        TimeCheck = chkBPIncludeCopyTime
+                    Case IndustryType.T3Invention
+                        CostCheck = chkBPIncludeT3Costs
+                        TimeCheck = chkBPIncludeT3Time
+                    Case Else
+                        CostCheck = Nothing
+                        TimeCheck = Nothing
+                End Select
+
                 Call LoadFacility(CurrentIndustryType, False, True, _
                                   cmbBPFacilityActivities.Text, cmbBPFacilityType, cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, _
                                   lblBPFacilityBonus, lblBPFacilityDefault, lblBPFacilityManualME, txtBPFacilityManualME, _
                                   lblBPFacilityManualTE, txtBPFacilityManualTE, btnBPFacilitySave, lblBPFacilityTaxRate, BPTab, _
-                                  chkBPFacilityIncludeCosts, Nothing, FullyLoadedBPFacility,
+                                  chkBPFacilityIncludeUsage, Nothing, CostCheck, TimeCheck, FullyLoadedBPFacility,
                                   cmbBPFacilityActivities, SelectedBlueprint.GetTechLevel, CurrentBPGroupID, CurrentBPCategoryID, False)
                 PreviousIndustryType = CurrentIndustryType
             End If
@@ -4735,7 +4739,7 @@ Tabs:
                                          lblBPFacilityManualTE, txtBPFacilityManualTE, btnBPFacilitySave, lblBPFacilityTaxRate, BPTab)
                 Call cmbBPFacilityRegion.Focus()
             ElseIf cmbBPFacilityType.Text = None Then
-                Call SetNoFacility(cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, chkBPFacilityIncludeCosts)
+                Call SetNoFacility(cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, chkBPFacilityIncludeUsage)
                 Call tabBPInventionREEquip.Focus()
                 ' Allow this to be saved as a default though
                 btnBPFacilitySave.Enabled = True
@@ -4744,13 +4748,31 @@ Tabs:
                 ' Save the facility locally
                 ' For a pos, need to display the results and reload the bp
                 Dim Defaults As New ProgramSettings
-                Call DisplayFacilityBonus(GetProductionType(cmbBPFacilityActivities.Text, CurrentBPGroupID, CurrentBPCategoryID, cmbBPFacilityType.Text), _
+                Dim CostCheck As CheckBox
+                Dim TimeCheck As CheckBox
+                Dim TempIndustryType As IndustryType = GetProductionType(cmbBPFacilityActivities.Text, CurrentBPGroupID, CurrentBPCategoryID, cmbBPFacilityType.Text)
+
+                Select Case TempIndustryType
+                    Case IndustryType.Invention, IndustryType.T3Invention
+                        CostCheck = chkBPIncludeInventionCosts
+                        TimeCheck = chkBPIncludeInventionTime
+                    Case IndustryType.Copying
+                        CostCheck = chkBPIncludeCopyCosts
+                        TimeCheck = chkBPIncludeCopyTime
+                    Case IndustryType.T3Invention
+                        CostCheck = chkBPIncludeT3Costs
+                        TimeCheck = chkBPIncludeT3Time
+                    Case Else
+                        CostCheck = Nothing
+                        TimeCheck = Nothing
+                End Select
+                Call DisplayFacilityBonus(TempIndustryType, _
                               Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, CurrentBPGroupID, CurrentBPCategoryID, _
                               cmbBPFacilityActivities.Text, cmbBPFacilityType.Text, cmbBPFacilityorArray.Text, _
                               cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, _
                               lblBPFacilityBonus, lblBPFacilityDefault, lblBPFacilityManualME, txtBPFacilityManualME, _
                               lblBPFacilityManualTE, txtBPFacilityManualTE, btnBPFacilitySave, lblBPFacilityTaxRate, _
-                              chkBPFacilityIncludeCosts, Nothing, BPTab, FullyLoadedBPFacility)
+                              chkBPFacilityIncludeUsage, CostCheck, TimeCheck, BPTab, FullyLoadedBPFacility)
             End If
 
             ' Anytime this changes, set all the other ME/TE boxes to not viewed
@@ -4822,7 +4844,7 @@ Tabs:
                                     cmbBPFacilityActivities.Text, cmbBPFacilityType, cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, _
                                     lblBPFacilityBonus, lblBPFacilityDefault, lblBPFacilityManualME, txtBPFacilityManualME, _
                                     lblBPFacilityManualTE, txtBPFacilityManualTE, btnBPFacilitySave, lblBPFacilityTaxRate, BPTab, _
-                                    chkBPFacilityIncludeCosts, Nothing, Autoload, OverrideFacilityName)
+                                    chkBPFacilityIncludeUsage, Nothing, Nothing, Autoload, OverrideFacilityName)
 
 
                 If Autoload Then
@@ -4851,7 +4873,7 @@ Tabs:
             Call LoadFacilities(SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID, False, _
                                 cmbBPFacilityActivities.Text, cmbBPFacilityType, cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, _
                                 lblBPFacilityBonus, lblBPFacilityDefault, lblBPFacilityManualME, txtBPFacilityManualME, _
-                                lblBPFacilityManualTE, txtBPFacilityManualTE, btnBPFacilitySave, lblBPFacilityTaxRate, BPTab, chkBPFacilityIncludeCosts, Nothing, Nothing)
+                                lblBPFacilityManualTE, txtBPFacilityManualTE, btnBPFacilitySave, lblBPFacilityTaxRate, BPTab, chkBPFacilityIncludeUsage, Nothing, Nothing, Nothing)
             PreviousFacilityEquipment = cmbBPFacilityorArray.Text
         End If
     End Sub
@@ -4868,7 +4890,7 @@ Tabs:
                                       cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, _
                                       lblBPFacilityBonus, lblBPFacilityDefault, lblBPFacilityManualME, txtBPFacilityManualME, _
                                       lblBPFacilityManualTE, txtBPFacilityManualTE, btnBPFacilitySave, lblBPFacilityTaxRate, _
-                                      chkBPFacilityIncludeCosts, Nothing, BPTab, FullyLoadedBPFacility)
+                                      chkBPFacilityIncludeUsage, Nothing, Nothing, BPTab, FullyLoadedBPFacility)
 
             If txtBPFacilityManualME.Visible Then
                 Call txtBPFacilityManualME.Focus()
@@ -4893,19 +4915,19 @@ Tabs:
             Case ActivityManufacturing
                 Select Case BPGroupID
                     Case SuperGroupID, TitanGroupID
-                        SelectedBPManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeCosts.Checked
+                        SelectedBPManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
                         Call SelectedBPSuperManufacturingFacility.SaveFacility(BPTab)
                         DefaultBPSuperManufacturingFacility = CType(SelectedBPSuperManufacturingFacility.Clone, IndustryFacility)
                     Case BoosterGroupID
-                        SelectedBPBoosterManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeCosts.Checked
+                        SelectedBPBoosterManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
                         Call SelectedBPBoosterManufacturingFacility.SaveFacility(BPTab)
                         DefaultBPBoosterManufacturingFacility = CType(SelectedBPBoosterManufacturingFacility.Clone, IndustryFacility)
                     Case CarrierGroupID, DredGroupID, CapIndustrialGroupID
-                        SelectedBPCapitalManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeCosts.Checked
+                        SelectedBPCapitalManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
                         Call SelectedBPCapitalManufacturingFacility.SaveFacility(BPTab)
                         DefaultBPCapitalManufacturingFacility = CType(SelectedBPCapitalManufacturingFacility.Clone, IndustryFacility)
                     Case StrategicCruiserGroupID
-                        SelectedBPT3ManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeCosts.Checked
+                        SelectedBPT3ManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
                         Call SelectedBPT3ManufacturingFacility.SaveFacility(BPTab)
                         DefaultBPT3ManufacturingFacility = CType(SelectedBPT3ManufacturingFacility.Clone, IndustryFacility)
                     Case Else
@@ -4916,21 +4938,21 @@ Tabs:
 
                             Select Case IndyType
                                 Case IndustryType.POSFuelBlockManufacturing
-                                    SelectedBPPOSFuelBlockFacility.IncludeActivityCost = chkBPFacilityIncludeCosts.Checked
+                                    SelectedBPPOSFuelBlockFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
                                     Call SelectedBPPOSFuelBlockFacility.SaveFacility(BPTab)
                                     DefaultBPPOSFuelBlockFacility = CType(SelectedBPPOSFuelBlockFacility.Clone, IndustryFacility)
                                 Case IndustryType.POSLargeShipManufacturing
-                                    SelectedBPPOSLargeShipFacility.IncludeActivityCost = chkBPFacilityIncludeCosts.Checked
+                                    SelectedBPPOSLargeShipFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
                                     Call SelectedBPPOSLargeShipFacility.SaveFacility(BPTab)
                                     DefaultBPPOSLargeShipFacility = CType(SelectedBPPOSLargeShipFacility.Clone, IndustryFacility)
                                 Case IndustryType.POSModuleManufacturing
-                                    SelectedBPPOSModuleFacility.IncludeActivityCost = chkBPFacilityIncludeCosts.Checked
+                                    SelectedBPPOSModuleFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
                                     Call SelectedBPPOSModuleFacility.SaveFacility(BPTab)
                                     DefaultBPPOSModuleFacility = CType(SelectedBPPOSModuleFacility.Clone, IndustryFacility)
                             End Select
 
                             ' It's a pos, so always save the facility as well for all other manufacturing
-                            SelectedBPManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeCosts.Checked
+                            SelectedBPManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
                             Dim SavedIndyType As IndustryType = SelectedBPManufacturingFacility.ProductionType
                             SelectedBPManufacturingFacility.ProductionType = IndustryType.Manufacturing ' Save as the base manufacturing
                             Call SelectedBPManufacturingFacility.SaveFacility(BPTab)
@@ -4939,35 +4961,35 @@ Tabs:
 
                         Else
                             If BPCategoryID = SubsystemCategoryID Then
-                                SelectedBPSubsystemManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeCosts.Checked
+                                SelectedBPSubsystemManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
                                 Call SelectedBPSubsystemManufacturingFacility.SaveFacility(BPTab)
                                 DefaultBPSubsystemManufacturingFacility = CType(SelectedBPSubsystemManufacturingFacility.Clone, IndustryFacility)
                             ElseIf BPCategoryID = ComponentCategoryID Then
-                                SelectedBPComponentManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeCosts.Checked
+                                SelectedBPComponentManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
                                 Call SelectedBPComponentManufacturingFacility.SaveFacility(BPTab)
                                 DefaultBPComponentManufacturingFacility = CType(SelectedBPComponentManufacturingFacility.Clone, IndustryFacility)
                             Else
-                                SelectedBPManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeCosts.Checked
+                                SelectedBPManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
                                 Call SelectedBPManufacturingFacility.SaveFacility(BPTab)
                                 DefaultBPManufacturingFacility = CType(SelectedBPManufacturingFacility.Clone, IndustryFacility)
                             End If
                         End If
                 End Select
             Case ActivityComponentManufacturing
-                SelectedBPComponentManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeCosts.Checked
+                SelectedBPComponentManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
                 Call SelectedBPComponentManufacturingFacility.SaveFacility(BPTab)
                 DefaultBPComponentManufacturingFacility = CType(SelectedBPComponentManufacturingFacility.Clone, IndustryFacility)
             Case ActivityCopying
-                SelectedBPCopyFacility.IncludeActivityCost = chkBPFacilityIncludeCosts.Checked
+                SelectedBPCopyFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
                 Call SelectedBPCopyFacility.SaveFacility(BPTab)
                 DefaultBPCopyFacility = CType(SelectedBPCopyFacility.Clone, IndustryFacility)
             Case ActivityInvention
                 If SelectedBlueprint.GetItemGroupID = StrategicCruiserGroupID Or SelectedBlueprint.GetItemCategoryID = SubsystemCategoryID Then
-                    SelectedBPT3InventionFacility.IncludeActivityCost = chkBPFacilityIncludeCosts.Checked
+                    SelectedBPT3InventionFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
                     Call SelectedBPT3InventionFacility.SaveFacility(BPTab)
                     DefaultBPT3InventionFacility = CType(SelectedBPT3InventionFacility.Clone, IndustryFacility)
                 Else
-                    SelectedBPInventionFacility.IncludeActivityCost = chkBPFacilityIncludeCosts.Checked
+                    SelectedBPInventionFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
                     Call SelectedBPInventionFacility.SaveFacility(BPTab)
                     DefaultBPInventionFacility = CType(SelectedBPInventionFacility.Clone, IndustryFacility)
                 End If
@@ -5594,13 +5616,17 @@ Tabs:
         End If
     End Sub
 
-    Private Sub chkBPTotalInstallationCosts_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles chkBPFacilityIncludeCosts.CheckedChanged
-        If Not FirstLoad And SetTaxFeeChecks Then
+    Private Sub chkBPTotalInstallationCosts_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles chkBPFacilityIncludeUsage.CheckedChanged
+        If Not FirstLoad Then
             If Not IsNothing(SelectedBlueprint) Then
-                Call SelectedBlueprint.SetPriceData(chkBPTaxes.Checked, chkBPBrokerFees.Checked, chkBPFacilityIncludeCosts.Checked)
-                Call UpdateBPPriceLabels()
-                Call SetDefaultFacilitybyCheck(GetProductionType(cmbBPFacilityActivities.Text, SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID, cmbBPFacilityType.Text), _
-                                               chkBPFacilityIncludeCosts, BPTab, cmbBPFacilityType.Text, cmbBPFacilityorArray, lblBPFacilityDefault, btnBPFacilitySave)
+                Call SetDefaultFacilitybyCheck(GetProductionType(ActivityManufacturing, 0, 0, cmbBPFacilityType.Text), _
+                        chkBPFacilityIncludeUsage, BPTab, cmbBPFacilityType.Text, cmbBPFacilityorArray, _
+                        lblBPFacilityDefault, btnBPFacilitySave)
+
+                Dim SelectedIndyType As IndustryType = GetProductionType(cmbBPFacilityActivities.Text, SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID, cmbBPFacilityType.Text)
+                ' Set the found facility's usage for recalculating
+                GetManufacturingFacility(SelectedIndyType, BPTab).IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
+                Call UpdateBPGrids(SelectedBlueprint.GetBPTypeID, SelectedBlueprint.GetTechLevel, False, SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID)
             End If
         End If
     End Sub
@@ -5608,7 +5634,7 @@ Tabs:
     Private Sub chkBPTaxesFees_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles chkBPTaxes.CheckedChanged
         If Not FirstLoad And SetTaxFeeChecks Then
             If Not IsNothing(SelectedBlueprint) Then
-                Call SelectedBlueprint.SetPriceData(chkBPTaxes.Checked, chkBPBrokerFees.Checked, chkBPFacilityIncludeCosts.Checked)
+                Call SelectedBlueprint.SetPriceData(chkBPTaxes.Checked, chkBPBrokerFees.Checked)
                 Call UpdateBPPriceLabels()
             End If
         End If
@@ -5617,7 +5643,7 @@ Tabs:
     Private Sub chkBPBrokerFees_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkBPBrokerFees.CheckedChanged
         If Not FirstLoad And SetTaxFeeChecks Then
             If Not IsNothing(SelectedBlueprint) Then
-                Call SelectedBlueprint.SetPriceData(chkBPTaxes.Checked, chkBPBrokerFees.Checked, chkBPFacilityIncludeCosts.Checked)
+                Call SelectedBlueprint.SetPriceData(chkBPTaxes.Checked, chkBPBrokerFees.Checked)
                 Call UpdateBPPriceLabels()
             End If
         End If
@@ -6184,7 +6210,7 @@ Tabs:
         chkBPXL.Checked = UserBPTabSettings.XLCheck
 
         SetTaxFeeChecks = False
-        chkBPFacilityIncludeCosts.Checked = UserBPTabSettings.IncludeUsage
+        chkBPFacilityIncludeUsage.Checked = UserBPTabSettings.IncludeUsage
         chkBPTaxes.Checked = UserBPTabSettings.IncludeTaxes
         chkBPBrokerFees.Checked = UserBPTabSettings.IncludeFees
         SetTaxFeeChecks = True
@@ -6243,12 +6269,12 @@ Tabs:
         ' Default facility
         LoadingFacilityActivities = True ' Don't trigger a combo load yet
         cmbBPFacilityActivities.Text = ActivityManufacturing ' Always load the default manufacturing facility
-        chkBPFacilityIncludeCosts.Checked = DefaultBPManufacturingFacility.IncludeActivityCost ' Make sure this is set before loading
+        chkBPFacilityIncludeUsage.Checked = DefaultBPManufacturingFacility.IncludeActivityCost ' Make sure this is set before loading
         Call LoadFacility(IndustryType.Manufacturing, True, False, _
                           cmbBPFacilityActivities.Text, cmbBPFacilityType, cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, _
                           lblBPFacilityBonus, lblBPFacilityDefault, lblBPFacilityManualME, txtBPFacilityManualME, _
                           lblBPFacilityManualTE, txtBPFacilityManualTE, btnBPFacilitySave, lblBPFacilityTaxRate, _
-                          BPTab, chkBPFacilityIncludeCosts, Nothing, FullyLoadedBPFacility, cmbBPFacilityActivities, 1, 0, 0, True, False)
+                          BPTab, chkBPFacilityIncludeUsage, Nothing, Nothing, Nothing, FullyLoadedBPFacility, cmbBPFacilityActivities, 1, 0, 0, True, False)
         LoadingFacilityActivities = False
 
         CurrentBPCategoryID = 0
@@ -6271,7 +6297,7 @@ Tabs:
         chkBPPricePerUnit.Enabled = False
         txtBPAddlCosts.Enabled = False
         chkBPBuildBuy.Enabled = False
-        chkBPFacilityIncludeCosts.Enabled = False
+        chkBPFacilityIncludeUsage.Enabled = False
         chkBPTaxes.Enabled = False
         chkBPBrokerFees.Enabled = False
 
@@ -6384,7 +6410,7 @@ Tabs:
         TempSettings.LargeCheck = chkBPLarge.Checked
         TempSettings.XLCheck = chkBPXL.Checked
 
-        TempSettings.IncludeUsage = chkBPFacilityIncludeCosts.Checked
+        TempSettings.IncludeUsage = chkBPFacilityIncludeUsage.Checked
         TempSettings.IncludeTaxes = chkBPTaxes.Checked
         TempSettings.IncludeFees = chkBPBrokerFees.Checked
 
@@ -6471,6 +6497,7 @@ Tabs:
         Dim ItemGroupID As Long
         Dim ItemCategoryID As Long
         Dim AddlCost As Double
+
         Dim SelectedIndyType As IndustryType
 
         ' Set the number of runs to 1 if it's blank
@@ -6668,13 +6695,32 @@ Tabs:
 
         SelectedIndyType = GetProductionType(cmbBPFacilityActivities.Text, ItemGroupID, ItemCategoryID, cmbBPFacilityType.Text)
 
+        Dim CostCheck As CheckBox
+        Dim TimeCheck As CheckBox
+
+        Select Case SelectedIndyType
+            Case IndustryType.Invention, IndustryType.T3Invention
+                CostCheck = chkBPIncludeInventionCosts
+                TimeCheck = chkBPIncludeInventionTime
+            Case IndustryType.Copying
+                CostCheck = chkBPIncludeCopyCosts
+                TimeCheck = chkBPIncludeCopyTime
+            Case IndustryType.T3Invention
+                CostCheck = chkBPIncludeT3Costs
+                TimeCheck = chkBPIncludeT3Time
+            Case Else
+                CostCheck = Nothing
+                TimeCheck = Nothing
+        End Select
+
         ' Load the facility based on what was selected, if not in the list then load manufacturing - basically don't change the facility unless we have to
         If SelectedIndyType <> PreviousIndustryType Or cmbBPFacilityType.Text = POSFacility Then  ' always load with POS so we can load the correct array
             Call LoadFacility(SelectedIndyType, False, True, _
                           cmbBPFacilityActivities.Text, cmbBPFacilityType, cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, _
                           lblBPFacilityBonus, lblBPFacilityDefault, lblBPFacilityManualME, txtBPFacilityManualME, _
                           lblBPFacilityManualTE, txtBPFacilityManualTE, btnBPFacilitySave, lblBPFacilityTaxRate, BPTab, _
-                          chkBPFacilityIncludeCosts, Nothing, FullyLoadedBPFacility, cmbBPFacilityActivities, TempTech, ItemGroupID, ItemCategoryID, False, False) ' Don't load activites again
+                          chkBPFacilityIncludeUsage, Nothing, CostCheck, TimeCheck, FullyLoadedBPFacility, cmbBPFacilityActivities, _
+                          TempTech, ItemGroupID, ItemCategoryID, False, False) ' Don't load activites again
         End If
 
         cmbBPBlueprintSelection.Focus()
@@ -6695,7 +6741,7 @@ Tabs:
             chkBPBuildBuy.Enabled = True
             txtBPNumBPs.Enabled = True
             txtBPLines.Enabled = True
-            chkBPFacilityIncludeCosts.Enabled = True
+            chkBPFacilityIncludeUsage.Enabled = True
             chkBPTaxes.Enabled = True
             chkBPBrokerFees.Enabled = True
             chkBPPricePerUnit.Enabled = True
@@ -6817,16 +6863,36 @@ Tabs:
         If Not FullyLoadedBPFacility Then
             ' Get the type of facility we are doing
             IndyType = GetProductionType(cmbBPFacilityActivities.Text, BPGroupID, BPCategoryID, cmbBPFacilityType.Text)
+
+            Dim CostCheck As CheckBox
+            Dim TimeCheck As CheckBox
+
+            Select Case IndyType
+                Case IndustryType.Invention, IndustryType.T3Invention
+                    CostCheck = chkBPIncludeInventionCosts
+                    TimeCheck = chkBPIncludeInventionTime
+                Case IndustryType.Copying
+                    CostCheck = chkBPIncludeCopyCosts
+                    TimeCheck = chkBPIncludeCopyTime
+                Case IndustryType.T3Invention
+                    CostCheck = chkBPIncludeT3Costs
+                    TimeCheck = chkBPIncludeT3Time
+                Case Else
+                    CostCheck = Nothing
+                    TimeCheck = Nothing
+            End Select
+
             Call LoadFacility(IndyType, True, True, _
                               cmbBPFacilityActivities.Text, cmbBPFacilityType, cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, _
                               lblBPFacilityBonus, lblBPFacilityDefault, lblBPFacilityManualME, txtBPFacilityManualME, _
                               lblBPFacilityManualTE, txtBPFacilityManualTE, btnBPFacilitySave, lblBPFacilityTaxRate, BPTab, _
-                              chkBPFacilityIncludeCosts, Nothing, FullyLoadedBPFacility, cmbBPFacilityActivities, BPTech, BPGroupID, BPCategoryID, False)
+                              chkBPFacilityIncludeUsage, Nothing, CostCheck, TimeCheck, FullyLoadedBPFacility, cmbBPFacilityActivities, _
+                              BPTech, BPGroupID, BPCategoryID, False)
         End If
 
         ' Determine the type of facility we want to build from for this blueprint first
         BlueprintBuildFacility = GetManufacturingFacility(GetProductionType(ActivityManufacturing, BPGroupID, BPCategoryID, cmbBPFacilityType.Text), BPTab)
-        BlueprintBuildFacility.IncludeActivityCost = chkBPFacilityIncludeCosts.Checked
+        BlueprintBuildFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
 
         ' Working
         ' Now load the materials into the lists
@@ -6879,7 +6945,7 @@ Tabs:
         End If
 
         ' Build the item and get the list of materials
-        Call SelectedBlueprint.BuildItem(chkBPTaxes.Checked, chkBPTaxes.Checked, chkBPFacilityIncludeCosts.Checked)
+        Call SelectedBlueprint.BuildItem(chkBPTaxes.Checked, chkBPTaxes.Checked, chkBPFacilityIncludeUsage.Checked)
 
         ' Sort the lists
         SelectedBlueprint.GetRawMaterials.SortMaterialListByQuantity()
@@ -7022,7 +7088,7 @@ Tabs:
                 lblBPInventionTime.Text = FormatIPHTime(SelectedBlueprint.GetInventionRETime)
 
                 ' Add copy costs
-                lblBPCopyCosts.Text = FormatNumber(SelectedBlueprint.GetTotalCopyCost)
+                lblBPCopyCosts.Text = FormatNumber(SelectedBlueprint.GetBPCCopyCost)
 
                 ' Finally check the invention materials and make sure that if any have 0.00 for price,
                 ' we update the invention label and add a tooltip for what has a price of 0
@@ -7112,76 +7178,76 @@ Tabs:
                 ttMain.SetToolTip(lblT3InventStatus, "")
             End If
 
-            Else ' T1
-                If rbtnBPCopyInvREMats.Checked Then
-                    ' We are turning this off, so move to raw
-                    rbtnBPRawmatCopy.Checked = True
-                End If
-                rbtnBPCopyInvREMats.Enabled = False
+        Else ' T1
+            If rbtnBPCopyInvREMats.Checked Then
+                ' We are turning this off, so move to raw
+                rbtnBPRawmatCopy.Checked = True
+            End If
+            rbtnBPCopyInvREMats.Enabled = False
 
-                ' Remove calcs for t1
-                tabBPInventionREEquip.TabPages.Remove(tabInventionCalcs)
-                tabBPInventionREEquip.TabPages.Remove(tabT3Calcs)
+            ' Remove calcs for t1
+            tabBPInventionREEquip.TabPages.Remove(tabInventionCalcs)
+            tabBPInventionREEquip.TabPages.Remove(tabT3Calcs)
+        End If
+
+        ' If we loaded from the manufacturing tab or shopping list, this is no longer relevant for the next bp tab updates
+        SentFromManufacturingTab = False
+        SentFromShoppingList = False
+
+        ' Update any bonus label the selected team might give for this BP
+        If UpdateTeamBonusLabel Then
+            Dim TempList As New List(Of Long)
+
+            ' Set the groupID's that we want to limit the team search to
+            If SelectedBlueprint.HasComponents And cmbBPTeamActivities.Text = ActivityComponentManufacturing Then
+                ' Load up all the items that build this blueprint
+                For i = 0 To SelectedBlueprint.GetComponentMaterials.GetMaterialList.Count - 1
+                    TempList.Add(SelectedBlueprint.GetComponentMaterials.GetMaterialList(i).GetMaterialTypeID)
+                Next
+            ElseIf cmbBPTeamActivities.Text <> ActivityComponentManufacturing Then
+                ' Just add the groupID
+                TempList.Add(SelectedBlueprint.GetItemGroupID)
+            Else
+                ' Send nothing
+                TempList = Nothing
             End If
 
-            ' If we loaded from the manufacturing tab or shopping list, this is no longer relevant for the next bp tab updates
-            SentFromManufacturingTab = False
-            SentFromShoppingList = False
+            Select Case cmbBPTeamActivities.Text
+                Case ActivityManufacturing
+                    Call DisplayTeamBonus(TempList, SelectedBPManufacturingTeam, txtBPTeamBonus, lblBPDefaultTeam, btnBPSaveTeam, BPTab)
+                Case ActivityComponentManufacturing
+                    Call DisplayTeamBonus(TempList, SelectedBPComponentManufacturingTeam, txtBPTeamBonus, lblBPDefaultTeam, btnBPSaveTeam, BPTab)
+                Case ActivityCopying
+                    Call DisplayTeamBonus(TempList, SelectedBPCopyTeam, txtBPTeamBonus, lblBPDefaultTeam, btnBPSaveTeam, BPTab)
+                Case ActivityInvention
+                    Call DisplayTeamBonus(TempList, SelectedBPInventionTeam, txtBPTeamBonus, lblBPDefaultTeam, btnBPSaveTeam, BPTab)
+            End Select
+        End If
 
-            ' Update any bonus label the selected team might give for this BP
-            If UpdateTeamBonusLabel Then
-                Dim TempList As New List(Of Long)
+        ' Save this for later
+        CurrentBPCategoryID = SelectedBlueprint.GetItemCategoryID
+        CurrentBPGroupID = SelectedBlueprint.GetItemGroupID
 
-                ' Set the groupID's that we want to limit the team search to
-                If SelectedBlueprint.HasComponents And cmbBPTeamActivities.Text = ActivityComponentManufacturing Then
-                    ' Load up all the items that build this blueprint
-                    For i = 0 To SelectedBlueprint.GetComponentMaterials.GetMaterialList.Count - 1
-                        TempList.Add(SelectedBlueprint.GetComponentMaterials.GetMaterialList(i).GetMaterialTypeID)
-                    Next
-                ElseIf cmbBPTeamActivities.Text <> ActivityComponentManufacturing Then
-                    ' Just add the groupID
-                    TempList.Add(SelectedBlueprint.GetItemGroupID)
-                Else
-                    ' Send nothing
-                    TempList = Nothing
-                End If
+        If SelectedBlueprint.HasComponents And Not cmbBPFacilityActivities.Items.Contains(ActivityComponentManufacturing) Then
+            cmbBPFacilityActivities.Items.Add(ActivityComponentManufacturing)
+        End If
 
-                Select Case cmbBPTeamActivities.Text
-                    Case ActivityManufacturing
-                        Call DisplayTeamBonus(TempList, SelectedBPManufacturingTeam, txtBPTeamBonus, lblBPDefaultTeam, btnBPSaveTeam, BPTab)
-                    Case ActivityComponentManufacturing
-                        Call DisplayTeamBonus(TempList, SelectedBPComponentManufacturingTeam, txtBPTeamBonus, lblBPDefaultTeam, btnBPSaveTeam, BPTab)
-                    Case ActivityCopying
-                        Call DisplayTeamBonus(TempList, SelectedBPCopyTeam, txtBPTeamBonus, lblBPDefaultTeam, btnBPSaveTeam, BPTab)
-                    Case ActivityInvention
-                        Call DisplayTeamBonus(TempList, SelectedBPInventionTeam, txtBPTeamBonus, lblBPDefaultTeam, btnBPSaveTeam, BPTab)
-                End Select
-            End If
-
-            ' Save this for later
-            CurrentBPCategoryID = SelectedBlueprint.GetItemCategoryID
-            CurrentBPGroupID = SelectedBlueprint.GetItemGroupID
-
-            If SelectedBlueprint.HasComponents And Not cmbBPFacilityActivities.Items.Contains(ActivityComponentManufacturing) Then
-                cmbBPFacilityActivities.Items.Add(ActivityComponentManufacturing)
-            End If
-
-            ' Finally Update the labels
-            Call UpdateBPPriceLabels()
+        ' Finally Update the labels
+        Call UpdateBPPriceLabels()
 
 ExitForm:
 
-            ' Done
-            lstBPComponentMats.Show()
-            lstBPRawMats.Show()
-            lblBPCanMakeBP.Visible = True
-            lblBPCanMakeBPAll.Visible = True
+        ' Done
+        lstBPComponentMats.Show()
+        lstBPRawMats.Show()
+        lblBPCanMakeBP.Visible = True
+        lblBPCanMakeBPAll.Visible = True
 
-            ' Enable Teams and facility selectors
-            tabBPInventionREEquip.Enabled = True
-            gbBPTeam.Enabled = True
+        ' Enable Teams and facility selectors
+        tabBPInventionREEquip.Enabled = True
+        gbBPTeam.Enabled = True
 
-            Me.Cursor = Cursors.Default
+        Me.Cursor = Cursors.Default
 
     End Sub
 
@@ -7511,24 +7577,24 @@ ExitForm:
         lblBPBrokerFees.Text = FormatNumber(SelectedBlueprint.GetBPBrokerFees / DivideUnits, 2)
 
         ' Show the usage cost for the activity selected
-        If chkBPFacilityIncludeCosts.Checked Then
+        If chkBPFacilityIncludeUsage.Checked Then
             Select Case cmbBPFacilityActivities.Text
                 Case ActivityManufacturing
-                    lblBPTotalInstallationCost.Text = FormatNumber(SelectedBlueprint.GetTotalManufacturingCost / DivideUnits, 2)
+                    lblBPTotalInstallationUsage.Text = FormatNumber(SelectedBlueprint.GetTotalManufacturingUsage / DivideUnits, 2)
                 Case ActivityInvention
-                    lblBPTotalInstallationCost.Text = FormatNumber(SelectedBlueprint.GetInventionREUsage() / DivideUnits, 2)
+                    lblBPTotalInstallationUsage.Text = FormatNumber(SelectedBlueprint.GetInventionREUsage() / DivideUnits, 2)
                 Case ActivityCopying
-                    lblBPTotalInstallationCost.Text = FormatNumber(SelectedBlueprint.GetTotalCopyCost() / DivideUnits, 2)
+                    lblBPTotalInstallationUsage.Text = FormatNumber(SelectedBlueprint.GetBPCCopyUsage() / DivideUnits, 2)
                 Case ActivityComponentManufacturing
-                    lblBPTotalInstallationCost.Text = FormatNumber(SelectedBlueprint.GetComponentFacilityUsage() / DivideUnits, 2)
+                    lblBPTotalInstallationUsage.Text = FormatNumber(SelectedBlueprint.GetComponentFacilityUsage() / DivideUnits, 2)
             End Select
         Else
-            lblBPTotalInstallationCost.Text = "0.00"
+            lblBPTotalInstallationUsage.Text = "0.00"
         End If
 
         ' Total
-        lblBPRawTotalCost.Text = FormatNumber((SelectedBlueprint.GetTotalRawCost + SelectedBlueprint.GetBPTaxes + SelectedBlueprint.GetBPBrokerFees + SelectedBlueprint.GetTotalManufacturingCost) / DivideUnits, 2)
-        lblBPTotalCompCost.Text = FormatNumber((SelectedBlueprint.GetTotalComponentCost + SelectedBlueprint.GetBPTaxes + SelectedBlueprint.GetBPBrokerFees + SelectedBlueprint.GetTotalManufacturingCost) / DivideUnits, 2)
+        lblBPRawTotalCost.Text = FormatNumber((SelectedBlueprint.GetTotalRawCost + SelectedBlueprint.GetBPTaxes + SelectedBlueprint.GetBPBrokerFees + SelectedBlueprint.GetTotalManufacturingUsage) / DivideUnits, 2)
+        lblBPTotalCompCost.Text = FormatNumber((SelectedBlueprint.GetTotalComponentCost + SelectedBlueprint.GetBPTaxes + SelectedBlueprint.GetBPBrokerFees + SelectedBlueprint.GetTotalManufacturingUsage) / DivideUnits, 2)
 
         ' Profit labels (market cost - total cost of mats and invention)
         TotalRawProfit = SelectedBlueprint.GetTotalRawProfit / DivideUnits
@@ -10203,7 +10269,7 @@ ExitSub:
                                 ActivityManufacturing, cmbCalcBaseFacilityType, cmbCalcBaseFacilityRegion, cmbCalcBaseFacilitySystem, cmbCalcBaseFacilityorArray, _
                                 lblCalcBaseFacilityBonus, lblCalcBaseFacilityDefault, lblCalcBaseFacilityManualME, txtCalcBaseFacilityManualME, _
                                 lblCalcBaseFacilityManualTE, txtCalcBaseFacilityManualTE, btnCalcBaseFacilitySave, lblCalcBaseFacilityTaxRate, CalcTab, _
-                                chkCalcBaseFacilityIncludeUsage, Nothing, Autoload, OverrideFacilityName)
+                                chkCalcBaseFacilityIncludeUsage, Nothing, Nothing, Autoload, OverrideFacilityName)
 
             If cmbCalcBaseFacilityType.Text <> POSFacility Then
                 ' Hide the POS modules for multi-use
@@ -10279,7 +10345,7 @@ ExitSub:
                                 ActivityManufacturing, cmbCalcBaseFacilityType, cmbCalcBaseFacilityRegion, cmbCalcBaseFacilitySystem, cmbCalcBaseFacilityorArray, _
                                 lblCalcBaseFacilityBonus, lblCalcBaseFacilityDefault, lblCalcBaseFacilityManualME, txtCalcBaseFacilityManualME, _
                                 lblCalcBaseFacilityManualTE, txtCalcBaseFacilityManualTE, btnCalcBaseFacilitySave, lblCalcBaseFacilityTaxRate, CalcTab, _
-                                chkCalcBaseFacilityIncludeUsage, Nothing, Nothing)
+                                chkCalcBaseFacilityIncludeUsage, Nothing, Nothing, Nothing)
             PreviousCalcBaseFacilityEquipment = cmbCalcBaseFacilityorArray.Text
         End If
     End Sub
@@ -10300,7 +10366,7 @@ ExitSub:
                                       cmbCalcBaseFacilityRegion, cmbCalcBaseFacilitySystem, cmbCalcBaseFacilityorArray, _
                                       lblCalcBaseFacilityBonus, lblCalcBaseFacilityDefault, lblCalcBaseFacilityManualME, txtCalcBaseFacilityManualME, _
                                       lblCalcBaseFacilityManualTE, txtCalcBaseFacilityManualTE, btnCalcBaseFacilitySave, lblCalcBaseFacilityTaxRate, _
-                                      chkCalcBaseFacilityIncludeUsage, Nothing, CalcTab, CalcBaseFacilityLoaded)
+                                      chkCalcBaseFacilityIncludeUsage, Nothing, Nothing, CalcTab, CalcBaseFacilityLoaded)
 
             If txtCalcBaseFacilityManualME.Visible Then
                 Call txtCalcBaseFacilityManualME.Focus()
@@ -10520,7 +10586,7 @@ ExitSub:
                                 ActivityComponentManufacturing, cmbCalcComponentFacilityType, cmbCalcComponentFacilityRegion, cmbCalcComponentFacilitySystem, cmbCalcComponentFacilityorArray, _
                                 lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
                                 lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, CalcTab, _
-                                chkCalcComponentFacilityIncludeCosts, Nothing, Autoload)
+                                chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, Autoload)
 
             Call cmbCalcComponentFacilityorArray.Focus()
             If Autoload Then
@@ -10538,7 +10604,7 @@ ExitSub:
                                 ActivityComponentManufacturing, cmbCalcComponentFacilityType, cmbCalcComponentFacilityRegion, cmbCalcComponentFacilitySystem, cmbCalcComponentFacilityorArray, _
                                 lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
                                 lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, CalcTab, _
-                                chkCalcComponentFacilityIncludeCosts, Nothing, Nothing)
+                                chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, Nothing)
             PreviousCalcComponentFacilityEquipment = cmbCalcComponentFacilityorArray.Text
         End If
     End Sub
@@ -10559,7 +10625,7 @@ ExitSub:
                                       cmbCalcComponentFacilityRegion, cmbCalcComponentFacilitySystem, cmbCalcComponentFacilityorArray, _
                                       lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
                                       lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, _
-                                      chkCalcComponentFacilityIncludeCosts, Nothing, CalcTab, CalcComponentFacilityLoaded)
+                                      chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, CalcTab, CalcComponentFacilityLoaded)
 
             If txtCalcComponentFacilityManualME.Visible Then
                 Call txtCalcComponentFacilityManualME.Focus()
@@ -10572,7 +10638,7 @@ ExitSub:
 
     Private Sub btnCalcComponentFacilitySave_Click(sender As System.Object, e As System.EventArgs) Handles btnCalcComponentFacilitySave.Click
 
-        SelectedCalcComponentManufacturingFacility.IncludeActivityCost = chkCalcComponentFacilityIncludeCosts.Checked
+        SelectedCalcComponentManufacturingFacility.IncludeActivityCost = chkCalcComponentFacilityIncludeUsage.Checked
         Call SelectedCalcComponentManufacturingFacility.SaveFacility(CalcTab)
         DefaultCalcComponentManufacturingFacility = CType(SelectedCalcComponentManufacturingFacility, IndustryFacility)
 
@@ -10667,10 +10733,10 @@ ExitSub:
 
     End Sub
 
-    Private Sub chkCalcComponentFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcComponentFacilityIncludeCosts.CheckedChanged
+    Private Sub chkCalcComponentFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcComponentFacilityIncludeUsage.CheckedChanged
         If Not FirstLoad Then
             Call SetDefaultFacilitybyCheck(GetProductionType(ActivityManufacturing, -1, ComponentCategoryID, cmbCalcComponentFacilityType.Text), _
-                                                     chkCalcComponentFacilityIncludeCosts, CalcTab, cmbCalcComponentFacilityType.Text, _
+                                                     chkCalcComponentFacilityIncludeUsage, CalcTab, cmbCalcComponentFacilityType.Text, _
                                                      cmbCalcComponentFacilityorArray, lblCalcComponentFacilityDefault, btnCalcComponentFacilitySave)
             Call ResetRefresh()
         End If
@@ -10695,12 +10761,14 @@ ExitSub:
                                          lblCalcInventionFacilityBonus, lblCalcInventionFacilityDefault, lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
                                          lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualTE, btnCalcInventionFacilitySave, lblCalcInventionFacilityTaxRate, CalcTab)
                 ' Make sure these are enabled when changed
-                chkCalcInventionFacilityIncludeCosts.Enabled = True
+                chkCalcInventionFacilityIncludeUsage.Enabled = True
+                chkCalcInventionFacilityIncludeCost.Enabled = True
                 chkCalcInventionFacilityIncludeTime.Enabled = True
+                lblCalcInventionInclude.Enabled = True
                 Call cmbCalcInventionFacilityRegion.Focus()
 
             ElseIf cmbCalcInventionFacilityType.Text = None Then
-                Call SetNoFacility(cmbCalcInventionFacilityRegion, cmbCalcInventionFacilitySystem, cmbCalcInventionFacilityorArray, Nothing, chkCalcInventionFacilityIncludeCosts, chkCalcInventionFacilityIncludeTime)
+                Call SetNoFacility(cmbCalcInventionFacilityRegion, cmbCalcInventionFacilitySystem, cmbCalcInventionFacilityorArray, chkCalcInventionFacilityIncludeUsage, chkCalcInventionFacilityIncludeCost, chkCalcInventionFacilityIncludeTime)
                 ' Allow this to be saved as a default though
                 btnCalcInventionFacilitySave.Enabled = True
                 ' changed so not the default
@@ -10715,7 +10783,7 @@ ExitSub:
                                cmbCalcInventionFacilityRegion, cmbCalcInventionFacilitySystem, cmbCalcInventionFacilityorArray, _
                                lblCalcInventionFacilityBonus, lblCalcInventionFacilityDefault, lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
                                lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualTE, btnCalcInventionFacilitySave, lblCalcInventionFacilityTaxRate, _
-                               chkCalcInventionFacilityIncludeCosts, chkCalcInventionFacilityIncludeTime, CalcTab, CalcInventionFacilityLoaded)
+                               chkCalcInventionFacilityIncludeUsage, chkCalcInventionFacilityIncludeCost, chkCalcInventionFacilityIncludeTime, CalcTab, CalcInventionFacilityLoaded)
             End If
 
             ' Anytime this changes, set all the other ME/TE boxes to not viewed
@@ -10776,7 +10844,7 @@ ExitSub:
                                 ActivityInvention, cmbCalcInventionFacilityType, cmbCalcInventionFacilityRegion, cmbCalcInventionFacilitySystem, cmbCalcInventionFacilityorArray, _
                                 lblCalcInventionFacilityBonus, lblCalcInventionFacilityDefault, lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
                                 lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualTE, btnCalcInventionFacilitySave, lblCalcInventionFacilityTaxRate, CalcTab, _
-                                chkCalcInventionFacilityIncludeCosts, chkCalcInventionFacilityIncludeTime, Autoload)
+                                chkCalcInventionFacilityIncludeUsage, chkCalcInventionFacilityIncludeCost, chkCalcInventionFacilityIncludeTime, Autoload)
 
             Call cmbCalcInventionFacilityorArray.Focus()
             If Autoload Then
@@ -10794,7 +10862,7 @@ ExitSub:
                                 ActivityInvention, cmbCalcInventionFacilityType, cmbCalcInventionFacilityRegion, cmbCalcInventionFacilitySystem, cmbCalcInventionFacilityorArray, _
                                 lblCalcInventionFacilityBonus, lblCalcInventionFacilityDefault, lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
                                 lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualTE, btnCalcInventionFacilitySave, lblCalcInventionFacilityTaxRate, CalcTab, _
-                                chkCalcInventionFacilityIncludeCosts, chkCalcInventionFacilityIncludeTime, Nothing)
+                                chkCalcInventionFacilityIncludeUsage, chkCalcInventionFacilityIncludeCost, chkCalcInventionFacilityIncludeTime, Nothing)
             PreviousCalcInventionFacilityEquipment = cmbCalcInventionFacilityorArray.Text
         End If
     End Sub
@@ -10815,7 +10883,7 @@ ExitSub:
                                       cmbCalcInventionFacilityRegion, cmbCalcInventionFacilitySystem, cmbCalcInventionFacilityorArray, _
                                       lblCalcInventionFacilityBonus, lblCalcInventionFacilityDefault, lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
                                       lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualTE, btnCalcInventionFacilitySave, lblCalcInventionFacilityTaxRate, _
-                                      chkCalcInventionFacilityIncludeCosts, chkCalcInventionFacilityIncludeTime, CalcTab, CalcInventionFacilityLoaded)
+                                      chkCalcInventionFacilityIncludeUsage, chkCalcInventionFacilityIncludeCost, chkCalcInventionFacilityIncludeTime, CalcTab, CalcInventionFacilityLoaded)
 
             If txtCalcInventionFacilityManualME.Visible Then
                 Call txtCalcInventionFacilityManualME.Focus()
@@ -10828,7 +10896,7 @@ ExitSub:
 
     Private Sub btnCalcInventionFacilitySave_Click(sender As System.Object, e As System.EventArgs) Handles btnCalcInventionFacilitySave.Click
 
-        SelectedCalcInventionFacility.IncludeActivityCost = chkCalcInventionFacilityIncludeCosts.Checked
+        SelectedCalcInventionFacility.IncludeActivityUsage = chkCalcInventionFacilityIncludeUsage.Checked
         SelectedCalcInventionFacility.IncludeActivityTime = chkCalcInventionFacilityIncludeTime.Checked
         Call SelectedCalcInventionFacility.SaveFacility(CalcTab)
         DefaultCalcInventionFacility = CType(SelectedCalcInventionFacility, IndustryFacility)
@@ -10924,12 +10992,14 @@ ExitSub:
 
     End Sub
 
-    Private Sub chkCalcInventionFacilityIncludeCost_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcInventionFacilityIncludeCosts.CheckedChanged
+    Private Sub chkCalcInventionFacilityIncludeCost_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcInventionFacilityIncludeCost.CheckedChanged
         If Not FirstLoad Then
+            ' Set the include cost check
+            SelectedCalcInventionFacility.IncludeActivityCost = chkCalcInventionFacilityIncludeCost.Checked
             Call SetDefaultFacilitybyCheck(GetProductionType(ActivityInvention, 0, 0, cmbCalcInventionFacilityType.Text), _
-                                                         chkCalcInventionFacilityIncludeCosts, CalcTab, cmbCalcInventionFacilityType.Text, _
+                                                         chkCalcInventionFacilityIncludeUsage, CalcTab, cmbCalcInventionFacilityType.Text, _
                                                          cmbCalcInventionFacilityorArray, lblCalcInventionFacilityDefault, _
-                                                         btnCalcInventionFacilitySave, chkCalcInventionFacilityIncludeTime)
+                                                         btnCalcInventionFacilitySave, chkCalcInventionFacilityIncludeCost, chkCalcInventionFacilityIncludeTime)
             Call ResetRefresh()
         End If
     End Sub
@@ -10939,9 +11009,19 @@ ExitSub:
             ' Set the include time check
             SelectedCalcInventionFacility.IncludeActivityTime = chkCalcInventionFacilityIncludeTime.Checked
             Call SetDefaultFacilitybyCheck(GetProductionType(ActivityInvention, 0, 0, cmbCalcInventionFacilityType.Text), _
-                                                         chkCalcInventionFacilityIncludeCosts, CalcTab, cmbCalcInventionFacilityType.Text, _
+                                                         chkCalcInventionFacilityIncludeUsage, CalcTab, cmbCalcInventionFacilityType.Text, _
                                                          cmbCalcInventionFacilityorArray, lblCalcInventionFacilityDefault, _
-                                                         btnCalcInventionFacilitySave, chkCalcInventionFacilityIncludeTime)
+                                                         btnCalcInventionFacilitySave, chkCalcInventionFacilityIncludeCost, chkCalcInventionFacilityIncludeTime)
+            Call ResetRefresh()
+        End If
+    End Sub
+
+    Private Sub chkCalcInventionFacilityIncludeUsage_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcInventionFacilityIncludeUsage.CheckedChanged
+        If Not FirstLoad Then
+            Call SetDefaultFacilitybyCheck(GetProductionType(ActivityInvention, 0, 0, cmbCalcInventionFacilityType.Text), _
+                                                         chkCalcInventionFacilityIncludeUsage, CalcTab, cmbCalcInventionFacilityType.Text, _
+                                                         cmbCalcInventionFacilityorArray, lblCalcInventionFacilityDefault, _
+                                                         btnCalcInventionFacilitySave, chkCalcInventionFacilityIncludeCost, chkCalcInventionFacilityIncludeTime)
             Call ResetRefresh()
         End If
     End Sub
@@ -10965,12 +11045,14 @@ ExitSub:
                                          lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityDefault, lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
                                          lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualTE, btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityTaxRate, CalcTab)
                 ' Make sure these are enabled when changed
-                chkCalcT3InventionFacilityIncludeCosts.Enabled = True
+                chkCalcT3InventionFacilityIncludeUsage.Enabled = True
+                chkCalcT3InventionFacilityIncludeCost.Enabled = True
                 chkCalcT3InventionFacilityIncludeTime.Enabled = True
+                lblCalcT3InventionInclude.Enabled = True
                 Call cmbCalcT3InventionFacilityRegion.Focus()
 
             ElseIf cmbCalcT3InventionFacilityType.Text = None Then
-                Call SetNoFacility(cmbCalcT3InventionFacilityRegion, cmbCalcT3InventionFacilitySystem, cmbCalcT3InventionFacilityorArray, Nothing, chkCalcT3InventionFacilityIncludeCosts, chkCalcT3InventionFacilityIncludeTime)
+                Call SetNoFacility(cmbCalcT3InventionFacilityRegion, cmbCalcT3InventionFacilitySystem, cmbCalcT3InventionFacilityorArray, chkCalcT3FacilityIncludeUsage, chkCalcT3InventionFacilityIncludeCost, chkCalcT3InventionFacilityIncludeTime)
                 ' Allow this to be saved as a default though
                 btnCalcT3InventionFacilitySave.Enabled = True
                 ' changed so not the default
@@ -10985,7 +11067,7 @@ ExitSub:
                                cmbCalcT3InventionFacilityRegion, cmbCalcT3InventionFacilitySystem, cmbCalcT3InventionFacilityorArray, _
                                lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityDefault, lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
                                lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualTE, btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityTaxRate, _
-                               chkCalcT3InventionFacilityIncludeCosts, chkCalcT3InventionFacilityIncludeTime, CalcTab, CalcT3InventionFacilityLoaded)
+                               chkCalcT3InventionFacilityIncludeUsage, chkCalcT3InventionFacilityIncludeCost, chkCalcT3InventionFacilityIncludeTime, CalcTab, CalcT3InventionFacilityLoaded)
             End If
 
             ' Anytime this changes, set all the other ME/TE boxes to not viewed
@@ -11046,7 +11128,7 @@ ExitSub:
                                 ActivityInvention, cmbCalcT3InventionFacilityType, cmbCalcT3InventionFacilityRegion, cmbCalcT3InventionFacilitySystem, cmbCalcT3InventionFacilityorArray, _
                                 lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityDefault, lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
                                 lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualTE, btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityTaxRate, CalcTab, _
-                                chkCalcT3InventionFacilityIncludeCosts, chkCalcT3InventionFacilityIncludeTime, Autoload)
+                               chkCalcT3InventionFacilityIncludeUsage, chkCalcT3InventionFacilityIncludeCost, chkCalcT3InventionFacilityIncludeTime, Autoload)
 
             Call cmbCalcT3InventionFacilityorArray.Focus()
             If Autoload Then
@@ -11064,7 +11146,7 @@ ExitSub:
                                 ActivityInvention, cmbCalcT3InventionFacilityType, cmbCalcT3InventionFacilityRegion, cmbCalcT3InventionFacilitySystem, cmbCalcT3InventionFacilityorArray, _
                                 lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityDefault, lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
                                 lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualTE, btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityTaxRate, CalcTab, _
-                                chkCalcT3InventionFacilityIncludeCosts, chkCalcT3InventionFacilityIncludeTime, Nothing)
+                                chkCalcT3InventionFacilityIncludeUsage, chkCalcT3InventionFacilityIncludeCost, chkCalcT3InventionFacilityIncludeTime, Nothing)
             PreviousCalcT3InventionFacilityEquipment = cmbCalcT3InventionFacilityorArray.Text
         End If
     End Sub
@@ -11085,7 +11167,7 @@ ExitSub:
                                       cmbCalcT3InventionFacilityRegion, cmbCalcT3InventionFacilitySystem, cmbCalcT3InventionFacilityorArray, _
                                       lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityDefault, lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
                                       lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualTE, btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityTaxRate, _
-                                      chkCalcT3InventionFacilityIncludeCosts, chkCalcT3InventionFacilityIncludeTime, CalcTab, CalcT3InventionFacilityLoaded)
+                                      chkCalcT3InventionFacilityIncludeUsage, chkCalcT3InventionFacilityIncludeCost, chkCalcT3InventionFacilityIncludeTime, CalcTab, CalcT3InventionFacilityLoaded)
 
             If txtCalcT3InventionFacilityManualME.Visible Then
                 Call txtCalcT3InventionFacilityManualME.Focus()
@@ -11098,7 +11180,8 @@ ExitSub:
 
     Private Sub btnCalcT3InventionFacilitySave_Click(sender As System.Object, e As System.EventArgs) Handles btnCalcT3InventionFacilitySave.Click
 
-        SelectedCalcT3InventionFacility.IncludeActivityCost = chkCalcT3InventionFacilityIncludeCosts.Checked
+        SelectedCalcT3InventionFacility.IncludeActivityUsage = chkCalcT3InventionFacilityIncludeUsage.Checked
+        SelectedCalcT3InventionFacility.IncludeActivityCost = chkCalcT3InventionFacilityIncludeCost.Checked
         SelectedCalcT3InventionFacility.IncludeActivityTime = chkCalcT3InventionFacilityIncludeTime.Checked
         Call SelectedCalcT3InventionFacility.SaveFacility(CalcTab)
         DefaultCalcT3InventionFacility = CType(SelectedCalcT3InventionFacility, IndustryFacility)
@@ -11194,12 +11277,14 @@ ExitSub:
 
     End Sub
 
-    Private Sub chkCalcT3InventionFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcT3InventionFacilityIncludeCosts.CheckedChanged
+    Private Sub chkCalcT3InventionFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcT3InventionFacilityIncludeCost.CheckedChanged
         If Not FirstLoad Then
+            ' Set the include cost
+            SelectedCalcT3InventionFacility.IncludeActivityCost = chkCalcT3InventionFacilityIncludeCost.Checked
             Call SetDefaultFacilitybyCheck(GetProductionType(ActivityInvention, StrategicCruiserGroupID, -1, cmbCalcT3InventionFacilityType.Text), _
-                                                     chkCalcT3InventionFacilityIncludeCosts, CalcTab, cmbCalcT3InventionFacilityType.Text, _
+                                                     chkCalcT3InventionFacilityIncludeUsage, CalcTab, cmbCalcT3InventionFacilityType.Text, _
                                                      cmbCalcT3InventionFacilityorArray, lblCalcT3InventionFacilityDefault, _
-                                                     btnCalcT3InventionFacilitySave, chkCalcT3InventionFacilityIncludeTime)
+                                                     btnCalcT3InventionFacilitySave, chkCalcT3InventionFacilityIncludeCost, chkCalcT3InventionFacilityIncludeTime)
             Call ResetRefresh()
         End If
     End Sub
@@ -11209,9 +11294,20 @@ ExitSub:
             ' Set the include time
             SelectedCalcT3InventionFacility.IncludeActivityTime = chkCalcT3InventionFacilityIncludeTime.Checked
             Call SetDefaultFacilitybyCheck(GetProductionType(ActivityInvention, StrategicCruiserGroupID, -1, cmbCalcT3InventionFacilityType.Text), _
-                                                     chkCalcT3InventionFacilityIncludeCosts, CalcTab, cmbCalcT3InventionFacilityType.Text, _
+                                                     chkCalcT3InventionFacilityIncludeUsage, CalcTab, cmbCalcT3InventionFacilityType.Text, _
                                                      cmbCalcT3InventionFacilityorArray, lblCalcT3InventionFacilityDefault, _
-                                                     btnCalcT3InventionFacilitySave, chkCalcT3InventionFacilityIncludeTime)
+                                                     btnCalcT3InventionFacilitySave, chkCalcT3InventionFacilityIncludeCost, chkCalcT3InventionFacilityIncludeTime)
+            Call ResetRefresh()
+        End If
+    End Sub
+
+    Private Sub chkCalcT3InventionFacilityIncludeUsage_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcT3InventionFacilityIncludeUsage.CheckedChanged
+        If Not FirstLoad Then
+            ' Set the include time
+            Call SetDefaultFacilitybyCheck(GetProductionType(ActivityInvention, StrategicCruiserGroupID, -1, cmbCalcT3InventionFacilityType.Text), _
+                                                     chkCalcT3InventionFacilityIncludeUsage, CalcTab, cmbCalcT3InventionFacilityType.Text, _
+                                                     cmbCalcT3InventionFacilityorArray, lblCalcT3InventionFacilityDefault, _
+                                                     btnCalcT3InventionFacilitySave, chkCalcT3InventionFacilityIncludeCost, chkCalcT3InventionFacilityIncludeTime)
             Call ResetRefresh()
         End If
     End Sub
@@ -11235,12 +11331,14 @@ ExitSub:
                                          lblCalcCopyFacilityBonus, lblCalcCopyFacilityDefault, lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
                                          lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualTE, btnCalcCopyFacilitySave, lblCalcCopyFacilityTaxRate, CalcTab)
                 ' Make sure these are enabled when changed
-                chkCalcCopyFacilityIncludeCosts.Enabled = True
+                chkCalcCopyFacilityIncludeUsage.Enabled = True
+                chkCalcCopyFacilityIncludeCost.Enabled = True
                 chkCalcCopyFacilityIncludeTime.Enabled = True
+                lblCalcCopyInclude.Enabled = True
                 Call cmbCalcCopyFacilityRegion.Focus()
 
             ElseIf cmbCalcCopyFacilityType.Text = None Then
-                Call SetNoFacility(cmbCalcCopyFacilityRegion, cmbCalcCopyFacilitySystem, cmbCalcCopyFacilityorArray, Nothing, chkCalcCopyFacilityIncludeCosts, chkCalcCopyFacilityIncludeTime)
+                Call SetNoFacility(cmbCalcCopyFacilityRegion, cmbCalcCopyFacilitySystem, cmbCalcCopyFacilityorArray, chkCalcCopyFacilityIncludeUsage, chkCalcCopyFacilityIncludeCost, chkCalcCopyFacilityIncludeTime)
                 ' Allow this to be saved as a default though
                 btnCalcCopyFacilitySave.Enabled = True
                 ' changed so not the default
@@ -11255,7 +11353,7 @@ ExitSub:
                                cmbCalcCopyFacilityRegion, cmbCalcCopyFacilitySystem, cmbCalcCopyFacilityorArray, _
                                lblCalcCopyFacilityBonus, lblCalcCopyFacilityDefault, lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
                                lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualTE, btnCalcCopyFacilitySave, lblCalcCopyFacilityTaxRate, _
-                               chkCalcCopyFacilityIncludeCosts, chkCalcCopyFacilityIncludeTime, CalcTab, CalcCopyFacilityLoaded)
+                               chkCalcCopyFacilityIncludeUsage, chkCalcCopyFacilityIncludeCost, chkCalcCopyFacilityIncludeTime, CalcTab, CalcCopyFacilityLoaded)
             End If
 
             ' Anytime this changes, set all the other ME/TE boxes to not viewed
@@ -11316,7 +11414,7 @@ ExitSub:
                                 ActivityCopying, cmbCalcCopyFacilityType, cmbCalcCopyFacilityRegion, cmbCalcCopyFacilitySystem, cmbCalcCopyFacilityorArray, _
                                 lblCalcCopyFacilityBonus, lblCalcCopyFacilityDefault, lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
                                 lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualTE, btnCalcCopyFacilitySave, lblCalcCopyFacilityTaxRate, CalcTab, _
-                                chkCalcCopyFacilityIncludeCosts, chkCalcCopyFacilityIncludeTime, Autoload)
+                                chkCalcCopyFacilityIncludeUsage, chkCalcCopyFacilityIncludeCost, chkCalcCopyFacilityIncludeTime, Autoload)
 
             Call cmbCalcCopyFacilityorArray.Focus()
             If Autoload Then
@@ -11334,7 +11432,7 @@ ExitSub:
                                 ActivityCopying, cmbCalcCopyFacilityType, cmbCalcCopyFacilityRegion, cmbCalcCopyFacilitySystem, cmbCalcCopyFacilityorArray, _
                                 lblCalcCopyFacilityBonus, lblCalcCopyFacilityDefault, lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
                                 lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualTE, btnCalcCopyFacilitySave, lblCalcCopyFacilityTaxRate, CalcTab, _
-                                chkCalcCopyFacilityIncludeCosts, chkCalcCopyFacilityIncludeTime, Nothing)
+                                chkCalcCopyFacilityIncludeUsage, chkCalcCopyFacilityIncludeCost, chkCalcCopyFacilityIncludeTime, Nothing)
             PreviousCalcCopyFacilityEquipment = cmbCalcCopyFacilityorArray.Text
         End If
     End Sub
@@ -11355,7 +11453,7 @@ ExitSub:
                                       cmbCalcCopyFacilityRegion, cmbCalcCopyFacilitySystem, cmbCalcCopyFacilityorArray, _
                                       lblCalcCopyFacilityBonus, lblCalcCopyFacilityDefault, lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
                                       lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualTE, btnCalcCopyFacilitySave, lblCalcCopyFacilityTaxRate, _
-                                      chkCalcCopyFacilityIncludeCosts, chkCalcCopyFacilityIncludeCosts, CalcTab, CalcCopyFacilityLoaded)
+                                      chkCalcCopyFacilityIncludeUsage, chkCalcCopyFacilityIncludeCost, chkCalcCopyFacilityIncludeCost, CalcTab, CalcCopyFacilityLoaded)
 
             If txtCalcCopyFacilityManualME.Visible Then
                 Call txtCalcCopyFacilityManualME.Focus()
@@ -11368,7 +11466,8 @@ ExitSub:
 
     Private Sub btnCalcCopyFacilitySave_Click(sender As System.Object, e As System.EventArgs) Handles btnCalcCopyFacilitySave.Click
 
-        SelectedCalcCopyFacility.IncludeActivityCost = chkCalcCopyFacilityIncludeCosts.Checked
+        SelectedCalcCopyFacility.IncludeActivityUsage = chkCalcCopyFacilityIncludeUsage.Checked
+        SelectedCalcCopyFacility.IncludeActivityCost = chkCalcCopyFacilityIncludeCost.Checked
         SelectedCalcCopyFacility.IncludeActivityTime = chkCalcCopyFacilityIncludeTime.Checked
         Call SelectedCalcCopyFacility.SaveFacility(CalcTab)
         DefaultCalcCopyFacility = CType(SelectedCalcCopyFacility, IndustryFacility)
@@ -11464,12 +11563,14 @@ ExitSub:
 
     End Sub
 
-    Private Sub chkCalcCopyFacilityIncludeCost_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcCopyFacilityIncludeCosts.CheckedChanged
+    Private Sub chkCalcCopyFacilityIncludeCost_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcCopyFacilityIncludeCost.CheckedChanged
         If Not FirstLoad Then
+            ' Set the copy cost first
+            SelectedCalcCopyFacility.IncludeActivityCost = chkCalcCopyFacilityIncludeCost.Checked
             Call SetDefaultFacilitybyCheck(GetProductionType(ActivityCopying, 0, 0, cmbCalcCopyFacilityType.Text), _
-                                                     chkCalcCopyFacilityIncludeCosts, CalcTab, cmbCalcCopyFacilityType.Text, _
+                                                     chkCalcCopyFacilityIncludeUsage, CalcTab, cmbCalcCopyFacilityType.Text, _
                                                      cmbCalcCopyFacilityorArray, lblCalcCopyFacilityDefault, _
-                                                     btnCalcCopyFacilitySave, chkCalcCopyFacilityIncludeTime)
+                                                     btnCalcCopyFacilitySave, chkCalcCopyFacilityIncludeCost, chkCalcCopyFacilityIncludeTime)
             Call ResetRefresh()
         End If
     End Sub
@@ -11479,9 +11580,19 @@ ExitSub:
             ' Set the copy time first
             SelectedCalcCopyFacility.IncludeActivityTime = chkCalcCopyFacilityIncludeTime.Checked
             Call SetDefaultFacilitybyCheck(GetProductionType(ActivityCopying, 0, 0, cmbCalcCopyFacilityType.Text), _
-                                                     chkCalcCopyFacilityIncludeCosts, CalcTab, cmbCalcCopyFacilityType.Text, _
+                                                     chkCalcCopyFacilityIncludeUsage, CalcTab, cmbCalcCopyFacilityType.Text, _
                                                      cmbCalcCopyFacilityorArray, lblCalcCopyFacilityDefault, _
-                                                     btnCalcCopyFacilitySave, chkCalcCopyFacilityIncludeTime)
+                                                     btnCalcCopyFacilitySave, chkCalcCopyFacilityIncludeCost, chkCalcCopyFacilityIncludeTime)
+            Call ResetRefresh()
+        End If
+    End Sub
+
+    Private Sub chkCalcCopyFacilityIncludeUsage_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcCopyFacilityIncludeUsage.CheckedChanged
+        If Not FirstLoad Then
+            Call SetDefaultFacilitybyCheck(GetProductionType(ActivityCopying, 0, 0, cmbCalcCopyFacilityType.Text), _
+                                                     chkCalcCopyFacilityIncludeUsage, CalcTab, cmbCalcCopyFacilityType.Text, _
+                                                     cmbCalcCopyFacilityorArray, lblCalcCopyFacilityDefault, _
+                                                     btnCalcCopyFacilitySave, chkCalcCopyFacilityIncludeCost, chkCalcCopyFacilityIncludeTime)
             Call ResetRefresh()
         End If
     End Sub
@@ -11568,7 +11679,7 @@ ExitSub:
                                 ActivityManufacturing, cmbCalcNoPOSFacilityType, cmbCalcNoPOSFacilityRegion, cmbCalcNoPOSFacilitySystem, cmbCalcNoPOSFacilityorArray, _
                                 lblCalcNoPOSFacilityBonus, lblCalcNoPOSFacilityDefault, lblCalcNoPOSFacilityManualME, txtCalcNoPOSFacilityManualME, _
                                 lblCalcNoPOSFacilityManualTE, txtCalcNoPOSFacilityManualTE, btnCalcNoPOSFacilitySave, lblCalcNoPOSFacilityTaxRate, CalcTab, _
-                                chkCalcNoPOSFacilityIncludeCosts, Nothing, Autoload)
+                                chkCalcNoPOSFacilityIncludeusage, Nothing, Nothing, Autoload)
 
             Call cmbCalcNoPOSFacilityorArray.Focus()
             If Autoload Then
@@ -11586,7 +11697,7 @@ ExitSub:
                                 ActivityManufacturing, cmbCalcNoPOSFacilityType, cmbCalcNoPOSFacilityRegion, cmbCalcNoPOSFacilitySystem, cmbCalcNoPOSFacilityorArray, _
                                 lblCalcNoPOSFacilityBonus, lblCalcNoPOSFacilityDefault, lblCalcNoPOSFacilityManualME, txtCalcNoPOSFacilityManualME, _
                                 lblCalcNoPOSFacilityManualTE, txtCalcNoPOSFacilityManualTE, btnCalcNoPOSFacilitySave, lblCalcNoPOSFacilityTaxRate, CalcTab, _
-                                chkCalcNoPOSFacilityIncludeCosts, Nothing, Nothing)
+                                chkCalcNoPOSFacilityIncludeUsage, Nothing, Nothing, Nothing)
             PreviousCalcNoPOSFacilityEquipment = cmbCalcNoPOSFacilityorArray.Text
         End If
     End Sub
@@ -11607,7 +11718,7 @@ ExitSub:
                                       cmbCalcNoPOSFacilityRegion, cmbCalcNoPOSFacilitySystem, cmbCalcNoPOSFacilityorArray, _
                                       lblCalcNoPOSFacilityBonus, lblCalcNoPOSFacilityDefault, lblCalcNoPOSFacilityManualME, txtCalcNoPOSFacilityManualME, _
                                       lblCalcNoPOSFacilityManualTE, txtCalcNoPOSFacilityManualTE, btnCalcNoPOSFacilitySave, lblCalcNoPOSFacilityTaxRate, _
-                                      chkCalcNoPOSFacilityIncludeCosts, Nothing, CalcTab, CalcNoPOSFacilityLoaded)
+                                      chkCalcNoPOSFacilityIncludeUsage, Nothing, Nothing, CalcTab, CalcNoPOSFacilityLoaded)
 
             If txtCalcNoPOSFacilityManualME.Visible Then
                 Call txtCalcNoPOSFacilityManualME.Focus()
@@ -11620,7 +11731,7 @@ ExitSub:
 
     Private Sub btnCalcNoPOSFacilitySave_Click(sender As System.Object, e As System.EventArgs) Handles btnCalcNoPOSFacilitySave.Click
 
-        SelectedCalcNoPOSFacility.IncludeActivityCost = chkCalcNoPOSFacilityIncludeCosts.Checked
+        SelectedCalcNoPOSFacility.IncludeActivityCost = chkCalcNoPOSFacilityIncludeUsage.Checked
         Call SelectedCalcNoPOSFacility.SaveFacility(CalcTab)
         DefaultCalcNoPOSFacility = CType(SelectedCalcNoPOSFacility, IndustryFacility)
 
@@ -11715,10 +11826,10 @@ ExitSub:
 
     End Sub
 
-    Private Sub chkCalcNoPOSFacilityIncludeCost_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcNoPOSFacilityIncludeCosts.CheckedChanged
+    Private Sub chkCalcNoPOSFacilityIncludeCost_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcNoPOSFacilityIncludeUsage.CheckedChanged
         If Not FirstLoad Then
             Call SetDefaultFacilitybyCheck(GetProductionType(ActivityManufacturing, 0, 0, cmbCalcNoPOSFacilityType.Text), _
-                               chkCalcNoPOSFacilityIncludeCosts, CalcTab, cmbCalcNoPOSFacilityType.Text, cmbCalcNoPOSFacilityorArray, _
+                               chkCalcNoPOSFacilityIncludeUsage, CalcTab, cmbCalcNoPOSFacilityType.Text, cmbCalcNoPOSFacilityorArray, _
                                lblCalcNoPOSFacilityDefault, btnCalcNoPOSFacilitySave)
             Call ResetRefresh()
         End If
@@ -11805,7 +11916,7 @@ ExitSub:
                                 ActivityManufacturing, cmbCalcSuperFacilityType, cmbCalcSuperFacilityRegion, cmbCalcSuperFacilitySystem, cmbCalcSuperFacilityorArray, _
                                 lblCalcSuperFacilityBonus, lblCalcSuperFacilityDefault, lblCalcSuperFacilityManualME, txtCalcSuperFacilityManualME, _
                                 lblCalcSuperFacilityManualTE, txtCalcSuperFacilityManualTE, btnCalcSuperFacilitySave, lblCalcSuperFacilityTaxRate, CalcTab, _
-                                chkCalcSuperFacilityIncludeCosts, Nothing, Autoload)
+                                chkCalcSuperFacilityIncludeUsage, Nothing, Nothing, Autoload)
 
             Call cmbCalcSuperFacilityorArray.Focus()
             If Autoload Then
@@ -11823,7 +11934,7 @@ ExitSub:
                                 ActivityManufacturing, cmbCalcSuperFacilityType, cmbCalcSuperFacilityRegion, cmbCalcSuperFacilitySystem, cmbCalcSuperFacilityorArray, _
                                 lblCalcSuperFacilityBonus, lblCalcSuperFacilityDefault, lblCalcSuperFacilityManualME, txtCalcSuperFacilityManualME, _
                                 lblCalcSuperFacilityManualTE, txtCalcSuperFacilityManualTE, btnCalcSuperFacilitySave, lblCalcSuperFacilityTaxRate, CalcTab, _
-                                chkCalcSuperFacilityIncludeCosts, Nothing, Nothing)
+                                chkCalcSuperFacilityIncludeUsage, Nothing, Nothing, Nothing)
             PreviousCalcSuperFacilityEquipment = cmbCalcSuperFacilityorArray.Text
         End If
     End Sub
@@ -11844,7 +11955,7 @@ ExitSub:
                                       cmbCalcSuperFacilityRegion, cmbCalcSuperFacilitySystem, cmbCalcSuperFacilityorArray, _
                                       lblCalcSuperFacilityBonus, lblCalcSuperFacilityDefault, lblCalcSuperFacilityManualME, txtCalcSuperFacilityManualME, _
                                       lblCalcSuperFacilityManualTE, txtCalcSuperFacilityManualTE, btnCalcSuperFacilitySave, lblCalcSuperFacilityTaxRate, _
-                                      chkCalcSuperFacilityIncludeCosts, Nothing, CalcTab, CalcSuperFacilityLoaded)
+                                      chkCalcSuperFacilityIncludeUsage, Nothing, Nothing, CalcTab, CalcSuperFacilityLoaded)
 
             If txtCalcSuperFacilityManualME.Visible Then
                 Call txtCalcSuperFacilityManualME.Focus()
@@ -11857,7 +11968,7 @@ ExitSub:
 
     Private Sub btnCalcSuperFacilitySave_Click(sender As System.Object, e As System.EventArgs) Handles btnCalcSuperFacilitySave.Click
 
-        SelectedCalcSuperManufacturingFacility.IncludeActivityCost = chkCalcSuperFacilityIncludeCosts.Checked
+        SelectedCalcSuperManufacturingFacility.IncludeActivityCost = chkCalcSuperFacilityIncludeUsage.Checked
         Call SelectedCalcSuperManufacturingFacility.SaveFacility(CalcTab)
         DefaultCalcSuperManufacturingFacility = CType(SelectedCalcSuperManufacturingFacility, IndustryFacility)
 
@@ -11952,10 +12063,10 @@ ExitSub:
 
     End Sub
 
-    Private Sub chkCalcSuperFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcSuperFacilityIncludeCosts.CheckedChanged
+    Private Sub chkCalcSuperFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcSuperFacilityIncludeUsage.CheckedChanged
         If Not FirstLoad Then
             Call SetDefaultFacilitybyCheck(GetProductionType(ActivityManufacturing, SuperGroupID, -1, cmbCalcSuperFacilityType.Text), _
-                               chkCalcSuperFacilityIncludeCosts, CalcTab, cmbCalcSuperFacilityType.Text, cmbCalcSuperFacilityorArray, _
+                               chkCalcSuperFacilityIncludeUsage, CalcTab, cmbCalcSuperFacilityType.Text, cmbCalcSuperFacilityorArray, _
                                lblCalcSuperFacilityDefault, btnCalcSuperFacilitySave)
             Call ResetRefresh()
         End If
@@ -12042,7 +12153,7 @@ ExitSub:
                                 ActivityManufacturing, cmbCalcCapitalFacilityType, cmbCalcCapitalFacilityRegion, cmbCalcCapitalFacilitySystem, cmbCalcCapitalFacilityorArray, _
                                 lblCalcCapitalFacilityBonus, lblCalcCapitalFacilityDefault, lblCalcCapitalFacilityManualME, txtCalcCapitalFacilityManualME, _
                                 lblCalcCapitalFacilityManualTE, txtCalcCapitalFacilityManualTE, btnCalcCapitalFacilitySave, lblCalcCapitalFacilityTaxRate, CalcTab, _
-                                chkCalcCapitalFacilityIncludeCosts, Nothing, Autoload)
+                                chkCalcSuperFacilityIncludeUsage, Nothing, Nothing, Autoload)
 
             Call cmbCalcCapitalFacilityorArray.Focus()
             If Autoload Then
@@ -12060,7 +12171,7 @@ ExitSub:
                                 ActivityManufacturing, cmbCalcCapitalFacilityType, cmbCalcCapitalFacilityRegion, cmbCalcCapitalFacilitySystem, cmbCalcCapitalFacilityorArray, _
                                 lblCalcCapitalFacilityBonus, lblCalcCapitalFacilityDefault, lblCalcCapitalFacilityManualME, txtCalcCapitalFacilityManualME, _
                                 lblCalcCapitalFacilityManualTE, txtCalcCapitalFacilityManualTE, btnCalcCapitalFacilitySave, lblCalcCapitalFacilityTaxRate, CalcTab, _
-                                chkCalcCapitalFacilityIncludeCosts, Nothing, Nothing)
+                                chkCalcCapitalFacilityIncludeUsage, Nothing, Nothing, Nothing)
             PreviousCalcCapitalFacilityEquipment = cmbCalcCapitalFacilityorArray.Text
         End If
     End Sub
@@ -12081,7 +12192,7 @@ ExitSub:
                                       cmbCalcCapitalFacilityRegion, cmbCalcCapitalFacilitySystem, cmbCalcCapitalFacilityorArray, _
                                       lblCalcCapitalFacilityBonus, lblCalcCapitalFacilityDefault, lblCalcCapitalFacilityManualME, txtCalcCapitalFacilityManualME, _
                                       lblCalcCapitalFacilityManualTE, txtCalcCapitalFacilityManualTE, btnCalcCapitalFacilitySave, lblCalcCapitalFacilityTaxRate, _
-                                      chkCalcCapitalFacilityIncludeCosts, Nothing, CalcTab, CalcCapitalFacilityLoaded)
+                                      chkCalcCapitalFacilityIncludeUsage, Nothing, Nothing, CalcTab, CalcCapitalFacilityLoaded)
 
             If txtCalcCapitalFacilityManualME.Visible Then
                 Call txtCalcCapitalFacilityManualME.Focus()
@@ -12094,7 +12205,7 @@ ExitSub:
 
     Private Sub btnCalcCapitalFacilitySave_Click(sender As System.Object, e As System.EventArgs) Handles btnCalcCapitalFacilitySave.Click
 
-        SelectedCalcCapitalManufacturingFacility.IncludeActivityCost = chkCalcCapitalFacilityIncludeCosts.Checked
+        SelectedCalcCapitalManufacturingFacility.IncludeActivityCost = chkCalcCapitalFacilityIncludeUsage.Checked
         Call SelectedCalcCapitalManufacturingFacility.SaveFacility(CalcTab)
         DefaultCalcCapitalManufacturingFacility = CType(SelectedCalcCapitalManufacturingFacility, IndustryFacility)
 
@@ -12189,10 +12300,10 @@ ExitSub:
 
     End Sub
 
-    Private Sub chkCalcCapitalFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcCapitalFacilityIncludeCosts.CheckedChanged
+    Private Sub chkCalcCapitalFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcCapitalFacilityIncludeUsage.CheckedChanged
         If Not FirstLoad Then
             Call SetDefaultFacilitybyCheck(GetProductionType(ActivityManufacturing, DredGroupID, 0, cmbCalcCapitalFacilityType.Text), _
-                                                     chkCalcCapitalFacilityIncludeCosts, CalcTab, cmbCalcCapitalFacilityType.Text, _
+                                                     chkCalcCapitalFacilityIncludeUsage, CalcTab, cmbCalcCapitalFacilityType.Text, _
                                                      cmbCalcCapitalFacilityorArray, lblCalcCapitalFacilityDefault, btnCalcCapitalFacilitySave)
             Call ResetRefresh()
         End If
@@ -12279,7 +12390,7 @@ ExitSub:
                                 ActivityManufacturing, cmbCalcT3FacilityType, cmbCalcT3FacilityRegion, cmbCalcT3FacilitySystem, cmbCalcT3FacilityorArray, _
                                 lblCalcT3FacilityBonus, lblCalcT3FacilityDefault, lblCalcT3FacilityManualME, txtCalcT3FacilityManualME, _
                                 lblCalcT3FacilityManualTE, txtCalcT3FacilityManualTE, btnCalcT3FacilitySave, lblCalcT3FacilityTaxRate, CalcTab, _
-                                chkCalcT3FacilityIncludeCosts, Nothing, Autoload)
+                                chkCalcT3FacilityIncludeUsage, Nothing, Nothing, Autoload)
 
             Call cmbCalcT3FacilityorArray.Focus()
             If Autoload Then
@@ -12297,7 +12408,7 @@ ExitSub:
                                 ActivityManufacturing, cmbCalcT3FacilityType, cmbCalcT3FacilityRegion, cmbCalcT3FacilitySystem, cmbCalcT3FacilityorArray, _
                                 lblCalcT3FacilityBonus, lblCalcT3FacilityDefault, lblCalcT3FacilityManualME, txtCalcT3FacilityManualME, _
                                 lblCalcT3FacilityManualTE, txtCalcT3FacilityManualTE, btnCalcT3FacilitySave, lblCalcT3FacilityTaxRate, CalcTab, _
-                                chkCalcT3FacilityIncludeCosts, Nothing, Nothing)
+                                chkCalcT3FacilityIncludeUsage, Nothing, Nothing, Nothing)
             PreviousCalcT3FacilityEquipment = cmbCalcT3FacilityorArray.Text
         End If
     End Sub
@@ -12318,7 +12429,7 @@ ExitSub:
                                       cmbCalcT3FacilityRegion, cmbCalcT3FacilitySystem, cmbCalcT3FacilityorArray, _
                                       lblCalcT3FacilityBonus, lblCalcT3FacilityDefault, lblCalcT3FacilityManualME, txtCalcT3FacilityManualME, _
                                       lblCalcT3FacilityManualTE, txtCalcT3FacilityManualTE, btnCalcT3FacilitySave, lblCalcT3FacilityTaxRate, _
-                                      chkCalcT3FacilityIncludeCosts, Nothing, CalcTab, CalcT3FacilityLoaded)
+                                      chkCalcT3FacilityIncludeUsage, Nothing, Nothing, CalcTab, CalcT3FacilityLoaded)
 
             If txtCalcT3FacilityManualME.Visible Then
                 Call txtCalcT3FacilityManualME.Focus()
@@ -12331,7 +12442,7 @@ ExitSub:
 
     Private Sub btnCalcT3FacilitySave_Click(sender As System.Object, e As System.EventArgs) Handles btnCalcT3FacilitySave.Click
 
-        SelectedCalcT3ManufacturingFacility.IncludeActivityCost = chkCalcT3FacilityIncludeCosts.Checked
+        SelectedCalcT3ManufacturingFacility.IncludeActivityCost = chkCalcT3FacilityIncludeUsage.Checked
         Call SelectedCalcT3ManufacturingFacility.SaveFacility(CalcTab)
         DefaultCalcT3ManufacturingFacility = CType(SelectedCalcT3ManufacturingFacility, IndustryFacility)
 
@@ -12426,10 +12537,10 @@ ExitSub:
 
     End Sub
 
-    Private Sub chkCalcT3FacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcT3FacilityIncludeCosts.CheckedChanged
+    Private Sub chkCalcT3FacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcT3FacilityIncludeUsage.CheckedChanged
         If Not FirstLoad Then
             Call SetDefaultFacilitybyCheck(GetProductionType(ActivityManufacturing, StrategicCruiserGroupID, 0, cmbCalcT3FacilityType.Text), _
-                                                     chkCalcT3FacilityIncludeCosts, CalcTab, cmbCalcT3FacilityType.Text, _
+                                                     chkCalcT3FacilityIncludeUsage, CalcTab, cmbCalcT3FacilityType.Text, _
                                                      cmbCalcT3FacilityorArray, lblCalcT3FacilityDefault, btnCalcT3FacilitySave)
             Call ResetRefresh()
         End If
@@ -12516,7 +12627,7 @@ ExitSub:
                                 ActivityManufacturing, cmbCalcSubsystemFacilityType, cmbCalcSubsystemFacilityRegion, cmbCalcSubsystemFacilitySystem, cmbCalcSubsystemFacilityorArray, _
                                 lblCalcSubsystemFacilityBonus, lblCalcSubsystemFacilityDefault, lblCalcSubsystemFacilityManualME, txtCalcSubsystemFacilityManualME, _
                                 lblCalcSubsystemFacilityManualTE, txtCalcSubsystemFacilityManualTE, btnCalcSubsystemFacilitySave, lblCalcSubsystemFacilityTaxRate, CalcTab, _
-                                chkCalcSubsystemFacilityIncludeCosts, Nothing, Autoload)
+                                chkCalcSubsystemFacilityIncludeUsage, Nothing, Nothing, Autoload)
 
             Call cmbCalcSubsystemFacilityorArray.Focus()
             If Autoload Then
@@ -12534,7 +12645,7 @@ ExitSub:
                                 ActivityManufacturing, cmbCalcSubsystemFacilityType, cmbCalcSubsystemFacilityRegion, cmbCalcSubsystemFacilitySystem, cmbCalcSubsystemFacilityorArray, _
                                 lblCalcSubsystemFacilityBonus, lblCalcSubsystemFacilityDefault, lblCalcSubsystemFacilityManualME, txtCalcSubsystemFacilityManualME, _
                                 lblCalcSubsystemFacilityManualTE, txtCalcSubsystemFacilityManualTE, btnCalcSubsystemFacilitySave, lblCalcSubsystemFacilityTaxRate, CalcTab, _
-                                chkCalcSubsystemFacilityIncludeCosts, Nothing, Nothing)
+                                chkCalcSubsystemFacilityIncludeUsage, Nothing, Nothing, Nothing)
             PreviousCalcSubsystemFacilityEquipment = cmbCalcSubsystemFacilityorArray.Text
         End If
     End Sub
@@ -12555,7 +12666,7 @@ ExitSub:
                                       cmbCalcSubsystemFacilityRegion, cmbCalcSubsystemFacilitySystem, cmbCalcSubsystemFacilityorArray, _
                                       lblCalcSubsystemFacilityBonus, lblCalcSubsystemFacilityDefault, lblCalcSubsystemFacilityManualME, txtCalcSubsystemFacilityManualME, _
                                       lblCalcSubsystemFacilityManualTE, txtCalcSubsystemFacilityManualTE, btnCalcSubsystemFacilitySave, lblCalcSubsystemFacilityTaxRate, _
-                                      chkCalcSubsystemFacilityIncludeCosts, Nothing, CalcTab, CalcSubsystemFacilityLoaded)
+                                      chkCalcSubsystemFacilityIncludeUsage, Nothing, Nothing, CalcTab, CalcSubsystemFacilityLoaded)
 
             If txtCalcSubsystemFacilityManualME.Visible Then
                 Call txtCalcSubsystemFacilityManualME.Focus()
@@ -12568,7 +12679,7 @@ ExitSub:
 
     Private Sub btnCalcSubsystemFacilitySave_Click(sender As System.Object, e As System.EventArgs) Handles btnCalcSubsystemFacilitySave.Click
 
-        SelectedCalcSubsystemManufacturingFacility.IncludeActivityCost = chkCalcSubsystemFacilityIncludeCosts.Checked
+        SelectedCalcSubsystemManufacturingFacility.IncludeActivityCost = chkCalcSubsystemFacilityIncludeUsage.Checked
         Call SelectedCalcSubsystemManufacturingFacility.SaveFacility(CalcTab)
         DefaultCalcSubsystemManufacturingFacility = CType(SelectedCalcSubsystemManufacturingFacility, IndustryFacility)
 
@@ -12663,10 +12774,10 @@ ExitSub:
 
     End Sub
 
-    Private Sub chkCalcSubsystemFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcSubsystemFacilityIncludeCosts.CheckedChanged
+    Private Sub chkCalcSubsystemFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcSubsystemFacilityIncludeUsage.CheckedChanged
         If Not FirstLoad Then
             Call SetDefaultFacilitybyCheck(GetProductionType(ActivityManufacturing, -1, SubsystemCategoryID, cmbCalcSubsystemFacilityType.Text), _
-                                                     chkCalcSubsystemFacilityIncludeCosts, CalcTab, cmbCalcSubsystemFacilityType.Text, _
+                                                     chkCalcSubsystemFacilityIncludeUsage, CalcTab, cmbCalcSubsystemFacilityType.Text, _
                                                      cmbCalcSubsystemFacilityorArray, lblCalcSubsystemFacilityDefault, btnCalcSubsystemFacilitySave)
             Call ResetRefresh()
         End If
@@ -12753,7 +12864,7 @@ ExitSub:
                                 ActivityManufacturing, cmbCalcBoosterFacilityType, cmbCalcBoosterFacilityRegion, cmbCalcBoosterFacilitySystem, cmbCalcBoosterFacilityorArray, _
                                 lblCalcBoosterFacilityBonus, lblCalcBoosterFacilityDefault, lblCalcBoosterFacilityManualME, txtCalcBoosterFacilityManualME, _
                                 lblCalcBoosterFacilityManualTE, txtCalcBoosterFacilityManualTE, btnCalcBoosterFacilitySave, lblCalcBoosterFacilityTaxRate, CalcTab, _
-                                chkCalcBoosterFacilityIncludeCosts, Nothing, Autoload)
+                                chkCalcBoosterFacilityIncludeUsage, Nothing, Nothing, Autoload)
 
             Call cmbCalcBoosterFacilityorArray.Focus()
             If Autoload Then
@@ -12771,7 +12882,7 @@ ExitSub:
                                 ActivityManufacturing, cmbCalcBoosterFacilityType, cmbCalcBoosterFacilityRegion, cmbCalcBoosterFacilitySystem, cmbCalcBoosterFacilityorArray, _
                                 lblCalcBoosterFacilityBonus, lblCalcBoosterFacilityDefault, lblCalcBoosterFacilityManualME, txtCalcBoosterFacilityManualME, _
                                 lblCalcBoosterFacilityManualTE, txtCalcBoosterFacilityManualTE, btnCalcBoosterFacilitySave, lblCalcBoosterFacilityTaxRate, CalcTab, _
-                                chkCalcBoosterFacilityIncludeCosts, Nothing, Nothing)
+                                chkCalcBoosterFacilityIncludeUsage, Nothing, Nothing, Nothing)
             PreviousCalcBoosterFacilityEquipment = cmbCalcBoosterFacilityorArray.Text
         End If
     End Sub
@@ -12792,7 +12903,7 @@ ExitSub:
                                       cmbCalcBoosterFacilityRegion, cmbCalcBoosterFacilitySystem, cmbCalcBoosterFacilityorArray, _
                                       lblCalcBoosterFacilityBonus, lblCalcBoosterFacilityDefault, lblCalcBoosterFacilityManualME, txtCalcBoosterFacilityManualME, _
                                       lblCalcBoosterFacilityManualTE, txtCalcBoosterFacilityManualTE, btnCalcBoosterFacilitySave, lblCalcBoosterFacilityTaxRate, _
-                                      chkCalcBoosterFacilityIncludeCosts, Nothing, CalcTab, CalcBoosterFacilityLoaded)
+                                      chkCalcBoosterFacilityIncludeUsage, Nothing, Nothing, CalcTab, CalcBoosterFacilityLoaded)
 
             If txtCalcBoosterFacilityManualME.Visible Then
                 Call txtCalcBoosterFacilityManualME.Focus()
@@ -12805,7 +12916,7 @@ ExitSub:
 
     Private Sub btnCalcBoosterFacilitySave_Click(sender As System.Object, e As System.EventArgs) Handles btnCalcBoosterFacilitySave.Click
 
-        SelectedCalcBoosterManufacturingFacility.IncludeActivityCost = chkCalcBoosterFacilityIncludeCosts.Checked
+        SelectedCalcBoosterManufacturingFacility.IncludeActivityCost = chkCalcBoosterFacilityIncludeUsage.Checked
         Call SelectedCalcBoosterManufacturingFacility.SaveFacility(CalcTab)
         DefaultCalcBoosterManufacturingFacility = CType(SelectedCalcBoosterManufacturingFacility, IndustryFacility)
 
@@ -12900,10 +13011,10 @@ ExitSub:
 
     End Sub
 
-    Private Sub chkCalcBoosterFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcBoosterFacilityIncludeCosts.CheckedChanged
+    Private Sub chkCalcBoosterFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcBoosterFacilityIncludeUsage.CheckedChanged
         If Not FirstLoad Then
             Call SetDefaultFacilitybyCheck(GetProductionType(ActivityManufacturing, BoosterGroupID, -1, cmbCalcBoosterFacilityType.Text), _
-                                                     chkCalcBoosterFacilityIncludeCosts, CalcTab, cmbCalcBoosterFacilityType.Text, _
+                                                     chkCalcBoosterFacilityIncludeUsage, CalcTab, cmbCalcBoosterFacilityType.Text, _
                                                      cmbCalcBoosterFacilityorArray, lblCalcBoosterFacilityDefault, btnCalcBoosterFacilitySave)
             Call ResetRefresh()
         End If
@@ -15003,12 +15114,12 @@ CheckTechs:
             ' Load the Default facilities for the tab
             LoadingFacilityActivities = True ' Don't trigger a combo load yet
             CalcBaseFacilityLoaded = False
-            chkCalcBaseFacilityIncludeUsage.Checked = DefaultCalcBaseManufacturingFacility.IncludeActivityCost
+            chkCalcBaseFacilityIncludeUsage.Checked = DefaultCalcBaseManufacturingFacility.IncludeActivityUsage
             Call LoadFacility(IndustryType.Manufacturing, True, False, _
                               ActivityManufacturing, cmbCalcBaseFacilityType, cmbCalcBaseFacilityRegion, cmbCalcBaseFacilitySystem, cmbCalcBaseFacilityorArray, _
                               lblCalcBaseFacilityBonus, lblCalcBaseFacilityDefault, lblCalcBaseFacilityManualME, txtCalcBaseFacilityManualME, _
                               lblCalcBaseFacilityManualTE, txtCalcBaseFacilityManualTE, btnCalcBaseFacilitySave, lblCalcBaseFacilityTaxRate, _
-                              CalcTab, chkCalcBaseFacilityIncludeUsage, Nothing, CalcBaseFacilityLoaded, Nothing, 1, 0, 0, False)
+                              CalcTab, chkCalcBaseFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcBaseFacilityLoaded, Nothing, 1, 0, 0, False)
             If cmbCalcBaseFacilityType.Text = POSFacility Then
                 ' Show the POS modules for multi-use
                 SetPOSMultiUseArraysVisibility(True)
@@ -15025,106 +15136,109 @@ CheckTechs:
 
             LoadingFacilityActivities = True
             CalcComponentFacilityLoaded = False
-            chkCalcComponentFacilityIncludeCosts.Checked = DefaultCalcComponentManufacturingFacility.IncludeActivityCost
+            chkCalcComponentFacilityIncludeUsage.Checked = DefaultCalcComponentManufacturingFacility.IncludeActivityUsage
             Call LoadFacility(IndustryType.ComponentManufacturing, True, False, _
                               ActivityComponentManufacturing, cmbCalcComponentFacilityType, cmbCalcComponentFacilityRegion, cmbCalcComponentFacilitySystem, cmbCalcComponentFacilityorArray, _
                               lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
                               lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, _
-                              CalcTab, chkCalcComponentFacilityIncludeCosts, Nothing, CalcComponentFacilityLoaded, Nothing, 1, -1, ComponentCategoryID, False)
+                              CalcTab, chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcComponentFacilityLoaded, Nothing, 1, -1, ComponentCategoryID, False)
             LoadingFacilityActivities = False
 
             LoadingFacilityActivities = True
             CalcInventionFacilityLoaded = False
-            chkCalcInventionFacilityIncludeCosts.Checked = DefaultCalcInventionFacility.IncludeActivityCost
+            chkCalcInventionFacilityIncludeUsage.Checked = DefaultCalcInventionFacility.IncludeActivityUsage
+            chkCalcInventionFacilityIncludeCost.Checked = DefaultCalcInventionFacility.IncludeActivityCost
             chkCalcInventionFacilityIncludeTime.Checked = DefaultCalcInventionFacility.IncludeActivityTime
             Call LoadFacility(IndustryType.Invention, True, False, _
                               ActivityInvention, cmbCalcInventionFacilityType, cmbCalcInventionFacilityRegion, cmbCalcInventionFacilitySystem, cmbCalcInventionFacilityorArray, _
                               lblCalcInventionFacilityBonus, lblCalcInventionFacilityDefault, lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
                               lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualTE, btnCalcInventionFacilitySave, lblCalcInventionFacilityTaxRate, _
-                              CalcTab, chkCalcInventionFacilityIncludeCosts, chkCalcInventionFacilityIncludeTime, CalcInventionFacilityLoaded, Nothing, 1, 0, 0, False)
+                              CalcTab, chkCalcInventionFacilityIncludeUsage, lblCalcInventionInclude, chkCalcInventionFacilityIncludeCost, chkCalcInventionFacilityIncludeTime, CalcInventionFacilityLoaded, Nothing, 1, 0, 0, False)
             LoadingFacilityActivities = False
 
             LoadingFacilityActivities = True
             CalcT3InventionFacilityLoaded = False
-            chkCalcT3InventionFacilityIncludeCosts.Checked = DefaultCalcT3InventionFacility.IncludeActivityCost
+            chkCalcT3InventionFacilityIncludeUsage.Checked = DefaultCalcT3InventionFacility.IncludeActivityUsage
+            chkCalcT3InventionFacilityIncludeCost.Checked = DefaultCalcT3InventionFacility.IncludeActivityCost
             chkCalcT3InventionFacilityIncludeTime.Checked = DefaultCalcT3InventionFacility.IncludeActivityTime
             Call LoadFacility(IndustryType.T3Invention, True, False, _
                               ActivityInvention, cmbCalcT3InventionFacilityType, cmbCalcT3InventionFacilityRegion, cmbCalcT3InventionFacilitySystem, cmbCalcT3InventionFacilityorArray, _
                               lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityDefault, lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
                               lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualTE, btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityTaxRate, _
-                              CalcTab, chkCalcT3InventionFacilityIncludeCosts, chkCalcT3InventionFacilityIncludeTime, CalcT3InventionFacilityLoaded, Nothing, 1, StrategicCruiserGroupID, 0, False)
+                              CalcTab, chkCalcT3InventionFacilityIncludeUsage, lblCalcT3InventionInclude, chkCalcT3InventionFacilityIncludeCost, chkCalcT3InventionFacilityIncludeTime, CalcT3InventionFacilityLoaded, Nothing, 1, StrategicCruiserGroupID, 0, False)
             LoadingFacilityActivities = False
 
             LoadingFacilityActivities = True
             CalcCopyFacilityLoaded = False
-            chkCalcCopyFacilityIncludeCosts.Checked = DefaultCalcCopyFacility.IncludeActivityCost
+            chkCalcCopyFacilityIncludeUsage.Checked = DefaultCalcCopyFacility.IncludeActivityUsage
+            chkCalcCopyFacilityIncludeCost.Checked = DefaultCalcCopyFacility.IncludeActivityCost
             chkCalcCopyFacilityIncludeTime.Checked = DefaultCalcCopyFacility.IncludeActivityTime
             Call LoadFacility(IndustryType.Copying, True, False, _
                               ActivityCopying, cmbCalcCopyFacilityType, cmbCalcCopyFacilityRegion, cmbCalcCopyFacilitySystem, cmbCalcCopyFacilityorArray, _
                               lblCalcCopyFacilityBonus, lblCalcCopyFacilityDefault, lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
                               lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualTE, btnCalcCopyFacilitySave, lblCalcCopyFacilityTaxRate, _
-                              CalcTab, chkCalcCopyFacilityIncludeCosts, chkCalcCopyFacilityIncludeTime, CalcCopyFacilityLoaded, Nothing, 1, 0, 0, False)
+                              CalcTab, chkCalcCopyFacilityIncludeUsage, lblCalcCopyInclude, chkCalcCopyFacilityIncludeCost, chkCalcCopyFacilityIncludeTime, CalcCopyFacilityLoaded, Nothing, 1, 0, 0, False)
             LoadingFacilityActivities = False
 
             LoadingFacilityActivities = True
             CalcNoPOSFacilityLoaded = False
-            chkCalcNoPOSFacilityIncludeCosts.Checked = DefaultCalcNoPOSFacility.IncludeActivityCost
+            chkCalcNoPOSFacilityIncludeUsage.Checked = DefaultCalcNoPOSFacility.IncludeActivityCost
             Call LoadFacility(IndustryType.NoPOSManufacturing, True, False, _
                               ActivityManufacturing, cmbCalcNoPOSFacilityType, cmbCalcNoPOSFacilityRegion, cmbCalcNoPOSFacilitySystem, cmbCalcNoPOSFacilityorArray, _
                               lblCalcNoPOSFacilityBonus, lblCalcNoPOSFacilityDefault, lblCalcNoPOSFacilityManualME, txtCalcNoPOSFacilityManualME, _
                               lblCalcNoPOSFacilityManualTE, txtCalcNoPOSFacilityManualTE, btnCalcNoPOSFacilitySave, lblCalcNoPOSFacilityTaxRate, _
-                              CalcTab, chkCalcNoPOSFacilityIncludeCosts, Nothing, CalcNoPOSFacilityLoaded, Nothing, 1, -1, SovStructureCategoryID, False)
+                              CalcTab, chkCalcNoPOSFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcNoPOSFacilityLoaded, Nothing, 1, -1, SovStructureCategoryID, False)
             LoadingFacilityActivities = False
 
             LoadingFacilityActivities = True
             CalcSuperFacilityLoaded = False
-            chkCalcSuperFacilityIncludeCosts.Checked = DefaultCalcSuperManufacturingFacility.IncludeActivityCost
+            chkCalcSuperFacilityIncludeUsage.Checked = DefaultCalcSuperManufacturingFacility.IncludeActivityUsage
             Call LoadFacility(IndustryType.SuperManufacturing, True, False, _
                               ActivityManufacturing, cmbCalcSuperFacilityType, cmbCalcSuperFacilityRegion, cmbCalcSuperFacilitySystem, cmbCalcSuperFacilityorArray, _
                               lblCalcSuperFacilityBonus, lblCalcSuperFacilityDefault, lblCalcSuperFacilityManualME, txtCalcSuperFacilityManualME, _
                               lblCalcSuperFacilityManualTE, txtCalcSuperFacilityManualTE, btnCalcSuperFacilitySave, lblCalcSuperFacilityTaxRate, _
-                              CalcTab, chkCalcSuperFacilityIncludeCosts, Nothing, CalcSuperFacilityLoaded, Nothing, 1, SuperGroupID, -1, False)
+                              CalcTab, chkCalcSuperFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcSuperFacilityLoaded, Nothing, 1, SuperGroupID, -1, False)
             LoadingFacilityActivities = False
 
             LoadingFacilityActivities = True
             CalcCapitalFacilityLoaded = False
-            chkCalcCapitalFacilityIncludeCosts.Checked = DefaultCalcCapitalManufacturingFacility.IncludeActivityCost
+            chkCalcCapitalFacilityIncludeUsage.Checked = DefaultCalcCapitalManufacturingFacility.IncludeActivityUsage
             Call LoadFacility(IndustryType.CapitalManufacturing, True, False, _
                               ActivityManufacturing, cmbCalcCapitalFacilityType, cmbCalcCapitalFacilityRegion, cmbCalcCapitalFacilitySystem, cmbCalcCapitalFacilityorArray, _
                               lblCalcCapitalFacilityBonus, lblCalcCapitalFacilityDefault, lblCalcCapitalFacilityManualME, txtCalcCapitalFacilityManualME, _
                               lblCalcCapitalFacilityManualTE, txtCalcCapitalFacilityManualTE, btnCalcCapitalFacilitySave, lblCalcCapitalFacilityTaxRate, _
-                              CalcTab, chkCalcCapitalFacilityIncludeCosts, Nothing, CalcCapitalFacilityLoaded, Nothing, 1, DredGroupID, -1, False)
+                              CalcTab, chkCalcCapitalFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcCapitalFacilityLoaded, Nothing, 1, DredGroupID, -1, False)
 
             LoadingFacilityActivities = False
 
             LoadingFacilityActivities = True
             CalcT3FacilityLoaded = False
-            chkCalcCapitalFacilityIncludeCosts.Checked = DefaultCalcT3ManufacturingFacility.IncludeActivityCost
+            chkCalcCapitalFacilityIncludeUsage.Checked = DefaultCalcT3ManufacturingFacility.IncludeActivityUsage
             Call LoadFacility(IndustryType.T3Manufacturing, True, False, _
                               ActivityManufacturing, cmbCalcT3FacilityType, cmbCalcT3FacilityRegion, cmbCalcT3FacilitySystem, cmbCalcT3FacilityorArray, _
                               lblCalcT3FacilityBonus, lblCalcT3FacilityDefault, lblCalcT3FacilityManualME, txtCalcT3FacilityManualME, _
                               lblCalcT3FacilityManualTE, txtCalcT3FacilityManualTE, btnCalcT3FacilitySave, lblCalcT3FacilityTaxRate, _
-                              CalcTab, chkCalcT3FacilityIncludeCosts, Nothing, CalcT3FacilityLoaded, Nothing, 1, StrategicCruiserGroupID, -1, False)
+                              CalcTab, chkCalcT3FacilityIncludeUsage, Nothing, Nothing, Nothing, CalcT3FacilityLoaded, Nothing, 1, StrategicCruiserGroupID, -1, False)
             LoadingFacilityActivities = False
 
             LoadingFacilityActivities = True
             CalcSubsystemFacilityLoaded = False
-            chkCalcSubsystemFacilityIncludeCosts.Checked = DefaultCalcSubsystemManufacturingFacility.IncludeActivityCost
+            chkCalcSubsystemFacilityIncludeUsage.Checked = DefaultCalcSubsystemManufacturingFacility.IncludeActivityUsage
             Call LoadFacility(IndustryType.SubsystemManufacturing, True, False, _
                               ActivityManufacturing, cmbCalcSubsystemFacilityType, cmbCalcSubsystemFacilityRegion, cmbCalcSubsystemFacilitySystem, cmbCalcSubsystemFacilityorArray, _
                               lblCalcSubsystemFacilityBonus, lblCalcSubsystemFacilityDefault, lblCalcSubsystemFacilityManualME, txtCalcSubsystemFacilityManualME, _
                               lblCalcSubsystemFacilityManualTE, txtCalcSubsystemFacilityManualTE, btnCalcSubsystemFacilitySave, lblCalcSubsystemFacilityTaxRate, _
-                              CalcTab, chkCalcSubsystemFacilityIncludeCosts, Nothing, CalcSubsystemFacilityLoaded, Nothing, 1, -1, SubsystemCategoryID, False)
+                              CalcTab, chkCalcSubsystemFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcSubsystemFacilityLoaded, Nothing, 1, -1, SubsystemCategoryID, False)
             LoadingFacilityActivities = False
 
             LoadingFacilityActivities = True
             CalcBoosterFacilityLoaded = False
-            chkCalcBoosterFacilityIncludeCosts.Checked = DefaultCalcBoosterManufacturingFacility.IncludeActivityCost
+            chkCalcBoosterFacilityIncludeUsage.Checked = DefaultCalcBoosterManufacturingFacility.IncludeActivityUsage
             Call LoadFacility(IndustryType.BoosterManufacturing, True, False, _
                               ActivityManufacturing, cmbCalcBoosterFacilityType, cmbCalcBoosterFacilityRegion, cmbCalcBoosterFacilitySystem, cmbCalcBoosterFacilityorArray, _
                               lblCalcBoosterFacilityBonus, lblCalcBoosterFacilityDefault, lblCalcBoosterFacilityManualME, txtCalcBoosterFacilityManualME, _
                               lblCalcBoosterFacilityManualTE, txtCalcBoosterFacilityManualTE, btnCalcBoosterFacilitySave, lblCalcBoosterFacilityTaxRate, _
-                              CalcTab, chkCalcBoosterFacilityIncludeCosts, Nothing, CalcBoosterFacilityLoaded, Nothing, 1, BoosterGroupID, -1, False)
+                              CalcTab, chkCalcBoosterFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcBoosterFacilityLoaded, Nothing, 1, BoosterGroupID, -1, False)
             LoadingFacilityActivities = False
 
             ' Other defaults
@@ -15479,7 +15593,7 @@ CheckTechs:
                               ActivityManufacturing, cmbCalcBaseFacilityType, cmbCalcBaseFacilityRegion, cmbCalcBaseFacilitySystem, cmbCalcBaseFacilityorArray, _
                               lblCalcBaseFacilityBonus, lblCalcBaseFacilityDefault, lblCalcBaseFacilityManualME, txtCalcBaseFacilityManualME, _
                               lblCalcBaseFacilityManualTE, txtCalcBaseFacilityManualTE, btnCalcBaseFacilitySave, lblCalcBaseFacilityTaxRate, CalcTab, _
-                              chkCalcBaseFacilityIncludeUsage, Nothing, CalcBaseFacilityLoaded)
+                              chkCalcBaseFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcBaseFacilityLoaded)
         End If
 
         ' Component
@@ -15489,7 +15603,7 @@ CheckTechs:
                               ActivityManufacturing, cmbCalcComponentFacilityType, cmbCalcComponentFacilityRegion, cmbCalcComponentFacilitySystem, cmbCalcComponentFacilityorArray, _
                               lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
                               lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, CalcTab, _
-                              chkCalcComponentFacilityIncludeCosts, Nothing, CalcComponentFacilityLoaded)
+                              chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcComponentFacilityLoaded)
         End If
 
         ' Invention
@@ -15499,7 +15613,17 @@ CheckTechs:
                               ActivityManufacturing, cmbCalcInventionFacilityType, cmbCalcInventionFacilityRegion, cmbCalcInventionFacilitySystem, cmbCalcInventionFacilityorArray, _
                               lblCalcInventionFacilityBonus, lblCalcInventionFacilityDefault, lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
                               lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualTE, btnCalcInventionFacilitySave, lblCalcInventionFacilityTaxRate, CalcTab, _
-                              chkCalcInventionFacilityIncludeCosts, chkCalcInventionFacilityIncludeTime, CalcInventionFacilityLoaded)
+                              chkCalcInventionFacilityIncludeUsage, lblCalcInventionInclude, chkCalcInventionFacilityIncludeCost, chkCalcInventionFacilityIncludeTime, CalcInventionFacilityLoaded)
+        End If
+
+        ' Copy
+        If Not CalcCopyFacilityLoaded Then
+            ' Get the type of facility we are doing
+            Call LoadFacility(IndustryType.Copying, True, True, _
+                              ActivityManufacturing, cmbCalcCopyFacilityType, cmbCalcCopyFacilityRegion, cmbCalcCopyFacilitySystem, cmbCalcCopyFacilityorArray, _
+                              lblCalcCopyFacilityBonus, lblCalcCopyFacilityDefault, lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
+                              lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualTE, btnCalcCopyFacilitySave, lblCalcCopyFacilityTaxRate, CalcTab, _
+                              chkCalcCopyFacilityIncludeUsage, lblCalcCopyInclude, chkCalcCopyFacilityIncludeCost, chkCalcCopyFacilityIncludeTime, CalcCopyFacilityLoaded)
         End If
 
         ' T3 Invention
@@ -15509,7 +15633,7 @@ CheckTechs:
                               ActivityManufacturing, cmbCalcT3InventionFacilityType, cmbCalcT3InventionFacilityRegion, cmbCalcT3InventionFacilitySystem, cmbCalcT3InventionFacilityorArray, _
                               lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityDefault, lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
                               lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualTE, btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityTaxRate, CalcTab, _
-                              chkCalcT3InventionFacilityIncludeCosts, chkCalcT3InventionFacilityIncludeTime, CalcT3InventionFacilityLoaded)
+                              chkCalcT3InventionFacilityIncludeUsage, lblCalcT3InventionInclude, chkCalcT3InventionFacilityIncludeCost, chkCalcT3InventionFacilityIncludeTime, CalcT3InventionFacilityLoaded)
         End If
 
         ' No POS
@@ -15519,7 +15643,7 @@ CheckTechs:
                               ActivityManufacturing, cmbCalcNoPOSFacilityType, cmbCalcNoPOSFacilityRegion, cmbCalcNoPOSFacilitySystem, cmbCalcNoPOSFacilityorArray, _
                               lblCalcNoPOSFacilityBonus, lblCalcNoPOSFacilityDefault, lblCalcNoPOSFacilityManualME, txtCalcNoPOSFacilityManualME, _
                               lblCalcNoPOSFacilityManualTE, txtCalcNoPOSFacilityManualTE, btnCalcNoPOSFacilitySave, lblCalcNoPOSFacilityTaxRate, CalcTab, _
-                              chkCalcNoPOSFacilityIncludeCosts, Nothing, CalcNoPOSFacilityLoaded)
+                              chkCalcNoPOSFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcNoPOSFacilityLoaded)
         End If
 
         ' Capital
@@ -15529,7 +15653,7 @@ CheckTechs:
                               ActivityManufacturing, cmbCalcCapitalFacilityType, cmbCalcCapitalFacilityRegion, cmbCalcCapitalFacilitySystem, cmbCalcCapitalFacilityorArray, _
                               lblCalcCapitalFacilityBonus, lblCalcCapitalFacilityDefault, lblCalcCapitalFacilityManualME, txtCalcCapitalFacilityManualME, _
                               lblCalcCapitalFacilityManualTE, txtCalcCapitalFacilityManualTE, btnCalcCapitalFacilitySave, lblCalcCapitalFacilityTaxRate, CalcTab, _
-                              chkCalcCapitalFacilityIncludeCosts, Nothing, CalcCapitalFacilityLoaded)
+                              chkCalcCapitalFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcCapitalFacilityLoaded)
         End If
 
         ' Super
@@ -15539,7 +15663,7 @@ CheckTechs:
                               ActivityManufacturing, cmbCalcSuperFacilityType, cmbCalcSuperFacilityRegion, cmbCalcSuperFacilitySystem, cmbCalcSuperFacilityorArray, _
                               lblCalcSuperFacilityBonus, lblCalcSuperFacilityDefault, lblCalcSuperFacilityManualME, txtCalcSuperFacilityManualME, _
                               lblCalcSuperFacilityManualTE, txtCalcSuperFacilityManualTE, btnCalcSuperFacilitySave, lblCalcSuperFacilityTaxRate, CalcTab, _
-                              chkCalcSuperFacilityIncludeCosts, Nothing, CalcSuperFacilityLoaded)
+                              chkCalcSuperFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcSuperFacilityLoaded)
         End If
 
         ' T3
@@ -15549,7 +15673,7 @@ CheckTechs:
                               ActivityManufacturing, cmbCalcT3FacilityType, cmbCalcT3FacilityRegion, cmbCalcT3FacilitySystem, cmbCalcT3FacilityorArray, _
                               lblCalcT3FacilityBonus, lblCalcT3FacilityDefault, lblCalcT3FacilityManualME, txtCalcT3FacilityManualME, _
                               lblCalcT3FacilityManualTE, txtCalcT3FacilityManualTE, btnCalcT3FacilitySave, lblCalcT3FacilityTaxRate, CalcTab, _
-                              chkCalcT3FacilityIncludeCosts, Nothing, CalcT3FacilityLoaded)
+                              chkCalcT3FacilityIncludeUsage, Nothing, Nothing, Nothing, CalcT3FacilityLoaded)
         End If
 
         ' Subsystem
@@ -15559,7 +15683,7 @@ CheckTechs:
                               ActivityManufacturing, cmbCalcSubsystemFacilityType, cmbCalcSubsystemFacilityRegion, cmbCalcSubsystemFacilitySystem, cmbCalcSubsystemFacilityorArray, _
                               lblCalcSubsystemFacilityBonus, lblCalcSubsystemFacilityDefault, lblCalcSubsystemFacilityManualME, txtCalcSubsystemFacilityManualME, _
                               lblCalcSubsystemFacilityManualTE, txtCalcSubsystemFacilityManualTE, btnCalcSubsystemFacilitySave, lblCalcSubsystemFacilityTaxRate, CalcTab, _
-                              chkCalcSubsystemFacilityIncludeCosts, Nothing, CalcSubsystemFacilityLoaded)
+                              chkCalcSubsystemFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcSubsystemFacilityLoaded)
         End If
 
         ' Booster
@@ -15569,7 +15693,7 @@ CheckTechs:
                               ActivityManufacturing, cmbCalcBoosterFacilityType, cmbCalcBoosterFacilityRegion, cmbCalcBoosterFacilitySystem, cmbCalcBoosterFacilityorArray, _
                               lblCalcBoosterFacilityBonus, lblCalcBoosterFacilityDefault, lblCalcBoosterFacilityManualME, txtCalcBoosterFacilityManualME, _
                               lblCalcBoosterFacilityManualTE, txtCalcBoosterFacilityManualTE, btnCalcBoosterFacilitySave, lblCalcBoosterFacilityTaxRate, CalcTab, _
-                              chkCalcBoosterFacilityIncludeCosts, Nothing, CalcBoosterFacilityLoaded)
+                              chkCalcBoosterFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcBoosterFacilityLoaded)
         End If
 
         If Not RefreshCalcData Then
@@ -16134,8 +16258,8 @@ CheckTechs:
                                 InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourComponents
                                 InsertItem.CalcType = "Components"
                                 InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetProductionTime, ManufacturingBlueprint.GetTotalUnits)
-                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalComponentCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetTotalManufacturingCost
-                                InsertItem.TotalManufacturingCost = ManufacturingBlueprint.GetTotalManufacturingCost
+                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalComponentCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetTotalManufacturingUsage
+                                InsertItem.TotalManufacturingCost = ManufacturingBlueprint.GetTotalManufacturingUsage
                                 InsertItem.Taxes = ManufacturingBlueprint.GetBPTaxes
                                 InsertItem.BrokerFees = ManufacturingBlueprint.GetBPBrokerFees
                                 InsertItem.BPProductionTime = FormatIPHTime(ManufacturingBlueprint.GetProductionTime)
@@ -16150,9 +16274,9 @@ CheckTechs:
                                 End If
 
                                 If ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T2 Then
-                                    InsertItem.TotalCopyCost = ManufacturingBlueprint.GetCopyUsage
+                                    InsertItem.TotalCopyCost = ManufacturingBlueprint.GetBPCCopyCost
                                 ElseIf ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T3 Then
-                                    InsertItem.TotalCopyCost = ManufacturingBlueprint.GetCopyUsage
+                                    InsertItem.TotalCopyCost = ManufacturingBlueprint.GetBPCCopyCost
                                 Else
                                     InsertItem.TotalCopyCost = 0
                                 End If
@@ -16169,7 +16293,7 @@ CheckTechs:
                             InsertItem.CalcType = "Raw Materials"
                             InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetTotalProductionTime, ManufacturingBlueprint.GetTotalUnits)
                             InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost
-                            InsertItem.TotalManufacturingCost = ManufacturingBlueprint.GetTotalManufacturingCost
+                            InsertItem.TotalManufacturingCost = ManufacturingBlueprint.GetTotalManufacturingUsage
                             InsertItem.Taxes = ManufacturingBlueprint.GetBPTaxes
                             InsertItem.BrokerFees = ManufacturingBlueprint.GetBPBrokerFees
                             InsertItem.BPProductionTime = FormatIPHTime(ManufacturingBlueprint.GetProductionTime)
@@ -16184,9 +16308,9 @@ CheckTechs:
                             End If
 
                             If ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T2 Then
-                                InsertItem.TotalCopyCost = ManufacturingBlueprint.GetCopyUsage
+                                InsertItem.TotalCopyCost = ManufacturingBlueprint.GetBPCCopyCost
                             ElseIf ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T3 Then
-                                InsertItem.TotalCopyCost = ManufacturingBlueprint.GetCopyUsage
+                                InsertItem.TotalCopyCost = ManufacturingBlueprint.GetBPCCopyCost
                             Else
                                 InsertItem.TotalCopyCost = 0
                             End If
@@ -16227,8 +16351,8 @@ CheckTechs:
                                 InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourRaw
                                 InsertItem.CalcType = "Build/Buy"
                                 InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetTotalProductionTime, ManufacturingBlueprint.GetTotalUnits)
-                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetTotalManufacturingCost
-                                InsertItem.TotalManufacturingCost = ManufacturingBlueprint.GetTotalManufacturingCost
+                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetTotalManufacturingUsage
+                                InsertItem.TotalManufacturingCost = ManufacturingBlueprint.GetTotalManufacturingUsage
                                 InsertItem.Taxes = ManufacturingBlueprint.GetBPTaxes
                                 InsertItem.BrokerFees = ManufacturingBlueprint.GetBPBrokerFees
                                 InsertItem.BPProductionTime = FormatIPHTime(ManufacturingBlueprint.GetProductionTime)
@@ -16243,9 +16367,9 @@ CheckTechs:
                                 End If
 
                                 If ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T2 Then
-                                    InsertItem.TotalCopyCost = ManufacturingBlueprint.GetCopyUsage
+                                    InsertItem.TotalCopyCost = ManufacturingBlueprint.GetBPCCopyCost
                                 ElseIf ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T3 Then
-                                    InsertItem.TotalCopyCost = ManufacturingBlueprint.GetCopyUsage
+                                    InsertItem.TotalCopyCost = ManufacturingBlueprint.GetBPCCopyCost
                                 Else
                                     InsertItem.TotalCopyCost = 0
                                 End If
@@ -16262,7 +16386,7 @@ CheckTechs:
                                 InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourComponents
                                 InsertItem.CalcType = "Components"
                                 InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetProductionTime, ManufacturingBlueprint.GetTotalUnits)
-                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalComponentCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetTotalManufacturingCost
+                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalComponentCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetTotalManufacturingUsage
                             ElseIf rbtnCalcCompareRawMats.Checked Then
                                 ' Use the Raw values 
                                 InsertItem.ProfitPercent = ManufacturingBlueprint.GetTotalRawProfitPercent
@@ -16270,7 +16394,7 @@ CheckTechs:
                                 InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourRaw
                                 InsertItem.CalcType = "Raw Materials"
                                 InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetTotalProductionTime, ManufacturingBlueprint.GetTotalUnits)
-                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetTotalManufacturingCost
+                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetTotalManufacturingUsage
                             ElseIf rbtnCalcCompareBuildBuy.Checked Then
                                 ' Use the Build/Buy best rate values (the blueprint was set to get these values above)
                                 InsertItem.ProfitPercent = ManufacturingBlueprint.GetTotalRawProfitPercent
@@ -16278,10 +16402,10 @@ CheckTechs:
                                 InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourRaw
                                 InsertItem.CalcType = "Build/Buy"
                                 InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetTotalProductionTime, ManufacturingBlueprint.GetTotalUnits)
-                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetTotalManufacturingCost
+                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetTotalManufacturingUsage
                             End If
                             InsertItem.ItemMarketPrice = ManufacturingBlueprint.GetItemMarketPrice
-                            InsertItem.TotalManufacturingCost = ManufacturingBlueprint.GetTotalManufacturingCost
+                            InsertItem.TotalManufacturingCost = ManufacturingBlueprint.GetTotalManufacturingUsage
                             InsertItem.Taxes = ManufacturingBlueprint.GetBPTaxes
                             InsertItem.BrokerFees = ManufacturingBlueprint.GetBPBrokerFees
                             InsertItem.BPProductionTime = FormatIPHTime(ManufacturingBlueprint.GetProductionTime)
@@ -16296,8 +16420,8 @@ CheckTechs:
                             InsertItem.ManufacturingTeamUsage = ManufacturingBlueprint.GetManufacturingTeamFee
                             InsertItem.ComponentTeamUsage = ManufacturingBlueprint.GetComponentTeamFee
 
-                            InsertItem.TotalCopyCost = ManufacturingBlueprint.GetCopyUsage
-                            InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetCopyUsage
+                            InsertItem.TotalCopyCost = ManufacturingBlueprint.GetBPCCopyCost
+                            InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetBPCCopyUsage
 
                             If ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T2 Or ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T3 Then
                                 InsertItem.TotalInventionRECost = ManufacturingBlueprint.GetTotalInventionRECost

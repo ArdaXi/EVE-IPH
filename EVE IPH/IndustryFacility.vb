@@ -275,8 +275,8 @@ Public Class IndustryFacility
             .RegionID = RegionID
             .RegionName = RegionName
             .ActivityCostperSecond = ActivityCostPerSecond
-
             .IncludeActivityUsage = IncludeActivityUsage
+
             If Not IsNothing(IncludeActivityCost) Then
                 .IncludeActivityCost = IncludeActivityCost
             End If

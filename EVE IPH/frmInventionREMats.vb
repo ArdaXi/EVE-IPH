@@ -43,15 +43,17 @@
         lstMats.Columns.Add("Total Cost", 100, HorizontalAlignment.Right)
         lstMats.Columns.Add("Quantity", 75, HorizontalAlignment.Right)
 
-        For i = 0 To MaterialList.GetMaterialList.Count - 1
-            Application.DoEvents()
-            MatList = lstMats.Items.Add(MaterialList.GetMaterialList(i).GetMaterialName)
-            TotalCost = CDbl(MaterialList.GetMaterialList(i).GetTotalCost)
-            Quantity = CLng(MaterialList.GetMaterialList(i).GetQuantity)
-            MatList.SubItems.Add(FormatNumber(TotalCost / Quantity, 2))
-            MatList.SubItems.Add(FormatNumber(TotalCost, 2))
-            MatList.SubItems.Add(FormatNumber(Quantity, 0))
-        Next
+        If Not IsNothing(MaterialList.GetMaterialList) Then
+            For i = 0 To MaterialList.GetMaterialList.Count - 1
+                Application.DoEvents()
+                MatList = lstMats.Items.Add(MaterialList.GetMaterialList(i).GetMaterialName)
+                TotalCost = CDbl(MaterialList.GetMaterialList(i).GetTotalCost)
+                Quantity = CLng(MaterialList.GetMaterialList(i).GetQuantity)
+                MatList.SubItems.Add(FormatNumber(TotalCost / Quantity, 2))
+                MatList.SubItems.Add(FormatNumber(TotalCost, 2))
+                MatList.SubItems.Add(FormatNumber(Quantity, 0))
+            Next
+        End If
 
         ' Finally add the usage cost
         MatList = lstMats.Items.Add("Total Usage")

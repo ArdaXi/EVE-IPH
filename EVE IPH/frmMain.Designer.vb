@@ -532,14 +532,16 @@ Partial Class frmMain
         Me.lblCalcComponentFacilityManualTE = New System.Windows.Forms.Label()
         Me.lblCalcComponentFacilityLocation = New System.Windows.Forms.Label()
         Me.lblCalcComponentFacilityType = New System.Windows.Forms.Label()
-        Me.chkCalcComponentFacilityIncludeCosts = New System.Windows.Forms.CheckBox()
+        Me.chkCalcComponentFacilityIncludeUsage = New System.Windows.Forms.CheckBox()
         Me.cmbCalcComponentFacilityType = New System.Windows.Forms.ComboBox()
         Me.lblCalcComponentFacilityManualME = New System.Windows.Forms.Label()
         Me.lblCalcComponentFacilityBonus = New System.Windows.Forms.Label()
         Me.tabCalcFacilityCopy = New System.Windows.Forms.TabPage()
+        Me.lblCalcCopyInclude = New System.Windows.Forms.Label()
+        Me.chkCalcCopyFacilityIncludeUsage = New System.Windows.Forms.CheckBox()
         Me.chkCalcCopyFacilityIncludeTime = New System.Windows.Forms.CheckBox()
         Me.lblCalcCopyFacilityDefault = New System.Windows.Forms.Label()
-        Me.chkCalcCopyFacilityIncludeCosts = New System.Windows.Forms.CheckBox()
+        Me.chkCalcCopyFacilityIncludeCost = New System.Windows.Forms.CheckBox()
         Me.btnCalcCopyFacilitySave = New System.Windows.Forms.Button()
         Me.lblCalcCopyFacilityTaxRate = New System.Windows.Forms.Label()
         Me.txtCalcCopyFacilityManualTE = New System.Windows.Forms.TextBox()
@@ -554,10 +556,12 @@ Partial Class frmMain
         Me.lblCalcCopyFacilityManualME = New System.Windows.Forms.Label()
         Me.lblCalcCopyFacilityBonus = New System.Windows.Forms.Label()
         Me.tabCalcFacilityInvention = New System.Windows.Forms.TabPage()
+        Me.lblCalcInventionInclude = New System.Windows.Forms.Label()
+        Me.chkCalcInventionFacilityIncludeUsage = New System.Windows.Forms.CheckBox()
         Me.lblCalcInventionFacilityDefault = New System.Windows.Forms.Label()
         Me.chkCalcInventionFacilityIncludeTime = New System.Windows.Forms.CheckBox()
         Me.btnCalcInventionFacilitySave = New System.Windows.Forms.Button()
-        Me.chkCalcInventionFacilityIncludeCosts = New System.Windows.Forms.CheckBox()
+        Me.chkCalcInventionFacilityIncludeCost = New System.Windows.Forms.CheckBox()
         Me.lblCalcInventionFacilityTaxRate = New System.Windows.Forms.Label()
         Me.txtCalcInventionFacilityManualTE = New System.Windows.Forms.TextBox()
         Me.txtCalcInventionFacilityManualME = New System.Windows.Forms.TextBox()
@@ -571,11 +575,13 @@ Partial Class frmMain
         Me.lblCalcInventionFacilityManualME = New System.Windows.Forms.Label()
         Me.lblCalcInventionFacilityBonus = New System.Windows.Forms.Label()
         Me.TabPage1 = New System.Windows.Forms.TabPage()
+        Me.lblCalcT3InventionInclude = New System.Windows.Forms.Label()
+        Me.chkCalcT3InventionFacilityIncludeUsage = New System.Windows.Forms.CheckBox()
         Me.lblCalcT3InventionFacilityManualTE = New System.Windows.Forms.Label()
         Me.lblCalcT3InventionFacilityDefault = New System.Windows.Forms.Label()
         Me.chkCalcT3InventionFacilityIncludeTime = New System.Windows.Forms.CheckBox()
         Me.btnCalcT3InventionFacilitySave = New System.Windows.Forms.Button()
-        Me.chkCalcT3InventionFacilityIncludeCosts = New System.Windows.Forms.CheckBox()
+        Me.chkCalcT3InventionFacilityIncludeCost = New System.Windows.Forms.CheckBox()
         Me.lblCalcT3InventionFacilityTaxRate = New System.Windows.Forms.Label()
         Me.txtCalcT3InventionFacilityManualTE = New System.Windows.Forms.TextBox()
         Me.txtCalcT3InventionFacilityManualME = New System.Windows.Forms.TextBox()
@@ -599,7 +605,7 @@ Partial Class frmMain
         Me.lblCalcCapitalFacilityManualTE = New System.Windows.Forms.Label()
         Me.lblCalcCapitalFacilityLocation = New System.Windows.Forms.Label()
         Me.lblCalcCapitalFacilityType = New System.Windows.Forms.Label()
-        Me.chkCalcCapitalFacilityIncludeCosts = New System.Windows.Forms.CheckBox()
+        Me.chkCalcCapitalFacilityIncludeUsage = New System.Windows.Forms.CheckBox()
         Me.cmbCalcCapitalFacilityType = New System.Windows.Forms.ComboBox()
         Me.lblCalcCapitalFacilityManualME = New System.Windows.Forms.Label()
         Me.lblCalcCapitalFacilityBonus = New System.Windows.Forms.Label()
@@ -615,7 +621,7 @@ Partial Class frmMain
         Me.lblCalcSuperFacilityManualTE = New System.Windows.Forms.Label()
         Me.lblCalcSuperFacilityLocation = New System.Windows.Forms.Label()
         Me.lblCalcSuperFacilityType = New System.Windows.Forms.Label()
-        Me.chkCalcSuperFacilityIncludeCosts = New System.Windows.Forms.CheckBox()
+        Me.chkCalcSuperFacilityIncludeUsage = New System.Windows.Forms.CheckBox()
         Me.cmbCalcSuperFacilityType = New System.Windows.Forms.ComboBox()
         Me.lblCalcSuperFacilityManualME = New System.Windows.Forms.Label()
         Me.lblCalcSuperFacilityBonus = New System.Windows.Forms.Label()
@@ -631,7 +637,7 @@ Partial Class frmMain
         Me.lblCalcT3FacilityManualTE = New System.Windows.Forms.Label()
         Me.lblCalcT3FacilityLocation = New System.Windows.Forms.Label()
         Me.lblCalcT3FacilityType = New System.Windows.Forms.Label()
-        Me.chkCalcT3FacilityIncludeCosts = New System.Windows.Forms.CheckBox()
+        Me.chkCalcT3FacilityIncludeUsage = New System.Windows.Forms.CheckBox()
         Me.cmbCalcT3FacilityType = New System.Windows.Forms.ComboBox()
         Me.lblCalcT3FacilityManualME = New System.Windows.Forms.Label()
         Me.lblCalcT3FacilityBonus = New System.Windows.Forms.Label()
@@ -647,7 +653,7 @@ Partial Class frmMain
         Me.lblCalcSubsystemFacilityManualTE = New System.Windows.Forms.Label()
         Me.lblCalcSubsystemFacilityLocation = New System.Windows.Forms.Label()
         Me.lblCalcSubsystemFacilityType = New System.Windows.Forms.Label()
-        Me.chkCalcSubsystemFacilityIncludeCosts = New System.Windows.Forms.CheckBox()
+        Me.chkCalcSubsystemFacilityIncludeUsage = New System.Windows.Forms.CheckBox()
         Me.cmbCalcSubsystemFacilityType = New System.Windows.Forms.ComboBox()
         Me.lblCalcSubsystemFacilityManualME = New System.Windows.Forms.Label()
         Me.lblCalcSubsystemFacilityBonus = New System.Windows.Forms.Label()
@@ -663,7 +669,7 @@ Partial Class frmMain
         Me.lblCalcBoosterFacilityManualTE = New System.Windows.Forms.Label()
         Me.lblCalcBoosterFacilityLocation = New System.Windows.Forms.Label()
         Me.lblCalcBoosterFacilityType = New System.Windows.Forms.Label()
-        Me.chkCalcBoosterFacilityIncludeCosts = New System.Windows.Forms.CheckBox()
+        Me.chkCalcBoosterFacilityIncludeUsage = New System.Windows.Forms.CheckBox()
         Me.cmbCalcBoosterFacilityType = New System.Windows.Forms.ComboBox()
         Me.lblCalcBoosterFacilityManualME = New System.Windows.Forms.Label()
         Me.lblCalcBoosterFacilityBonus = New System.Windows.Forms.Label()
@@ -671,7 +677,7 @@ Partial Class frmMain
         Me.lblCalcNoPOSFacilityDefault = New System.Windows.Forms.Label()
         Me.btnCalcNoPOSFacilitySave = New System.Windows.Forms.Button()
         Me.lblCalcNoPOSFacilityTaxRate = New System.Windows.Forms.Label()
-        Me.chkCalcNoPOSFacilityIncludeCosts = New System.Windows.Forms.CheckBox()
+        Me.chkCalcNoPOSFacilityIncludeUsage = New System.Windows.Forms.CheckBox()
         Me.txtCalcNoPOSFacilityManualTE = New System.Windows.Forms.TextBox()
         Me.txtCalcNoPOSFacilityManualME = New System.Windows.Forms.TextBox()
         Me.cmbCalcNoPOSFacilityorArray = New System.Windows.Forms.ComboBox()
@@ -1002,13 +1008,13 @@ Partial Class frmMain
         Me.txtBPFacilityManualTE = New System.Windows.Forms.TextBox()
         Me.txtBPFacilityManualME = New System.Windows.Forms.TextBox()
         Me.cmbBPFacilityorArray = New System.Windows.Forms.ComboBox()
-        Me.lblBPTotalInstallationCost = New System.Windows.Forms.Label()
+        Me.lblBPTotalInstallationUsage = New System.Windows.Forms.Label()
         Me.cmbBPFacilitySystem = New System.Windows.Forms.ComboBox()
         Me.cmbBPFacilityRegion = New System.Windows.Forms.ComboBox()
         Me.lblBPFacilityManualTE = New System.Windows.Forms.Label()
         Me.lblBPFacilityLocation = New System.Windows.Forms.Label()
         Me.lblBPFacility = New System.Windows.Forms.Label()
-        Me.chkBPFacilityIncludeCosts = New System.Windows.Forms.CheckBox()
+        Me.chkBPFacilityIncludeUsage = New System.Windows.Forms.CheckBox()
         Me.cmbBPFacilityType = New System.Windows.Forms.ComboBox()
         Me.lblBPFacilityManualME = New System.Windows.Forms.Label()
         Me.lblBPFacilityBonus = New System.Windows.Forms.Label()
@@ -1111,7 +1117,6 @@ Partial Class frmMain
         Me.MyListView3 = New EVE_Isk_per_Hour.MyListView()
         Me.MyListView2 = New EVE_Isk_per_Hour.MyListView()
         Me.MyListView1 = New EVE_Isk_per_Hour.MyListView()
-        Me.CheckBox1 = New System.Windows.Forms.CheckBox()
         Me.mnuStripMain.SuspendLayout
         Me.pnlMain.SuspendLayout
         Me.tabMining.SuspendLayout
@@ -5908,9 +5913,9 @@ Partial Class frmMain
         'lblCalcBaseFacilityDefault
         '
         Me.lblCalcBaseFacilityDefault.ForeColor = System.Drawing.SystemColors.Highlight
-        Me.lblCalcBaseFacilityDefault.Location = New System.Drawing.Point(241, 3)
+        Me.lblCalcBaseFacilityDefault.Location = New System.Drawing.Point(212, 3)
         Me.lblCalcBaseFacilityDefault.Name = "lblCalcBaseFacilityDefault"
-        Me.lblCalcBaseFacilityDefault.Size = New System.Drawing.Size(50, 34)
+        Me.lblCalcBaseFacilityDefault.Size = New System.Drawing.Size(79, 20)
         Me.lblCalcBaseFacilityDefault.TabIndex = 66
         Me.lblCalcBaseFacilityDefault.Text = "Default Facility"
         Me.lblCalcBaseFacilityDefault.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -6071,7 +6076,7 @@ Partial Class frmMain
         'chkCalcBaseFacilityIncludeUsage
         '
         Me.chkCalcBaseFacilityIncludeUsage.AutoSize = true
-        Me.chkCalcBaseFacilityIncludeUsage.Location = New System.Drawing.Point(139, 6)
+        Me.chkCalcBaseFacilityIncludeUsage.Location = New System.Drawing.Point(139, 25)
         Me.chkCalcBaseFacilityIncludeUsage.Name = "chkCalcBaseFacilityIncludeUsage"
         Me.chkCalcBaseFacilityIncludeUsage.Size = New System.Drawing.Size(95, 17)
         Me.chkCalcBaseFacilityIncludeUsage.TabIndex = 7
@@ -6124,7 +6129,7 @@ Partial Class frmMain
         Me.tabCalcFacilityComponents.Controls.Add(Me.lblCalcComponentFacilityManualTE)
         Me.tabCalcFacilityComponents.Controls.Add(Me.lblCalcComponentFacilityLocation)
         Me.tabCalcFacilityComponents.Controls.Add(Me.lblCalcComponentFacilityType)
-        Me.tabCalcFacilityComponents.Controls.Add(Me.chkCalcComponentFacilityIncludeCosts)
+        Me.tabCalcFacilityComponents.Controls.Add(Me.chkCalcComponentFacilityIncludeUsage)
         Me.tabCalcFacilityComponents.Controls.Add(Me.cmbCalcComponentFacilityType)
         Me.tabCalcFacilityComponents.Controls.Add(Me.lblCalcComponentFacilityManualME)
         Me.tabCalcFacilityComponents.Controls.Add(Me.lblCalcComponentFacilityBonus)
@@ -6138,9 +6143,9 @@ Partial Class frmMain
         'lblCalcComponentFacilityDefault
         '
         Me.lblCalcComponentFacilityDefault.ForeColor = System.Drawing.SystemColors.Highlight
-        Me.lblCalcComponentFacilityDefault.Location = New System.Drawing.Point(241, 3)
+        Me.lblCalcComponentFacilityDefault.Location = New System.Drawing.Point(212, 3)
         Me.lblCalcComponentFacilityDefault.Name = "lblCalcComponentFacilityDefault"
-        Me.lblCalcComponentFacilityDefault.Size = New System.Drawing.Size(50, 34)
+        Me.lblCalcComponentFacilityDefault.Size = New System.Drawing.Size(79, 20)
         Me.lblCalcComponentFacilityDefault.TabIndex = 21
         Me.lblCalcComponentFacilityDefault.Text = "Default Facility"
         Me.lblCalcComponentFacilityDefault.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -6244,15 +6249,15 @@ Partial Class frmMain
         Me.lblCalcComponentFacilityType.TabIndex = 19
         Me.lblCalcComponentFacilityType.Text = "Facility Type:"
         '
-        'chkCalcComponentFacilityIncludeCosts
+        'chkCalcComponentFacilityIncludeUsage
         '
-        Me.chkCalcComponentFacilityIncludeCosts.AutoSize = true
-        Me.chkCalcComponentFacilityIncludeCosts.Location = New System.Drawing.Point(139, 6)
-        Me.chkCalcComponentFacilityIncludeCosts.Name = "chkCalcComponentFacilityIncludeCosts"
-        Me.chkCalcComponentFacilityIncludeCosts.Size = New System.Drawing.Size(85, 17)
-        Me.chkCalcComponentFacilityIncludeCosts.TabIndex = 23
-        Me.chkCalcComponentFacilityIncludeCosts.Text = "Include Cost"
-        Me.chkCalcComponentFacilityIncludeCosts.UseVisualStyleBackColor = true
+        Me.chkCalcComponentFacilityIncludeUsage.AutoSize = true
+        Me.chkCalcComponentFacilityIncludeUsage.Location = New System.Drawing.Point(139, 25)
+        Me.chkCalcComponentFacilityIncludeUsage.Name = "chkCalcComponentFacilityIncludeUsage"
+        Me.chkCalcComponentFacilityIncludeUsage.Size = New System.Drawing.Size(95, 17)
+        Me.chkCalcComponentFacilityIncludeUsage.TabIndex = 23
+        Me.chkCalcComponentFacilityIncludeUsage.Text = "Include Usage"
+        Me.chkCalcComponentFacilityIncludeUsage.UseVisualStyleBackColor = true
         '
         'cmbCalcComponentFacilityType
         '
@@ -6289,9 +6294,11 @@ Partial Class frmMain
         '
         'tabCalcFacilityCopy
         '
+        Me.tabCalcFacilityCopy.Controls.Add(Me.lblCalcCopyInclude)
+        Me.tabCalcFacilityCopy.Controls.Add(Me.chkCalcCopyFacilityIncludeUsage)
         Me.tabCalcFacilityCopy.Controls.Add(Me.chkCalcCopyFacilityIncludeTime)
         Me.tabCalcFacilityCopy.Controls.Add(Me.lblCalcCopyFacilityDefault)
-        Me.tabCalcFacilityCopy.Controls.Add(Me.chkCalcCopyFacilityIncludeCosts)
+        Me.tabCalcFacilityCopy.Controls.Add(Me.chkCalcCopyFacilityIncludeCost)
         Me.tabCalcFacilityCopy.Controls.Add(Me.btnCalcCopyFacilitySave)
         Me.tabCalcFacilityCopy.Controls.Add(Me.lblCalcCopyFacilityTaxRate)
         Me.tabCalcFacilityCopy.Controls.Add(Me.txtCalcCopyFacilityManualTE)
@@ -6312,35 +6319,54 @@ Partial Class frmMain
         Me.tabCalcFacilityCopy.Text = "Copy"
         Me.tabCalcFacilityCopy.UseVisualStyleBackColor = true
         '
+        'lblCalcCopyInclude
+        '
+        Me.lblCalcCopyInclude.AutoSize = true
+        Me.lblCalcCopyInclude.Location = New System.Drawing.Point(136, 9)
+        Me.lblCalcCopyInclude.Name = "lblCalcCopyInclude"
+        Me.lblCalcCopyInclude.Size = New System.Drawing.Size(45, 13)
+        Me.lblCalcCopyInclude.TabIndex = 75
+        Me.lblCalcCopyInclude.Text = "Include:"
+        '
+        'chkCalcCopyFacilityIncludeUsage
+        '
+        Me.chkCalcCopyFacilityIncludeUsage.AutoSize = true
+        Me.chkCalcCopyFacilityIncludeUsage.Location = New System.Drawing.Point(139, 25)
+        Me.chkCalcCopyFacilityIncludeUsage.Name = "chkCalcCopyFacilityIncludeUsage"
+        Me.chkCalcCopyFacilityIncludeUsage.Size = New System.Drawing.Size(57, 17)
+        Me.chkCalcCopyFacilityIncludeUsage.TabIndex = 74
+        Me.chkCalcCopyFacilityIncludeUsage.Text = "Usage"
+        Me.chkCalcCopyFacilityIncludeUsage.UseVisualStyleBackColor = true
+        '
         'chkCalcCopyFacilityIncludeTime
         '
         Me.chkCalcCopyFacilityIncludeTime.AutoSize = true
-        Me.chkCalcCopyFacilityIncludeTime.Location = New System.Drawing.Point(139, 23)
+        Me.chkCalcCopyFacilityIncludeTime.Location = New System.Drawing.Point(243, 25)
         Me.chkCalcCopyFacilityIncludeTime.Name = "chkCalcCopyFacilityIncludeTime"
-        Me.chkCalcCopyFacilityIncludeTime.Size = New System.Drawing.Size(76, 17)
+        Me.chkCalcCopyFacilityIncludeTime.Size = New System.Drawing.Size(49, 17)
         Me.chkCalcCopyFacilityIncludeTime.TabIndex = 1
-        Me.chkCalcCopyFacilityIncludeTime.Text = "Copy Time"
+        Me.chkCalcCopyFacilityIncludeTime.Text = "Time"
         Me.chkCalcCopyFacilityIncludeTime.UseVisualStyleBackColor = true
         '
         'lblCalcCopyFacilityDefault
         '
         Me.lblCalcCopyFacilityDefault.ForeColor = System.Drawing.SystemColors.Highlight
-        Me.lblCalcCopyFacilityDefault.Location = New System.Drawing.Point(241, 3)
+        Me.lblCalcCopyFacilityDefault.Location = New System.Drawing.Point(212, 3)
         Me.lblCalcCopyFacilityDefault.Name = "lblCalcCopyFacilityDefault"
-        Me.lblCalcCopyFacilityDefault.Size = New System.Drawing.Size(50, 34)
+        Me.lblCalcCopyFacilityDefault.Size = New System.Drawing.Size(79, 20)
         Me.lblCalcCopyFacilityDefault.TabIndex = 36
         Me.lblCalcCopyFacilityDefault.Text = "Default Facility"
         Me.lblCalcCopyFacilityDefault.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
-        'chkCalcCopyFacilityIncludeCosts
+        'chkCalcCopyFacilityIncludeCost
         '
-        Me.chkCalcCopyFacilityIncludeCosts.AutoSize = true
-        Me.chkCalcCopyFacilityIncludeCosts.Location = New System.Drawing.Point(139, 6)
-        Me.chkCalcCopyFacilityIncludeCosts.Name = "chkCalcCopyFacilityIncludeCosts"
-        Me.chkCalcCopyFacilityIncludeCosts.Size = New System.Drawing.Size(74, 17)
-        Me.chkCalcCopyFacilityIncludeCosts.TabIndex = 71
-        Me.chkCalcCopyFacilityIncludeCosts.Text = "Copy Cost"
-        Me.chkCalcCopyFacilityIncludeCosts.UseVisualStyleBackColor = true
+        Me.chkCalcCopyFacilityIncludeCost.AutoSize = true
+        Me.chkCalcCopyFacilityIncludeCost.Location = New System.Drawing.Point(196, 25)
+        Me.chkCalcCopyFacilityIncludeCost.Name = "chkCalcCopyFacilityIncludeCost"
+        Me.chkCalcCopyFacilityIncludeCost.Size = New System.Drawing.Size(47, 17)
+        Me.chkCalcCopyFacilityIncludeCost.TabIndex = 71
+        Me.chkCalcCopyFacilityIncludeCost.Text = "Cost"
+        Me.chkCalcCopyFacilityIncludeCost.UseVisualStyleBackColor = true
         '
         'btnCalcCopyFacilitySave
         '
@@ -6476,11 +6502,12 @@ Partial Class frmMain
         '
         'tabCalcFacilityInvention
         '
-        Me.tabCalcFacilityInvention.Controls.Add(Me.CheckBox1)
+        Me.tabCalcFacilityInvention.Controls.Add(Me.lblCalcInventionInclude)
+        Me.tabCalcFacilityInvention.Controls.Add(Me.chkCalcInventionFacilityIncludeUsage)
         Me.tabCalcFacilityInvention.Controls.Add(Me.lblCalcInventionFacilityDefault)
         Me.tabCalcFacilityInvention.Controls.Add(Me.chkCalcInventionFacilityIncludeTime)
         Me.tabCalcFacilityInvention.Controls.Add(Me.btnCalcInventionFacilitySave)
-        Me.tabCalcFacilityInvention.Controls.Add(Me.chkCalcInventionFacilityIncludeCosts)
+        Me.tabCalcFacilityInvention.Controls.Add(Me.chkCalcInventionFacilityIncludeCost)
         Me.tabCalcFacilityInvention.Controls.Add(Me.lblCalcInventionFacilityTaxRate)
         Me.tabCalcFacilityInvention.Controls.Add(Me.txtCalcInventionFacilityManualTE)
         Me.tabCalcFacilityInvention.Controls.Add(Me.txtCalcInventionFacilityManualME)
@@ -6500,12 +6527,31 @@ Partial Class frmMain
         Me.tabCalcFacilityInvention.Text = "T2 Inv."
         Me.tabCalcFacilityInvention.UseVisualStyleBackColor = true
         '
+        'lblCalcInventionInclude
+        '
+        Me.lblCalcInventionInclude.AutoSize = true
+        Me.lblCalcInventionInclude.Location = New System.Drawing.Point(136, 9)
+        Me.lblCalcInventionInclude.Name = "lblCalcInventionInclude"
+        Me.lblCalcInventionInclude.Size = New System.Drawing.Size(45, 13)
+        Me.lblCalcInventionInclude.TabIndex = 74
+        Me.lblCalcInventionInclude.Text = "Include:"
+        '
+        'chkCalcInventionFacilityIncludeUsage
+        '
+        Me.chkCalcInventionFacilityIncludeUsage.AutoSize = true
+        Me.chkCalcInventionFacilityIncludeUsage.Location = New System.Drawing.Point(139, 25)
+        Me.chkCalcInventionFacilityIncludeUsage.Name = "chkCalcInventionFacilityIncludeUsage"
+        Me.chkCalcInventionFacilityIncludeUsage.Size = New System.Drawing.Size(57, 17)
+        Me.chkCalcInventionFacilityIncludeUsage.TabIndex = 73
+        Me.chkCalcInventionFacilityIncludeUsage.Text = "Usage"
+        Me.chkCalcInventionFacilityIncludeUsage.UseVisualStyleBackColor = true
+        '
         'lblCalcInventionFacilityDefault
         '
         Me.lblCalcInventionFacilityDefault.ForeColor = System.Drawing.SystemColors.Highlight
-        Me.lblCalcInventionFacilityDefault.Location = New System.Drawing.Point(241, 3)
+        Me.lblCalcInventionFacilityDefault.Location = New System.Drawing.Point(212, 3)
         Me.lblCalcInventionFacilityDefault.Name = "lblCalcInventionFacilityDefault"
-        Me.lblCalcInventionFacilityDefault.Size = New System.Drawing.Size(50, 34)
+        Me.lblCalcInventionFacilityDefault.Size = New System.Drawing.Size(79, 20)
         Me.lblCalcInventionFacilityDefault.TabIndex = 36
         Me.lblCalcInventionFacilityDefault.Text = "Default Facility"
         Me.lblCalcInventionFacilityDefault.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -6513,7 +6559,7 @@ Partial Class frmMain
         'chkCalcInventionFacilityIncludeTime
         '
         Me.chkCalcInventionFacilityIncludeTime.AutoSize = true
-        Me.chkCalcInventionFacilityIncludeTime.Location = New System.Drawing.Point(189, 6)
+        Me.chkCalcInventionFacilityIncludeTime.Location = New System.Drawing.Point(243, 25)
         Me.chkCalcInventionFacilityIncludeTime.Name = "chkCalcInventionFacilityIncludeTime"
         Me.chkCalcInventionFacilityIncludeTime.Size = New System.Drawing.Size(49, 17)
         Me.chkCalcInventionFacilityIncludeTime.TabIndex = 0
@@ -6530,15 +6576,15 @@ Partial Class frmMain
         Me.btnCalcInventionFacilitySave.Text = "Save"
         Me.btnCalcInventionFacilitySave.UseVisualStyleBackColor = true
         '
-        'chkCalcInventionFacilityIncludeCosts
+        'chkCalcInventionFacilityIncludeCost
         '
-        Me.chkCalcInventionFacilityIncludeCosts.AutoSize = true
-        Me.chkCalcInventionFacilityIncludeCosts.Location = New System.Drawing.Point(139, 21)
-        Me.chkCalcInventionFacilityIncludeCosts.Name = "chkCalcInventionFacilityIncludeCosts"
-        Me.chkCalcInventionFacilityIncludeCosts.Size = New System.Drawing.Size(47, 17)
-        Me.chkCalcInventionFacilityIncludeCosts.TabIndex = 72
-        Me.chkCalcInventionFacilityIncludeCosts.Text = "Cost"
-        Me.chkCalcInventionFacilityIncludeCosts.UseVisualStyleBackColor = true
+        Me.chkCalcInventionFacilityIncludeCost.AutoSize = true
+        Me.chkCalcInventionFacilityIncludeCost.Location = New System.Drawing.Point(196, 25)
+        Me.chkCalcInventionFacilityIncludeCost.Name = "chkCalcInventionFacilityIncludeCost"
+        Me.chkCalcInventionFacilityIncludeCost.Size = New System.Drawing.Size(47, 17)
+        Me.chkCalcInventionFacilityIncludeCost.TabIndex = 72
+        Me.chkCalcInventionFacilityIncludeCost.Text = "Cost"
+        Me.chkCalcInventionFacilityIncludeCost.UseVisualStyleBackColor = true
         '
         'lblCalcInventionFacilityTaxRate
         '
@@ -6664,11 +6710,13 @@ Partial Class frmMain
         '
         'TabPage1
         '
+        Me.TabPage1.Controls.Add(Me.lblCalcT3InventionInclude)
+        Me.TabPage1.Controls.Add(Me.chkCalcT3InventionFacilityIncludeUsage)
         Me.TabPage1.Controls.Add(Me.lblCalcT3InventionFacilityManualTE)
         Me.TabPage1.Controls.Add(Me.lblCalcT3InventionFacilityDefault)
         Me.TabPage1.Controls.Add(Me.chkCalcT3InventionFacilityIncludeTime)
         Me.TabPage1.Controls.Add(Me.btnCalcT3InventionFacilitySave)
-        Me.TabPage1.Controls.Add(Me.chkCalcT3InventionFacilityIncludeCosts)
+        Me.TabPage1.Controls.Add(Me.chkCalcT3InventionFacilityIncludeCost)
         Me.TabPage1.Controls.Add(Me.lblCalcT3InventionFacilityTaxRate)
         Me.TabPage1.Controls.Add(Me.txtCalcT3InventionFacilityManualTE)
         Me.TabPage1.Controls.Add(Me.txtCalcT3InventionFacilityManualME)
@@ -6687,6 +6735,25 @@ Partial Class frmMain
         Me.TabPage1.Text = "T3 Inv."
         Me.TabPage1.UseVisualStyleBackColor = true
         '
+        'lblCalcT3InventionInclude
+        '
+        Me.lblCalcT3InventionInclude.AutoSize = true
+        Me.lblCalcT3InventionInclude.Location = New System.Drawing.Point(136, 9)
+        Me.lblCalcT3InventionInclude.Name = "lblCalcT3InventionInclude"
+        Me.lblCalcT3InventionInclude.Size = New System.Drawing.Size(45, 13)
+        Me.lblCalcT3InventionInclude.TabIndex = 90
+        Me.lblCalcT3InventionInclude.Text = "Include:"
+        '
+        'chkCalcT3InventionFacilityIncludeUsage
+        '
+        Me.chkCalcT3InventionFacilityIncludeUsage.AutoSize = true
+        Me.chkCalcT3InventionFacilityIncludeUsage.Location = New System.Drawing.Point(139, 25)
+        Me.chkCalcT3InventionFacilityIncludeUsage.Name = "chkCalcT3InventionFacilityIncludeUsage"
+        Me.chkCalcT3InventionFacilityIncludeUsage.Size = New System.Drawing.Size(57, 17)
+        Me.chkCalcT3InventionFacilityIncludeUsage.TabIndex = 89
+        Me.chkCalcT3InventionFacilityIncludeUsage.Text = "Usage"
+        Me.chkCalcT3InventionFacilityIncludeUsage.UseVisualStyleBackColor = true
+        '
         'lblCalcT3InventionFacilityManualTE
         '
         Me.lblCalcT3InventionFacilityManualTE.AutoSize = true
@@ -6700,9 +6767,9 @@ Partial Class frmMain
         'lblCalcT3InventionFacilityDefault
         '
         Me.lblCalcT3InventionFacilityDefault.ForeColor = System.Drawing.SystemColors.Highlight
-        Me.lblCalcT3InventionFacilityDefault.Location = New System.Drawing.Point(241, 3)
+        Me.lblCalcT3InventionFacilityDefault.Location = New System.Drawing.Point(212, 3)
         Me.lblCalcT3InventionFacilityDefault.Name = "lblCalcT3InventionFacilityDefault"
-        Me.lblCalcT3InventionFacilityDefault.Size = New System.Drawing.Size(50, 34)
+        Me.lblCalcT3InventionFacilityDefault.Size = New System.Drawing.Size(79, 20)
         Me.lblCalcT3InventionFacilityDefault.TabIndex = 76
         Me.lblCalcT3InventionFacilityDefault.Text = "Default Facility"
         Me.lblCalcT3InventionFacilityDefault.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -6710,11 +6777,11 @@ Partial Class frmMain
         'chkCalcT3InventionFacilityIncludeTime
         '
         Me.chkCalcT3InventionFacilityIncludeTime.AutoSize = true
-        Me.chkCalcT3InventionFacilityIncludeTime.Location = New System.Drawing.Point(139, 23)
+        Me.chkCalcT3InventionFacilityIncludeTime.Location = New System.Drawing.Point(243, 25)
         Me.chkCalcT3InventionFacilityIncludeTime.Name = "chkCalcT3InventionFacilityIncludeTime"
-        Me.chkCalcT3InventionFacilityIncludeTime.Size = New System.Drawing.Size(87, 17)
+        Me.chkCalcT3InventionFacilityIncludeTime.Size = New System.Drawing.Size(49, 17)
         Me.chkCalcT3InventionFacilityIncludeTime.TabIndex = 73
-        Me.chkCalcT3InventionFacilityIncludeTime.Text = "Include Time"
+        Me.chkCalcT3InventionFacilityIncludeTime.Text = "Time"
         Me.chkCalcT3InventionFacilityIncludeTime.UseVisualStyleBackColor = true
         '
         'btnCalcT3InventionFacilitySave
@@ -6727,15 +6794,15 @@ Partial Class frmMain
         Me.btnCalcT3InventionFacilitySave.Text = "Save"
         Me.btnCalcT3InventionFacilitySave.UseVisualStyleBackColor = true
         '
-        'chkCalcT3InventionFacilityIncludeCosts
+        'chkCalcT3InventionFacilityIncludeCost
         '
-        Me.chkCalcT3InventionFacilityIncludeCosts.AutoSize = true
-        Me.chkCalcT3InventionFacilityIncludeCosts.Location = New System.Drawing.Point(139, 6)
-        Me.chkCalcT3InventionFacilityIncludeCosts.Name = "chkCalcT3InventionFacilityIncludeCosts"
-        Me.chkCalcT3InventionFacilityIncludeCosts.Size = New System.Drawing.Size(85, 17)
-        Me.chkCalcT3InventionFacilityIncludeCosts.TabIndex = 86
-        Me.chkCalcT3InventionFacilityIncludeCosts.Text = "Include Cost"
-        Me.chkCalcT3InventionFacilityIncludeCosts.UseVisualStyleBackColor = true
+        Me.chkCalcT3InventionFacilityIncludeCost.AutoSize = true
+        Me.chkCalcT3InventionFacilityIncludeCost.Location = New System.Drawing.Point(196, 25)
+        Me.chkCalcT3InventionFacilityIncludeCost.Name = "chkCalcT3InventionFacilityIncludeCost"
+        Me.chkCalcT3InventionFacilityIncludeCost.Size = New System.Drawing.Size(47, 17)
+        Me.chkCalcT3InventionFacilityIncludeCost.TabIndex = 86
+        Me.chkCalcT3InventionFacilityIncludeCost.Text = "Cost"
+        Me.chkCalcT3InventionFacilityIncludeCost.UseVisualStyleBackColor = true
         '
         'lblCalcT3InventionFacilityTaxRate
         '
@@ -6862,7 +6929,7 @@ Partial Class frmMain
         Me.tabCalcFacilityCapitals.Controls.Add(Me.lblCalcCapitalFacilityManualTE)
         Me.tabCalcFacilityCapitals.Controls.Add(Me.lblCalcCapitalFacilityLocation)
         Me.tabCalcFacilityCapitals.Controls.Add(Me.lblCalcCapitalFacilityType)
-        Me.tabCalcFacilityCapitals.Controls.Add(Me.chkCalcCapitalFacilityIncludeCosts)
+        Me.tabCalcFacilityCapitals.Controls.Add(Me.chkCalcCapitalFacilityIncludeUsage)
         Me.tabCalcFacilityCapitals.Controls.Add(Me.cmbCalcCapitalFacilityType)
         Me.tabCalcFacilityCapitals.Controls.Add(Me.lblCalcCapitalFacilityManualME)
         Me.tabCalcFacilityCapitals.Controls.Add(Me.lblCalcCapitalFacilityBonus)
@@ -6876,9 +6943,9 @@ Partial Class frmMain
         'lblCalcCapitalFacilityDefault
         '
         Me.lblCalcCapitalFacilityDefault.ForeColor = System.Drawing.SystemColors.Highlight
-        Me.lblCalcCapitalFacilityDefault.Location = New System.Drawing.Point(241, 3)
+        Me.lblCalcCapitalFacilityDefault.Location = New System.Drawing.Point(212, 3)
         Me.lblCalcCapitalFacilityDefault.Name = "lblCalcCapitalFacilityDefault"
-        Me.lblCalcCapitalFacilityDefault.Size = New System.Drawing.Size(50, 34)
+        Me.lblCalcCapitalFacilityDefault.Size = New System.Drawing.Size(79, 20)
         Me.lblCalcCapitalFacilityDefault.TabIndex = 36
         Me.lblCalcCapitalFacilityDefault.Text = "Default Facility"
         Me.lblCalcCapitalFacilityDefault.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -6982,15 +7049,15 @@ Partial Class frmMain
         Me.lblCalcCapitalFacilityType.TabIndex = 34
         Me.lblCalcCapitalFacilityType.Text = "Facility Type:"
         '
-        'chkCalcCapitalFacilityIncludeCosts
+        'chkCalcCapitalFacilityIncludeUsage
         '
-        Me.chkCalcCapitalFacilityIncludeCosts.AutoSize = true
-        Me.chkCalcCapitalFacilityIncludeCosts.Location = New System.Drawing.Point(139, 6)
-        Me.chkCalcCapitalFacilityIncludeCosts.Name = "chkCalcCapitalFacilityIncludeCosts"
-        Me.chkCalcCapitalFacilityIncludeCosts.Size = New System.Drawing.Size(85, 17)
-        Me.chkCalcCapitalFacilityIncludeCosts.TabIndex = 38
-        Me.chkCalcCapitalFacilityIncludeCosts.Text = "Include Cost"
-        Me.chkCalcCapitalFacilityIncludeCosts.UseVisualStyleBackColor = true
+        Me.chkCalcCapitalFacilityIncludeUsage.AutoSize = true
+        Me.chkCalcCapitalFacilityIncludeUsage.Location = New System.Drawing.Point(139, 25)
+        Me.chkCalcCapitalFacilityIncludeUsage.Name = "chkCalcCapitalFacilityIncludeUsage"
+        Me.chkCalcCapitalFacilityIncludeUsage.Size = New System.Drawing.Size(95, 17)
+        Me.chkCalcCapitalFacilityIncludeUsage.TabIndex = 38
+        Me.chkCalcCapitalFacilityIncludeUsage.Text = "Include Usage"
+        Me.chkCalcCapitalFacilityIncludeUsage.UseVisualStyleBackColor = true
         '
         'cmbCalcCapitalFacilityType
         '
@@ -7038,7 +7105,7 @@ Partial Class frmMain
         Me.tabCalcFacilitySupers.Controls.Add(Me.lblCalcSuperFacilityManualTE)
         Me.tabCalcFacilitySupers.Controls.Add(Me.lblCalcSuperFacilityLocation)
         Me.tabCalcFacilitySupers.Controls.Add(Me.lblCalcSuperFacilityType)
-        Me.tabCalcFacilitySupers.Controls.Add(Me.chkCalcSuperFacilityIncludeCosts)
+        Me.tabCalcFacilitySupers.Controls.Add(Me.chkCalcSuperFacilityIncludeUsage)
         Me.tabCalcFacilitySupers.Controls.Add(Me.cmbCalcSuperFacilityType)
         Me.tabCalcFacilitySupers.Controls.Add(Me.lblCalcSuperFacilityManualME)
         Me.tabCalcFacilitySupers.Controls.Add(Me.lblCalcSuperFacilityBonus)
@@ -7052,9 +7119,9 @@ Partial Class frmMain
         'lblCalcSuperFacilityDefault
         '
         Me.lblCalcSuperFacilityDefault.ForeColor = System.Drawing.SystemColors.Highlight
-        Me.lblCalcSuperFacilityDefault.Location = New System.Drawing.Point(241, 3)
+        Me.lblCalcSuperFacilityDefault.Location = New System.Drawing.Point(212, 3)
         Me.lblCalcSuperFacilityDefault.Name = "lblCalcSuperFacilityDefault"
-        Me.lblCalcSuperFacilityDefault.Size = New System.Drawing.Size(50, 34)
+        Me.lblCalcSuperFacilityDefault.Size = New System.Drawing.Size(79, 20)
         Me.lblCalcSuperFacilityDefault.TabIndex = 36
         Me.lblCalcSuperFacilityDefault.Text = "Default Facility"
         Me.lblCalcSuperFacilityDefault.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -7158,15 +7225,15 @@ Partial Class frmMain
         Me.lblCalcSuperFacilityType.TabIndex = 34
         Me.lblCalcSuperFacilityType.Text = "Facility Type:"
         '
-        'chkCalcSuperFacilityIncludeCosts
+        'chkCalcSuperFacilityIncludeUsage
         '
-        Me.chkCalcSuperFacilityIncludeCosts.AutoSize = true
-        Me.chkCalcSuperFacilityIncludeCosts.Location = New System.Drawing.Point(139, 6)
-        Me.chkCalcSuperFacilityIncludeCosts.Name = "chkCalcSuperFacilityIncludeCosts"
-        Me.chkCalcSuperFacilityIncludeCosts.Size = New System.Drawing.Size(85, 17)
-        Me.chkCalcSuperFacilityIncludeCosts.TabIndex = 38
-        Me.chkCalcSuperFacilityIncludeCosts.Text = "Include Cost"
-        Me.chkCalcSuperFacilityIncludeCosts.UseVisualStyleBackColor = true
+        Me.chkCalcSuperFacilityIncludeUsage.AutoSize = true
+        Me.chkCalcSuperFacilityIncludeUsage.Location = New System.Drawing.Point(139, 25)
+        Me.chkCalcSuperFacilityIncludeUsage.Name = "chkCalcSuperFacilityIncludeUsage"
+        Me.chkCalcSuperFacilityIncludeUsage.Size = New System.Drawing.Size(95, 17)
+        Me.chkCalcSuperFacilityIncludeUsage.TabIndex = 38
+        Me.chkCalcSuperFacilityIncludeUsage.Text = "Include Usage"
+        Me.chkCalcSuperFacilityIncludeUsage.UseVisualStyleBackColor = true
         '
         'cmbCalcSuperFacilityType
         '
@@ -7214,7 +7281,7 @@ Partial Class frmMain
         Me.tabCalcFacilityT3.Controls.Add(Me.lblCalcT3FacilityManualTE)
         Me.tabCalcFacilityT3.Controls.Add(Me.lblCalcT3FacilityLocation)
         Me.tabCalcFacilityT3.Controls.Add(Me.lblCalcT3FacilityType)
-        Me.tabCalcFacilityT3.Controls.Add(Me.chkCalcT3FacilityIncludeCosts)
+        Me.tabCalcFacilityT3.Controls.Add(Me.chkCalcT3FacilityIncludeUsage)
         Me.tabCalcFacilityT3.Controls.Add(Me.cmbCalcT3FacilityType)
         Me.tabCalcFacilityT3.Controls.Add(Me.lblCalcT3FacilityManualME)
         Me.tabCalcFacilityT3.Controls.Add(Me.lblCalcT3FacilityBonus)
@@ -7228,9 +7295,9 @@ Partial Class frmMain
         'lblCalcT3FacilityDefault
         '
         Me.lblCalcT3FacilityDefault.ForeColor = System.Drawing.SystemColors.Highlight
-        Me.lblCalcT3FacilityDefault.Location = New System.Drawing.Point(241, 3)
+        Me.lblCalcT3FacilityDefault.Location = New System.Drawing.Point(212, 3)
         Me.lblCalcT3FacilityDefault.Name = "lblCalcT3FacilityDefault"
-        Me.lblCalcT3FacilityDefault.Size = New System.Drawing.Size(50, 34)
+        Me.lblCalcT3FacilityDefault.Size = New System.Drawing.Size(79, 20)
         Me.lblCalcT3FacilityDefault.TabIndex = 36
         Me.lblCalcT3FacilityDefault.Text = "Default Facility"
         Me.lblCalcT3FacilityDefault.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -7334,15 +7401,15 @@ Partial Class frmMain
         Me.lblCalcT3FacilityType.TabIndex = 34
         Me.lblCalcT3FacilityType.Text = "Facility Type:"
         '
-        'chkCalcT3FacilityIncludeCosts
+        'chkCalcT3FacilityIncludeUsage
         '
-        Me.chkCalcT3FacilityIncludeCosts.AutoSize = true
-        Me.chkCalcT3FacilityIncludeCosts.Location = New System.Drawing.Point(139, 6)
-        Me.chkCalcT3FacilityIncludeCosts.Name = "chkCalcT3FacilityIncludeCosts"
-        Me.chkCalcT3FacilityIncludeCosts.Size = New System.Drawing.Size(85, 17)
-        Me.chkCalcT3FacilityIncludeCosts.TabIndex = 38
-        Me.chkCalcT3FacilityIncludeCosts.Text = "Include Cost"
-        Me.chkCalcT3FacilityIncludeCosts.UseVisualStyleBackColor = true
+        Me.chkCalcT3FacilityIncludeUsage.AutoSize = true
+        Me.chkCalcT3FacilityIncludeUsage.Location = New System.Drawing.Point(139, 25)
+        Me.chkCalcT3FacilityIncludeUsage.Name = "chkCalcT3FacilityIncludeUsage"
+        Me.chkCalcT3FacilityIncludeUsage.Size = New System.Drawing.Size(95, 17)
+        Me.chkCalcT3FacilityIncludeUsage.TabIndex = 38
+        Me.chkCalcT3FacilityIncludeUsage.Text = "Include Usage"
+        Me.chkCalcT3FacilityIncludeUsage.UseVisualStyleBackColor = true
         '
         'cmbCalcT3FacilityType
         '
@@ -7390,7 +7457,7 @@ Partial Class frmMain
         Me.tabCalcFacilitySubsystems.Controls.Add(Me.lblCalcSubsystemFacilityManualTE)
         Me.tabCalcFacilitySubsystems.Controls.Add(Me.lblCalcSubsystemFacilityLocation)
         Me.tabCalcFacilitySubsystems.Controls.Add(Me.lblCalcSubsystemFacilityType)
-        Me.tabCalcFacilitySubsystems.Controls.Add(Me.chkCalcSubsystemFacilityIncludeCosts)
+        Me.tabCalcFacilitySubsystems.Controls.Add(Me.chkCalcSubsystemFacilityIncludeUsage)
         Me.tabCalcFacilitySubsystems.Controls.Add(Me.cmbCalcSubsystemFacilityType)
         Me.tabCalcFacilitySubsystems.Controls.Add(Me.lblCalcSubsystemFacilityManualME)
         Me.tabCalcFacilitySubsystems.Controls.Add(Me.lblCalcSubsystemFacilityBonus)
@@ -7404,9 +7471,9 @@ Partial Class frmMain
         'lblCalcSubsystemFacilityDefault
         '
         Me.lblCalcSubsystemFacilityDefault.ForeColor = System.Drawing.SystemColors.Highlight
-        Me.lblCalcSubsystemFacilityDefault.Location = New System.Drawing.Point(241, 3)
+        Me.lblCalcSubsystemFacilityDefault.Location = New System.Drawing.Point(212, 3)
         Me.lblCalcSubsystemFacilityDefault.Name = "lblCalcSubsystemFacilityDefault"
-        Me.lblCalcSubsystemFacilityDefault.Size = New System.Drawing.Size(50, 34)
+        Me.lblCalcSubsystemFacilityDefault.Size = New System.Drawing.Size(79, 20)
         Me.lblCalcSubsystemFacilityDefault.TabIndex = 36
         Me.lblCalcSubsystemFacilityDefault.Text = "Default Facility"
         Me.lblCalcSubsystemFacilityDefault.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -7510,15 +7577,15 @@ Partial Class frmMain
         Me.lblCalcSubsystemFacilityType.TabIndex = 34
         Me.lblCalcSubsystemFacilityType.Text = "Facility Type:"
         '
-        'chkCalcSubsystemFacilityIncludeCosts
+        'chkCalcSubsystemFacilityIncludeUsage
         '
-        Me.chkCalcSubsystemFacilityIncludeCosts.AutoSize = true
-        Me.chkCalcSubsystemFacilityIncludeCosts.Location = New System.Drawing.Point(139, 6)
-        Me.chkCalcSubsystemFacilityIncludeCosts.Name = "chkCalcSubsystemFacilityIncludeCosts"
-        Me.chkCalcSubsystemFacilityIncludeCosts.Size = New System.Drawing.Size(85, 17)
-        Me.chkCalcSubsystemFacilityIncludeCosts.TabIndex = 38
-        Me.chkCalcSubsystemFacilityIncludeCosts.Text = "Include Cost"
-        Me.chkCalcSubsystemFacilityIncludeCosts.UseVisualStyleBackColor = true
+        Me.chkCalcSubsystemFacilityIncludeUsage.AutoSize = true
+        Me.chkCalcSubsystemFacilityIncludeUsage.Location = New System.Drawing.Point(139, 25)
+        Me.chkCalcSubsystemFacilityIncludeUsage.Name = "chkCalcSubsystemFacilityIncludeUsage"
+        Me.chkCalcSubsystemFacilityIncludeUsage.Size = New System.Drawing.Size(95, 17)
+        Me.chkCalcSubsystemFacilityIncludeUsage.TabIndex = 38
+        Me.chkCalcSubsystemFacilityIncludeUsage.Text = "Include Usage"
+        Me.chkCalcSubsystemFacilityIncludeUsage.UseVisualStyleBackColor = true
         '
         'cmbCalcSubsystemFacilityType
         '
@@ -7566,7 +7633,7 @@ Partial Class frmMain
         Me.tabCalcFacilityBoosters.Controls.Add(Me.lblCalcBoosterFacilityManualTE)
         Me.tabCalcFacilityBoosters.Controls.Add(Me.lblCalcBoosterFacilityLocation)
         Me.tabCalcFacilityBoosters.Controls.Add(Me.lblCalcBoosterFacilityType)
-        Me.tabCalcFacilityBoosters.Controls.Add(Me.chkCalcBoosterFacilityIncludeCosts)
+        Me.tabCalcFacilityBoosters.Controls.Add(Me.chkCalcBoosterFacilityIncludeUsage)
         Me.tabCalcFacilityBoosters.Controls.Add(Me.cmbCalcBoosterFacilityType)
         Me.tabCalcFacilityBoosters.Controls.Add(Me.lblCalcBoosterFacilityManualME)
         Me.tabCalcFacilityBoosters.Controls.Add(Me.lblCalcBoosterFacilityBonus)
@@ -7580,9 +7647,9 @@ Partial Class frmMain
         'lblCalcBoosterFacilityDefault
         '
         Me.lblCalcBoosterFacilityDefault.ForeColor = System.Drawing.SystemColors.Highlight
-        Me.lblCalcBoosterFacilityDefault.Location = New System.Drawing.Point(241, 3)
+        Me.lblCalcBoosterFacilityDefault.Location = New System.Drawing.Point(212, 3)
         Me.lblCalcBoosterFacilityDefault.Name = "lblCalcBoosterFacilityDefault"
-        Me.lblCalcBoosterFacilityDefault.Size = New System.Drawing.Size(50, 34)
+        Me.lblCalcBoosterFacilityDefault.Size = New System.Drawing.Size(79, 20)
         Me.lblCalcBoosterFacilityDefault.TabIndex = 36
         Me.lblCalcBoosterFacilityDefault.Text = "Default Facility"
         Me.lblCalcBoosterFacilityDefault.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -7686,15 +7753,15 @@ Partial Class frmMain
         Me.lblCalcBoosterFacilityType.TabIndex = 34
         Me.lblCalcBoosterFacilityType.Text = "Facility Type:"
         '
-        'chkCalcBoosterFacilityIncludeCosts
+        'chkCalcBoosterFacilityIncludeUsage
         '
-        Me.chkCalcBoosterFacilityIncludeCosts.AutoSize = true
-        Me.chkCalcBoosterFacilityIncludeCosts.Location = New System.Drawing.Point(139, 6)
-        Me.chkCalcBoosterFacilityIncludeCosts.Name = "chkCalcBoosterFacilityIncludeCosts"
-        Me.chkCalcBoosterFacilityIncludeCosts.Size = New System.Drawing.Size(85, 17)
-        Me.chkCalcBoosterFacilityIncludeCosts.TabIndex = 38
-        Me.chkCalcBoosterFacilityIncludeCosts.Text = "Include Cost"
-        Me.chkCalcBoosterFacilityIncludeCosts.UseVisualStyleBackColor = true
+        Me.chkCalcBoosterFacilityIncludeUsage.AutoSize = true
+        Me.chkCalcBoosterFacilityIncludeUsage.Location = New System.Drawing.Point(139, 25)
+        Me.chkCalcBoosterFacilityIncludeUsage.Name = "chkCalcBoosterFacilityIncludeUsage"
+        Me.chkCalcBoosterFacilityIncludeUsage.Size = New System.Drawing.Size(95, 17)
+        Me.chkCalcBoosterFacilityIncludeUsage.TabIndex = 38
+        Me.chkCalcBoosterFacilityIncludeUsage.Text = "Include Usage"
+        Me.chkCalcBoosterFacilityIncludeUsage.UseVisualStyleBackColor = true
         '
         'cmbCalcBoosterFacilityType
         '
@@ -7734,7 +7801,7 @@ Partial Class frmMain
         Me.tabCalcFacilityNoPOS.Controls.Add(Me.lblCalcNoPOSFacilityDefault)
         Me.tabCalcFacilityNoPOS.Controls.Add(Me.btnCalcNoPOSFacilitySave)
         Me.tabCalcFacilityNoPOS.Controls.Add(Me.lblCalcNoPOSFacilityTaxRate)
-        Me.tabCalcFacilityNoPOS.Controls.Add(Me.chkCalcNoPOSFacilityIncludeCosts)
+        Me.tabCalcFacilityNoPOS.Controls.Add(Me.chkCalcNoPOSFacilityIncludeUsage)
         Me.tabCalcFacilityNoPOS.Controls.Add(Me.txtCalcNoPOSFacilityManualTE)
         Me.tabCalcFacilityNoPOS.Controls.Add(Me.txtCalcNoPOSFacilityManualME)
         Me.tabCalcFacilityNoPOS.Controls.Add(Me.cmbCalcNoPOSFacilityorArray)
@@ -7756,9 +7823,9 @@ Partial Class frmMain
         'lblCalcNoPOSFacilityDefault
         '
         Me.lblCalcNoPOSFacilityDefault.ForeColor = System.Drawing.SystemColors.Highlight
-        Me.lblCalcNoPOSFacilityDefault.Location = New System.Drawing.Point(241, 3)
+        Me.lblCalcNoPOSFacilityDefault.Location = New System.Drawing.Point(212, 3)
         Me.lblCalcNoPOSFacilityDefault.Name = "lblCalcNoPOSFacilityDefault"
-        Me.lblCalcNoPOSFacilityDefault.Size = New System.Drawing.Size(50, 34)
+        Me.lblCalcNoPOSFacilityDefault.Size = New System.Drawing.Size(79, 20)
         Me.lblCalcNoPOSFacilityDefault.TabIndex = 36
         Me.lblCalcNoPOSFacilityDefault.Text = "Default Facility"
         Me.lblCalcNoPOSFacilityDefault.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -7784,15 +7851,15 @@ Partial Class frmMain
         Me.lblCalcNoPOSFacilityTaxRate.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         Me.lblCalcNoPOSFacilityTaxRate.Visible = false
         '
-        'chkCalcNoPOSFacilityIncludeCosts
+        'chkCalcNoPOSFacilityIncludeUsage
         '
-        Me.chkCalcNoPOSFacilityIncludeCosts.AutoSize = true
-        Me.chkCalcNoPOSFacilityIncludeCosts.Location = New System.Drawing.Point(139, 6)
-        Me.chkCalcNoPOSFacilityIncludeCosts.Name = "chkCalcNoPOSFacilityIncludeCosts"
-        Me.chkCalcNoPOSFacilityIncludeCosts.Size = New System.Drawing.Size(85, 17)
-        Me.chkCalcNoPOSFacilityIncludeCosts.TabIndex = 73
-        Me.chkCalcNoPOSFacilityIncludeCosts.Text = "Include Cost"
-        Me.chkCalcNoPOSFacilityIncludeCosts.UseVisualStyleBackColor = true
+        Me.chkCalcNoPOSFacilityIncludeUsage.AutoSize = true
+        Me.chkCalcNoPOSFacilityIncludeUsage.Location = New System.Drawing.Point(139, 25)
+        Me.chkCalcNoPOSFacilityIncludeUsage.Name = "chkCalcNoPOSFacilityIncludeUsage"
+        Me.chkCalcNoPOSFacilityIncludeUsage.Size = New System.Drawing.Size(95, 17)
+        Me.chkCalcNoPOSFacilityIncludeUsage.TabIndex = 73
+        Me.chkCalcNoPOSFacilityIncludeUsage.Text = "Include Usage"
+        Me.chkCalcNoPOSFacilityIncludeUsage.UseVisualStyleBackColor = true
         '
         'txtCalcNoPOSFacilityManualTE
         '
@@ -11313,13 +11380,13 @@ Partial Class frmMain
         Me.tabFacility.Controls.Add(Me.txtBPFacilityManualTE)
         Me.tabFacility.Controls.Add(Me.txtBPFacilityManualME)
         Me.tabFacility.Controls.Add(Me.cmbBPFacilityorArray)
-        Me.tabFacility.Controls.Add(Me.lblBPTotalInstallationCost)
+        Me.tabFacility.Controls.Add(Me.lblBPTotalInstallationUsage)
         Me.tabFacility.Controls.Add(Me.cmbBPFacilitySystem)
         Me.tabFacility.Controls.Add(Me.cmbBPFacilityRegion)
         Me.tabFacility.Controls.Add(Me.lblBPFacilityManualTE)
         Me.tabFacility.Controls.Add(Me.lblBPFacilityLocation)
         Me.tabFacility.Controls.Add(Me.lblBPFacility)
-        Me.tabFacility.Controls.Add(Me.chkBPFacilityIncludeCosts)
+        Me.tabFacility.Controls.Add(Me.chkBPFacilityIncludeUsage)
         Me.tabFacility.Controls.Add(Me.cmbBPFacilityType)
         Me.tabFacility.Controls.Add(Me.lblBPFacilityManualME)
         Me.tabFacility.Controls.Add(Me.lblBPFacilityBonus)
@@ -11414,15 +11481,15 @@ Partial Class frmMain
         Me.cmbBPFacilityorArray.TabIndex = 11
         Me.cmbBPFacilityorArray.Text = "Select Facility / Array"
         '
-        'lblBPTotalInstallationCost
+        'lblBPTotalInstallationUsage
         '
-        Me.lblBPTotalInstallationCost.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.lblBPTotalInstallationCost.Location = New System.Drawing.Point(139, 42)
-        Me.lblBPTotalInstallationCost.Name = "lblBPTotalInstallationCost"
-        Me.lblBPTotalInstallationCost.Size = New System.Drawing.Size(139, 17)
-        Me.lblBPTotalInstallationCost.TabIndex = 8
-        Me.lblBPTotalInstallationCost.Text = "0.00"
-        Me.lblBPTotalInstallationCost.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
+        Me.lblBPTotalInstallationUsage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.lblBPTotalInstallationUsage.Location = New System.Drawing.Point(139, 42)
+        Me.lblBPTotalInstallationUsage.Name = "lblBPTotalInstallationUsage"
+        Me.lblBPTotalInstallationUsage.Size = New System.Drawing.Size(139, 17)
+        Me.lblBPTotalInstallationUsage.TabIndex = 8
+        Me.lblBPTotalInstallationUsage.Text = "0.00"
+        Me.lblBPTotalInstallationUsage.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
         'cmbBPFacilitySystem
         '
@@ -11470,18 +11537,18 @@ Partial Class frmMain
         Me.lblBPFacility.TabIndex = 3
         Me.lblBPFacility.Text = "Facility Type:"
         '
-        'chkBPFacilityIncludeCosts
+        'chkBPFacilityIncludeUsage
         '
-        Me.chkBPFacilityIncludeCosts.AutoSize = true
-        Me.chkBPFacilityIncludeCosts.Checked = true
-        Me.chkBPFacilityIncludeCosts.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkBPFacilityIncludeCosts.Enabled = false
-        Me.chkBPFacilityIncludeCosts.Location = New System.Drawing.Point(80, 42)
-        Me.chkBPFacilityIncludeCosts.Name = "chkBPFacilityIncludeCosts"
-        Me.chkBPFacilityIncludeCosts.Size = New System.Drawing.Size(60, 17)
-        Me.chkBPFacilityIncludeCosts.TabIndex = 7
-        Me.chkBPFacilityIncludeCosts.Text = "Usage:"
-        Me.chkBPFacilityIncludeCosts.UseVisualStyleBackColor = true
+        Me.chkBPFacilityIncludeUsage.AutoSize = true
+        Me.chkBPFacilityIncludeUsage.Checked = true
+        Me.chkBPFacilityIncludeUsage.CheckState = System.Windows.Forms.CheckState.Checked
+        Me.chkBPFacilityIncludeUsage.Enabled = false
+        Me.chkBPFacilityIncludeUsage.Location = New System.Drawing.Point(80, 42)
+        Me.chkBPFacilityIncludeUsage.Name = "chkBPFacilityIncludeUsage"
+        Me.chkBPFacilityIncludeUsage.Size = New System.Drawing.Size(60, 17)
+        Me.chkBPFacilityIncludeUsage.TabIndex = 7
+        Me.chkBPFacilityIncludeUsage.Text = "Usage:"
+        Me.chkBPFacilityIncludeUsage.UseVisualStyleBackColor = true
         '
         'cmbBPFacilityType
         '
@@ -12575,16 +12642,6 @@ Partial Class frmMain
         Me.MyListView1.UseCompatibleStateImageBehavior = false
         Me.MyListView1.View = System.Windows.Forms.View.Details
         '
-        'CheckBox1
-        '
-        Me.CheckBox1.AutoSize = true
-        Me.CheckBox1.Location = New System.Drawing.Point(189, 21)
-        Me.CheckBox1.Name = "CheckBox1"
-        Me.CheckBox1.Size = New System.Drawing.Size(57, 17)
-        Me.CheckBox1.TabIndex = 73
-        Me.CheckBox1.Text = "Usage"
-        Me.CheckBox1.UseVisualStyleBackColor = true
-        '
         'frmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6!, 13!)
@@ -13480,7 +13537,7 @@ End Sub
     Friend WithEvents lblBPRawIPH1 As System.Windows.Forms.Label
     Friend WithEvents lblBPRawTotalCost1 As System.Windows.Forms.Label
     Friend WithEvents lblBPTotalUnits As System.Windows.Forms.Label
-    Friend WithEvents lblBPTotalInstallationCost As System.Windows.Forms.Label
+    Friend WithEvents lblBPTotalInstallationUsage As System.Windows.Forms.Label
     Friend WithEvents lblBPTaxes As System.Windows.Forms.Label
     Friend WithEvents lblBPCompProfit As System.Windows.Forms.Label
     Friend WithEvents lblBPTotalCompCost As System.Windows.Forms.Label
@@ -13490,7 +13547,7 @@ End Sub
     Friend WithEvents lblBPRawIPH As System.Windows.Forms.Label
     Friend WithEvents lblBPCompIPH As System.Windows.Forms.Label
     Friend WithEvents lblBPTotalUnits1 As System.Windows.Forms.Label
-    Friend WithEvents chkBPFacilityIncludeCosts As System.Windows.Forms.CheckBox
+    Friend WithEvents chkBPFacilityIncludeUsage As System.Windows.Forms.CheckBox
     Friend WithEvents lblBPMarketCost1 As System.Windows.Forms.Label
     Friend WithEvents chkBPTaxes As System.Windows.Forms.CheckBox
     Friend WithEvents tabBPInventionREEquip As System.Windows.Forms.TabControl
@@ -13713,9 +13770,9 @@ End Sub
     Friend WithEvents lblCalcInventionTeamDefault As System.Windows.Forms.Label
     Friend WithEvents cmbCalcCopyTeam As System.Windows.Forms.ComboBox
     Friend WithEvents lblCalcCopyTeamDefault As System.Windows.Forms.Label
-    Friend WithEvents chkCalcNoPOSFacilityIncludeCosts As System.Windows.Forms.CheckBox
-    Friend WithEvents chkCalcInventionFacilityIncludeCosts As System.Windows.Forms.CheckBox
-    Friend WithEvents chkCalcCopyFacilityIncludeCosts As System.Windows.Forms.CheckBox
+    Friend WithEvents chkCalcNoPOSFacilityIncludeUsage As System.Windows.Forms.CheckBox
+    Friend WithEvents chkCalcInventionFacilityIncludeCost As System.Windows.Forms.CheckBox
+    Friend WithEvents chkCalcCopyFacilityIncludeCost As System.Windows.Forms.CheckBox
     Friend WithEvents cmbCalcManufacturingTeamActivity As System.Windows.Forms.ComboBox
     Friend WithEvents chkCalcIncludeNoTeamManufacturing As System.Windows.Forms.CheckBox
     Friend WithEvents btnCalcSaveManufacturingTeam As System.Windows.Forms.Button
@@ -13739,7 +13796,7 @@ End Sub
     Friend WithEvents lblCalcComponentFacilityManualTE As System.Windows.Forms.Label
     Friend WithEvents lblCalcComponentFacilityLocation As System.Windows.Forms.Label
     Friend WithEvents lblCalcComponentFacilityType As System.Windows.Forms.Label
-    Friend WithEvents chkCalcComponentFacilityIncludeCosts As System.Windows.Forms.CheckBox
+    Friend WithEvents chkCalcComponentFacilityIncludeUsage As System.Windows.Forms.CheckBox
     Friend WithEvents cmbCalcComponentFacilityType As System.Windows.Forms.ComboBox
     Friend WithEvents lblCalcComponentFacilityManualME As System.Windows.Forms.Label
     Friend WithEvents lblCalcComponentFacilityBonus As System.Windows.Forms.Label
@@ -13796,7 +13853,7 @@ End Sub
     Friend WithEvents lblCalcSuperFacilityManualTE As System.Windows.Forms.Label
     Friend WithEvents lblCalcSuperFacilityLocation As System.Windows.Forms.Label
     Friend WithEvents lblCalcSuperFacilityType As System.Windows.Forms.Label
-    Friend WithEvents chkCalcSuperFacilityIncludeCosts As System.Windows.Forms.CheckBox
+    Friend WithEvents chkCalcSuperFacilityIncludeUsage As System.Windows.Forms.CheckBox
     Friend WithEvents cmbCalcSuperFacilityType As System.Windows.Forms.ComboBox
     Friend WithEvents lblCalcSuperFacilityManualME As System.Windows.Forms.Label
     Friend WithEvents lblCalcSuperFacilityBonus As System.Windows.Forms.Label
@@ -13811,7 +13868,7 @@ End Sub
     Friend WithEvents lblCalcCapitalFacilityManualTE As System.Windows.Forms.Label
     Friend WithEvents lblCalcCapitalFacilityLocation As System.Windows.Forms.Label
     Friend WithEvents lblCalcCapitalFacilityType As System.Windows.Forms.Label
-    Friend WithEvents chkCalcCapitalFacilityIncludeCosts As System.Windows.Forms.CheckBox
+    Friend WithEvents chkCalcCapitalFacilityIncludeUsage As System.Windows.Forms.CheckBox
     Friend WithEvents cmbCalcCapitalFacilityType As System.Windows.Forms.ComboBox
     Friend WithEvents lblCalcCapitalFacilityManualME As System.Windows.Forms.Label
     Friend WithEvents lblCalcCapitalFacilityBonus As System.Windows.Forms.Label
@@ -13826,7 +13883,7 @@ End Sub
     Friend WithEvents lblCalcT3FacilityManualTE As System.Windows.Forms.Label
     Friend WithEvents lblCalcT3FacilityLocation As System.Windows.Forms.Label
     Friend WithEvents lblCalcT3FacilityType As System.Windows.Forms.Label
-    Friend WithEvents chkCalcT3FacilityIncludeCosts As System.Windows.Forms.CheckBox
+    Friend WithEvents chkCalcT3FacilityIncludeUsage As System.Windows.Forms.CheckBox
     Friend WithEvents cmbCalcT3FacilityType As System.Windows.Forms.ComboBox
     Friend WithEvents lblCalcT3FacilityManualME As System.Windows.Forms.Label
     Friend WithEvents lblCalcT3FacilityBonus As System.Windows.Forms.Label
@@ -13841,7 +13898,7 @@ End Sub
     Friend WithEvents lblCalcSubsystemFacilityManualTE As System.Windows.Forms.Label
     Friend WithEvents lblCalcSubsystemFacilityLocation As System.Windows.Forms.Label
     Friend WithEvents lblCalcSubsystemFacilityType As System.Windows.Forms.Label
-    Friend WithEvents chkCalcSubsystemFacilityIncludeCosts As System.Windows.Forms.CheckBox
+    Friend WithEvents chkCalcSubsystemFacilityIncludeUsage As System.Windows.Forms.CheckBox
     Friend WithEvents cmbCalcSubsystemFacilityType As System.Windows.Forms.ComboBox
     Friend WithEvents lblCalcSubsystemFacilityManualME As System.Windows.Forms.Label
     Friend WithEvents lblCalcSubsystemFacilityBonus As System.Windows.Forms.Label
@@ -13856,7 +13913,7 @@ End Sub
     Friend WithEvents lblCalcBoosterFacilityManualTE As System.Windows.Forms.Label
     Friend WithEvents lblCalcBoosterFacilityLocation As System.Windows.Forms.Label
     Friend WithEvents lblCalcBoosterFacilityType As System.Windows.Forms.Label
-    Friend WithEvents chkCalcBoosterFacilityIncludeCosts As System.Windows.Forms.CheckBox
+    Friend WithEvents chkCalcBoosterFacilityIncludeUsage As System.Windows.Forms.CheckBox
     Friend WithEvents cmbCalcBoosterFacilityType As System.Windows.Forms.ComboBox
     Friend WithEvents lblCalcBoosterFacilityManualME As System.Windows.Forms.Label
     Friend WithEvents lblCalcBoosterFacilityBonus As System.Windows.Forms.Label
@@ -13886,7 +13943,7 @@ End Sub
     Friend WithEvents lblCalcT3InventionFacilityDefault As System.Windows.Forms.Label
     Friend WithEvents chkCalcT3InventionFacilityIncludeTime As System.Windows.Forms.CheckBox
     Friend WithEvents btnCalcT3InventionFacilitySave As System.Windows.Forms.Button
-    Friend WithEvents chkCalcT3InventionFacilityIncludeCosts As System.Windows.Forms.CheckBox
+    Friend WithEvents chkCalcT3InventionFacilityIncludeCost As System.Windows.Forms.CheckBox
     Friend WithEvents lblCalcT3InventionFacilityTaxRate As System.Windows.Forms.Label
     Friend WithEvents txtCalcT3InventionFacilityManualTE As System.Windows.Forms.TextBox
     Friend WithEvents txtCalcT3InventionFacilityManualME As System.Windows.Forms.TextBox
@@ -13899,6 +13956,11 @@ End Sub
     Friend WithEvents lblCalcT3InventionFacilityManualME As System.Windows.Forms.Label
     Friend WithEvents lblCalcT3InventionFacilityBonus As System.Windows.Forms.Label
     Friend WithEvents mnuResetCRESTDates As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents CheckBox1 As System.Windows.Forms.CheckBox
+    Friend WithEvents chkCalcInventionFacilityIncludeUsage As System.Windows.Forms.CheckBox
+    Friend WithEvents lblCalcInventionInclude As System.Windows.Forms.Label
+    Friend WithEvents lblCalcCopyInclude As System.Windows.Forms.Label
+    Friend WithEvents chkCalcCopyFacilityIncludeUsage As System.Windows.Forms.CheckBox
+    Friend WithEvents lblCalcT3InventionInclude As System.Windows.Forms.Label
+    Friend WithEvents chkCalcT3InventionFacilityIncludeUsage As System.Windows.Forms.CheckBox
 
 End Class

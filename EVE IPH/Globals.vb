@@ -812,19 +812,19 @@ Public Module Public_Variables
 
             End If
 
-                ' Taxes and usage
-                .ItemTaxes = SentBlueprint.GetBPTaxes
-                .ItemBrokerFees = SentBlueprint.GetBPBrokerFees
-                .ItemUsage = SentBlueprint.GetTotalManufacturingCost
+            ' Taxes and usage
+            .ItemTaxes = SentBlueprint.GetBPTaxes
+            .ItemBrokerFees = SentBlueprint.GetBPBrokerFees
+            .ItemUsage = SentBlueprint.GetTotalManufacturingUsage
 
-                ' Volume of the item(s)
-                .BuildVolume = SentBlueprint.GetTotalBuiltItemVolume
+            ' Volume of the item(s)
+            .BuildVolume = SentBlueprint.GetTotalBuiltItemVolume
 
-                ' Finally set techlevel
-                .TechLevel = SentBlueprint.GetTechLevel
+            ' Finally set techlevel
+            .TechLevel = SentBlueprint.GetTechLevel
 
-                ' All blueprint build types we want to save the base materials to build the bp
-                ShoppingItem.BPMaterialList = CType(SentBlueprint.GetComponentMaterials.Clone, Materials)
+            ' All blueprint build types we want to save the base materials to build the bp
+            ShoppingItem.BPMaterialList = CType(SentBlueprint.GetComponentMaterials.Clone, Materials)
 
         End With
 
