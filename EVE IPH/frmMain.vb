@@ -2834,68 +2834,68 @@ NoBonus:
         If Tab = BPTab Then
             Select Case IndyType
                 Case IndustryType.Manufacturing
-                    Return SelectedBPManufacturingFacility
+                    Return CType(SelectedBPManufacturingFacility.Clone(), IndustryFacility)
                 Case IndustryType.BoosterManufacturing
-                    Return SelectedBPBoosterManufacturingFacility
+                    Return CType(SelectedBPBoosterManufacturingFacility.Clone(), IndustryFacility)
                 Case IndustryType.CapitalManufacturing
-                    Return SelectedBPCapitalManufacturingFacility
+                    Return CType(SelectedBPCapitalManufacturingFacility.Clone(), IndustryFacility)
                 Case IndustryType.ComponentManufacturing
-                    Return SelectedBPComponentManufacturingFacility
+                    Return CType(SelectedBPComponentManufacturingFacility.Clone(), IndustryFacility)
                 Case IndustryType.SubsystemManufacturing
-                    Return SelectedBPSubsystemManufacturingFacility
+                    Return CType(SelectedBPSubsystemManufacturingFacility.Clone(), IndustryFacility)
                 Case IndustryType.SuperManufacturing
-                    Return SelectedBPSuperManufacturingFacility
+                    Return CType(SelectedBPSuperManufacturingFacility.Clone(), IndustryFacility)
                 Case IndustryType.T3Manufacturing
-                    Return SelectedBPT3ManufacturingFacility
+                    Return CType(SelectedBPT3ManufacturingFacility.Clone(), IndustryFacility)
                 Case IndustryType.POSFuelBlockManufacturing
-                    Return SelectedBPPOSFuelBlockFacility
+                    Return CType(SelectedBPPOSFuelBlockFacility.Clone(), IndustryFacility)
                 Case IndustryType.POSLargeShipManufacturing
-                    Return SelectedBPPOSLargeShipFacility
+                    Return CType(SelectedBPPOSLargeShipFacility.Clone(), IndustryFacility)
                 Case IndustryType.POSModuleManufacturing
-                    Return SelectedBPPOSModuleFacility
+                    Return CType(SelectedBPPOSModuleFacility.Clone(), IndustryFacility)
                 Case IndustryType.NoPOSManufacturing
-                    Return SelectedBPNoPOSFacility
+                    Return CType(SelectedBPNoPOSFacility.Clone(), IndustryFacility)
                 Case IndustryType.Invention
-                    Return SelectedBPInventionFacility
+                    Return CType(SelectedBPInventionFacility.Clone(), IndustryFacility)
                 Case IndustryType.T3Invention
-                    Return SelectedBPT3InventionFacility
+                    Return CType(SelectedBPT3InventionFacility.Clone(), IndustryFacility)
                 Case IndustryType.Copying
-                    Return SelectedBPCopyFacility
+                    Return CType(SelectedBPCopyFacility.Clone(), IndustryFacility)
                 Case Else
-                    Return SelectedBPManufacturingFacility
+                    Return CType(SelectedBPManufacturingFacility.Clone(), IndustryFacility)
             End Select
         Else
             Select Case IndyType
                 Case IndustryType.Manufacturing
-                    Return SelectedCalcBaseManufacturingFacility
+                    Return CType(SelectedCalcBaseManufacturingFacility.Clone(), IndustryFacility)
                 Case IndustryType.BoosterManufacturing
-                    Return SelectedCalcBoosterManufacturingFacility
+                    Return CType(SelectedCalcBoosterManufacturingFacility.Clone(), IndustryFacility)
                 Case IndustryType.CapitalManufacturing
-                    Return SelectedCalcCapitalManufacturingFacility
+                    Return CType(SelectedCalcCapitalManufacturingFacility.Clone(), IndustryFacility)
                 Case IndustryType.ComponentManufacturing
-                    Return SelectedCalcComponentManufacturingFacility
+                    Return CType(SelectedCalcComponentManufacturingFacility.Clone(), IndustryFacility)
                 Case IndustryType.SubsystemManufacturing
-                    Return SelectedCalcSubsystemManufacturingFacility
+                    Return CType(SelectedCalcSubsystemManufacturingFacility.Clone(), IndustryFacility)
                 Case IndustryType.SuperManufacturing
-                    Return SelectedCalcSuperManufacturingFacility
+                    Return CType(SelectedCalcSuperManufacturingFacility.Clone(), IndustryFacility)
                 Case IndustryType.T3Manufacturing
-                    Return SelectedCalcT3ManufacturingFacility
+                    Return CType(SelectedCalcT3ManufacturingFacility.Clone(), IndustryFacility)
                 Case IndustryType.POSFuelBlockManufacturing
-                    Return SelectedCalcPOSFuelBlockFacility
+                    Return CType(SelectedCalcPOSFuelBlockFacility.Clone(), IndustryFacility)
                 Case IndustryType.POSLargeShipManufacturing
-                    Return SelectedCalcPOSLargeShipFacility
+                    Return CType(SelectedCalcPOSLargeShipFacility.Clone(), IndustryFacility)
                 Case IndustryType.POSModuleManufacturing
-                    Return SelectedCalcPOSModuleFacility
+                    Return CType(SelectedCalcPOSModuleFacility.Clone(), IndustryFacility)
                 Case IndustryType.NoPOSManufacturing
-                    Return SelectedCalcNoPOSFacility
+                    Return CType(SelectedCalcNoPOSFacility.Clone(), IndustryFacility)
                 Case IndustryType.Invention
-                    Return SelectedCalcInventionFacility
+                    Return CType(SelectedCalcInventionFacility.Clone(), IndustryFacility)
                 Case IndustryType.T3Invention
-                    Return SelectedCalcT3InventionFacility
+                    Return CType(SelectedCalcT3InventionFacility.Clone(), IndustryFacility)
                 Case IndustryType.Copying
-                    Return SelectedCalcCopyFacility
+                    Return CType(SelectedCalcCopyFacility.Clone(), IndustryFacility)
                 Case Else
-                    Return SelectedCalcBaseManufacturingFacility
+                    Return CType(SelectedCalcBaseManufacturingFacility.Clone(), IndustryFacility)
             End Select
         End If
     End Function
@@ -15337,6 +15337,7 @@ CheckTechs:
             .CheckBPTypeMisc = chkCalcMisc.Checked
             .CheckBPTypeDeployables = chkCalcDeployables.Checked
             .CheckBPTypeCelestials = chkCalcCelestials.Checked
+            .CheckBPTypeStationParts = chkCalcStationParts.Checked
 
             .CheckTech1 = chkCalcT1.Checked
             .CheckTech2 = chkCalcT2.Checked
@@ -15861,6 +15862,7 @@ CheckTechs:
 
                 ' Set all the teams regardless of tech used
                 InsertItem.ManufacturingTeam = SelectedCalcManufacturingTeam
+                InsertItem.ComponentTeam = SelectedCalcComponentManufacturingTeam
                 InsertItem.InventionRETeam = SelectedCalcInventionTeam
                 InsertItem.CopyTeam = SelectedCalcCopyTeam
 
@@ -15868,6 +15870,12 @@ CheckTechs:
                 InsertItem.Runs = CInt(txtCalcRuns.Text)
                 InsertItem.ProductionLines = CInt(txtCalcProdLines.Text)
                 InsertItem.LaboratoryLines = CInt(txtCalcLabLines.Text)
+
+                ' Reset all the industry facilities
+                InsertItem.ManufacturingFacility = New IndustryFacility
+                InsertItem.ComponentManufacturingFacility = New IndustryFacility
+                InsertItem.CopyFacility = New IndustryFacility
+                InsertItem.InventionREFacility = New IndustryFacility
 
                 Dim SelectedIndyType As IndustryType
 
@@ -15903,32 +15911,37 @@ CheckTechs:
                             ArrayName = ""
                     End Select
 
-                    ' Need to autoselect the pos array by type of blueprint
-                    SQL = "SELECT DISTINCT ARRAY_NAME, MATERIAL_MULTIPLIER, TIME_MULTIPLIER FROM ASSEMBLY_ARRAYS "
-                    SQL = SQL & "WHERE ACTIVITY_ID = "
-                    SQL = SQL & CStr(IndustryActivities.Manufacturing) & " "
-                    ' Check groups and categories
-                    SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(InsertItem.ItemCategoryID, InsertItem.ItemGroupID) & " "
-                    If ArrayName <> "" Then
-                        SQL = SQL & "AND ARRAY_NAME = '" & ArrayName & "'"
-                    End If
-
-                    DBCommand = New SQLiteCommand(SQL, DB)
-                    readerArray = DBCommand.ExecuteReader
-
-                    While readerArray.Read()
-                        ' Set the facility
-                        InsertItem.ManufacturingFacility = CType(SelectedCalcBaseManufacturingFacility.Clone, IndustryFacility)
-                        InsertItem.ManufacturingFacility.FacilityName = readerArray.GetString(0)
-                        InsertItem.ManufacturingFacility.MaterialMultiplier = readerArray.GetDouble(1)
-                        InsertItem.ManufacturingFacility.TimeMultiplier = readerArray.GetDouble(2)
-                        InsertItem.ManufacturingFacility.TaxRate = POSTaxRate
-
-                        ' Add the facility if multiple
-                        If ProcessAllMultiUsePOSArrays Then
-                            Call MultiUsePOSArrays.Add(InsertItem.ManufacturingFacility)
+                    If SelectedIndyType <> IndustryType.NoPOSManufacturing Then
+                        ' Need to autoselect the pos array by type of blueprint
+                        SQL = "SELECT DISTINCT ARRAY_NAME, MATERIAL_MULTIPLIER, TIME_MULTIPLIER FROM ASSEMBLY_ARRAYS "
+                        SQL = SQL & "WHERE ACTIVITY_ID = "
+                        SQL = SQL & CStr(IndustryActivities.Manufacturing) & " "
+                        ' Check groups and categories
+                        SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(InsertItem.ItemCategoryID, InsertItem.ItemGroupID) & " "
+                        If ArrayName <> "" Then
+                            SQL = SQL & "AND ARRAY_NAME = '" & ArrayName & "'"
                         End If
-                    End While
+
+                        DBCommand = New SQLiteCommand(SQL, DB)
+                        readerArray = DBCommand.ExecuteReader
+
+                        While readerArray.Read()
+                            ' Set the facility
+                            InsertItem.ManufacturingFacility = CType(SelectedCalcBaseManufacturingFacility.Clone, IndustryFacility)
+                            InsertItem.ManufacturingFacility.FacilityName = readerArray.GetString(0)
+                            InsertItem.ManufacturingFacility.MaterialMultiplier = readerArray.GetDouble(1)
+                            InsertItem.ManufacturingFacility.TimeMultiplier = readerArray.GetDouble(2)
+                            InsertItem.ManufacturingFacility.TaxRate = POSTaxRate
+
+                            ' Add the facility if multiple
+                            If ProcessAllMultiUsePOSArrays Then
+                                Call MultiUsePOSArrays.Add(InsertItem.ManufacturingFacility)
+                            End If
+                        End While
+                    Else
+                        ' Load the NO POS facility
+                        InsertItem.ManufacturingFacility = GetManufacturingFacility(SelectedIndyType, CalcTab)
+                    End If
                 Else
                     ' Nothing special, just set it to the current selected facility for this type
                     InsertItem.ManufacturingFacility = GetManufacturingFacility(GetProductionType(ActivityManufacturing, InsertItem.ItemGroupID, InsertItem.ItemCategoryID, StationFacility), CalcTab)
@@ -15937,10 +15950,6 @@ CheckTechs:
                 ' Set the component, and copy facilities
                 InsertItem.ComponentManufacturingFacility = GetManufacturingFacility(GetProductionType(ActivityComponentManufacturing, InsertItem.ItemGroupID, InsertItem.ItemCategoryID, StationFacility), CalcTab)
                 InsertItem.CopyFacility = GetManufacturingFacility(GetProductionType(ActivityCopying, InsertItem.ItemGroupID, InsertItem.ItemCategoryID, StationFacility), CalcTab)
-
-                ' Set teams
-                InsertItem.ManufacturingTeam = SelectedCalcManufacturingTeam
-                InsertItem.ComponentTeam = SelectedCalcComponentManufacturingTeam
 
                 ' Now determine how many copies of the base item we need with different data changed
                 ' If T1, just select compare types (raw and components)

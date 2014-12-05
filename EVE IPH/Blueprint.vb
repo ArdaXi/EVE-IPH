@@ -99,6 +99,7 @@ Public Class Blueprint
     Private InventionREChance As Double
     Private InventionREDecryptor As Decryptor
     Private TotalInventedREdRuns As Integer ' Number of runs an invention job will produce
+    Private SingleInventedREdBPCRuns As Integer ' The runs on one bp invented
     Private NumInventionREJobs As Integer ' Number of invention jobs we will do
 
     Private CopyCost As Double ' Total Cost of the BPCs for the T2 item - for now set this to 0. TO DO add copy materials for things like data sheets, etc
@@ -404,9 +405,8 @@ Public Class Blueprint
                 ' Save the base costs
                 BaseJobCost += CurrentMaterial.GetQuantity * readerBP.GetDouble(8)
 
-                ' Set the quantity: required = max(runs,ceil(round(runs ? baseQuantity ? materialModifier,2))
-                'CurrentMatQuantity = CLng(Math.Max(UserRuns, Math.Ceiling(Math.Round(UserRuns * CurrentMaterial.GetQuantity * GetBPMaterialModifier(), 2))))
-                CurrentMatQuantity = CLng(Math.Ceiling(CurrentMaterial.GetQuantity * GetBPMaterialModifier())) * UserRuns
+                ' Set the quantity: required = max(runs,ceil(round(runs * baseQuantity * materialModifier,2))
+                CurrentMatQuantity = CLng(Math.Max(UserRuns, Math.Ceiling(Math.Round(UserRuns * CurrentMaterial.GetQuantity * GetBPMaterialModifier(), 2))))
 
                 ' Update the quantity - just add the negative percent of the ME modifier to 1 and multiply
                 Call CurrentMaterial.SetQuantity(CurrentMatQuantity)
@@ -1095,7 +1095,6 @@ Public Class Blueprint
 
         Dim SQL As String
         Dim InventionMat As Material = Nothing
-        Dim SingleInventedREdBPCRuns As Integer
         Dim BaseInventionREMats As New Materials
         Dim NumInventionRESessions As Long = 0 ' How many sessions (runs per set of lines) ie. 10 runs 5 lines = 2 sessions
 
@@ -1458,7 +1457,7 @@ Public Class Blueprint
 
     ' Gets the total invented runs for each BPC
     Public Function GetInventedREdRuns() As Integer
-        Return TotalInventedREdRuns
+        Return SingleInventedREdBPCRuns
     End Function
 
     ' Returns the number of jobs we'll have to do
