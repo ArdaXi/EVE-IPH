@@ -456,6 +456,10 @@ Public Class frmMain
         ' After we are done with everything, use the following tables to update the RACE ID value in the ALL_BLUEPRINTS table
         lblTableName.Text = "Updating the Race ID's"
 
+        ' Set null to zero
+        SQL = "UPDATE ALL_BLUEPRINTS SET RACE_ID = 0 WHERE RACE_ID IS NULL "
+        Call Execute_SQLiteSQL(SQL, SQLiteDB)
+
         ' 1 = Caldari
         SQL = "UPDATE ALL_BLUEPRINTS SET RACE_ID = 1 "
         SQL = SQL & "WHERE "
@@ -464,7 +468,7 @@ Public Class frmMain
         SQL = SQL & "(SELECT DISTINCT BLUEPRINT_ID FROM ALL_BLUEPRINT_MATERIALS WHERE MATERIAL = 'Caldari Encryption Methods')) "
         SQL = SQL & "OR MARKET_GROUP ='Caldari' OR BLUEPRINT_GROUP IN ('Missile Blueprint','Missile Launcher Blueprint') "
         SQL = SQL & "OR BLUEPRINT_NAME LIKE 'Caldari%'  OR BLUEPRINT_NAME LIKE 'Caldari%' "
-        SQL = SQL & "AND RACE_ID IS NULL "
+        SQL = SQL & "AND RACE_ID = 0 "
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
         ' 2 = Minmatar
@@ -475,7 +479,7 @@ Public Class frmMain
         SQL = SQL & "(SELECT DISTINCT BLUEPRINT_ID FROM ALL_BLUEPRINT_MATERIALS WHERE MATERIAL = 'Minmatar Encryption Methods')) "
         SQL = SQL & "OR MARKET_GROUP ='Minmatar' OR BLUEPRINT_GROUP IN ('Projectile Ammo Blueprint','Projectile Weapon Blueprint') "
         SQL = SQL & "OR BLUEPRINT_NAME LIKE 'Republic%'  OR BLUEPRINT_NAME LIKE 'Minmatar%' "
-        SQL = SQL & "AND RACE_ID IS NULL "
+        SQL = SQL & "AND RACE_ID = 0 "
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
         ' 4 = Amarr
@@ -486,7 +490,7 @@ Public Class frmMain
         SQL = SQL & "(SELECT DISTINCT BLUEPRINT_ID FROM ALL_BLUEPRINT_MATERIALS WHERE MATERIAL = 'Amarr Encryption Methods')) "
         SQL = SQL & "OR MARKET_GROUP ='Amarr' OR BLUEPRINT_GROUP IN ('Energy Weapon Blueprint','Frequency Crystal Blueprint') "
         SQL = SQL & "OR BLUEPRINT_NAME LIKE 'Ammatar%' OR BLUEPRINT_NAME LIKE 'Imperial Navy%' OR BLUEPRINT_NAME LIKE 'Khanid Navy%' OR BLUEPRINT_NAME LIKE 'Amarr%' "
-        SQL = SQL & "AND RACE_ID IS NULL "
+        SQL = SQL & "AND RACE_ID = 0"
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
         ' 8 = Gallente
@@ -497,7 +501,7 @@ Public Class frmMain
         SQL = SQL & "(SELECT DISTINCT BLUEPRINT_ID FROM ALL_BLUEPRINT_MATERIALS WHERE MATERIAL = 'Gallente Encryption Methods')) "
         SQL = SQL & "OR MARKET_GROUP ='Gallente' OR BLUEPRINT_GROUP IN ('Hybrid Charge Blueprint','Hybrid Weapon Blueprint', 'Capacitor Booster Charge Blueprint', 'Bomb Blueprint') "
         SQL = SQL & "OR BLUEPRINT_NAME LIKE 'Federation%' OR BLUEPRINT_NAME LIKE 'Gallente%' "
-        SQL = SQL & "AND RACE_ID IS NULL "
+        SQL = SQL & "AND RACE_ID = 0"
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
         SQL = "UPDATE ALL_BLUEPRINTS SET RACE_ID = 15 WHERE MARKET_GROUP = 'Pirate Faction' OR RACE_ID > 15"
@@ -506,10 +510,6 @@ Public Class frmMain
         SQL = "UPDATE ALL_BLUEPRINTS SET RACE_ID = 15 WHERE BLUEPRINT_NAME LIKE 'Serpentis%' OR BLUEPRINT_NAME LIKE 'Angel%' OR BLUEPRINT_NAME LIKE 'Blood%'"
         SQL = SQL & "OR BLUEPRINT_NAME LIKE 'Domination%' OR BLUEPRINT_NAME LIKE 'Dread Guristas%' OR BLUEPRINT_NAME LIKE 'Guristas%' "
         SQL = SQL & "OR BLUEPRINT_NAME LIKE 'True Sansha%' OR BLUEPRINT_NAME LIKE 'Sansha%' OR BLUEPRINT_NAME LIKE 'Shadow%' OR BLUEPRINT_NAME LIKE 'Dark Blood%'"
-        Call Execute_SQLiteSQL(SQL, SQLiteDB)
-
-        ' Set null to zero
-        SQL = "UPDATE ALL_BLUEPRINTS SET RACE_ID = 0 WHERE RACE_ID IS NULL "
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
         ' Set all the structures now that are zero
@@ -530,16 +530,19 @@ Public Class frmMain
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
         ' Update any remaining by blueprint group
-        SQL = "SELECT DISTINCT BLUEPRINT_GROUP, RACE_ID FROM ALL_BLUEPRINTS WHERE RACE_ID <> 0 AND ITEM_CATEGORY <> 'Structure' "
+        SQL = "SELECT DISTINCT BLUEPRINT_GROUP, RACE_ID FROM ALL_BLUEPRINTS WHERE RACE_ID <> 0 "
         SQLiteDBCommand = New SQLiteCommand(SQL, SQLiteDB)
         SQLiteReader = SQLiteDBCommand.ExecuteReader
 
         While SQLiteReader.Read
             SQL = "UPDATE ALL_BLUEPRINTS SET RACE_ID = " & SQLiteReader.GetInt32(1) & " "
             SQL = SQL & "WHERE BLUEPRINT_GROUP = '" & SQLiteReader.GetString(0) & "' "
-            SQL = SQL & "AND RACE_ID = 0"
+            SQL = SQL & "AND RACE_ID = 0 AND ITEM_CATEGORY IN ('Module', 'Drone')"
             Call Execute_SQLiteSQL(SQL, SQLiteDB)
         End While
+
+        ' Finally use market ID to update any that are race id 0
+
 
         ' Fix for Pheobe SDE issues
         SQL = "DELETE FROM ALL_BLUEPRINT_MATERIALS WHERE MATERIAL_CATEGORY = 'Decryptors'"
