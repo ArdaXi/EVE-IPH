@@ -508,11 +508,29 @@ Public Class frmMain
         SQL = SQL & "OR BLUEPRINT_NAME LIKE 'True Sansha%' OR BLUEPRINT_NAME LIKE 'Sansha%' OR BLUEPRINT_NAME LIKE 'Shadow%' OR BLUEPRINT_NAME LIKE 'Dark Blood%'"
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
+        ' Set null to zero
         SQL = "UPDATE ALL_BLUEPRINTS SET RACE_ID = 0 WHERE RACE_ID IS NULL "
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
+        ' Set all the structures now that are zero
+        SQL = "UPDATE ALL_BLUEPRINTS SET RACE_ID = 1 WHERE RACE_ID <> 15 AND ITEM_CATEGORY = 'Structure' "
+        SQL = SQL & "AND ITEM_GROUP IN ('Mobile Missile Sentry')"
+        Call Execute_SQLiteSQL(SQL, SQLiteDB)
+
+        SQL = "UPDATE ALL_BLUEPRINTS SET RACE_ID = 2 WHERE RACE_ID <> 15 AND ITEM_CATEGORY = 'Structure' "
+        SQL = SQL & "AND ITEM_GROUP IN ('Mobile Projectile Sentry')"
+        Call Execute_SQLiteSQL(SQL, SQLiteDB)
+
+        SQL = "UPDATE ALL_BLUEPRINTS SET RACE_ID = 4 WHERE RACE_ID <> 15 AND ITEM_CATEGORY = 'Structure' "
+        SQL = SQL & "AND ITEM_GROUP IN ('Mobile Laser Sentry')"
+        Call Execute_SQLiteSQL(SQL, SQLiteDB)
+
+        SQL = "UPDATE ALL_BLUEPRINTS SET RACE_ID = 8 WHERE RACE_ID <> 15 AND ITEM_CATEGORY = 'Structure' "
+        SQL = SQL & "AND ITEM_GROUP IN ('Mobile Hybrid Sentry')"
+        Call Execute_SQLiteSQL(SQL, SQLiteDB)
+
         ' Update any remaining by blueprint group
-        SQL = "SELECT DISTINCT BLUEPRINT_GROUP, RACE_ID FROM ALL_BLUEPRINTS WHERE RACE_ID <> 0 "
+        SQL = "SELECT DISTINCT BLUEPRINT_GROUP, RACE_ID FROM ALL_BLUEPRINTS WHERE RACE_ID <> 0 AND ITEM_CATEGORY <> 'Structure' "
         SQLiteDBCommand = New SQLiteCommand(SQL, SQLiteDB)
         SQLiteReader = SQLiteDBCommand.ExecuteReader
 
@@ -527,7 +545,7 @@ Public Class frmMain
         SQL = "DELETE FROM ALL_BLUEPRINT_MATERIALS WHERE MATERIAL_CATEGORY = 'Decryptors'"
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
-        SQL = "DELETE FROM ALL_BLUEPRINT_MATERIALS WHERE BLUEPRINT_NAME LIKE '%Interface Blueprint'"
+        SQL = "DELETE FROM ALL_BLUEPRINT_MATERIALS WHERE BLUEPRINT_NAME LIKE '%Data Interface Blueprint'"
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
         SQL = "DELETE FROM ALL_BLUEPRINTS WHERE ITEM_GROUP = 'Data Interfaces'"
@@ -936,12 +954,12 @@ Public Class frmMain
         ' Create SQLite table
         SQL = "CREATE TABLE ALL_BLUEPRINT_MATERIALS ("
         SQL = SQL & "BLUEPRINT_ID INTEGER,"
-        SQL = SQL & "BLUEPRINT_NAME VARCHAR(" & GetLenSQLExpField("BLUEPRINT_NAME", "ALL_BLUEPRINT_MATERIALS") & ") NOT NULL,"
+        SQL = SQL & "BLUEPRINT_NAME VARCHAR(100) NOT NULL,"
         SQL = SQL & "PRODUCT_ID INTEGER NOT NULL,"
         SQL = SQL & "MATERIAL_ID INTEGER NOT NULL,"
-        SQL = SQL & "MATERIAL VARCHAR(" & GetLenSQLExpField("MATERIAL", "ALL_BLUEPRINT_MATERIALS") & ") NOT NULL,"
-        SQL = SQL & "MATERIAL_GROUP VARCHAR(" & GetLenSQLExpField("MATERIAL_GROUP", "ALL_BLUEPRINT_MATERIALS") & ") NOT NULL,"
-        SQL = SQL & "MATERIAL_CATEGORY VARCHAR(" & GetLenSQLExpField("MATERIAL_CATEGORY", "ALL_BLUEPRINT_MATERIALS") & ") NOT NULL,"
+        SQL = SQL & "MATERIAL VARCHAR(100) NOT NULL,"
+        SQL = SQL & "MATERIAL_GROUP VARCHAR(100) NOT NULL,"
+        SQL = SQL & "MATERIAL_CATEGORY VARCHAR(100) NOT NULL,"
         SQL = SQL & "MATERIAL_VOLUME REAL,"
         SQL = SQL & "QUANTITY INTEGER NOT NULL,"
         SQL = SQL & "ACTIVITY INTEGER NOT NULL,"

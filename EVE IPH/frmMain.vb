@@ -3601,10 +3601,6 @@ NoBonus:
             SQL = SQL & " AND API_TYPE = 'Corporation'"
             ExecuteNonQuerySQL(SQL)
 
-            ' Reset the outpost cache date too
-            SQL = "UPDATE EVEIPH_DATA SET OUTPOSTS_CACHED_UNTIL = NULL"
-            ExecuteNonQuerySQL(SQL)
-
             ' Reload the asset variables for the character, which will load nothing but clear the assets out
             Call SelectedCharacter.GetAssets().LoadAssets(ScanType.Personal, UserApplicationSettings.LoadAssetsonStartup)
             Call SelectedCharacter.CharacterCorporation.GetAssets().LoadAssets(ScanType.Corporation, UserApplicationSettings.LoadAssetsonStartup)
@@ -7315,7 +7311,7 @@ ExitForm:
             ElseIf .rbtnBPBoosterBlueprints.Checked Then
                 SQL = SQL & "AND ITEM_CATEGORY = 'Implant' "
             ElseIf .rbtnBPComponentBlueprints.Checked Then
-                SQL = SQL & "AND ITEM_GROUP LIKE '%Components%' "
+                SQL = SQL & "(X.ITEM_GROUP LIKE '%Components%' AND X.ITEM_GROUP <> 'Station Components') OR "
             ElseIf .rbtnBPMiscBlueprints.Checked Then
                 SQL = SQL & "AND ITEM_GROUP IN ('Tool','Data Interfaces','Cyberimplant','Fuel Block') "
             ElseIf .rbtnBPDeployableBlueprints.Checked Then
@@ -17177,7 +17173,7 @@ ExitCalc:
             ItemTypes = ItemTypes & "X.ITEM_CATEGORY = 'Implant' OR "
         End If
         If chkCalcComponents.Checked Then
-            ItemTypes = ItemTypes & "X.ITEM_GROUP LIKE '%Components%' OR "
+            ItemTypes = ItemTypes & "(X.ITEM_GROUP LIKE '%Components%' AND X.ITEM_GROUP <> 'Station Components') OR "
         End If
         If chkCalcRigs.Checked Then
             ItemTypes = ItemTypes & "X.ITEM_GROUP LIKE 'Rig%' OR "

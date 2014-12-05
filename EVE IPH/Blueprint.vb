@@ -49,15 +49,14 @@ Public Class Blueprint
     ' Base Fees for activity
     Private JobFee As Double
 
+    ' How much it costs to use each facility
+    Private ManufacturingFacilityUsage As Double
+    Private ComponentFacilityUsage As Double
+
     Private ManufacturingTeamFee As Double
     Private ComponentTeamFee As Double
     Private InventionRETeamFee As Double
     Private CopyTeamFee As Double
-
-    ' How much it costs to use each facility
-    Private ManufacturingFacilityUsage As Double
-    Private ComponentFacilityUsage As Double
-    Private InventionREUsage As Double
 
     ' Variables for calcuations
     Private BPProductionTime As Double ' Production Time for 1 Run of Blueprint 
@@ -110,11 +109,12 @@ Public Class Blueprint
     Private IncludeCopyCosts As Boolean
     Private IncludeCopyUsage As Boolean
 
-    Private TotalInventionRECost As Double ' Total cost to run this invention job for this bp
-    Private TotalInventionRETime As Double ' Total time in seconds to invent this bp
+    Private InventionRECost As Double ' Total cost to run this invention job for this bp
+    Private InventionRETime As Double ' Total time in seconds to invent this bp
+    Private InventionREUsage As Double ' Total cost to do this activity in a facility
 
     Private IncludeInventionRECosts As Boolean
-    Private IncludeTotalInventionRETime As Boolean
+    Private IncludeInventionRETime As Boolean
     Private IncludeInventionREUsage As Boolean ' just the facility usage, not the full cost use for both T2 and T3
 
     Private InventionT3BPCTypeID As Long ' BP used to invent the BP we are building
@@ -189,7 +189,7 @@ Public Class Blueprint
 
         ' Invention and Copy costs/times are set after getting the full base job materials
         IncludeInventionRECosts = InventionREFacility.IncludeActivityCost
-        IncludeTotalInventionRETime = InventionREFacility.IncludeActivityTime
+        IncludeInventionRETime = InventionREFacility.IncludeActivityTime
         IncludeInventionREUsage = InventionREFacility.IncludeActivityUsage
 
         IncludeCopyCosts = CopyFacility.IncludeActivityCost
@@ -262,13 +262,14 @@ Public Class Blueprint
 
         CopyCost = 0
         CopyTime = 0
-        TotalInventionRECost = 0
-        TotalInventionRETime = 0
+        InventionRECost = 0
+        InventionRETime = 0
 
         ManufacturingFacilityUsage = 0
         ComponentFacilityUsage = 0
-        InventionREUsage = 0
+
         CopyUsage = 0
+        InventionREUsage = 0
 
         BaseJobCost = 0
         JobFee = 0
@@ -627,9 +628,9 @@ Public Class Blueprint
         End If
 
         ' Add all the times here - only include copy, re, and invention times here since it's the total time
-        TotalProductionTime = TotalProductionTime + BPProductionTime + CopyTime + TotalInventionRETime
+        TotalProductionTime = TotalProductionTime + BPProductionTime + CopyTime + InventionRETime
         ' Finally, add in the copy, invention and RE time if they sent it
-        BPProductionTime = BPProductionTime + CopyTime + TotalInventionRETime
+        BPProductionTime = BPProductionTime + CopyTime + InventionRETime
 
         ' Finally set all the price data
         Call SetPriceData(SetTaxes, SetBrokerFees)
@@ -877,8 +878,8 @@ Public Class Blueprint
         TaxesFeesUsage = BPTaxes + BPBrokerFees + TotalManufacturingUsage
 
         ' Totals
-        TotalRawCost = RawMaterials.GetTotalMaterialsCost + TotalInventionRECost + AdditionalCosts
-        TotalComponentCost = ComponentMaterials.GetTotalMaterialsCost + TotalInventionRECost + AdditionalCosts
+        TotalRawCost = RawMaterials.GetTotalMaterialsCost + InventionRECost + AdditionalCosts
+        TotalComponentCost = ComponentMaterials.GetTotalMaterialsCost + InventionRECost + AdditionalCosts
 
         ' Profit market cost - total cost of mats and invention and fees
         TotalRawProfit = ItemMarketCost - TotalRawCost - TaxesFeesUsage
@@ -1208,10 +1209,10 @@ Public Class Blueprint
         End If
 
         ' Set invention time
-        If IncludeTotalInventionRETime Then
-            TotalInventionRETime = GetInventionTime() * Math.Ceiling(NumInventionRESessions / NumberofLaboratoryLines)
+        If IncludeInventionRETime Then
+            InventionRETime = GetInventionTime() * Math.Ceiling(NumInventionRESessions / NumberofLaboratoryLines)
         Else
-            TotalInventionRETime = 0
+            InventionRETime = 0
         End If
 
         ' Set invention usage
@@ -1243,9 +1244,9 @@ Public Class Blueprint
 
             ' Set the total cost for the sent runs by totaling all to get success needed, then dividing it by the runs invented
             ' (some bps have more runs than 1 - i.e. Drones = 10) to get the cost per run, then multiply that cost by the number of runs - Later add copy costs here
-            TotalInventionRECost = (InventionREMaterials.GetTotalMaterialsCost + InventionREUsage + CopyUsage) / TotalInventedREdRuns * UserRuns
+            InventionRECost = (InventionREMaterials.GetTotalMaterialsCost + InventionREUsage + CopyUsage) / TotalInventedREdRuns * UserRuns
         Else
-            TotalInventionRECost = InventionREUsage + CopyUsage
+            InventionRECost = InventionREUsage + CopyUsage
         End If
 
     End Sub
@@ -1427,12 +1428,12 @@ Public Class Blueprint
 
     ' Returns the invention time in friendly format it took to make a T2/T3 BPC 
     Public Function GetInventionRETime() As Double
-        Return TotalInventionRETime
+        Return InventionRETime
     End Function
 
     ' Gets the total Invention Cost of this Blueprint if it can be invented
     Public Function GetTotalInventionRECost() As Double
-        Return TotalInventionRECost - InventionREUsage ' Only return the cost of the materials
+        Return InventionRECost - InventionREUsage ' Only return the cost of the materials
     End Function
 
     ' Gets the invention usage fees for installing this invention job for this BP
