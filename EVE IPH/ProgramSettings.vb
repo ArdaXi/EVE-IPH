@@ -681,7 +681,7 @@ Public Class ProgramSettings
     Private CopyFacilitySettings As FacilitySettings
     Private InventionFacilitySettings As FacilitySettings
     Private T3InventionFacilitySettings As FacilitySettings
-    Private NoPoSFacilitySettings As FacilitySettings
+    Private NoPOSFacilitySettings As FacilitySettings
     Private POSFuelBlockFacilitySettings As FacilitySettings
     Private POSModuleFacilitySettings As FacilitySettings
     Private POSLargeShipFacilitySettings As FacilitySettings
@@ -731,7 +731,7 @@ Public Class ProgramSettings
     Private Const CopyFacilitySettingsFileName As String = "CopyFacilitySettings.xml"
     Private Const InventionFacilitySettingsFileName As String = "InventionFacilitySettings.xml"
     Private Const T3InventionFacilitySettingsFileName As String = "T3InventionFacilitySettings.xml"
-    Private Const NoPoSFacilitySettingsFileName As String = "NoPoSFacilitySettings.xml"
+    Private Const NoPoSFacilitySettingsFileName As String = "NoPOSFacilitySettings.xml"
 
     Private Const POSFuelBlockFacilitySettingsFileName As String = "POSFuelBlockFacilitySettings.xml"
     Private Const POSLargeShipFacilitySettingsFileName As String = "POSLargeShipFacilitySettings.xml"
@@ -1137,7 +1137,7 @@ Public Class ProgramSettings
                     .PricePerUnit = CBool(GetSettingValue(BPSettingsFileName, SettingTypes.TypeBoolean, "BPSettings", "PricePerUnit", DefaultBPPricePerUnit))
                     .IncludeInventionCost = CBool(GetSettingValue(BPSettingsFileName, SettingTypes.TypeBoolean, "BPSettings", "IncludeInventionCost", DefaultBPIncludeInventionCost))
                     .IncludeInventionTime = CBool(GetSettingValue(BPSettingsFileName, SettingTypes.TypeBoolean, "BPSettings", "IncludeInventionTime", DefaultBPIncludeInventionTime))
-                    .IncludeCopyCost = CBool(GetSettingValue(BPSettingsFileName, SettingTypes.TypeBoolean, "BPSettings", "IncludeCopyCost", DefaultBPIncludeCopyCost))
+                    .IncludeCopyCost = CBool(GetSettingValue(BPSettingsFileName, SettingTypes.TypeBoolean, "BPSettings", "IncludeCopyCost", DefaultBPIncludecopyCost))
                     .IncludeCopyTime = CBool(GetSettingValue(BPSettingsFileName, SettingTypes.TypeBoolean, "BPSettings", "IncludeCopyTime", DefaultBPIncludeCopyTime))
                     .IncludeT3Cost = CBool(GetSettingValue(BPSettingsFileName, SettingTypes.TypeBoolean, "BPSettings", "IncludeT3Cost", DefaultBPIncludeT3Cost))
                     .IncludeT3Time = CBool(GetSettingValue(BPSettingsFileName, SettingTypes.TypeBoolean, "BPSettings", "IncludeT3Time", DefaultBPIncludeT3Time))
@@ -4224,7 +4224,7 @@ Public Class ProgramSettings
                 Case IndustryType.T3Invention
                     Call WriteSettingsToFile(Tab & T3InventionFacilitySettingsFileName, FacilitySettingsList, Tab & "T3InventionFacilitySettings")
                 Case IndustryType.NoPOSManufacturing
-                    Call WriteSettingsToFile(Tab & NoPoSFacilitySettingsFileName, FacilitySettingsList, Tab & "NoPoSFacilitySettings")
+                    Call WriteSettingsToFile(Tab & NoPoSFacilitySettingsFileName, FacilitySettingsList, Tab & "NoPOSFacilitySettings")
                 Case IndustryType.POSFuelBlockManufacturing
                     Call WriteSettingsToFile(Tab & POSFuelBlockFacilitySettingsFileName, FacilitySettingsList, Tab & "POSFuelBlockManufacturingFacilitySettings")
                 Case IndustryType.POSLargeShipManufacturing

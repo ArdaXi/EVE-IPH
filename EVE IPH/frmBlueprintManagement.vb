@@ -26,6 +26,8 @@ Public Class frmBlueprintManagement
     Private FavoriteUpdate As Boolean
     Private BPTypeUpdate As Boolean
 
+    Private Const SelectTypeText As String = "Select Type"
+
     ' For Blueprints - copy or original
     Public Enum BlueprintType
         ' -1 is original, -2 is copy
@@ -89,7 +91,7 @@ Public Class frmBlueprintManagement
             btnScanPersonalBPs.Enabled = False
             btnScanCorpBPs.Enabled = False
             cmbBPTypeFilterLoaded = False
-            cmbBPTypeFilter.Text = "Select Type"
+            cmbBPTypeFilter.Text = SelectTypeText
             Call UpdateBlueprintGrid(False)
         End If
     End Sub
@@ -98,7 +100,7 @@ Public Class frmBlueprintManagement
         If Not FirstLoad And rbtnAllBPs.Checked Then
             Call SetScanEnableButtons()
             cmbBPTypeFilterLoaded = False
-            cmbBPTypeFilter.Text = "Select Type"
+            cmbBPTypeFilter.Text = SelectTypeText
             Call UpdateBlueprintGrid(False)
         End If
     End Sub
@@ -107,7 +109,7 @@ Public Class frmBlueprintManagement
         If Not FirstLoad And rbtnFavorites.Checked Then
             Call SetScanEnableButtons()
             cmbBPTypeFilterLoaded = False
-            cmbBPTypeFilter.Text = "Select Type"
+            cmbBPTypeFilter.Text = SelectTypeText
             Call UpdateBlueprintGrid(False)
         End If
     End Sub
@@ -124,7 +126,7 @@ Public Class frmBlueprintManagement
 
         If Not FirstLoad And rbtnScannedPersonalBPs.Checked Then
             cmbBPTypeFilterLoaded = False
-            cmbBPTypeFilter.Text = "Select Type"
+            cmbBPTypeFilter.Text = SelectTypeText
             Call UpdateBlueprintGrid(False)
         End If
 
@@ -141,7 +143,7 @@ Public Class frmBlueprintManagement
 
         If Not FirstLoad And rbtnScannedCorpBPs.Checked Then
             cmbBPTypeFilterLoaded = False
-            cmbBPTypeFilter.Text = "Select Type"
+            cmbBPTypeFilter.Text = SelectTypeText
             Call UpdateBlueprintGrid(False)
         End If
 
@@ -165,7 +167,7 @@ Public Class frmBlueprintManagement
     Private Sub ResetTypeCmbFillGrid()
         If Not FirstLoad Then
             cmbBPTypeFilterLoaded = False
-            cmbBPTypeFilter.Text = "Select Type"
+            cmbBPTypeFilter.Text = SelectTypeText
             Call UpdateBlueprintGrid(True)
         End If
     End Sub
@@ -213,7 +215,7 @@ Public Class frmBlueprintManagement
     Private Sub rbtnShipBlueprints_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles rbtnShipBlueprints.CheckedChanged
         If Not FirstLoad And rbtnShipBlueprints.Checked Then
             cmbBPTypeFilterLoaded = False
-            cmbBPTypeFilter.Text = "Select Type"
+            cmbBPTypeFilter.Text = SelectTypeText
             Call UpdateBlueprintGrid(True)
         End If
     End Sub
@@ -221,7 +223,7 @@ Public Class frmBlueprintManagement
     Private Sub rbtnModuleBlueprints_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles rbtnModuleBlueprints.CheckedChanged
         If Not FirstLoad And rbtnModuleBlueprints.Checked Then
             cmbBPTypeFilterLoaded = False
-            cmbBPTypeFilter.Text = "Select Type"
+            cmbBPTypeFilter.Text = SelectTypeText
             Call UpdateBlueprintGrid(True)
         End If
     End Sub
@@ -229,7 +231,7 @@ Public Class frmBlueprintManagement
     Private Sub rbtnDroneBlueprints_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles rbtnDroneBlueprints.CheckedChanged
         If Not FirstLoad And rbtnDroneBlueprints.Checked Then
             cmbBPTypeFilterLoaded = False
-            cmbBPTypeFilter.Text = "Select Type"
+            cmbBPTypeFilter.Text = SelectTypeText
             Call UpdateBlueprintGrid(True)
         End If
     End Sub
@@ -237,7 +239,7 @@ Public Class frmBlueprintManagement
     Private Sub rbtnAmmoChargeBlueprints_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles rbtnAmmoChargeBlueprints.CheckedChanged
         If Not FirstLoad And rbtnAmmoChargeBlueprints.Checked Then
             cmbBPTypeFilterLoaded = False
-            cmbBPTypeFilter.Text = "Select Type"
+            cmbBPTypeFilter.Text = SelectTypeText
             Call UpdateBlueprintGrid(True)
         End If
     End Sub
@@ -245,7 +247,7 @@ Public Class frmBlueprintManagement
     Private Sub rbtnRigBlueprints_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles rbtnRigBlueprints.CheckedChanged
         If Not FirstLoad And rbtnRigBlueprints.Checked Then
             cmbBPTypeFilterLoaded = False
-            cmbBPTypeFilter.Text = "Select Type"
+            cmbBPTypeFilter.Text = SelectTypeText
             Call UpdateBlueprintGrid(True)
         End If
     End Sub
@@ -253,7 +255,7 @@ Public Class frmBlueprintManagement
     Private Sub rbtnComponentBlueprints_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles rbtnComponentBlueprints.CheckedChanged
         If Not FirstLoad And rbtnComponentBlueprints.Checked Then
             cmbBPTypeFilterLoaded = False
-            cmbBPTypeFilter.Text = "Select Type"
+            cmbBPTypeFilter.Text = SelectTypeText
             Call UpdateBlueprintGrid(True)
         End If
     End Sub
@@ -261,7 +263,7 @@ Public Class frmBlueprintManagement
     Private Sub rbtnSubsystemBlueprints_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles rbtnSubsystemBlueprints.CheckedChanged
         If Not FirstLoad And rbtnSubsystemBlueprints.Checked Then
             cmbBPTypeFilterLoaded = False
-            cmbBPTypeFilter.Text = "Select Type"
+            cmbBPTypeFilter.Text = SelectTypeText
             Call UpdateBlueprintGrid(True)
         End If
     End Sub
@@ -269,7 +271,7 @@ Public Class frmBlueprintManagement
     Private Sub rbtnStructureBlueprints_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles rbtnStructureBlueprints.CheckedChanged
         If Not FirstLoad And rbtnStructureBlueprints.Checked Then
             cmbBPTypeFilterLoaded = False
-            cmbBPTypeFilter.Text = "Select Type"
+            cmbBPTypeFilter.Text = SelectTypeText
             Call UpdateBlueprintGrid(True)
         End If
     End Sub
@@ -277,7 +279,7 @@ Public Class frmBlueprintManagement
     Private Sub rbtnAllBPTypes_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles rbtnAllBPTypes.CheckedChanged
         If Not FirstLoad And rbtnAllBPTypes.Checked Then
             cmbBPTypeFilterLoaded = False
-            cmbBPTypeFilter.Text = "Select Type"
+            cmbBPTypeFilter.Text = SelectTypeText
             Call UpdateBlueprintGrid(True)
         End If
     End Sub
@@ -285,7 +287,7 @@ Public Class frmBlueprintManagement
     Private Sub rbtnBoosterBlueprints_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles rbtnBoosterBlueprints.CheckedChanged
         If Not FirstLoad And rbtnBoosterBlueprints.Checked Then
             cmbBPTypeFilterLoaded = False
-            cmbBPTypeFilter.Text = "Select Type"
+            cmbBPTypeFilter.Text = SelectTypeText
             Call UpdateBlueprintGrid(True)
         End If
     End Sub
@@ -293,7 +295,7 @@ Public Class frmBlueprintManagement
     Private Sub rbtnToolBlueprints_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles rbtnMiscBlueprints.CheckedChanged
         If Not FirstLoad And rbtnMiscBlueprints.Checked Then
             cmbBPTypeFilterLoaded = False
-            cmbBPTypeFilter.Text = "Select Type"
+            cmbBPTypeFilter.Text = SelectTypeText
             Call UpdateBlueprintGrid(True)
         End If
     End Sub
@@ -301,7 +303,7 @@ Public Class frmBlueprintManagement
     Private Sub rbtnBPAllBPtypes_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles rbtnShowAllBPtypes.CheckedChanged
         If Not FirstLoad And rbtnShowAllBPtypes.Checked Then
             cmbBPTypeFilterLoaded = False
-            cmbBPTypeFilter.Text = "Select Type"
+            cmbBPTypeFilter.Text = SelectTypeText
             Call UpdateBlueprintGrid(True)
         End If
     End Sub
@@ -309,7 +311,7 @@ Public Class frmBlueprintManagement
     Private Sub rbtnBPOnlyBPO_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles rbtnOnlyBPO.CheckedChanged
         If Not FirstLoad And rbtnOnlyBPO.Checked Then
             cmbBPTypeFilterLoaded = False
-            cmbBPTypeFilter.Text = "Select Type"
+            cmbBPTypeFilter.Text = SelectTypeText
             Call UpdateBlueprintGrid(True)
         End If
     End Sub
@@ -317,7 +319,7 @@ Public Class frmBlueprintManagement
     Private Sub rbtnBPOnlyCopies_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles rbtnOnlyCopies.CheckedChanged
         If Not FirstLoad And rbtnOnlyCopies.Checked Then
             cmbBPTypeFilterLoaded = False
-            cmbBPTypeFilter.Text = "Select Type"
+            cmbBPTypeFilter.Text = SelectTypeText
             Call UpdateBlueprintGrid(True)
         End If
     End Sub
@@ -330,7 +332,7 @@ Public Class frmBlueprintManagement
         'End If
 
         cmbBPTypeFilterLoaded = False
-        cmbBPTypeFilter.Text = "Select Type"
+        cmbBPTypeFilter.Text = SelectTypeText
         Call UpdateBlueprintGrid(True)
 
     End Sub
@@ -371,7 +373,7 @@ Public Class frmBlueprintManagement
     End Sub
 
     Private Sub cmbBPTypeFilter_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmbBPTypeFilter.SelectedIndexChanged
-        If SelectedType <> cmbBPTypeFilter.Text And cmbBPTypeFilter.Text <> "Select Type" Then
+        If SelectedType <> cmbBPTypeFilter.Text And cmbBPTypeFilter.Text <> SelectTypeText Then
             Call UpdateBlueprintGrid(True)
             SelectedType = cmbBPTypeFilter.Text
             cmbBPTypeFilterLoaded = False
@@ -495,7 +497,7 @@ Public Class frmBlueprintManagement
     Private Sub InitForm()
 
         cmbBPTypeFilterLoaded = False
-        cmbBPTypeFilter.Text = "Select Type"
+        cmbBPTypeFilter.Text = SelectTypeText
         FirstLoad = True
 
         ' Race Checks
@@ -663,6 +665,7 @@ Public Class frmBlueprintManagement
         gbBPFilter.Enabled = True
         gbUpdateOptions.Enabled = True
         grpScanAssets.Enabled = True
+        SelectedType = "" ' Reset this on each load
         Application.DoEvents()
 
         Exit Sub
@@ -843,7 +846,7 @@ Public Class frmBlueprintManagement
         End If
 
         ' If they select a type of item, set that
-        If Trim(cmbBPTypeFilter.Text) <> "Select Type" Then
+        If Trim(cmbBPTypeFilter.Text) <> SelectTypeText Then
             ComboType = "AND ITEM_GROUP ='" & FormatDBString(Trim(cmbBPTypeFilter.Text)) & "' "
         End If
 
@@ -1018,7 +1021,7 @@ Public Class frmBlueprintManagement
         Dim readerTypes As SQLiteDataReader
         Dim BPUserID As Long
 
-        cmbBPTypeFilter.Text = "Select Type"
+        cmbBPTypeFilter.Text = SelectTypeText
         SQL = "SELECT ITEM_GROUP FROM " & ALL_USER_BLUEPRINTS
 
         WhereClause = BuildWhereClause()
@@ -1026,7 +1029,7 @@ Public Class frmBlueprintManagement
         If WhereClause = "" Then
             ' They didn't select anything, just clear and exit
             cmbBPTypeFilter.Items.Clear()
-            cmbBPTypeFilter.Text = "Select Type"
+            cmbBPTypeFilter.Text = SelectTypeText
             Exit Sub
         End If
 
@@ -1076,7 +1079,7 @@ Public Class frmBlueprintManagement
 
         cmbBPTypeFilter.Items.Clear()
         ' Add Select Type to top
-        cmbBPTypeFilter.Items.Add("Select Type")
+        cmbBPTypeFilter.Items.Add(SelectTypeText)
         ' Add rest
         While readerTypes.Read
             cmbBPTypeFilter.Items.Add(readerTypes.GetString(0))

@@ -40,8 +40,8 @@ Public Class Blueprint
     Private BPTaxes As Double ' Public updatable number for display updates, for easy updates when clicked
     Private BrokerFees As Double ' See above - Sell Order or Buy Order
     Private BPBrokerFees As Double ' Public updatable number for display updates, for easy updates when clicked
-    Private TotalManufacturingUsage As Double ' Total of all costs to manufacture
-    Private IncludeManufacturingCost As Boolean
+    Private ManufacturingUsage As Double ' Total of all costs to manufacture
+    Private IncludeManufacturingUsage As Boolean
 
     ' New cost variables
     Private BaseJobCost As Double ' Total per material used * average price
@@ -277,7 +277,7 @@ Public Class Blueprint
         ManufacturingTeamFee = 0
         ComponentTeamFee = 0
 
-        TotalManufacturingUsage = 0
+        ManufacturingUsage = 0
 
         InventionREDecryptor = NoDecryptor
         TotalInventedREdRuns = 0
@@ -294,7 +294,7 @@ Public Class Blueprint
         BrokerFees = 0
 
         ' See if we want to include the costs
-        IncludeManufacturingCost = InitProductionFacility.IncludeActivityUsage
+        IncludeManufacturingUsage = InitProductionFacility.IncludeActivityUsage
 
         ' If they send zero lines, then set to the user skills
         If NumProductionLines = 0 Then ' 3387 mass production and 24625 is adv mass production
@@ -482,7 +482,7 @@ Public Class Blueprint
                             TempSkills = ComponentBlueprint.GetReqBPSkills
 
                             ' Building this, so add fees to current (taxes for mats added in building item)
-                            TotalManufacturingUsage += ComponentBlueprint.GetTotalManufacturingUsage
+                            ManufacturingUsage += ComponentBlueprint.GetManufacturingUsage
 
                             ' Get the component usage
                             ComponentFacilityUsage += ComponentBlueprint.GetManufacturingFacilityUsage
@@ -875,7 +875,7 @@ Public Class Blueprint
             BPBrokerFees = 0
         End If
 
-        TaxesFeesUsage = BPTaxes + BPBrokerFees + TotalManufacturingUsage
+        TaxesFeesUsage = BPTaxes + BPBrokerFees + ManufacturingUsage
 
         ' Totals
         TotalRawCost = RawMaterials.GetTotalMaterialsCost + InventionRECost + AdditionalCosts
@@ -996,7 +996,7 @@ Public Class Blueprint
     ' Sets the fees for setting up a job to build this item
     Private Sub SetManufacturingCostsAndFees()
 
-        If IncludeManufacturingCost Then
+        If IncludeManufacturingUsage Then
             ' baseJobCost = Sum(eachmaterialquantity * adjustedPrice) - set in build function
             ' jobFee = baseJobCost * systemCostIndex * runs
             JobFee = BaseJobCost * ManufacturingFacility.CostIndex * UserRuns
@@ -1008,9 +1008,9 @@ Public Class Blueprint
             ManufacturingFacilityUsage = (JobFee + ManufacturingTeamFee) * ManufacturingFacility.TaxRate
 
             ' totalInstallationCost = jobFee + teamCost + facilityTax
-            TotalManufacturingUsage = JobFee + ManufacturingTeamFee + ManufacturingFacilityUsage
+            ManufacturingUsage = JobFee + ManufacturingTeamFee + ManufacturingFacilityUsage
         Else
-            TotalManufacturingUsage = 0
+            ManufacturingUsage = 0
         End If
     End Sub
 
@@ -1540,8 +1540,8 @@ Public Class Blueprint
     End Function
 
     ' Returns the cost of setting up a job to build this item
-    Public Function GetTotalManufacturingUsage() As Double
-        Return TotalManufacturingUsage
+    Public Function GetManufacturingUsage() As Double
+        Return ManufacturingUsage
     End Function
 
     ' Returns the total units this blueprint muliplied by runs, will create

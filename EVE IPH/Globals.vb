@@ -167,7 +167,9 @@ Public Module Public_Variables
     ' Categories (has multiple groups)
     Public Const SubsystemCategoryID As Long = 32
     Public Const ComponentCategoryID As Long = 17 ' This is just for component blueprints, this category contains many other items as 'Commodities'
-    Public Const SovStructureCategoryID As Long = 40 ' This is for loading No POS build items
+    Public Const StationEggGroupID As Long = 307 ' This is for loading No POS build items
+    Public Const SovStructureCategoryID As Long = 40
+
     Public Const AncientRelicCategoryID As Long = 34
     Public Const BlueprintCategoryID As Long = 9
 
@@ -815,7 +817,7 @@ Public Module Public_Variables
             ' Taxes and usage
             .ItemTaxes = SentBlueprint.GetBPTaxes
             .ItemBrokerFees = SentBlueprint.GetBPBrokerFees
-            .ItemUsage = SentBlueprint.GetTotalManufacturingUsage
+            .ItemUsage = SentBlueprint.GetManufacturingUsage
 
             ' Volume of the item(s)
             .BuildVolume = SentBlueprint.GetTotalBuiltItemVolume

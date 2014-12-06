@@ -173,10 +173,14 @@ Public Class EVEBlueprints
                     With IndyBlueprints(i)
 
                         ' For now, only include unique BPs until I get the multiple BP support done - use Max ME for the determination or Max TE if they are the same ME
-                        SQL = "SELECT ME, TE FROM OWNED_BLUEPRINTS WHERE BLUEPRINT_ID = " & .typeID & " AND USER_ID = " & SearchID
+                        SQL = "SELECT ME, TE, BP_TYPE, ITEM_ID FROM OWNED_BLUEPRINTS WHERE BLUEPRINT_ID = " & .typeID & " AND USER_ID = " & SearchID
                         DBCommand = New SQLiteCommand(SQL, DB)
                         readerBlueprints = DBCommand.ExecuteReader
                         readerBlueprints.Read()
+
+                        If .typeID = 955 And .BPType = BPType.Original Then
+                            Application.DoEvents()
+                        End If
 
                         If readerBlueprints.HasRows Then
                             ' If greater ME, or the ME is equal and TE is greater, update it
@@ -184,6 +188,9 @@ Public Class EVEBlueprints
                                 InsertBP = False
                                 IgnoreBP = False
                             ElseIf readerBlueprints.GetDouble(0) = IndyBlueprints(i).materialEfficiency And readerBlueprints.GetDouble(1) > IndyBlueprints(i).timeEfficiency Then
+                                InsertBP = False
+                                IgnoreBP = False
+                            ElseIf .BPType <> readerBlueprints.GetInt32(2) Then
                                 InsertBP = False
                                 IgnoreBP = False
                             Else
@@ -212,14 +219,22 @@ Public Class EVEBlueprints
                             Else
                                 ' Update the BP 
                                 SQL = "UPDATE OWNED_BLUEPRINTS SET "
-                                SQL = SQL & "LOCATION_ID = " & .locationID & ","
-                                SQL = SQL & "FLAG_ID = " & .flagID & ","
-                                SQL = SQL & "ME = " & .materialEfficiency & ","
-                                SQL = SQL & "TE = " & .timeEfficiency & ","
-                                SQL = SQL & "RUNS = " & .runs & ","
+                                SQL = SQL & "LOCATION_ID = " & CStr(.locationID) & ","
+                                SQL = SQL & "FLAG_ID = " & CStr(.flagID) & ","
+                                SQL = SQL & "ME = " & CStr(.materialEfficiency) & ","
+                                SQL = SQL & "TE = " & CStr(.timeEfficiency) & ","
+                                SQL = SQL & "RUNS = " & CStr(.runs) & ","
+                                ' Also reset the unqiue itemid
+                                SQL = SQL & "ITEM_ID = " & CStr(.itemID) & ","
+                                ' Could go from a copy to orginial (with single bp loading, will change with multi)
+                                SQL = SQL & "BP_TYPE = " & CStr(.BPType) & ","
+                                If .BPType = BPType.Original Then
+                                    ' Mark this as owned
+                                    SQL = SQL & "OWNED = 1,"
+                                End If
                                 SQL = SQL & "BLUEPRINT_NAME = '" & FormatDBString(.typeName) & "' " ' If it changes
                                 ' Search with ITEM_ID
-                                SQL = SQL & "WHERE ITEM_ID = " & .itemID & " AND USER_ID = " & SearchID
+                                SQL = SQL & "WHERE ITEM_ID = " & CStr(readerBlueprints.GetInt64(3)) & " AND USER_ID = " & CStr(SearchID)
 
                             End If
 
