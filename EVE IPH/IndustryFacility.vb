@@ -254,6 +254,35 @@ Public Class IndustryFacility
             rsLoader.Close()
             rsLoader = Nothing
             DBCommand = Nothing
+        Else
+            ' Just use everything we can from the search settings and set the others to defaults (ie. if they don't have the index table loaded, this will happen)
+            FacilityType = SearchFacilitySettings.FacilityType
+            FacilityName = SearchFacilitySettings.Facility
+            ProductionType = SearchFacilitySettings.ProductionType
+            RegionName = SearchFacilitySettings.RegionName
+            RegionID = SearchFacilitySettings.RegionID
+            SolarSystemName = SearchFacilitySettings.SolarSystemName
+            SolarSystemID = SearchFacilitySettings.SolarSystemID
+            TaxRate = 0
+            CostIndex = 0
+            MaterialMultiplier = SearchFacilitySettings.MaterialMultiplier
+            TimeMultiplier = SearchFacilitySettings.TimeMultiplier
+            ActivityID = SearchFacilitySettings.ActivityID
+            Select Case ActivityID
+                Case 7
+                    Activity = ActivityCopying
+                Case 8
+                    Activity = ActivityInvention
+                Case Else
+                    Activity = ActivityManufacturing
+            End Select
+            ActivityCostPerSecond = SearchFacilitySettings.ActivityCostperSecond
+            IsDefault = FacilityDefault
+            FacilityTypeID = 0
+
+            IncludeActivityCost = SearchFacilitySettings.IncludeActivityCost
+            IncludeActivityTime = SearchFacilitySettings.IncludeActivityTime
+            IncludeActivityUsage = SearchFacilitySettings.IncludeActivityUsage
         End If
 
     End Sub

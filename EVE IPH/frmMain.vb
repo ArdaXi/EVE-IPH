@@ -2315,20 +2315,20 @@ NoBonus:
 
                 CostMultiplier = rsLoader.GetDouble(4)
                 Tax = rsLoader.GetDouble(5)
+
+                FacilityID = rsLoader.GetInt64(0)
+                FacilityTypeID = rsLoader.GetInt64(1)
+
+                rsLoader.Close()
             Else
-                MaterialMultiplier = Defaults.FacilityDefaultMM
-                TimeMultiplier = Defaults.FacilityDefaultTM
-                CostMultiplier = 1
-                Tax = Defaults.FacilityDefaultTax
+                ' Set the facility to none if not found
+                FacilityType = None
             End If
 
-            FacilityID = rsLoader.GetInt64(0)
-            FacilityTypeID = rsLoader.GetInt64(1)
+        End If
 
-            rsLoader.Close()
-
-        Else
-            ' None selected
+        If FacilityType = None Then
+            ' None selected or not found
             FacilityName = None
             FacilityID = 0
             FacilityTypeID = 0
@@ -2440,7 +2440,7 @@ NoBonus:
             End If
         End With
 
-        SelectedFacility.IncludeActivityUsage = UsageCheck.checked
+        SelectedFacility.IncludeActivityUsage = UsageCheck.Checked
 
         If Not IsNothing(ActivityCostCheck) Then
             SelectedFacility.IncludeActivityCost = ActivityCostCheck.Checked
