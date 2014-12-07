@@ -434,9 +434,9 @@ Public Class Blueprint
                         OwnedBP = CBool(readerLookup.GetInt64(2))
                     Else
                         ' T2
-                        If TechLevel = BlueprintTechLevel.T2 Then
-                            TempME = BaseT2ME
-                            TempTE = BaseT2TE
+                        If TechLevel = BlueprintTechLevel.T2 Or TechLevel = BlueprintTechLevel.T3 Then
+                            TempME = BaseT2T3ME
+                            TempTE = BaseT2T3TE
                         Else
                             TempME = UserSettings.DefaultBPME
                             TempTE = UserSettings.DefaultBPTE
@@ -1170,7 +1170,23 @@ Public Class Blueprint
         InventionREChance = SetInventionChance(UseTypical)
 
         ' Use the max runs for the T2 item and this should be the invented runs for one bpc
-        SingleInventedREdBPCRuns = MaxProductionLimit + InventionREDecryptor.RunMod
+        If TechLevel = BlueprintTechLevel.T2 Then
+            SingleInventedREdBPCRuns = MaxProductionLimit + InventionREDecryptor.RunMod
+        Else
+            ' Base it off of the relic type - need to look it up based on the TypeID
+            Select Case InventionT3BPCTypeID
+                Case 30752 ' Intact Hull Section
+                    MaxProductionLimit = 20
+                Case 30753 ' Malfunctioning Hull Section
+                    MaxProductionLimit = 10
+                Case 30754 ' Wrecked Hull Section
+                    MaxProductionLimit = 3
+                Case Else
+                    MaxProductionLimit = 3
+            End Select
+            ' Set the final runs for one bp
+            SingleInventedREdBPCRuns = MaxProductionLimit + InventionREDecryptor.RunMod
+        End If
 
         ' Averages and final cost per run
         AvgRunsforSuccess = 1 / InventionREChance

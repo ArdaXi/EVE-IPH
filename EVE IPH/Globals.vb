@@ -126,8 +126,8 @@ Public Module Public_Variables
     Public Const NoExpiry As Date = #1/1/2200#
 
     ' T2 BPC base ME/TE
-    Public Const BaseT2ME As Double = 2
-    Public Const BaseT2TE As Double = 4
+    Public Const BaseT2T3ME As Double = 2
+    Public Const BaseT2T3TE As Double = 4
 
     ' For team and industry tab loading
     Public Const BPTab As String = "BP"
@@ -169,6 +169,7 @@ Public Module Public_Variables
     Public Const ComponentCategoryID As Long = 17 ' This is just for component blueprints, this category contains many other items as 'Commodities'
     Public Const StationEggGroupID As Long = 307 ' This is for loading No POS build items
     Public Const SovStructureCategoryID As Long = 40
+    Public Const StationPartsGroupID As Long = 536
 
     Public Const AncientRelicCategoryID As Long = 34
     Public Const BlueprintCategoryID As Long = 9

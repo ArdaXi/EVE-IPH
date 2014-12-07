@@ -308,7 +308,7 @@ Public Class frmInventionMonitor
             ' Add NONE
             cmbBPDecryptor.Items.Add(None)
             ' If the ME is base, no decryptor was used
-            If lstInventionItems.SelectedItems(0).SubItems(4).Text = CStr(BaseT2ME) Then
+            If lstInventionItems.SelectedItems(0).SubItems(4).Text = CStr(BaseT2T3ME) Then
                 SelectedDecryptor = NoDecryptor
             End If
 
@@ -325,7 +325,7 @@ Public Class frmInventionMonitor
                 ' Get the decryptor and compare it to the ME of the final BP they selected
                 TempDecryptor = InventionDecryptors.GetDecryptor(readerDecryptor.GetString(0))
 
-                If TempDecryptor.MEMod + BaseT2ME = CInt(lstInventionItems.SelectedItems(0).SubItems(3).Text) Then
+                If TempDecryptor.MEMod + BaseT2T3ME = CInt(lstInventionItems.SelectedItems(0).SubItems(3).Text) Then
                     SelectedDecryptor = TempDecryptor
                 End If
             End While
