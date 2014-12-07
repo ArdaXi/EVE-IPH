@@ -1173,17 +1173,27 @@ Public Class Blueprint
         If TechLevel = BlueprintTechLevel.T2 Then
             SingleInventedREdBPCRuns = MaxProductionLimit + InventionREDecryptor.RunMod
         Else
+            SQL = "SELECT typeName FROM INVENTORY_TYPES WHERE typeID = " & CStr(InventionT3BPCTypeID)
+
+            DBCommand = New SQLiteCommand(SQL, DB)
+            readerBP = DBCommand.ExecuteReader()
+
             ' Base it off of the relic type - need to look it up based on the TypeID
-            Select Case InventionT3BPCTypeID
-                Case 30752 ' Intact Hull Section
-                    MaxProductionLimit = 20
-                Case 30753 ' Malfunctioning Hull Section
-                    MaxProductionLimit = 10
-                Case 30754 ' Wrecked Hull Section
-                    MaxProductionLimit = 3
-                Case Else
-                    MaxProductionLimit = 3
-            End Select
+            If readerBP.Read Then
+                Select Case readerBP.GetString(0).Substring(0, 6)
+                    Case "Intact" ' Intact 
+                        MaxProductionLimit = 20
+                    Case "Malfun" ' Malfunctioning
+                        MaxProductionLimit = 10
+                    Case "Wrecke" ' Wrecked 
+                        MaxProductionLimit = 3
+                    Case Else
+                        MaxProductionLimit = 3
+                End Select
+            Else
+                MaxProductionLimit = 3
+            End If
+
             ' Set the final runs for one bp
             SingleInventedREdBPCRuns = MaxProductionLimit + InventionREDecryptor.RunMod
         End If

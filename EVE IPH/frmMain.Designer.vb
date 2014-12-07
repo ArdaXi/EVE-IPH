@@ -11999,9 +11999,9 @@ Partial Class frmMain
         '
         'btnBPRefreshBP
         '
-        Me.btnBPRefreshBP.Location = New System.Drawing.Point(6, 189)
+        Me.btnBPRefreshBP.Location = New System.Drawing.Point(6, 188)
         Me.btnBPRefreshBP.Name = "btnBPRefreshBP"
-        Me.btnBPRefreshBP.Size = New System.Drawing.Size(130, 29)
+        Me.btnBPRefreshBP.Size = New System.Drawing.Size(130, 30)
         Me.btnBPRefreshBP.TabIndex = 13
         Me.btnBPRefreshBP.Text = "Refresh"
         Me.btnBPRefreshBP.UseVisualStyleBackColor = true
@@ -12030,9 +12030,9 @@ Partial Class frmMain
         Me.lblBPRuns.AutoSize = true
         Me.lblBPRuns.Location = New System.Drawing.Point(74, 11)
         Me.lblBPRuns.Name = "lblBPRuns"
-        Me.lblBPRuns.Size = New System.Drawing.Size(35, 13)
+        Me.lblBPRuns.Size = New System.Drawing.Size(62, 13)
         Me.lblBPRuns.TabIndex = 0
-        Me.lblBPRuns.Text = "Runs:"
+        Me.lblBPRuns.Text = "Total Runs:"
         '
         'gbBPTeam
         '
