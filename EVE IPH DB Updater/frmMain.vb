@@ -541,9 +541,16 @@ Public Class frmMain
             Call Execute_SQLiteSQL(SQL, SQLiteDB)
         End While
 
+<<<<<<< .mine
+        ' Station Parts should be 'Other'
+        SQL = "UPDATE ALL_BLUEPRINTS SET RACE_ID = 0 WHERE ITEM_GROUP_ID = 536 "
+        Call Execute_SQLiteSQL(SQL, SQLiteDB)
+
+=======
         ' Finally use market ID to update any that are race id 0
 
 
+>>>>>>> .r41
         ' Fix for Pheobe SDE issues
         SQL = "DELETE FROM ALL_BLUEPRINT_MATERIALS WHERE MATERIAL_CATEGORY = 'Decryptors'"
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
