@@ -1435,7 +1435,7 @@ Public Class Blueprint
 
     ' Returns the total bpc cost
     Public Function GetBPCCopyCost() As Double
-        Return CopyCost - CopyUsage ' Only return the cost of the materials
+        Return CopyCost ' Only return the cost of the materials
     End Function
 
     Public Function GetBPCCopyUsage() As Double
