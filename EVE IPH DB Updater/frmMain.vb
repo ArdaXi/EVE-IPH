@@ -10,7 +10,7 @@ Imports ComponentAce.Compression.Archiver
 Public Class frmMain
     Inherits System.Windows.Forms.Form
 
-    Public Const DatabaseName As String = "Phoebe_1.0_107269" ' also folder name to update YAML and Universe DB stuff
+    Public Const DatabaseName As String = "Rhea_1.0_109013" ' also folder name to update YAML and Universe DB stuff
 
     ' DB
     Public Const DatabasePath As String = "C:\Users\Brian\EVE Stuff\EVE IPH Project\DataDump Working\"
@@ -541,16 +541,10 @@ Public Class frmMain
             Call Execute_SQLiteSQL(SQL, SQLiteDB)
         End While
 
-<<<<<<< .mine
         ' Station Parts should be 'Other'
         SQL = "UPDATE ALL_BLUEPRINTS SET RACE_ID = 0 WHERE ITEM_GROUP_ID = 536 "
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
-=======
-        ' Finally use market ID to update any that are race id 0
-
-
->>>>>>> .r41
         ' Fix for Pheobe SDE issues
         SQL = "DELETE FROM ALL_BLUEPRINT_MATERIALS WHERE MATERIAL_CATEGORY = 'Decryptors'"
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
@@ -5392,38 +5386,38 @@ Public Class frmMain
         Call RandomSDEUpdates()
 
         ' Build all the universe tables
-        lblTableName.Text = "Building: mapCelestialStatistics"
-        Call Build_mapCelestialStatistics()
+        'lblTableName.Text = "Building: mapCelestialStatistics"
+        'Call Build_mapCelestialStatistics()
 
-        lblTableName.Text = "Building: mapConstellationJumps"
-        Call Build_mapConstellationJumps()
+        'lblTableName.Text = "Building: mapConstellationJumps"
+        'Call Build_mapConstellationJumps()
 
         lblTableName.Text = "Building: mapConstellations"
         Call Build_mapConstellations()
 
-        lblTableName.Text = "Building: mapDenormalize"
-        Call Build_mapDenormalize()
+        'lblTableName.Text = "Building: mapDenormalize"
+        'Call Build_mapDenormalize()
 
-        lblTableName.Text = "Building: mapJumps"
-        Call Build_mapJumps()
+        'lblTableName.Text = "Building: mapJumps"
+        'Call Build_mapJumps()
 
-        lblTableName.Text = "Building: mapLandmarks"
-        Call Build_mapLandmarks()
+        'lblTableName.Text = "Building: mapLandmarks"
+        'Call Build_mapLandmarks()
 
-        lblTableName.Text = "Building: mapLocationScenes"
-        Call Build_mapLocationScenes()
+        'lblTableName.Text = "Building: mapLocationScenes"
+        'Call Build_mapLocationScenes()
 
-        lblTableName.Text = "Building: mapLocationWormholeClasses"
-        Call Build_mapLocationWormholeClasses()
+        'lblTableName.Text = "Building: mapLocationWormholeClasses"
+        'Call Build_mapLocationWormholeClasses()
 
-        lblTableName.Text = "Building: mapRegionJumps"
-        Call Build_mapRegionJumps()
+        'lblTableName.Text = "Building: mapRegionJumps"
+        'Call Build_mapRegionJumps()
 
         lblTableName.Text = "Building: mapRegions"
         Call Build_mapRegions()
 
-        lblTableName.Text = "Building: mapSolarSystemJumps"
-        Call Build_mapSolarSystemJumps()
+        'lblTableName.Text = "Building: mapSolarSystemJumps"
+        'Call Build_mapSolarSystemJumps()
 
         lblTableName.Text = "Building: mapSolarSystems"
         Call Build_mapSolarSystems()
