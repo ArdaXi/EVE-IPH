@@ -5386,38 +5386,38 @@ Public Class frmMain
         Call RandomSDEUpdates()
 
         ' Build all the universe tables
-        'lblTableName.Text = "Building: mapCelestialStatistics"
-        'Call Build_mapCelestialStatistics()
+        lblTableName.Text = "Building: mapCelestialStatistics"
+        Call Build_mapCelestialStatistics()
 
-        'lblTableName.Text = "Building: mapConstellationJumps"
-        'Call Build_mapConstellationJumps()
+        lblTableName.Text = "Building: mapConstellationJumps"
+        Call Build_mapConstellationJumps()
 
         lblTableName.Text = "Building: mapConstellations"
         Call Build_mapConstellations()
 
-        'lblTableName.Text = "Building: mapDenormalize"
-        'Call Build_mapDenormalize()
+        lblTableName.Text = "Building: mapDenormalize"
+        Call Build_mapDenormalize()
 
-        'lblTableName.Text = "Building: mapJumps"
-        'Call Build_mapJumps()
+        lblTableName.Text = "Building: mapJumps"
+        Call Build_mapJumps()
 
-        'lblTableName.Text = "Building: mapLandmarks"
-        'Call Build_mapLandmarks()
+        lblTableName.Text = "Building: mapLandmarks"
+        Call Build_mapLandmarks()
 
-        'lblTableName.Text = "Building: mapLocationScenes"
-        'Call Build_mapLocationScenes()
+        lblTableName.Text = "Building: mapLocationScenes"
+        Call Build_mapLocationScenes()
 
-        'lblTableName.Text = "Building: mapLocationWormholeClasses"
-        'Call Build_mapLocationWormholeClasses()
+        lblTableName.Text = "Building: mapLocationWormholeClasses"
+        Call Build_mapLocationWormholeClasses()
 
-        'lblTableName.Text = "Building: mapRegionJumps"
-        'Call Build_mapRegionJumps()
+        lblTableName.Text = "Building: mapRegionJumps"
+        Call Build_mapRegionJumps()
 
         lblTableName.Text = "Building: mapRegions"
         Call Build_mapRegions()
 
-        'lblTableName.Text = "Building: mapSolarSystemJumps"
-        'Call Build_mapSolarSystemJumps()
+        lblTableName.Text = "Building: mapSolarSystemJumps"
+        Call Build_mapSolarSystemJumps()
 
         lblTableName.Text = "Building: mapSolarSystems"
         Call Build_mapSolarSystems()
@@ -5921,7 +5921,7 @@ Public Class frmMain
         Call Execute_msSQL("UPDATE invTypes SET typeName = 'Polarized ' + SUBSTRING(typeName, 11, LEN(typeName) -10) WHERE typeName LIKE 'Stigmatic%'")
 
         ' Random updates
-        Call Execute_msSQL("UPDATE ramAssemblyLineTypes SET baseMaterialMultiplier = .9 WHERE assemblyLineTypeID = 171") ' fix the base for thukker array
+        'Call Execute_msSQL("UPDATE ramAssemblyLineTypes SET baseMaterialMultiplier = .9 WHERE assemblyLineTypeID = 171") ' fix the base for thukker array
         Call Execute_msSQL("INSERT INTO ramAssemblyLineTypeDetailPerCategory VALUES (158, 34, 1, 1, 1)") 'fix the experimental array group items
         Call Execute_msSQL("UPDATE invTypes SET marketGroupID = 805 where marketGroupID IS NULL and typeID = 33195") ' For T2 mat to build new scanning modules
         ' Delete these 4 records from super capital ship assembly arrays - not sure if it's right or not but dump them for now since they give incorrect values
