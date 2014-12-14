@@ -158,8 +158,14 @@ Public Module Public_Variables
     Public Const DredGroupID As Integer = 485
     Public Const CapIndustrialGroupID As Integer = 883
     Public Const CarrierGroupID As Integer = 547
-    Public Const BoosterGroupID As Long = 303
-    Public Const StrategicCruiserGroupID As Long = 963
+    Public Const BoosterGroupID As Integer = 303
+    Public Const StrategicCruiserGroupID As Integer = 963
+    Public Const TacticalDestroyerGroupID As Integer = 1305
+
+    Public Const StrategicCrusierBlueprintID As Integer = 996
+    Public Const SubsystemBlueprintID As Integer = 973
+    Public Const BlueprintCategoryID As Integer = 9
+
 
     ' Only one Decryptor Group with Pheobe
     Public Const DecryptorGroup As Long = 1304
@@ -170,9 +176,6 @@ Public Module Public_Variables
     Public Const StationEggGroupID As Long = 307 ' This is for loading No POS build items
     Public Const SovStructureCategoryID As Long = 40
     Public Const StationPartsGroupID As Long = 536
-
-    Public Const AncientRelicCategoryID As Long = 34
-    Public Const BlueprintCategoryID As Long = 9
 
     Public Const POSFacility As String = "POS"
     Public Const StationFacility As String = "Station"

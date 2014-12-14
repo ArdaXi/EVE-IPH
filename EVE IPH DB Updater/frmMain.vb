@@ -545,15 +545,15 @@ Public Class frmMain
         SQL = "UPDATE ALL_BLUEPRINTS SET RACE_ID = 0 WHERE ITEM_GROUP_ID = 536 "
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
-        ' Fix for Pheobe SDE issues
-        SQL = "DELETE FROM ALL_BLUEPRINT_MATERIALS WHERE MATERIAL_CATEGORY = 'Decryptors'"
-        Call Execute_SQLiteSQL(SQL, SQLiteDB)
+        '' Fix for Pheobe SDE issues
+        'SQL = "DELETE FROM ALL_BLUEPRINT_MATERIALS WHERE MATERIAL_CATEGORY = 'Decryptors'"
+        'Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
-        SQL = "DELETE FROM ALL_BLUEPRINT_MATERIALS WHERE BLUEPRINT_NAME LIKE '%Data Interface Blueprint'"
-        Call Execute_SQLiteSQL(SQL, SQLiteDB)
+        'SQL = "DELETE FROM ALL_BLUEPRINT_MATERIALS WHERE BLUEPRINT_NAME LIKE '%Data Interface Blueprint'"
+        'Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
-        SQL = "DELETE FROM ALL_BLUEPRINTS WHERE ITEM_GROUP = 'Data Interfaces'"
-        Call Execute_SQLiteSQL(SQL, SQLiteDB)
+        'SQL = "DELETE FROM ALL_BLUEPRINTS WHERE ITEM_GROUP = 'Data Interfaces'"
+        'Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
         lblTableName.Text = "Finalizing..."
         Application.DoEvents()
@@ -3745,7 +3745,9 @@ Public Class frmMain
         msSQL = msSQL & "invTypeReactions.typeID, invTypes_1.typeName, "
         msSQL = msSQL & "invGroups_1.groupName, "
         msSQL = msSQL & "invCategories_1.categoryName, "
-        msSQL = msSQL & "CASE WHEN dgmTypeAttributes.valueInt IS NULL THEN invTypeReactions.quantity ELSE (dgmTypeAttributes.valueInt * invTypeReactions.quantity) END,  "
+        msSQL = msSQL & "CASE WHEN dgmTypeAttributes.valueFloat IS NULL THEN "
+        msSQL = msSQL & "CASE WHEN dgmTypeAttributes.valueInt IS NULL THEN invTypeReactions.quantity ELSE (dgmTypeAttributes.valueInt * invTypeReactions.quantity) END "
+        msSQL = msSQL & "ELSE dgmTypeAttributes.valueFloat END as quantity, "
         msSQL = msSQL & "invTypes_1.volume "
 
         msSQL2 = "FROM (((((invTypeReactions "
@@ -5915,17 +5917,10 @@ Public Class frmMain
             Call Execute_msSQL(msSQL)
         End While
 
-        ' Error in Kronos with MetaMaterial Reactions - output is 300 not 1
-        Call Execute_msSQL("Update invTypeReactions SET quantity = 300 where reactionTypeID IN (33363,33364,33365,33366) and input = 0")
-        ' Names off in Pheobe
-        Call Execute_msSQL("UPDATE invTypes SET typeName = 'Polarized ' + SUBSTRING(typeName, 11, LEN(typeName) -10) WHERE typeName LIKE 'Stigmatic%'")
-
         ' Random updates
-        'Call Execute_msSQL("UPDATE ramAssemblyLineTypes SET baseMaterialMultiplier = .9 WHERE assemblyLineTypeID = 171") ' fix the base for thukker array
-        Call Execute_msSQL("INSERT INTO ramAssemblyLineTypeDetailPerCategory VALUES (158, 34, 1, 1, 1)") 'fix the experimental array group items
-        Call Execute_msSQL("UPDATE invTypes SET marketGroupID = 805 where marketGroupID IS NULL and typeID = 33195") ' For T2 mat to build new scanning modules
+
         ' Delete these 4 records from super capital ship assembly arrays - not sure if it's right or not but dump them for now since they give incorrect values
-        Call Execute_msSQL("DELETE FROM ramAssemblyLineTypeDetailPerGroup WHERE assemblyLineTypeID = 10 AND groupID IN (485, 513, 547, 883)")
+        'Call Execute_msSQL("DELETE FROM ramAssemblyLineTypeDetailPerGroup WHERE assemblyLineTypeID = 10 AND groupID IN (485, 513, 547, 883)")
 
         mySQLReader.Close()
 

@@ -2066,11 +2066,14 @@ NoBonus:
                     Case ActivityCopying
                         SQL = SQL & CStr(IndustryActivities.Copying) & " "
                     Case ActivityInvention
-                        If ItemCategoryID = SubsystemCategoryID Or ItemGroupID = StrategicCruiserGroupID Then
-                            SQL = SQL & CStr(IndustryActivities.Invention) & " AND CATEGORY_ID = " & CStr(AncientRelicCategoryID)
+                        If ItemCategoryID = SubsystemCategoryID Then
+                            SQL = SQL & CStr(IndustryActivities.Invention) & " AND CATEGORY_ID = " & CStr(SubsystemBlueprintID)
+                        ElseIf ItemGroupID = StrategicCruiserGroupID Or ItemGroupID = TacticalDestroyerGroupID Then
+                            SQL = SQL & CStr(IndustryActivities.Invention) & " AND GROUP_ID = " & CStr(StrategicCrusierBlueprintID)
                         Else
-                            SQL = SQL & CStr(IndustryActivities.Invention) & " AND CATEGORY_ID = " & CStr(BlueprintCategoryID)
+                            SQL = SQL & CStr(IndustryActivities.Invention) & "AND GROUP_ID IS NULL "
                         End If
+                        SQL = SQL & "AND CATEGORY_ID = " & CStr(BlueprintCategoryID)
                 End Select
 
         End Select
@@ -7487,7 +7490,7 @@ ExitForm:
             ElseIf .rbtnBPBoosterBlueprints.Checked Then
                 SQL = SQL & "AND ITEM_CATEGORY = 'Implant' "
             ElseIf .rbtnBPComponentBlueprints.Checked Then
-                SQL = SQL & "(X.ITEM_GROUP LIKE '%Components%' AND X.ITEM_GROUP <> 'Station Components') OR "
+                SQL = SQL & "AND (ITEM_GROUP LIKE '%Components%' AND ITEM_GROUP <> 'Station Components') "
             ElseIf .rbtnBPMiscBlueprints.Checked Then
                 SQL = SQL & "AND ITEM_GROUP IN ('Tool','Data Interfaces','Cyberimplant','Fuel Block') "
             ElseIf .rbtnBPDeployableBlueprints.Checked Then
@@ -7513,7 +7516,7 @@ ExitForm:
             End If
         End With
 
-        ' Item Type Definitions - These are set by me b=ed on existing data
+        ' Item Type Definitions - These are set by me based on existing data
         ' 1, 2, 14 are T1, T2, T3
         ' 3 is Storyline
         ' 15 is Pirate Faction
@@ -7561,7 +7564,7 @@ ExitForm:
         If SQLItemType <> "" Then
             SQLItemType = " ALL_BLUEPRINTS.ITEM_TYPE IN (" & SQLItemType.Substring(0, SQLItemType.Length - 1) & ")  "
         Else
-            ' They need to have at le=t one. If not, just return nothing
+            ' They need to have at least one. If not, just return nothing
             BuildBPSelectQuery = ""
             Exit Function
         End If
