@@ -1068,19 +1068,11 @@ Public Class Blueprint
             MaxBPCRuns = readerBP.GetInt32(2)
             BPName = readerBP.GetString(3)
 
-            ' Based on their default settings, select the number of runs in the BPC used to invent this Blueprint - TO DO - check this logic
-            If T1MatGroupName.Substring(0, 3) = "Rig" Or T1MatCategoryName = "Ship" Then
-                ' Ships
-                Return "Ship"
-            Else
-                ' Modules
-                Return "Module"
-            End If
+            Return T1MatGroupName
         Else
             MaxBPCRuns = 0
             BPName = ""
             Return ""
-
         End If
 
     End Function
@@ -1096,7 +1088,7 @@ Public Class Blueprint
 
         Dim SQL As String
         Dim InventionMat As Material = Nothing
-        Dim BaseInventionREMats As New Materials
+        Dim SingleInventionREMats As New Materials
         Dim NumInventionRESessions As Long = 0 ' How many sessions (runs per set of lines) ie. 10 runs 5 lines = 2 sessions
 
         ' First select the datacores needed
@@ -1114,7 +1106,7 @@ Public Class Blueprint
                 ' Add this to the invention materials - add price for data cores, 0 cost for interfaces
                 InventionMat = New Material(readerBP.GetInt64(0), readerBP.GetString(1), readerBP.GetString(2), _
                                            readerBP.GetInt64(3), readerBP.GetDouble(4), If(readerBP.IsDBNull(5), 0, readerBP.GetDouble(5)), "")
-                BaseInventionREMats.InsertMaterial(InventionMat)
+                SingleInventionREMats.InsertMaterial(InventionMat)
             End If
         End While
 
@@ -1143,7 +1135,7 @@ Public Class Blueprint
             DBCommand = Nothing
 
             InventionMat = New Material(InventionREDecryptor.TypeID, InventionREDecryptor.Name, "Decryptors", 1, 0.1, DecryptorCost, "")
-            BaseInventionREMats.InsertMaterial(InventionMat)
+            SingleInventionREMats.InsertMaterial(InventionMat)
 
         End If
 
@@ -1157,7 +1149,7 @@ Public Class Blueprint
 
             If readerCost.Read Then
                 InventionMat = New Material(InventionT3BPCTypeID, readerCost.GetString(1), "Ancient Relics", 1, 100, readerCost.GetDouble(0), "")
-                BaseInventionREMats.InsertMaterial(InventionMat)
+                SingleInventionREMats.InsertMaterial(InventionMat)
             End If
 
             readerCost.Close()
@@ -1204,7 +1196,7 @@ Public Class Blueprint
         ' Set how many total invention runs we will need to do - take the number of bpc's we'll need and multiply by how many runs for a success - round up
         NumInventionREJobs = CInt(Math.Ceiling(AvgRunsforSuccess * Math.Ceiling(UserRuns / SingleInventedREdBPCRuns)))
 
-        ' Now set thet total runs we will get from all jobs
+        ' Now set the total runs we will get from all jobs
         TotalInventedREdRuns = CInt(Math.Ceiling(UserRuns / SingleInventedREdBPCRuns) * SingleInventedREdBPCRuns)
 
         ' Find the number of invention sessions we'll need to invent the number of runs for this item. This will be used in the copy and invention times
@@ -1252,13 +1244,13 @@ Public Class Blueprint
         ' Finally set the total cost
         If IncludeInventionRECosts Then
             ' Update the invention mats to reflect the number of invention runs we will do and save into the final list
-            For i = 0 To BaseInventionREMats.GetMaterialList.Count - 1
-                BaseInventionREMats.GetMaterialList(i).SetQuantity(BaseInventionREMats.GetMaterialList(i).GetQuantity * NumInventionREJobs)
+            For i = 0 To SingleInventionREMats.GetMaterialList.Count - 1
+                SingleInventionREMats.GetMaterialList(i).SetQuantity(SingleInventionREMats.GetMaterialList(i).GetQuantity * NumInventionREJobs)
             Next
 
             ' Now insert all the materials in a new list to get the correct cost (kind of a hack, need a better process - no automatic way to update the total price in a material list)
-            For i = 0 To BaseInventionREMats.GetMaterialList.Count - 1
-                InventionREMaterials.InsertMaterial(BaseInventionREMats.GetMaterialList(i))
+            For i = 0 To SingleInventionREMats.GetMaterialList.Count - 1
+                InventionREMaterials.InsertMaterial(SingleInventionREMats.GetMaterialList(i))
             Next
 
             ' Add the type of T1 BPC we will need to the invention materials

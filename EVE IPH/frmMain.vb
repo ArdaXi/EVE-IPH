@@ -1291,7 +1291,7 @@ NoBonus:
                     CalcBoosterFacilitiesLoaded = FacilitiesValue
                     CalcBoosterFacilitySystemsLoaded = SystemsValue
                     CalcBoosterFacilityRegionsLoaded = RegionsValue
-                Case IndustryType.T3Manufacturing
+                Case IndustryType.T3CruiserManufacturing
                     CalcT3FacilitiesLoaded = FacilitiesValue
                     CalcT3FacilitySystemsLoaded = SystemsValue
                     CalcT3FacilityRegionsLoaded = RegionsValue
@@ -1357,8 +1357,8 @@ NoBonus:
                     Case IndustryType.BoosterManufacturing
                         SelectedFacility = CType(DefaultBPBoosterManufacturingFacility.Clone, IndustryFacility)
                         SelectedActivity = ActivityManufacturing
-                    Case IndustryType.T3Manufacturing
-                        SelectedFacility = CType(DefaultBPT3ManufacturingFacility.Clone, IndustryFacility)
+                    Case IndustryType.T3CruiserManufacturing
+                        SelectedFacility = CType(DefaultBPT3CruiserManufacturingFacility.Clone, IndustryFacility)
                         SelectedActivity = ActivityManufacturing
                     Case IndustryType.SubsystemManufacturing
                         SelectedFacility = CType(DefaultBPSubsystemManufacturingFacility.Clone, IndustryFacility)
@@ -1403,8 +1403,8 @@ NoBonus:
                     Case IndustryType.BoosterManufacturing
                         SelectedFacility = CType(SelectedBPBoosterManufacturingFacility.Clone, IndustryFacility)
                         SelectedActivity = ActivityManufacturing
-                    Case IndustryType.T3Manufacturing
-                        SelectedFacility = CType(SelectedBPT3ManufacturingFacility.Clone, IndustryFacility)
+                    Case IndustryType.T3CruiserManufacturing
+                        SelectedFacility = CType(SelectedBPT3CruiserManufacturingFacility.Clone, IndustryFacility)
                         SelectedActivity = ActivityManufacturing
                     Case IndustryType.SubsystemManufacturing
                         SelectedFacility = CType(SelectedBPSubsystemManufacturingFacility.Clone, IndustryFacility)
@@ -1450,8 +1450,8 @@ NoBonus:
                     Case IndustryType.BoosterManufacturing
                         SelectedFacility = CType(DefaultCalcBoosterManufacturingFacility.Clone, IndustryFacility)
                         SelectedActivity = ActivityManufacturing
-                    Case IndustryType.T3Manufacturing
-                        SelectedFacility = CType(DefaultCalcT3ManufacturingFacility.Clone, IndustryFacility)
+                    Case IndustryType.T3CruiserManufacturing
+                        SelectedFacility = CType(DefaultCalcT3CruiserManufacturingFacility.Clone, IndustryFacility)
                         SelectedActivity = ActivityManufacturing
                     Case IndustryType.SubsystemManufacturing
                         SelectedFacility = CType(DefaultCalcSubsystemManufacturingFacility.Clone, IndustryFacility)
@@ -1496,8 +1496,8 @@ NoBonus:
                     Case IndustryType.BoosterManufacturing
                         SelectedFacility = CType(SelectedCalcBoosterManufacturingFacility.Clone, IndustryFacility)
                         SelectedActivity = ActivityManufacturing
-                    Case IndustryType.T3Manufacturing
-                        SelectedFacility = CType(SelectedCalcT3ManufacturingFacility.Clone, IndustryFacility)
+                    Case IndustryType.T3CruiserManufacturing
+                        SelectedFacility = CType(SelectedCalcT3CruiserManufacturingFacility.Clone, IndustryFacility)
                         SelectedActivity = ActivityManufacturing
                     Case IndustryType.SubsystemManufacturing
                         SelectedFacility = CType(SelectedCalcSubsystemManufacturingFacility.Clone, IndustryFacility)
@@ -1711,7 +1711,7 @@ NoBonus:
                     Case IndustryType.SuperManufacturing
                         ' Check types, supers can only be built in a pos
                         FacilityTypeCombo.Items.Add(POSFacility)
-                    Case IndustryType.BoosterManufacturing, IndustryType.SubsystemManufacturing, IndustryType.T3Manufacturing
+                    Case IndustryType.BoosterManufacturing, IndustryType.SubsystemManufacturing, IndustryType.T3CruiserManufacturing
                         ' Can be built in outposts and POS
                         FacilityTypeCombo.Items.Add(OutpostFacility)
                         FacilityTypeCombo.Items.Add(POSFacility)
@@ -2071,9 +2071,9 @@ NoBonus:
                         ElseIf ItemGroupID = StrategicCruiserGroupID Or ItemGroupID = TacticalDestroyerGroupID Then
                             SQL = SQL & CStr(IndustryActivities.Invention) & " AND GROUP_ID = " & CStr(StrategicCrusierBlueprintID)
                         Else
-                            SQL = SQL & CStr(IndustryActivities.Invention) & "AND GROUP_ID IS NULL "
+                            SQL = SQL & CStr(IndustryActivities.Invention) & " AND GROUP_ID IS NULL "
                         End If
-                        SQL = SQL & "AND CATEGORY_ID = " & CStr(BlueprintCategoryID)
+                        SQL = SQL & " AND CATEGORY_ID = " & CStr(BlueprintCategoryID)
                 End Select
 
         End Select
@@ -2496,13 +2496,13 @@ NoBonus:
                         SelectedBPSuperManufacturingFacility.IsDefault = False
                         SelectedFacility.IsDefault = False
                     End If
-                Case IndustryType.T3Manufacturing
-                    SelectedBPT3ManufacturingFacility = SelectedFacility
-                    If SelectedBPT3ManufacturingFacility.IsEqual(DefaultBPT3ManufacturingFacility) Then
-                        SelectedBPT3ManufacturingFacility.IsDefault = True
+                Case IndustryType.T3CruiserManufacturing
+                    SelectedBPT3CruiserManufacturingFacility = SelectedFacility
+                    If SelectedBPT3CruiserManufacturingFacility.IsEqual(DefaultBPT3CruiserManufacturingFacility) Then
+                        SelectedBPT3CruiserManufacturingFacility.IsDefault = True
                         SelectedFacility.IsDefault = True
                     Else
-                        SelectedBPT3ManufacturingFacility.IsDefault = False
+                        SelectedBPT3CruiserManufacturingFacility.IsDefault = False
                         SelectedFacility.IsDefault = False
                     End If
                 Case IndustryType.SubsystemManufacturing
@@ -2634,13 +2634,13 @@ NoBonus:
                         SelectedCalcSuperManufacturingFacility.IsDefault = False
                         SelectedFacility.IsDefault = False
                     End If
-                Case IndustryType.T3Manufacturing
-                    SelectedCalcT3ManufacturingFacility = SelectedFacility
-                    If SelectedCalcT3ManufacturingFacility.IsEqual(DefaultCalcT3ManufacturingFacility) Then
-                        SelectedCalcT3ManufacturingFacility.IsDefault = True
+                Case IndustryType.T3CruiserManufacturing
+                    SelectedCalcT3CruiserManufacturingFacility = SelectedFacility
+                    If SelectedCalcT3CruiserManufacturingFacility.IsEqual(DefaultCalcT3CruiserManufacturingFacility) Then
+                        SelectedCalcT3CruiserManufacturingFacility.IsDefault = True
                         SelectedFacility.IsDefault = True
                     Else
-                        SelectedCalcT3ManufacturingFacility.IsDefault = False
+                        SelectedCalcT3CruiserManufacturingFacility.IsDefault = False
                         SelectedFacility.IsDefault = False
                     End If
                 Case IndustryType.SubsystemManufacturing
@@ -2798,8 +2798,8 @@ NoBonus:
                     Return CType(SelectedBPSubsystemManufacturingFacility.Clone(), IndustryFacility)
                 Case IndustryType.SuperManufacturing
                     Return CType(SelectedBPSuperManufacturingFacility.Clone(), IndustryFacility)
-                Case IndustryType.T3Manufacturing
-                    Return CType(SelectedBPT3ManufacturingFacility.Clone(), IndustryFacility)
+                Case IndustryType.T3CruiserManufacturing
+                    Return CType(SelectedBPT3CruiserManufacturingFacility.Clone(), IndustryFacility)
                 Case IndustryType.POSFuelBlockManufacturing
                     Return CType(SelectedBPPOSFuelBlockFacility.Clone(), IndustryFacility)
                 Case IndustryType.POSLargeShipManufacturing
@@ -2831,8 +2831,8 @@ NoBonus:
                     Return CType(SelectedCalcSubsystemManufacturingFacility.Clone(), IndustryFacility)
                 Case IndustryType.SuperManufacturing
                     Return CType(SelectedCalcSuperManufacturingFacility.Clone(), IndustryFacility)
-                Case IndustryType.T3Manufacturing
-                    Return CType(SelectedCalcT3ManufacturingFacility.Clone(), IndustryFacility)
+                Case IndustryType.T3CruiserManufacturing
+                    Return CType(SelectedCalcT3CruiserManufacturingFacility.Clone(), IndustryFacility)
                 Case IndustryType.POSFuelBlockManufacturing
                     Return CType(SelectedCalcPOSFuelBlockFacility.Clone(), IndustryFacility)
                 Case IndustryType.POSLargeShipManufacturing
@@ -2878,8 +2878,8 @@ NoBonus:
                     SelectedFacility = SelectedBPCapitalManufacturingFacility
                 Case IndustryType.SuperManufacturing
                     SelectedFacility = SelectedBPSuperManufacturingFacility
-                Case IndustryType.T3Manufacturing
-                    SelectedFacility = SelectedBPT3ManufacturingFacility
+                Case IndustryType.T3CruiserManufacturing
+                    SelectedFacility = SelectedBPT3CruiserManufacturingFacility
                 Case IndustryType.SubsystemManufacturing
                     SelectedFacility = SelectedBPSubsystemManufacturingFacility
                 Case IndustryType.ComponentManufacturing
@@ -2911,8 +2911,8 @@ NoBonus:
                     SelectedFacility = SelectedCalcCapitalManufacturingFacility
                 Case IndustryType.SuperManufacturing
                     SelectedFacility = SelectedCalcSuperManufacturingFacility
-                Case IndustryType.T3Manufacturing
-                    SelectedFacility = SelectedCalcT3ManufacturingFacility
+                Case IndustryType.T3CruiserManufacturing
+                    SelectedFacility = SelectedCalcT3CruiserManufacturingFacility
                 Case IndustryType.SubsystemManufacturing
                     SelectedFacility = SelectedCalcSubsystemManufacturingFacility
                 Case IndustryType.ComponentManufacturing
@@ -2963,7 +2963,8 @@ NoBonus:
             Call SelectedBPManufacturingFacility.LoadFacility(LoadFacilitySettingsfromFacility(SelectedBPManufacturingFacility), LoadDefault)
             Call SelectedBPCapitalManufacturingFacility.LoadFacility(LoadFacilitySettingsfromFacility(SelectedBPCapitalManufacturingFacility), LoadDefault)
             Call SelectedBPSuperManufacturingFacility.LoadFacility(LoadFacilitySettingsfromFacility(SelectedBPSuperManufacturingFacility), LoadDefault)
-            Call SelectedBPT3ManufacturingFacility.LoadFacility(LoadFacilitySettingsfromFacility(SelectedBPT3ManufacturingFacility), LoadDefault)
+            Call SelectedBPT3CruiserManufacturingFacility.LoadFacility(LoadFacilitySettingsfromFacility(SelectedBPT3CruiserManufacturingFacility), LoadDefault)
+            Call SelectedBPT3DestroyerManufacturingFacility.LoadFacility(LoadFacilitySettingsfromFacility(SelectedBPT3DestroyerManufacturingFacility), LoadDefault)
             Call SelectedBPBoosterManufacturingFacility.LoadFacility(LoadFacilitySettingsfromFacility(SelectedBPBoosterManufacturingFacility), LoadDefault)
             Call SelectedBPSubsystemManufacturingFacility.LoadFacility(LoadFacilitySettingsfromFacility(SelectedBPSubsystemManufacturingFacility), LoadDefault)
             Call SelectedBPComponentManufacturingFacility.LoadFacility(LoadFacilitySettingsfromFacility(SelectedBPComponentManufacturingFacility), LoadDefault)
@@ -2981,7 +2982,8 @@ NoBonus:
             Call SelectedCalcBaseManufacturingFacility.LoadFacility(LoadFacilitySettingsfromFacility(SelectedCalcBaseManufacturingFacility), LoadDefault)
             Call SelectedCalcCapitalManufacturingFacility.LoadFacility(LoadFacilitySettingsfromFacility(SelectedCalcCapitalManufacturingFacility), LoadDefault)
             Call SelectedCalcSuperManufacturingFacility.LoadFacility(LoadFacilitySettingsfromFacility(SelectedCalcSuperManufacturingFacility), LoadDefault)
-            Call SelectedCalcT3ManufacturingFacility.LoadFacility(LoadFacilitySettingsfromFacility(SelectedCalcT3ManufacturingFacility), LoadDefault)
+            Call SelectedCalcT3CruiserManufacturingFacility.LoadFacility(LoadFacilitySettingsfromFacility(SelectedCalcT3CruiserManufacturingFacility), LoadDefault)
+            Call SelectedCalcT3DestroyerManufacturingFacility.LoadFacility(LoadFacilitySettingsfromFacility(SelectedCalcT3DestroyerManufacturingFacility), LoadDefault)
             Call SelectedCalcBoosterManufacturingFacility.LoadFacility(LoadFacilitySettingsfromFacility(SelectedCalcBoosterManufacturingFacility), LoadDefault)
             Call SelectedCalcSubsystemManufacturingFacility.LoadFacility(LoadFacilitySettingsfromFacility(SelectedCalcSubsystemManufacturingFacility), LoadDefault)
             Call SelectedCalcComponentManufacturingFacility.LoadFacility(LoadFacilitySettingsfromFacility(SelectedCalcComponentManufacturingFacility), LoadDefault)
@@ -3000,8 +3002,10 @@ NoBonus:
             DefaultBPCapitalManufacturingFacility = CType(SelectedBPCapitalManufacturingFacility.Clone, IndustryFacility)
             Call SelectedBPSuperManufacturingFacility.LoadFacility(AllSettings.LoadFacilitySettings(IndustryType.SuperManufacturing, BPTab), LoadDefault)
             DefaultBPSuperManufacturingFacility = CType(SelectedBPSuperManufacturingFacility.Clone, IndustryFacility)
-            Call SelectedBPT3ManufacturingFacility.LoadFacility(AllSettings.LoadFacilitySettings(IndustryType.T3Manufacturing, BPTab), LoadDefault)
-            DefaultBPT3ManufacturingFacility = CType(SelectedBPT3ManufacturingFacility.Clone, IndustryFacility)
+            Call SelectedBPT3CruiserManufacturingFacility.LoadFacility(AllSettings.LoadFacilitySettings(IndustryType.T3CruiserManufacturing, BPTab), LoadDefault)
+            DefaultBPT3CruiserManufacturingFacility = CType(SelectedBPT3CruiserManufacturingFacility.Clone, IndustryFacility)
+            Call SelectedBPT3DestroyerManufacturingFacility.LoadFacility(AllSettings.LoadFacilitySettings(IndustryType.T3DestroyerManufacturing, BPTab), LoadDefault)
+            DefaultBPT3DestroyerManufacturingFacility = CType(SelectedBPT3DestroyerManufacturingFacility.Clone, IndustryFacility)
             Call SelectedBPBoosterManufacturingFacility.LoadFacility(AllSettings.LoadFacilitySettings(IndustryType.BoosterManufacturing, BPTab), LoadDefault)
             DefaultBPBoosterManufacturingFacility = CType(SelectedBPBoosterManufacturingFacility.Clone, IndustryFacility)
             Call SelectedBPSubsystemManufacturingFacility.LoadFacility(AllSettings.LoadFacilitySettings(IndustryType.SubsystemManufacturing, BPTab), LoadDefault)
@@ -3032,8 +3036,10 @@ NoBonus:
             DefaultCalcCapitalManufacturingFacility = CType(SelectedCalcCapitalManufacturingFacility.Clone, IndustryFacility)
             Call SelectedCalcSuperManufacturingFacility.LoadFacility(AllSettings.LoadFacilitySettings(IndustryType.SuperManufacturing, CalcTab), LoadDefault)
             DefaultCalcSuperManufacturingFacility = CType(SelectedCalcSuperManufacturingFacility.Clone, IndustryFacility)
-            Call SelectedCalcT3ManufacturingFacility.LoadFacility(AllSettings.LoadFacilitySettings(IndustryType.T3Manufacturing, CalcTab), LoadDefault)
-            DefaultCalcT3ManufacturingFacility = CType(SelectedCalcT3ManufacturingFacility.Clone, IndustryFacility)
+            Call SelectedCalcT3CruiserManufacturingFacility.LoadFacility(AllSettings.LoadFacilitySettings(IndustryType.T3CruiserManufacturing, CalcTab), LoadDefault)
+            DefaultCalcT3CruiserManufacturingFacility = CType(SelectedCalcT3CruiserManufacturingFacility.Clone, IndustryFacility)
+            Call SelectedCalcT3DestroyerManufacturingFacility.LoadFacility(AllSettings.LoadFacilitySettings(IndustryType.T3DestroyerManufacturing, CalcTab), LoadDefault)
+            DefaultCalcT3DestroyerManufacturingFacility = CType(SelectedCalcT3DestroyerManufacturingFacility.Clone, IndustryFacility)
             Call SelectedCalcBoosterManufacturingFacility.LoadFacility(AllSettings.LoadFacilitySettings(IndustryType.BoosterManufacturing, CalcTab), LoadDefault)
             DefaultCalcBoosterManufacturingFacility = CType(SelectedCalcBoosterManufacturingFacility.Clone, IndustryFacility)
             Call SelectedCalcSubsystemManufacturingFacility.LoadFacility(AllSettings.LoadFacilitySettings(IndustryType.SubsystemManufacturing, CalcTab), LoadDefault)
@@ -3219,7 +3225,7 @@ NoBonus:
                         Case CarrierGroupID, DredGroupID, CapIndustrialGroupID
                             SelectedIndyType = IndustryType.CapitalManufacturing
                         Case StrategicCruiserGroupID
-                            SelectedIndyType = IndustryType.T3Manufacturing
+                            SelectedIndyType = IndustryType.T3CruiserManufacturing
                         Case Else
                             SelectedIndyType = IndustryType.Manufacturing
 
@@ -3408,8 +3414,8 @@ NoBonus:
                     SelectedBPCapitalManufacturingFacility = CType(BuildFacility.Clone, IndustryFacility)
                 Case IndustryType.SuperManufacturing
                     SelectedBPSuperManufacturingFacility = CType(BuildFacility.Clone, IndustryFacility)
-                Case IndustryType.T3Manufacturing
-                    SelectedBPT3ManufacturingFacility = CType(BuildFacility.Clone, IndustryFacility)
+                Case IndustryType.T3CruiserManufacturing
+                    SelectedBPT3CruiserManufacturingFacility = CType(BuildFacility.Clone, IndustryFacility)
                 Case IndustryType.SubsystemManufacturing
                     SelectedBPSubsystemManufacturingFacility = CType(BuildFacility.Clone, IndustryFacility)
                 Case IndustryType.ComponentManufacturing
@@ -5077,9 +5083,9 @@ Tabs:
                         Call SelectedBPCapitalManufacturingFacility.SaveFacility(BPTab)
                         DefaultBPCapitalManufacturingFacility = CType(SelectedBPCapitalManufacturingFacility.Clone, IndustryFacility)
                     Case StrategicCruiserGroupID
-                        SelectedBPT3ManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
-                        Call SelectedBPT3ManufacturingFacility.SaveFacility(BPTab)
-                        DefaultBPT3ManufacturingFacility = CType(SelectedBPT3ManufacturingFacility.Clone, IndustryFacility)
+                        SelectedBPT3CruiserManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
+                        Call SelectedBPT3CruiserManufacturingFacility.SaveFacility(BPTab)
+                        DefaultBPT3CruiserManufacturingFacility = CType(SelectedBPT3CruiserManufacturingFacility.Clone, IndustryFacility)
                     Case Else
                         If cmbBPFacilityType.Text = POSFacility Then
 
@@ -5192,8 +5198,8 @@ Tabs:
                     SelectedBPCapitalManufacturingFacility.MaterialMultiplier = CDbl(TempMMValue)
                 Case IndustryType.ComponentManufacturing
                     SelectedBPComponentManufacturingFacility.MaterialMultiplier = CDbl(TempMMValue)
-                Case IndustryType.T3Manufacturing
-                    SelectedBPT3ManufacturingFacility.MaterialMultiplier = CDbl(TempMMValue)
+                Case IndustryType.T3CruiserManufacturing
+                    SelectedBPT3CruiserManufacturingFacility.MaterialMultiplier = CDbl(TempMMValue)
                 Case IndustryType.SubsystemManufacturing
                     SelectedBPSubsystemManufacturingFacility.MaterialMultiplier = CDbl(TempMMValue)
                 Case IndustryType.Copying
@@ -5227,8 +5233,8 @@ Tabs:
                     txtBPFacilityManualME.Text = FormatPercent(SelectedBPCapitalManufacturingFacility.MaterialMultiplier, 1)
                 Case IndustryType.ComponentManufacturing
                     txtBPFacilityManualME.Text = FormatPercent(SelectedBPComponentManufacturingFacility.MaterialMultiplier, 1)
-                Case IndustryType.T3Manufacturing
-                    txtBPFacilityManualME.Text = FormatPercent(SelectedBPT3ManufacturingFacility.MaterialMultiplier, 1)
+                Case IndustryType.T3CruiserManufacturing
+                    txtBPFacilityManualME.Text = FormatPercent(SelectedBPT3CruiserManufacturingFacility.MaterialMultiplier, 1)
                 Case IndustryType.SubsystemManufacturing
                     txtBPFacilityManualME.Text = FormatPercent(SelectedBPSubsystemManufacturingFacility.MaterialMultiplier, 1)
                 Case IndustryType.Copying
@@ -5271,8 +5277,8 @@ Tabs:
                     SelectedBPCapitalManufacturingFacility.MaterialMultiplier = CDbl(TempTMValue)
                 Case IndustryType.ComponentManufacturing
                     SelectedBPComponentManufacturingFacility.MaterialMultiplier = CDbl(TempTMValue)
-                Case IndustryType.T3Manufacturing
-                    SelectedBPT3ManufacturingFacility.MaterialMultiplier = CDbl(TempTMValue)
+                Case IndustryType.T3CruiserManufacturing
+                    SelectedBPT3CruiserManufacturingFacility.MaterialMultiplier = CDbl(TempTMValue)
                 Case IndustryType.SubsystemManufacturing
                     SelectedBPSubsystemManufacturingFacility.MaterialMultiplier = CDbl(TempTMValue)
                 Case IndustryType.Copying
@@ -5306,8 +5312,8 @@ Tabs:
                     txtBPFacilityManualTE.Text = FormatPercent(SelectedBPCapitalManufacturingFacility.MaterialMultiplier, 1)
                 Case IndustryType.ComponentManufacturing
                     txtBPFacilityManualTE.Text = FormatPercent(SelectedBPComponentManufacturingFacility.MaterialMultiplier, 1)
-                Case IndustryType.T3Manufacturing
-                    txtBPFacilityManualTE.Text = FormatPercent(SelectedBPT3ManufacturingFacility.MaterialMultiplier, 1)
+                Case IndustryType.T3CruiserManufacturing
+                    txtBPFacilityManualTE.Text = FormatPercent(SelectedBPT3CruiserManufacturingFacility.MaterialMultiplier, 1)
                 Case IndustryType.SubsystemManufacturing
                     txtBPFacilityManualTE.Text = FormatPercent(SelectedBPSubsystemManufacturingFacility.MaterialMultiplier, 1)
                 Case IndustryType.Copying
@@ -6382,8 +6388,8 @@ Tabs:
 
         SelectedBPSubsystemManufacturingFacility.IncludeActivityCost = UserBPTabSettings.IncludeT3Cost
         SelectedBPSubsystemManufacturingFacility.IncludeActivityTime = UserBPTabSettings.IncludeT3Time
-        SelectedBPT3ManufacturingFacility.IncludeActivityCost = UserBPTabSettings.IncludeT3Cost
-        SelectedBPT3ManufacturingFacility.IncludeActivityTime = UserBPTabSettings.IncludeT3Time
+        SelectedBPT3CruiserManufacturingFacility.IncludeActivityCost = UserBPTabSettings.IncludeT3Cost
+        SelectedBPT3CruiserManufacturingFacility.IncludeActivityTime = UserBPTabSettings.IncludeT3Time
         SelectedBPT3InventionFacility.IncludeActivityCost = UserBPTabSettings.IncludeT3Cost
         SelectedBPT3InventionFacility.IncludeActivityTime = UserBPTabSettings.IncludeT3Time
 
@@ -6581,8 +6587,8 @@ Tabs:
 
         SelectedBPSubsystemManufacturingFacility.IncludeActivityCost = chkBPIncludeT3Costs.Checked
         SelectedBPSubsystemManufacturingFacility.IncludeActivityTime = chkBPIncludeT3Time.Checked
-        SelectedBPT3ManufacturingFacility.IncludeActivityCost = chkBPIncludeT3Costs.Checked
-        SelectedBPT3ManufacturingFacility.IncludeActivityTime = chkBPIncludeT3Time.Checked
+        SelectedBPT3CruiserManufacturingFacility.IncludeActivityCost = chkBPIncludeT3Costs.Checked
+        SelectedBPT3CruiserManufacturingFacility.IncludeActivityTime = chkBPIncludeT3Time.Checked
         SelectedBPT3InventionFacility.IncludeActivityCost = chkBPIncludeT3Costs.Checked
         SelectedBPT3InventionFacility.IncludeActivityTime = chkBPIncludeT3Time.Checked
 
@@ -6597,7 +6603,7 @@ Tabs:
         SelectedBPInventionFacility.SaveFacility(BPTab)
         SelectedBPCopyFacility.SaveFacility(BPTab)
         SelectedBPSubsystemManufacturingFacility.SaveFacility(BPTab)
-        SelectedBPT3ManufacturingFacility.SaveFacility(BPTab)
+        SelectedBPT3CruiserManufacturingFacility.SaveFacility(BPTab)
 
         ' Save the data in the XML file
         Call Settings.SaveBPSettings(TempSettings)
@@ -7562,7 +7568,7 @@ ExitForm:
 
         ' Add Item Type
         If SQLItemType <> "" Then
-            SQLItemType = " ALL_BLUEPRINTS.ITEM_TYPE IN (" & SQLItemType.Substring(0, SQLItemType.Length - 1) & ")  "
+            SQLItemType = " ALL_BLUEPRINTS.ITEM_TYPE IN (" & SQLItemType.Substring(0, SQLItemType.Length - 1) & ") "
         Else
             ' They need to have at least one. If not, just return nothing
             BuildBPSelectQuery = ""
@@ -7895,16 +7901,29 @@ ExitForm:
 
                 ' Set the number of bps
                 If Trim(txtBPRuns.Text) <> "" Then
+                    If ItemType = 2 Then
+                        SQL = "SELECT MAX_PRODUCTION_LIMIT FROM ALL_BLUEPRINTS WHERE BLUEPRINT_ID =" & SelectedBlueprint.GetBPTypeID
 
-                    SQL = "SELECT MAX_PRODUCTION_LIMIT FROM ALL_BLUEPRINTS WHERE BLUEPRINT_ID =" & SelectedBlueprint.GetBPTypeID
+                        DBCommand = New SQLiteCommand(SQL, DB)
+                        readerOwned = DBCommand.ExecuteReader()
+                        readerOwned.Read()
 
-                    DBCommand = New SQLiteCommand(SQL, DB)
-                    readerOwned = DBCommand.ExecuteReader()
-                    readerOwned.Read()
+                        MaxProductionRuns = readerOwned.GetInt32(0)
 
-                    MaxProductionRuns = readerOwned.GetInt32(0)
-
-                    readerOwned.Close()
+                        readerOwned.Close()
+                    Else ' base T3 runs off of the relic
+                        ' Base it off of the relic type - need to look it up based on the TypeID
+                        Select Case cmbBPRelic.Text
+                            Case "Intact" ' Intact 
+                                MaxProductionRuns = 20
+                            Case "Malfun" ' Malfunctioning
+                                MaxProductionRuns = 10
+                            Case "Wrecke" ' Wrecked 
+                                MaxProductionRuns = 3
+                            Case Else
+                                MaxProductionRuns = 3
+                        End Select
+                    End If
 
                     MaxProductionRuns = CInt(Math.Min(Math.Ceiling((MaxProductionRuns) + SelectedDecryptor.RunMod), MaxProductionRuns))
                     ' Set the num bps off of the calculated amount
@@ -12488,6 +12507,10 @@ ExitSub:
     End Sub
 
     ' CalcT3Facility functions
+    Private Sub chkCalcT3Destroyers_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcT3Destroyers.CheckedChanged
+
+    End Sub
+
     Private Sub cmbCalcT3FacilityType_DropDown(sender As Object, e As System.EventArgs) Handles cmbCalcT3FacilityType.DropDown
         PreviousCalcT3FacilityType = cmbCalcT3FacilityType.Text
     End Sub
@@ -12598,7 +12621,7 @@ ExitSub:
             ' We won't have any MM or TM to send, so just do default
             Dim Defaults As New ProgramSettings
 
-            Call DisplayFacilityBonus(IndustryType.T3Manufacturing, _
+            Call DisplayFacilityBonus(IndustryType.T3CruiserManufacturing, _
                                       Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, StrategicCruiserGroupID, -1, _
                                       ActivityManufacturing, cmbCalcT3FacilityType.Text, cmbCalcT3FacilityorArray.Text, _
                                       cmbCalcT3FacilityRegion, cmbCalcT3FacilitySystem, cmbCalcT3FacilityorArray, _
@@ -12617,9 +12640,9 @@ ExitSub:
 
     Private Sub btnCalcT3FacilitySave_Click(sender As System.Object, e As System.EventArgs) Handles btnCalcT3FacilitySave.Click
 
-        SelectedCalcT3ManufacturingFacility.IncludeActivityCost = chkCalcT3FacilityIncludeUsage.Checked
-        Call SelectedCalcT3ManufacturingFacility.SaveFacility(CalcTab)
-        DefaultCalcT3ManufacturingFacility = CType(SelectedCalcT3ManufacturingFacility.Clone, IndustryFacility)
+        SelectedCalcT3CruiserManufacturingFacility.IncludeActivityCost = chkCalcT3FacilityIncludeUsage.Checked
+        Call SelectedCalcT3CruiserManufacturingFacility.SaveFacility(CalcTab)
+        DefaultCalcT3CruiserManufacturingFacility = CType(SelectedCalcT3CruiserManufacturingFacility.Clone, IndustryFacility)
 
         lblCalcT3FacilityDefault.Visible = True
 
@@ -12655,7 +12678,7 @@ ExitSub:
 
         ' If it's an outpost, then save the me/te for this in the current facility
         If cmbCalcT3FacilityType.Text = OutpostFacility Then
-            SelectedCalcT3ManufacturingFacility.MaterialMultiplier = CDbl(TempMMValue)
+            SelectedCalcT3CruiserManufacturingFacility.MaterialMultiplier = CDbl(TempMMValue)
         End If
 
         ' They changed the value, so enable save
@@ -12668,7 +12691,7 @@ ExitSub:
     Private Sub txtCalcT3FacilityManualME_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcT3FacilityManualME.LostFocus
 
         If Trim(Replace(txtCalcT3FacilityManualME.Text, "%", "")) = "" And cmbCalcT3FacilityType.Text = OutpostFacility Then
-            txtCalcT3FacilityManualME.Text = FormatPercent(SelectedCalcT3ManufacturingFacility.MaterialMultiplier, 1)
+            txtCalcT3FacilityManualME.Text = FormatPercent(SelectedCalcT3CruiserManufacturingFacility.MaterialMultiplier, 1)
         End If
 
         If Not txtCalcT3FacilityManualME.Text.Contains("%") Then
@@ -12689,7 +12712,7 @@ ExitSub:
 
         ' If it's an outpost, then save the me/te for this in the current facility
         If cmbCalcT3FacilityType.Text = OutpostFacility Then
-            SelectedCalcT3ManufacturingFacility.MaterialMultiplier = CDbl(TempTMValue)
+            SelectedCalcT3CruiserManufacturingFacility.MaterialMultiplier = CDbl(TempTMValue)
         End If
 
         ' They changed the value, so enable save
@@ -12702,7 +12725,7 @@ ExitSub:
     Private Sub txtCalcT3FacilityManualTM_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcT3FacilityManualTE.LostFocus
 
         If Trim(Replace(txtCalcT3FacilityManualTE.Text, "%", "")) = "" And cmbCalcT3FacilityType.Text = OutpostFacility Then
-            txtCalcT3FacilityManualTE.Text = FormatPercent(SelectedCalcT3ManufacturingFacility.MaterialMultiplier, 1)
+            txtCalcT3FacilityManualTE.Text = FormatPercent(SelectedCalcT3CruiserManufacturingFacility.MaterialMultiplier, 1)
         End If
 
         If Not txtCalcT3FacilityManualTE.Text.Contains("%") Then
@@ -15384,8 +15407,8 @@ CheckTechs:
 
             LoadingFacilityActivities = True
             CalcT3FacilityLoaded = False
-            chkCalcCapitalFacilityIncludeUsage.Checked = DefaultCalcT3ManufacturingFacility.IncludeActivityUsage
-            Call LoadFacility(IndustryType.T3Manufacturing, True, False, _
+            chkCalcCapitalFacilityIncludeUsage.Checked = DefaultCalcT3CruiserManufacturingFacility.IncludeActivityUsage
+            Call LoadFacility(IndustryType.T3CruiserManufacturing, True, False, _
                               ActivityManufacturing, cmbCalcT3FacilityType, cmbCalcT3FacilityRegion, cmbCalcT3FacilitySystem, cmbCalcT3FacilityorArray, _
                               lblCalcT3FacilityBonus, lblCalcT3FacilityDefault, lblCalcT3FacilityManualME, txtCalcT3FacilityManualME, _
                               lblCalcT3FacilityManualTE, txtCalcT3FacilityManualTE, btnCalcT3FacilitySave, lblCalcT3FacilityTaxRate, _

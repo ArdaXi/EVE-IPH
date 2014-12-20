@@ -212,7 +212,7 @@ Public Class IndustryFacility
                     SQL = SQL & "AND GROUP_ID IN (" & CStr(TitanGroupID) & ", " & CStr(SuperGroupID) & ") "
                 Case IndustryType.BoosterManufacturing
                     SQL = SQL & "AND GROUP_ID = " & BoosterGroupID & " "
-                Case IndustryType.T3Manufacturing
+                Case IndustryType.T3CruiserManufacturing
                     SQL = SQL & "AND GROUP_ID = " & StrategicCruiserGroupID & " "
                 Case IndustryType.SubsystemManufacturing
                     SQL = SQL & "AND CATEGORY_ID = " & SubsystemCategoryID & " "
@@ -396,7 +396,8 @@ Public Module FacilityVariables
     Public SelectedBPComponentManufacturingFacility As New IndustryFacility
     Public SelectedBPCapitalManufacturingFacility As New IndustryFacility
     Public SelectedBPSuperManufacturingFacility As New IndustryFacility
-    Public SelectedBPT3ManufacturingFacility As New IndustryFacility
+    Public SelectedBPT3CruiserManufacturingFacility As New IndustryFacility
+    Public SelectedBPT3DestroyerManufacturingFacility As New IndustryFacility
     Public SelectedBPSubsystemManufacturingFacility As New IndustryFacility
     Public SelectedBPBoosterManufacturingFacility As New IndustryFacility
     Public SelectedBPInventionFacility As New IndustryFacility
@@ -417,7 +418,8 @@ Public Module FacilityVariables
     Public DefaultBPComponentManufacturingFacility As New IndustryFacility
     Public DefaultBPCapitalManufacturingFacility As New IndustryFacility
     Public DefaultBPSuperManufacturingFacility As New IndustryFacility
-    Public DefaultBPT3ManufacturingFacility As New IndustryFacility
+    Public DefaultBPT3CruiserManufacturingFacility As New IndustryFacility
+    Public DefaultBPT3DestroyerManufacturingFacility As New IndustryFacility
     Public DefaultBPSubsystemManufacturingFacility As New IndustryFacility
     Public DefaultBPBoosterManufacturingFacility As New IndustryFacility
     Public DefaultBPInventionFacility As New IndustryFacility
@@ -430,7 +432,8 @@ Public Module FacilityVariables
     Public SelectedCalcComponentManufacturingFacility As New IndustryFacility
     Public SelectedCalcCapitalManufacturingFacility As New IndustryFacility
     Public SelectedCalcSuperManufacturingFacility As New IndustryFacility
-    Public SelectedCalcT3ManufacturingFacility As New IndustryFacility
+    Public SelectedCalcT3CruiserManufacturingFacility As New IndustryFacility
+    Public SelectedCalcT3DestroyerManufacturingFacility As New IndustryFacility
     Public SelectedCalcSubsystemManufacturingFacility As New IndustryFacility
     Public SelectedCalcBoosterManufacturingFacility As New IndustryFacility
     Public SelectedCalcInventionFacility As New IndustryFacility
@@ -442,7 +445,8 @@ Public Module FacilityVariables
     Public DefaultCalcComponentManufacturingFacility As New IndustryFacility
     Public DefaultCalcCapitalManufacturingFacility As New IndustryFacility
     Public DefaultCalcSuperManufacturingFacility As New IndustryFacility
-    Public DefaultCalcT3ManufacturingFacility As New IndustryFacility
+    Public DefaultCalcT3CruiserManufacturingFacility As New IndustryFacility
+    Public DefaultCalcT3DestroyerManufacturingFacility As New IndustryFacility
     Public DefaultCalcSubsystemManufacturingFacility As New IndustryFacility
     Public DefaultCalcBoosterManufacturingFacility As New IndustryFacility
     Public DefaultCalcInventionFacility As New IndustryFacility
@@ -478,18 +482,19 @@ Public Module FacilityVariables
         ComponentManufacturing = 2
         CapitalManufacturing = 3
         SuperManufacturing = 4
-        T3Manufacturing = 5
+        T3CruiserManufacturing = 5
         SubsystemManufacturing = 6
         BoosterManufacturing = 7
         Copying = 8
         Invention = 9
         NoPOSManufacturing = 10
         T3Invention = 11
+        T3DestroyerManufacturing = 12
 
         ' Special POS Arrays
-        POSModuleManufacturing = 12
-        POSFuelBlockManufacturing = 13
-        POSLargeShipManufacturing = 14
+        POSModuleManufacturing = 13
+        POSFuelBlockManufacturing = 14
+        POSLargeShipManufacturing = 15
 
     End Enum
 
