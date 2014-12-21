@@ -394,6 +394,7 @@ Public Module FacilityVariables
     ' Selected facilities
     Public SelectedBPManufacturingFacility As New IndustryFacility
     Public SelectedBPComponentManufacturingFacility As New IndustryFacility
+    Public SelectedBPCapitalComponentManufacturingFacility As New IndustryFacility
     Public SelectedBPCapitalManufacturingFacility As New IndustryFacility
     Public SelectedBPSuperManufacturingFacility As New IndustryFacility
     Public SelectedBPT3CruiserManufacturingFacility As New IndustryFacility
@@ -416,6 +417,7 @@ Public Module FacilityVariables
 
     Public DefaultBPManufacturingFacility As New IndustryFacility
     Public DefaultBPComponentManufacturingFacility As New IndustryFacility
+    Public DefaultBPCapitalComponentManufacturingFacility As New IndustryFacility
     Public DefaultBPCapitalManufacturingFacility As New IndustryFacility
     Public DefaultBPSuperManufacturingFacility As New IndustryFacility
     Public DefaultBPT3CruiserManufacturingFacility As New IndustryFacility
@@ -430,6 +432,7 @@ Public Module FacilityVariables
     ' Selected facilities
     Public SelectedCalcBaseManufacturingFacility As New IndustryFacility
     Public SelectedCalcComponentManufacturingFacility As New IndustryFacility
+    Public SelectedCalcCapitalComponentManufacturingFacility As New IndustryFacility
     Public SelectedCalcCapitalManufacturingFacility As New IndustryFacility
     Public SelectedCalcSuperManufacturingFacility As New IndustryFacility
     Public SelectedCalcT3CruiserManufacturingFacility As New IndustryFacility
@@ -443,6 +446,7 @@ Public Module FacilityVariables
 
     Public DefaultCalcBaseManufacturingFacility As New IndustryFacility
     Public DefaultCalcComponentManufacturingFacility As New IndustryFacility
+    Public DefaultCalcCapitalComponentManufacturingFacility As New IndustryFacility
     Public DefaultCalcCapitalManufacturingFacility As New IndustryFacility
     Public DefaultCalcSuperManufacturingFacility As New IndustryFacility
     Public DefaultCalcT3CruiserManufacturingFacility As New IndustryFacility
@@ -480,21 +484,22 @@ Public Module FacilityVariables
         None = 0
         Manufacturing = 1
         ComponentManufacturing = 2
-        CapitalManufacturing = 3
-        SuperManufacturing = 4
-        T3CruiserManufacturing = 5
-        SubsystemManufacturing = 6
-        BoosterManufacturing = 7
-        Copying = 8
-        Invention = 9
-        NoPOSManufacturing = 10
-        T3Invention = 11
-        T3DestroyerManufacturing = 12
+        CapitalComponentManufacturing = 3
+        CapitalManufacturing = 4
+        SuperManufacturing = 5
+        T3CruiserManufacturing = 6
+        SubsystemManufacturing = 7
+        BoosterManufacturing = 8
+        Copying = 9
+        Invention = 10
+        NoPOSManufacturing = 11
+        T3Invention = 12
+        T3DestroyerManufacturing = 13
 
         ' Special POS Arrays
-        POSModuleManufacturing = 13
-        POSFuelBlockManufacturing = 14
-        POSLargeShipManufacturing = 15
+        POSModuleManufacturing = 14
+        POSFuelBlockManufacturing = 15
+        POSLargeShipManufacturing = 16
 
     End Enum
 

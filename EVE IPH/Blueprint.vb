@@ -1173,11 +1173,11 @@ Public Class Blueprint
             ' Base it off of the relic type - need to look it up based on the TypeID
             If readerBP.Read Then
                 Select Case readerBP.GetString(0).Substring(0, 6)
-                    Case "Intact" ' Intact 
+                    Case IntactRelic
                         MaxProductionLimit = 20
-                    Case "Malfun" ' Malfunctioning
+                    Case MalfunctioningRelic
                         MaxProductionLimit = 10
-                    Case "Wrecke" ' Wrecked 
+                    Case WreckedRelic
                         MaxProductionLimit = 3
                     Case Else
                         MaxProductionLimit = 3

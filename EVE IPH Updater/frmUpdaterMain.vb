@@ -94,7 +94,7 @@ Public Class frmUpdaterMain
         ROOT_FOLDER = "" 'UserPath & AppDataPath
 
         ' Set test platform flag
-        UpdaterTesting = True
+        UpdaterTesting = False
 
         '' Get the argument string, which for this program will only be the path to shell back to the calling program
         'For Each arg As String In Environment.GetCommandLineArgs()

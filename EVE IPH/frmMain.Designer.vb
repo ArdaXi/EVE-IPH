@@ -626,6 +626,7 @@ Partial Class frmMain
         Me.lblCalcSuperFacilityManualME = New System.Windows.Forms.Label()
         Me.lblCalcSuperFacilityBonus = New System.Windows.Forms.Label()
         Me.tabCalcFacilityT3Ships = New System.Windows.Forms.TabPage()
+        Me.chkCalcT3Destroyers = New System.Windows.Forms.CheckBox()
         Me.lblCalcT3FacilityDefault = New System.Windows.Forms.Label()
         Me.btnCalcT3FacilitySave = New System.Windows.Forms.Button()
         Me.lblCalcT3FacilityTaxRate = New System.Windows.Forms.Label()
@@ -1117,7 +1118,7 @@ Partial Class frmMain
         Me.MyListView2 = New EVE_Isk_per_Hour.MyListView()
         Me.MyListView1 = New EVE_Isk_per_Hour.MyListView()
         Me.cmbCalcManufacturingTeamActivity = New System.Windows.Forms.ComboBox()
-        Me.chkCalcT3Destroyers = New System.Windows.Forms.CheckBox()
+        Me.chkCalcCapComponents = New System.Windows.Forms.CheckBox()
         Me.mnuStripMain.SuspendLayout
         Me.pnlMain.SuspendLayout
         Me.tabMining.SuspendLayout
@@ -6134,6 +6135,7 @@ Partial Class frmMain
         Me.tabCalcFacilityComponents.Controls.Add(Me.cmbCalcComponentFacilityType)
         Me.tabCalcFacilityComponents.Controls.Add(Me.lblCalcComponentFacilityManualME)
         Me.tabCalcFacilityComponents.Controls.Add(Me.lblCalcComponentFacilityBonus)
+        Me.tabCalcFacilityComponents.Controls.Add(Me.chkCalcCapComponents)
         Me.tabCalcFacilityComponents.Location = New System.Drawing.Point(4, 44)
         Me.tabCalcFacilityComponents.Name = "tabCalcFacilityComponents"
         Me.tabCalcFacilityComponents.Size = New System.Drawing.Size(293, 113)
@@ -6934,9 +6936,9 @@ Partial Class frmMain
         Me.tabCalcFacilityCapitals.Controls.Add(Me.cmbCalcCapitalFacilityType)
         Me.tabCalcFacilityCapitals.Controls.Add(Me.lblCalcCapitalFacilityManualME)
         Me.tabCalcFacilityCapitals.Controls.Add(Me.lblCalcCapitalFacilityBonus)
-        Me.tabCalcFacilityCapitals.Location = New System.Drawing.Point(4, 24)
+        Me.tabCalcFacilityCapitals.Location = New System.Drawing.Point(4, 44)
         Me.tabCalcFacilityCapitals.Name = "tabCalcFacilityCapitals"
-        Me.tabCalcFacilityCapitals.Size = New System.Drawing.Size(293, 133)
+        Me.tabCalcFacilityCapitals.Size = New System.Drawing.Size(293, 113)
         Me.tabCalcFacilityCapitals.TabIndex = 5
         Me.tabCalcFacilityCapitals.Text = "Capitals"
         Me.tabCalcFacilityCapitals.UseVisualStyleBackColor = true
@@ -7293,6 +7295,16 @@ Partial Class frmMain
         Me.tabCalcFacilityT3Ships.TabIndex = 9
         Me.tabCalcFacilityT3Ships.Text = "T3 Ships"
         Me.tabCalcFacilityT3Ships.UseVisualStyleBackColor = true
+        '
+        'chkCalcT3Destroyers
+        '
+        Me.chkCalcT3Destroyers.AutoSize = true
+        Me.chkCalcT3Destroyers.Location = New System.Drawing.Point(139, 6)
+        Me.chkCalcT3Destroyers.Name = "chkCalcT3Destroyers"
+        Me.chkCalcT3Destroyers.Size = New System.Drawing.Size(76, 17)
+        Me.chkCalcT3Destroyers.TabIndex = 49
+        Me.chkCalcT3Destroyers.Text = "Destroyers"
+        Me.chkCalcT3Destroyers.UseVisualStyleBackColor = true
         '
         'lblCalcT3FacilityDefault
         '
@@ -12644,15 +12656,15 @@ Partial Class frmMain
         Me.cmbCalcManufacturingTeamActivity.TabIndex = 20
         Me.cmbCalcManufacturingTeamActivity.Text = "Select Activity"
         '
-        'chkCalcT3Destroyers
+        'chkCalcCapComponents
         '
-        Me.chkCalcT3Destroyers.AutoSize = true
-        Me.chkCalcT3Destroyers.Location = New System.Drawing.Point(139, 6)
-        Me.chkCalcT3Destroyers.Name = "chkCalcT3Destroyers"
-        Me.chkCalcT3Destroyers.Size = New System.Drawing.Size(76, 17)
-        Me.chkCalcT3Destroyers.TabIndex = 49
-        Me.chkCalcT3Destroyers.Text = "Destroyers"
-        Me.chkCalcT3Destroyers.UseVisualStyleBackColor = true
+        Me.chkCalcCapComponents.AutoSize = True
+        Me.chkCalcCapComponents.Location = New System.Drawing.Point(139, 6)
+        Me.chkCalcCapComponents.Name = "chkCalcCapComponents"
+        Me.chkCalcCapComponents.Size = New System.Drawing.Size(72, 17)
+        Me.chkCalcCapComponents.TabIndex = 50
+        Me.chkCalcCapComponents.Text = "Cap Parts"
+        Me.chkCalcCapComponents.UseVisualStyleBackColor = true
         '
         'frmMain
         '
@@ -13975,5 +13987,6 @@ End Sub
     Friend WithEvents lblCalcT3InventionInclude As System.Windows.Forms.Label
     Friend WithEvents chkCalcT3InventionFacilityIncludeUsage As System.Windows.Forms.CheckBox
     Friend WithEvents chkCalcT3Destroyers As System.Windows.Forms.CheckBox
+    Friend WithEvents chkCalcCapComponents As System.Windows.Forms.CheckBox
 
 End Class

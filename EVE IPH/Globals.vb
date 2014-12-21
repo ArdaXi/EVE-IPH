@@ -8,7 +8,7 @@ Imports System.Xml
 ' Place to store all public variables and functions
 Public Module Public_Variables
     ' DB name and version
-    Public Const DataDumpVersion As String = "Phoebe_1.0_107269"
+    Public Const DataDumpVersion As String = "Rhea_1.0_109013"
     Public Const VersionNumber As String = "3.1.*"
 
     Public UpdaterTesting As Boolean ' This flag will test the test downloads from the server for an update
@@ -125,6 +125,11 @@ Public Module Public_Variables
     Public Const NoDate As Date = #1/1/1900#
     Public Const NoExpiry As Date = #1/1/2200#
 
+    ' For T3 Relics
+    Public Const IntactRelic As String = "Intact"
+    Public Const MalfunctioningRelic As String = "Malfun"
+    Public Const WreckedRelic As String = "Wrecke"
+
     ' T2 BPC base ME/TE
     Public Const BaseT2T3ME As Double = 2
     Public Const BaseT2T3TE As Double = 4
@@ -166,16 +171,18 @@ Public Module Public_Variables
     Public Const SubsystemBlueprintID As Integer = 973
     Public Const BlueprintCategoryID As Integer = 9
 
+    Public Const CapitalComponentGroupID As Integer = 873
+    Public Const AdvCapitalComponentGroupID As Integer = 913
 
     ' Only one Decryptor Group with Pheobe
     Public Const DecryptorGroup As Long = 1304
 
     ' Categories (has multiple groups)
-    Public Const SubsystemCategoryID As Long = 32
-    Public Const ComponentCategoryID As Long = 17 ' This is just for component blueprints, this category contains many other items as 'Commodities'
-    Public Const StationEggGroupID As Long = 307 ' This is for loading No POS build items
-    Public Const SovStructureCategoryID As Long = 40
-    Public Const StationPartsGroupID As Long = 536
+    Public Const SubsystemCategoryID As Integer = 32
+    Public Const ComponentCategoryID As Integer = 17 ' This is just for component blueprints, this category contains many other items as 'Commodities'
+    Public Const StationEggGroupID As Integer = 307 ' This is for loading No POS build items
+    Public Const SovStructureCategoryID As Integer = 40
+    Public Const StationPartsGroupID As Integer = 536
 
     Public Const POSFacility As String = "POS"
     Public Const StationFacility As String = "Station"

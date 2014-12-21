@@ -2968,6 +2968,7 @@ NoBonus:
             Call SelectedBPBoosterManufacturingFacility.LoadFacility(LoadFacilitySettingsfromFacility(SelectedBPBoosterManufacturingFacility), LoadDefault)
             Call SelectedBPSubsystemManufacturingFacility.LoadFacility(LoadFacilitySettingsfromFacility(SelectedBPSubsystemManufacturingFacility), LoadDefault)
             Call SelectedBPComponentManufacturingFacility.LoadFacility(LoadFacilitySettingsfromFacility(SelectedBPComponentManufacturingFacility), LoadDefault)
+            Call SelectedBPCapitalComponentManufacturingFacility.LoadFacility(LoadFacilitySettingsfromFacility(SelectedBPCapitalComponentManufacturingFacility), LoadDefault)
             Call SelectedBPCopyFacility.LoadFacility(LoadFacilitySettingsfromFacility(SelectedBPCopyFacility), LoadDefault)
             Call SelectedBPInventionFacility.LoadFacility(LoadFacilitySettingsfromFacility(SelectedBPInventionFacility), LoadDefault)
             Call SelectedBPT3InventionFacility.LoadFacility(LoadFacilitySettingsfromFacility(SelectedBPT3InventionFacility), LoadDefault)
@@ -3012,6 +3013,8 @@ NoBonus:
             DefaultBPSubsystemManufacturingFacility = CType(SelectedBPSubsystemManufacturingFacility.Clone, IndustryFacility)
             Call SelectedBPComponentManufacturingFacility.LoadFacility(AllSettings.LoadFacilitySettings(IndustryType.ComponentManufacturing, BPTab), LoadDefault)
             DefaultBPComponentManufacturingFacility = CType(SelectedBPComponentManufacturingFacility.Clone, IndustryFacility)
+            Call SelectedBPCapitalComponentManufacturingFacility.LoadFacility(AllSettings.LoadFacilitySettings(IndustryType.CapitalComponentManufacturing, BPTab), LoadDefault)
+            DefaultBPCapitalComponentManufacturingFacility = CType(SelectedBPCapitalComponentManufacturingFacility.Clone, IndustryFacility)
             Call SelectedBPCopyFacility.LoadFacility(AllSettings.LoadFacilitySettings(IndustryType.Copying, BPTab), LoadDefault)
             DefaultBPCopyFacility = CType(SelectedBPCopyFacility.Clone, IndustryFacility)
             Call SelectedBPInventionFacility.LoadFacility(AllSettings.LoadFacilitySettings(IndustryType.Invention, BPTab), LoadDefault)
@@ -3046,6 +3049,8 @@ NoBonus:
             DefaultCalcSubsystemManufacturingFacility = CType(SelectedCalcSubsystemManufacturingFacility.Clone, IndustryFacility)
             Call SelectedCalcComponentManufacturingFacility.LoadFacility(AllSettings.LoadFacilitySettings(IndustryType.ComponentManufacturing, CalcTab), LoadDefault)
             DefaultCalcComponentManufacturingFacility = CType(SelectedCalcComponentManufacturingFacility.Clone, IndustryFacility)
+            Call SelectedCalcCapitalComponentManufacturingFacility.LoadFacility(AllSettings.LoadFacilitySettings(IndustryType.CapitalComponentManufacturing, CalcTab), LoadDefault)
+            DefaultCalcCapitalComponentManufacturingFacility = CType(SelectedCalcCapitalComponentManufacturingFacility.Clone, IndustryFacility)
             Call SelectedCalcCopyFacility.LoadFacility(AllSettings.LoadFacilitySettings(IndustryType.Copying, CalcTab), LoadDefault)
             DefaultCalcCopyFacility = CType(SelectedCalcCopyFacility.Clone, IndustryFacility)
             Call SelectedCalcInventionFacility.LoadFacility(AllSettings.LoadFacilitySettings(IndustryType.Invention, CalcTab), LoadDefault)
@@ -7914,11 +7919,11 @@ ExitForm:
                     Else ' base T3 runs off of the relic
                         ' Base it off of the relic type - need to look it up based on the TypeID
                         Select Case cmbBPRelic.Text
-                            Case "Intact" ' Intact 
+                            Case IntactRelic
                                 MaxProductionRuns = 20
-                            Case "Malfun" ' Malfunctioning
+                            Case MalfunctioningRelic
                                 MaxProductionRuns = 10
-                            Case "Wrecke" ' Wrecked 
+                            Case WreckedRelic
                                 MaxProductionRuns = 3
                             Case Else
                                 MaxProductionRuns = 3

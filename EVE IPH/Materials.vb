@@ -368,7 +368,7 @@ Public Class Materials
                             OutputString = OutputString & " (ME: " & MaterialList(i).GetItemME
 
                             If RelicDecryptorText <> "" Then
-                                If RelicDecryptorText.Contains("Intact") Or RelicDecryptorText.Contains("Malfunctioning") Or RelicDecryptorText.Contains("Wrecked") Then
+                                If RelicDecryptorText.Contains(IntactRelic) Or RelicDecryptorText.Contains(MalfunctioningRelic) Or RelicDecryptorText.Contains(WreckedRelic) Then
                                     OutputString = OutputString & ", Relic: " & RelicDecryptorText
                                 Else
                                     ' Decryptor

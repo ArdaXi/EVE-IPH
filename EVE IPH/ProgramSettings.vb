@@ -134,6 +134,9 @@ Public Class ProgramSettings
     Public DefaultComponentManufacturingFacilityID As Long = 60003760
     Public DefaultComponentManufacturingFacility As String = "Jita IV - Moon 4 - Caldari Navy Assembly Plant"
     Public DefaultComponentManufacturingFacilityType As String = StationFacility
+    Public DefaultCapitalComponentManufacturingFacilityID As Long = 60003760
+    Public DefaultCapitalComponentManufacturingFacility As String = "Jita IV - Moon 4 - Caldari Navy Assembly Plant"
+    Public DefaultCapitalComponentManufacturingFacilityType As String = StationFacility
     Public DefaultCapitalManufacturingFacilityID As Long = 60003043
     Public DefaultCapitalManufacturingFacility As String = "Akora VI - Moon 7 - Expert Housing Production Plant"
     Public DefaultCapitalManufacturingFacilityType As String = StationFacility
@@ -676,6 +679,7 @@ Public Class ProgramSettings
     ' Facilities
     Private ManufacturingFacilitySettings As FacilitySettings
     Private ComponentsManufacturingFacilitySettings As FacilitySettings
+    Private CapitalComponentsManufacturingFacilitySettings As FacilitySettings
     Private CapitalManufacturingFacilitySettings As FacilitySettings
     Private SuperManufacturingFacilitySettings As FacilitySettings
     Private T3CruiserManufacturingFacilitySettings As FacilitySettings
@@ -727,6 +731,7 @@ Public Class ProgramSettings
 
     Private Const ManufacturingFacilitySettingsFileName As String = "ManufacturingFacilitySettings.xml"
     Private Const ComponentsManufacturingFacilitySettingsFileName As String = "ComponentsManufacturingFacilitySettings.xml"
+    Private Const CapitalComponentsManufacturingFacilitySettingsFileName As String = "CapitalComponentsManufacturingFacilitySettings.xml"
     Private Const CapitalManufacturingFacilitySettingsFileName As String = "CapitalManufacturingFacilitySettings.xml"
     Private Const SuperCapitalManufacturingFacilitySettingsFileName As String = "SuperCapitalManufacturingFacilitySettings.xml"
     Private Const T3CruiserManufacturingFacilitySettingsFileName As String = "T3CruiserManufacturingFacilitySettings.xml"
@@ -3896,6 +3901,8 @@ Public Class ProgramSettings
                 FacilityFileName = ManufacturingFacilitySettingsFileName
             Case IndustryType.ComponentManufacturing
                 FacilityFileName = ComponentsManufacturingFacilitySettingsFileName
+            Case IndustryType.CapitalComponentManufacturing
+                FacilityFileName = CapitalComponentsManufacturingFacilitySettingsFileName
             Case IndustryType.CapitalManufacturing
                 FacilityFileName = CapitalManufacturingFacilitySettingsFileName
             Case IndustryType.SuperManufacturing
@@ -3961,6 +3968,21 @@ Public Class ProgramSettings
                             .IncludeActivityUsage = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "ComponentsManufacturingFacilitySettings", "IncludeActivityUsage", FacilityDefaultIncludeUsage))
                             .IncludeActivityCost = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "ComponentsManufacturingFacilitySettings", "IncludeActivityCost", FacilityDefaultIncludeCost))
                             .IncludeActivityTime = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "ComponentsManufacturingFacilitySettings", "IncludeActivityTime", FacilityDefaultIncludeTime))
+                        Case IndustryType.CapitalComponentManufacturing
+                            .Facility = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "CapitalComponentsManufacturingFacilitySettings", "Facility", DefaultCapitalComponentManufacturingFacility))
+                            .FacilityType = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "CapitalComponentsManufacturingFacilitySettings", "FacilityType", DefaultCapitalComponentManufacturingFacilityType))
+                            .ActivityID = CInt(GetSettingValue(FacilityFileName, SettingTypes.TypeInteger, Tab & "CapitalComponentsManufacturingFacilitySettings", "ActivityID", IndustryActivities.Manufacturing))
+                            .ProductionType = CType(GetSettingValue(FacilityFileName, SettingTypes.TypeInteger, Tab & "CapitalComponentsManufacturingFacilitySettings", "ProductionType", IndustryType.Manufacturing), IndustryType)
+                            .MaterialMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "CapitalComponentsManufacturingFacilitySettings", "MaterialMultiplier", FacilityDefaultMM))
+                            .TimeMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "CapitalComponentsManufacturingFacilitySettings", "TimeMultiplier", FacilityDefaultTM))
+                            .SolarSystemID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "CapitalComponentsManufacturingFacilitySettings", "SolarSystemID", FacilityDefaultSolarSystemID))
+                            .SolarSystemName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "CapitalComponentsManufacturingFacilitySettings", "SolarSystemName", FacilityDefaultSolarSystem))
+                            .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "CapitalComponentsManufacturingFacilitySettings", "RegionID", FacilityDefaultRegionID))
+                            .RegionName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "CapitalComponentsManufacturingFacilitySettings", "RegionName", FacilityDefaultRegion))
+                            .ActivityCostperSecond = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "CapitalComponentsManufacturingFacilitySettings", "ActivityCostperSecond", FacilityDefaultActivityCostperSecond))
+                            .IncludeActivityUsage = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "CapitalComponentsManufacturingFacilitySettings", "IncludeActivityUsage", FacilityDefaultIncludeUsage))
+                            .IncludeActivityCost = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "CapitalComponentsManufacturingFacilitySettings", "IncludeActivityCost", FacilityDefaultIncludeCost))
+                            .IncludeActivityTime = CBool(GetSettingValue(FacilityFileName, SettingTypes.TypeBoolean, Tab & "CapitalComponentsManufacturingFacilitySettings", "IncludeActivityTime", FacilityDefaultIncludeTime))
                         Case IndustryType.CapitalManufacturing
                             .Facility = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "CapitalManufacturingFacilitySettings", "Facility", DefaultCapitalManufacturingFacility))
                             .FacilityType = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "CapitalManufacturingFacilitySettings", "FacilityType", DefaultCapitalManufacturingFacilityType))
@@ -4174,6 +4196,8 @@ Public Class ProgramSettings
                 ManufacturingFacilitySettings = TempSettings
             Case IndustryType.ComponentManufacturing
                 ComponentsManufacturingFacilitySettings = TempSettings
+            Case IndustryType.CapitalComponentManufacturing
+                CapitalComponentsManufacturingFacilitySettings = TempSettings
             Case IndustryType.CapitalManufacturing
                 CapitalManufacturingFacilitySettings = TempSettings
             Case IndustryType.SuperManufacturing
@@ -4231,6 +4255,8 @@ Public Class ProgramSettings
                     Call WriteSettingsToFile(Tab & ManufacturingFacilitySettingsFileName, FacilitySettingsList, Tab & "ManufacturingFacilitySettings")
                 Case IndustryType.ComponentManufacturing
                     Call WriteSettingsToFile(Tab & ComponentsManufacturingFacilitySettingsFileName, FacilitySettingsList, Tab & "ComponentsManufacturingFacilitySettings")
+                Case IndustryType.ComponentManufacturing
+                    Call WriteSettingsToFile(Tab & CapitalComponentsManufacturingFacilitySettingsFileName, FacilitySettingsList, Tab & "CapitalComponentsManufacturingFacilitySettings")
                 Case IndustryType.SubsystemManufacturing
                     Call WriteSettingsToFile(Tab & SubsystemManufacturingFacilitySettingsFileName, FacilitySettingsList, Tab & "SubsystemManufacturingFacilitySettings")
                 Case IndustryType.SuperManufacturing
@@ -4285,6 +4311,8 @@ Public Class ProgramSettings
                 Return T3DestroyerManufacturingFacilitySettings
             Case IndustryType.ComponentManufacturing
                 Return ComponentsManufacturingFacilitySettings
+            Case IndustryType.CapitalComponentManufacturing
+                Return CapitalComponentsManufacturingFacilitySettings
             Case IndustryType.Copying
                 Return CopyFacilitySettings
             Case IndustryType.Invention
@@ -4381,6 +4409,12 @@ Public Class ProgramSettings
                 TempSettings.ActivityID = IndustryActivities.Manufacturing
                 TempSettings.ProductionType = IndustryType.ComponentManufacturing
                 ComponentsManufacturingFacilitySettings = TempSettings
+            Case IndustryType.CapitalComponentManufacturing
+                TempSettings.Facility = DefaultCapitalComponentManufacturingFacility
+                TempSettings.FacilityType = DefaultCapitalComponentManufacturingFacilityType
+                TempSettings.ActivityID = IndustryActivities.Manufacturing
+                TempSettings.ProductionType = IndustryType.CapitalComponentManufacturing
+                CapitalComponentsManufacturingFacilitySettings = TempSettings
             Case IndustryType.Copying
                 TempSettings.Facility = DefaultCopyFacility
                 TempSettings.FacilityType = DefaultCopyFacilityType
