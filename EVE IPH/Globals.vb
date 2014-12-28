@@ -111,7 +111,7 @@ Public Module Public_Variables
     Public Const allowedPriceChars As String = "0123456789.,"
     Public Const allowedMETEChars As String = "0123456789."
     Public Const allowedRunschars As String = "0123456789"
-    Public Const allowedDecimalChars As String = "0123456789."
+    Public Const allowedDecimalChars As String = "0123456789.-"
     Public Const allowedPercentChars As String = "0123456789.%"
 
     Public Const SQLiteDateFormat As String = "yyyy-MM-dd HH:mm:ss"
@@ -154,15 +154,21 @@ Public Module Public_Variables
 
     Public Const ActivityManufacturing As String = "Manufacturing"
     Public Const ActivityComponentManufacturing As String = "Component Manufacturing"
+    Public Const ActivityCapComponentManufacturing As String = "Cap Component Manufacturing"
     Public Const ActivityCopying As String = "Copying"
     Public Const ActivityInvention As String = "Invention"
 
     ' Use these to determine the facility types for these cases
-    Public Const TitanGroupID As Integer = 30
-    Public Const SuperGroupID As Integer = 659
-    Public Const DredGroupID As Integer = 485
-    Public Const CapIndustrialGroupID As Integer = 883
+    ' These are all the capital ships that use capital parts
+    Public Const CapitalIndustrialShipGroupID As Integer = 883
     Public Const CarrierGroupID As Integer = 547
+    Public Const DreadnoughtGroupID As Integer = 485
+    Public Const FreighterGroupID As Integer = 513
+    Public Const IndustrialCommandShipGroupID As Integer = 941
+    Public Const JumpFreighterGroupID As Integer = 902
+    Public Const SupercarrierGroupID As Integer = 659
+    Public Const TitanGroupID As Integer = 30
+
     Public Const BoosterGroupID As Integer = 303
     Public Const StrategicCruiserGroupID As Integer = 963
     Public Const TacticalDestroyerGroupID As Integer = 1305
@@ -171,6 +177,8 @@ Public Module Public_Variables
     Public Const SubsystemBlueprintID As Integer = 973
     Public Const BlueprintCategoryID As Integer = 9
 
+    Public Const ConstructionComponentsGroupID As Integer = 334 ' Use this for all non-capital components
+    Public Const ComponentCategoryID2 As Integer = 17
     Public Const CapitalComponentGroupID As Integer = 873
     Public Const AdvCapitalComponentGroupID As Integer = 913
 
@@ -179,7 +187,6 @@ Public Module Public_Variables
 
     ' Categories (has multiple groups)
     Public Const SubsystemCategoryID As Integer = 32
-    Public Const ComponentCategoryID As Integer = 17 ' This is just for component blueprints, this category contains many other items as 'Commodities'
     Public Const StationEggGroupID As Integer = 307 ' This is for loading No POS build items
     Public Const SovStructureCategoryID As Integer = 40
     Public Const StationPartsGroupID As Integer = 536

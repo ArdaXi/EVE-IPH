@@ -49,9 +49,10 @@ Public Class Blueprint
     ' Base Fees for activity
     Private JobFee As Double
 
-    ' How much it costs to use each facility
+    ' How much it costs to use each facility to manufacture items and parts
     Private ManufacturingFacilityUsage As Double
     Private ComponentFacilityUsage As Double
+    Private CapComponentFacilityUsage As Double
 
     Private ManufacturingTeamFee As Double
     Private ComponentTeamFee As Double
@@ -485,7 +486,7 @@ Public Class Blueprint
                             ManufacturingUsage += ComponentBlueprint.GetManufacturingUsage
 
                             ' Get the component usage
-                            ComponentFacilityUsage += ComponentBlueprint.GetManufacturingFacilityUsage
+                            ComponentFacilityUsage += ComponentBlueprint.GetManufacturingUsage
 
                             ' Save the component team fees
                             ComponentTeamFee += ComponentBlueprint.GetManufacturingTeamFee
@@ -1161,7 +1162,7 @@ Public Class Blueprint
         ' Get and set the invention chance
         InventionREChance = SetInventionChance(UseTypical)
 
-        ' Use the max runs for the T2 item and this should be the invented runs for one bpc
+        ' Use the max runs for the T2 item and this should be the invented runs for one bpc - TO DO check industry_products for this value as quantity
         If TechLevel = BlueprintTechLevel.T2 Then
             SingleInventedREdBPCRuns = MaxProductionLimit + InventionREDecryptor.RunMod
         Else
@@ -1171,6 +1172,7 @@ Public Class Blueprint
             readerBP = DBCommand.ExecuteReader()
 
             ' Base it off of the relic type - need to look it up based on the TypeID
+            ' TO DO - use industry products to get the quantity for the runs on t3
             If readerBP.Read Then
                 Select Case readerBP.GetString(0).Substring(0, 6)
                     Case IntactRelic
@@ -1510,9 +1512,14 @@ Public Class Blueprint
         Return ManufacturingFacilityUsage
     End Function
 
-    ' Returns the base facility tax/fee for this blueprint
+    ' Returns the base facility tax/fee for this blueprints components
     Public Function GetComponentFacilityUsage() As Double
         Return ComponentFacilityUsage
+    End Function
+
+    ' Returns the base facility tax/fee for this blueprint's cap components
+    Public Function GetCapComponentFacilityUsage() As Double
+        Return CapComponentFacilityUsage
     End Function
 
     ' Returns the max production limit for this blueprint

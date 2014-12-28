@@ -45,7 +45,7 @@ Class RefiningReprocessing
 
         ' NPC Station Tax for Reprocessing 
         ' StationTax = 5.0% − (0.75% * YourCorporationStanding) - You need 5%/0.75% = 6.67 Standing to pay no Station Tax.
-        StationTaxes = StationTax - (0.75 * StationStanding)
+        StationTaxes = StationTax - (0.0075 * StationStanding)
 
         If StationTaxes < 0 Then
             StationTaxes = 0

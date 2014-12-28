@@ -95,56 +95,6 @@ Public Class frmSettings
         btnSave.Text = "Save"
     End Sub
 
-    Private Sub txtBuildBaseInstallFee_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs)
-        ' Only allow numbers or backspace
-        If e.KeyChar <> ControlChars.Back Then
-            If allowedPriceChars.IndexOf(e.KeyChar) = -1 Then
-                ' Invalid Character
-                e.Handled = True
-            End If
-        End If
-    End Sub
-
-    Private Sub txtBuildBaseHourlyFee_keypress(ByVal sender As System.Object, ByVal e As System.Windows.Forms.KeyPressEventArgs)
-        ' Only allow numbers or backspace
-        If e.KeyChar <> ControlChars.Back Then
-            If allowedPriceChars.IndexOf(e.KeyChar) = -1 Then
-                ' Invalid Character
-                e.Handled = True
-            End If
-        End If
-    End Sub
-
-    Private Sub txtBuildStandingDiscount_keypress(ByVal sender As System.Object, ByVal e As System.Windows.Forms.KeyPressEventArgs)
-        ' Only allow numbers or backspace
-        If e.KeyChar <> ControlChars.Back Then
-            If allowedPriceChars.IndexOf(e.KeyChar) = -1 Then
-                ' Invalid Character
-                e.Handled = True
-            End If
-        End If
-    End Sub
-
-    Private Sub txtInventStandingDiscount_keypress(ByVal sender As System.Object, ByVal e As System.Windows.Forms.KeyPressEventArgs)
-        ' Only allow numbers or backspace
-        If e.KeyChar <> ControlChars.Back Then
-            If allowedPriceChars.IndexOf(e.KeyChar) = -1 Then
-                ' Invalid Character
-                e.Handled = True
-            End If
-        End If
-    End Sub
-
-    Private Sub txtInventBaseHourlyFee_keypress(ByVal sender As System.Object, ByVal e As System.Windows.Forms.KeyPressEventArgs)
-        ' Only allow numbers or backspace
-        If e.KeyChar <> ControlChars.Back Then
-            If allowedPriceChars.IndexOf(e.KeyChar) = -1 Then
-                ' Invalid Character
-                e.Handled = True
-            End If
-        End If
-    End Sub
-
     Private Sub txtEVECentralInterval_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtEVECentralInterval.KeyPress
         ' Only allow numbers or backspace
         If e.KeyChar <> ControlChars.Back Then
@@ -156,20 +106,10 @@ Public Class frmSettings
         End If
     End Sub
 
-    Private Sub txtInventBaseInstallFee_keypress(ByVal sender As System.Object, ByVal e As System.Windows.Forms.KeyPressEventArgs)
-        ' Only allow numbers or backspace
-        If e.KeyChar <> ControlChars.Back Then
-            If allowedPriceChars.IndexOf(e.KeyChar) = -1 Then
-                ' Invalid Character
-                e.Handled = True
-            End If
-        End If
-    End Sub
-
     Private Sub txtBrokerFactionStandings_keypress(ByVal sender As System.Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles txtBrokerFactionStanding.KeyPress
         ' Only allow numbers or backspace
         If e.KeyChar <> ControlChars.Back Then
-            If allowedPriceChars.IndexOf(e.KeyChar) = -1 Then
+            If allowedDecimalChars.IndexOf(e.KeyChar) = -1 Then
                 ' Invalid Character
                 e.Handled = True
             End If
@@ -179,27 +119,17 @@ Public Class frmSettings
     Private Sub txtBrokerCorpStandings_keypress(ByVal sender As System.Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles txtBrokerCorpStanding.KeyPress
         ' Only allow numbers or backspace
         If e.KeyChar <> ControlChars.Back Then
-            If allowedPriceChars.IndexOf(e.KeyChar) = -1 Then
+            If allowedDecimalChars.IndexOf(e.KeyChar) = -1 Then
                 ' Invalid Character
                 e.Handled = True
             End If
         End If
     End Sub
 
-    Private Sub txtInventCorpStandings_keypress(ByVal sender As System.Object, ByVal e As System.Windows.Forms.KeyPressEventArgs)
+    Private Sub txtRefineCorpStanding_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtRefineCorpStanding.KeyPress
         ' Only allow numbers or backspace
         If e.KeyChar <> ControlChars.Back Then
-            If allowedPriceChars.IndexOf(e.KeyChar) = -1 Then
-                ' Invalid Character
-                e.Handled = True
-            End If
-        End If
-    End Sub
-
-    Private Sub txtBuildCorpStandings_keypress(ByVal sender As System.Object, ByVal e As System.Windows.Forms.KeyPressEventArgs)
-        ' Only allow numbers or backspace
-        If e.KeyChar <> ControlChars.Back Then
-            If allowedPriceChars.IndexOf(e.KeyChar) = -1 Then
+            If allowedDecimalChars.IndexOf(e.KeyChar) = -1 Then
                 ' Invalid Character
                 e.Handled = True
             End If
@@ -214,31 +144,7 @@ Public Class frmSettings
         btnSave.Text = "Save"
     End Sub
 
-    Private Sub chkExportCSV_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs)
-        btnSave.Text = "Save"
-    End Sub
-
-    Private Sub chkExportSSV_CheckedChanged(sender As System.Object, e As System.EventArgs)
-        btnSave.Text = "Save"
-    End Sub
-
     Private Sub chkBuildBuyDefault_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles chkBuildBuyDefault.CheckedChanged
-        btnSave.Text = "Save"
-    End Sub
-
-    Private Sub chkIncludeInventionTimes_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs)
-        btnSave.Text = "Save"
-    End Sub
-
-    Private Sub chkUseMaxBPCRunsMods_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs)
-        btnSave.Text = "Save"
-    End Sub
-
-    Private Sub chkUseMaxBPCRunsShip_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs)
-        btnSave.Text = "Save"
-    End Sub
-
-    Private Sub chkIncludeCopyTimes_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs)
         btnSave.Text = "Save"
     End Sub
 
@@ -275,63 +181,11 @@ Public Class frmSettings
         btnSave.Text = "Save"
     End Sub
 
-    Private Sub chkIncludeRETimes_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs)
-        btnSave.Text = "Save"
-    End Sub
-
-    Private Sub cmbCopyStationModifier_SelectedIndexChanged(sender As System.Object, e As System.EventArgs)
-        btnSave.Text = "Save"
-    End Sub
-
-    Private Sub cmbInventionStationModifier_SelectedIndexChanged(sender As System.Object, e As System.EventArgs)
-        btnSave.Text = "Save"
-    End Sub
-
     Private Sub chkDisableSVR_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkDisableSVR.CheckedChanged
         btnSave.Text = "Save"
     End Sub
 
     Private Sub cmbRefineTax_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles cmbRefineTax.KeyPress
-        ' Only allow numbers, period or percent and backspace
-        If e.KeyChar <> ControlChars.Back Then
-            If allowedPercentChars.IndexOf(e.KeyChar) = -1 Then
-                ' Invalid Character
-                e.Handled = True
-            End If
-        End If
-    End Sub
-
-    Private Sub cmbBuildStandingsDiscount_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs)
-        ' Only allow numbers, period or percent and backspace
-        If e.KeyChar <> ControlChars.Back Then
-            If allowedPercentChars.IndexOf(e.KeyChar) = -1 Then
-                ' Invalid Character
-                e.Handled = True
-            End If
-        End If
-    End Sub
-
-    Private Sub cmbBuildStandingsSurcharge_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs)
-        ' Only allow numbers, period or percent and backspace
-        If e.KeyChar <> ControlChars.Back Then
-            If allowedPercentChars.IndexOf(e.KeyChar) = -1 Then
-                ' Invalid Character
-                e.Handled = True
-            End If
-        End If
-    End Sub
-
-    Private Sub cmbInventStandingsDiscount_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs)
-        ' Only allow numbers, period or percent and backspace
-        If e.KeyChar <> ControlChars.Back Then
-            If allowedPercentChars.IndexOf(e.KeyChar) = -1 Then
-                ' Invalid Character
-                e.Handled = True
-            End If
-        End If
-    End Sub
-
-    Private Sub cmbInventStandingsSurcharge_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs)
         ' Only allow numbers, period or percent and backspace
         If e.KeyChar <> ControlChars.Back Then
             If allowedPercentChars.IndexOf(e.KeyChar) = -1 Then
@@ -809,4 +663,5 @@ InvalidData:
     Private Sub chkLinkBPTabTeamstoSystem_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkLinkBPTabTeamstoSystem.CheckedChanged
         btnSave.Text = "Save"
     End Sub
+
 End Class

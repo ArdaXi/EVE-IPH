@@ -247,6 +247,7 @@ Partial Class frmSettings
         'txtRefineCorpStanding
         '
         Me.txtRefineCorpStanding.Location = New System.Drawing.Point(110, 59)
+        Me.txtRefineCorpStanding.MaxLength = 5
         Me.txtRefineCorpStanding.Name = "txtRefineCorpStanding"
         Me.txtRefineCorpStanding.Size = New System.Drawing.Size(41, 20)
         Me.txtRefineCorpStanding.TabIndex = 30
@@ -264,6 +265,7 @@ Partial Class frmSettings
         'txtBrokerCorpStanding
         '
         Me.txtBrokerCorpStanding.Location = New System.Drawing.Point(110, 15)
+        Me.txtBrokerCorpStanding.MaxLength = 5
         Me.txtBrokerCorpStanding.Name = "txtBrokerCorpStanding"
         Me.txtBrokerCorpStanding.Size = New System.Drawing.Size(41, 20)
         Me.txtBrokerCorpStanding.TabIndex = 26
@@ -281,6 +283,7 @@ Partial Class frmSettings
         'txtBrokerFactionStanding
         '
         Me.txtBrokerFactionStanding.Location = New System.Drawing.Point(110, 37)
+        Me.txtBrokerFactionStanding.MaxLength = 5
         Me.txtBrokerFactionStanding.Name = "txtBrokerFactionStanding"
         Me.txtBrokerFactionStanding.Size = New System.Drawing.Size(41, 20)
         Me.txtBrokerFactionStanding.TabIndex = 28

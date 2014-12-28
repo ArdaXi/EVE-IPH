@@ -67,6 +67,9 @@ Public Class IndustryFacility
                 FacilityType = .FacilityType
                 ProductionType = .ProductionType
                 Select Case ProductionType
+                    Case IndustryType.CapitalComponentManufacturing
+                        Activity = ActivityCapComponentManufacturing
+                        ActivityID = 1
                     Case IndustryType.ComponentManufacturing
                         Activity = ActivityComponentManufacturing
                         ActivityID = 1
@@ -207,9 +210,9 @@ Public Class IndustryFacility
 
             Select Case .ProductionType
                 Case IndustryType.CapitalManufacturing
-                    SQL = SQL & "AND GROUP_ID IN (" & CStr(CapIndustrialGroupID) & ", " & CStr(CarrierGroupID) & ", " & CStr(DredGroupID) & ") "
+                    SQL = SQL & "AND GROUP_ID IN (" & CStr(CapitalIndustrialShipGroupID) & ", " & CStr(CarrierGroupID) & ", " & CStr(DreadnoughtGroupID) & ") "
                 Case IndustryType.SuperManufacturing
-                    SQL = SQL & "AND GROUP_ID IN (" & CStr(TitanGroupID) & ", " & CStr(SuperGroupID) & ") "
+                    SQL = SQL & "AND GROUP_ID IN (" & CStr(TitanGroupID) & ", " & CStr(SuperCarrierGroupID) & ") "
                 Case IndustryType.BoosterManufacturing
                     SQL = SQL & "AND GROUP_ID = " & BoosterGroupID & " "
                 Case IndustryType.T3CruiserManufacturing
@@ -217,7 +220,9 @@ Public Class IndustryFacility
                 Case IndustryType.SubsystemManufacturing
                     SQL = SQL & "AND CATEGORY_ID = " & SubsystemCategoryID & " "
                 Case IndustryType.ComponentManufacturing
-                    SQL = SQL & "AND CATEGORY_ID = " & ComponentCategoryID & " "
+                    SQL = SQL & "AND GROUP_ID = " & ConstructionComponentsGroupID & " "
+                Case IndustryType.CapitalComponentManufacturing
+                    SQL = SQL & "AND GROUP_ID IN (" & CStr(AdvCapitalComponentGroupID) & ", " & CStr(CapitalComponentGroupID) & ") "
             End Select
 
             SQL = SQL & "GROUP BY FACILITY_NAME, REGION_NAME, REGION_ID, SOLAR_SYSTEM_NAME, SOLAR_SYSTEM_ID, FACILITY_TAX, "

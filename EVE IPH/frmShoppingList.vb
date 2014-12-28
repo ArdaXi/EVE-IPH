@@ -2093,7 +2093,7 @@ Tabs:
                     DataEntered = True
                 End If
             ElseIf UpdatePrice Then
-                If allowedDecimalChars.IndexOf(e.KeyChar) = -1 Then
+                If allowedPriceChars.IndexOf(e.KeyChar) = -1 Then
                     ' Invalid Character
                     e.Handled = True
                 Else
