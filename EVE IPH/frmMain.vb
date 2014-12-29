@@ -248,6 +248,9 @@ Public Class frmMain
     Private CalcComponentFacilityRegionsLoaded As Boolean
     Private CalcComponentFacilitySystemsLoaded As Boolean
     Private CalcComponentFacilitiesLoaded As Boolean
+    Private CalcCapitalComponentFacilityRegionsLoaded As Boolean
+    Private CalcCapitalComponentFacilitySystemsLoaded As Boolean
+    Private CalcCapitalComponentFacilitiesLoaded As Boolean
     Private CalcInventionFacilityRegionsLoaded As Boolean
     Private CalcInventionFacilitySystemsLoaded As Boolean
     Private CalcInventionFacilitiesLoaded As Boolean
@@ -269,6 +272,9 @@ Public Class frmMain
     Private CalcT3FacilityRegionsLoaded As Boolean
     Private CalcT3FacilitySystemsLoaded As Boolean
     Private CalcT3FacilitiesLoaded As Boolean
+    Private CalcT3DestroyerFacilityRegionsLoaded As Boolean
+    Private CalcT3DestroyerFacilitySystemsLoaded As Boolean
+    Private CalcT3DestroyerFacilitiesLoaded As Boolean
     Private CalcSubsystemFacilityRegionsLoaded As Boolean
     Private CalcSubsystemFacilitySystemsLoaded As Boolean
     Private CalcSubsystemFacilitiesLoaded As Boolean
@@ -288,9 +294,11 @@ Public Class frmMain
     ' For manufacturing tab
     Private CalcBaseFacilityLoaded As Boolean ' To check that a full facility is loaded or we can't build anything
     Private CalcComponentFacilityLoaded As Boolean
+    Private CalcCapitalComponentFacilityLoaded As Boolean
     Private CalcSuperFacilityLoaded As Boolean
     Private CalcCapitalFacilityLoaded As Boolean
     Private CalcT3FacilityLoaded As Boolean
+    Private CalcT3DestroyerFacilityLoaded As Boolean
     Private CalcSubsystemFacilityLoaded As Boolean
     Private CalcBoosterFacilityLoaded As Boolean
     Private CalcInventionFacilityLoaded As Boolean
@@ -525,7 +533,7 @@ Public Class frmMain
 
         ' Load the character
         Call SetProgress("Loading Character Data from API...")
-        'Call LoadCharacter(UserApplicationSettings.LoadAssetsonStartup, UserApplicationSettings.LoadBPsonStartup)
+        Call LoadCharacter(UserApplicationSettings.LoadAssetsonStartup, UserApplicationSettings.LoadBPsonStartup)
 
         ' Only allow selecting a default if there are accounts to set it to
         If NonDummyAccountsLoaded() Then
@@ -1663,7 +1671,7 @@ NoBonus:
     End Sub
 
     ' Loads the bp facility activity combo
-    Private Sub LoadFacilityActivities(BPTech As Integer, NewBP As Boolean, ByRef FacilityActivitiesCombo As ComboBox, BPGroupID As Integer, BPCategoryID As Integer)
+    Private Sub LoadFacilityActivities(BPTech As Integer, NewBP As Boolean, ByRef FacilityActivitiesCombo As ComboBox, BPGroupID As Long, BPCategoryID As Long)
 
         LoadingFacilityActivities = True
 
@@ -2290,9 +2298,9 @@ NoBonus:
                     Select Case ItemGroupID
                         Case TitanGroupID, SupercarrierGroupID, DreadnoughtGroupID, CarrierGroupID, _
                             CapitalIndustrialShipGroupID, IndustrialCommandShipGroupID, FreighterGroupID, JumpFreighterGroupID
-                            SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(-1, CapitalComponentGroupID) ' These all use cap components
+                            SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ComponentCategoryID2, CapitalComponentGroupID) ' These all use cap components
                         Case Else
-                            SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(-1, ConstructionComponentsGroupID)
+                            SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ComponentCategoryID2, ConstructionComponentsGroupID)
                     End Select
                 Case ActivityCopying
                     SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Copying & " "
@@ -15880,6 +15888,7 @@ CheckTechs:
         Dim TotalItemCount As Integer = 0
         Dim TempItemType As Integer = 0
         Dim TempOwned As Integer = 0
+        Dim TempBPType As Integer = 0
 
         Dim Response As MsgBoxResult
 
@@ -16011,6 +16020,16 @@ CheckTechs:
                               chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcComponentFacilityLoaded)
         End If
 
+        ' Capital Component
+        'If Not CalcCapitalComponentFacilityLoaded Then
+        '    ' Get the type of facility we are doing
+        '    Call LoadFacility(IndustryType.Manufacturing, True, True, _
+        '                      ActivityManufacturing, cmbCalcComponentFacilityType, cmbCalcComponentFacilityRegion, cmbCalcComponentFacilitySystem, cmbCalcComponentFacilityorArray, _
+        '                      lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
+        '                      lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, CalcTab, _
+        '                      chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcComponentFacilityLoaded)
+        'End If
+
         ' Invention
         If Not CalcInventionFacilityLoaded Then
             ' Get the type of facility we are doing
@@ -16071,7 +16090,7 @@ CheckTechs:
                               chkCalcSuperFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcSuperFacilityLoaded)
         End If
 
-        ' T3
+        ' T3 Cruisers
         If Not CalcT3FacilityLoaded Then
             ' Get the type of facility we are doing
             Call LoadFacility(IndustryType.Manufacturing, True, True, _
@@ -16080,6 +16099,16 @@ CheckTechs:
                               lblCalcT3FacilityManualTE, txtCalcT3FacilityManualTE, btnCalcT3FacilitySave, lblCalcT3FacilityTaxRate, CalcTab, _
                               chkCalcT3FacilityIncludeUsage, Nothing, Nothing, Nothing, CalcT3FacilityLoaded)
         End If
+
+        ' T3 Destroyers
+        'If Not CalcT3DestroyerFacilityLoaded Then
+        '    ' Get the type of facility we are doing
+        '    Call LoadFacility(IndustryType.Manufacturing, True, True, _
+        '                      ActivityManufacturing, cmbCalcT3FacilityType, cmbCalcT3FacilityRegion, cmbCalcT3FacilitySystem, cmbCalcT3FacilityorArray, _
+        '                      lblCalcT3FacilityBonus, lblCalcT3FacilityDefault, lblCalcT3FacilityManualME, txtCalcT3FacilityManualME, _
+        '                      lblCalcT3FacilityManualTE, txtCalcT3FacilityManualTE, btnCalcT3FacilitySave, lblCalcT3FacilityTaxRate, CalcTab, _
+        '                      chkCalcT3FacilityIncludeUsage, Nothing, Nothing, Nothing, CalcT3FacilityLoaded)
+        'End If
 
         ' Subsystem
         If Not CalcSubsystemFacilityLoaded Then
@@ -16204,6 +16233,14 @@ CheckTechs:
                     InsertItem.Owned = "No"
                 Else
                     InsertItem.Owned = "Yes"
+                End If
+
+                TempBPType = If(readerBPs.IsDBNull(14), -2, CInt(readerBPs.GetValue(16))) ' Default to bpc
+
+                If TempBPType = BPType.Copy Then
+                    InsertItem.BPCType = BPType.Copy
+                Else
+                    InsertItem.BPCType = BPType.Original
                 End If
 
                 ' ME value, either what the entered or in the table
@@ -16360,7 +16397,6 @@ CheckTechs:
                 ' If T2, first select each decryptor, then select Compare types (raw and components)
                 ' If T3, first choose a decryptor, then Relic, then select compare types (raw and components)
                 ' Insert each different combination
-
                 If InsertItem.TechLevel = "T2" Or InsertItem.TechLevel = "T3" Then
                     ' Now add additional records for each decryptor
                     For j = 1 To CalcDecryptorCheckBoxes.Count - 1
@@ -16369,7 +16405,7 @@ CheckTechs:
                             If CalcDecryptorCheckBoxes(j).Text <> None _
                                 And ((InsertItem.TechLevel = "T2" And chkCalcDecryptorforT2.Enabled And chkCalcDecryptorforT2.Checked) _
                                 Or (InsertItem.TechLevel = "T3" And chkCalcDecryptorforT3.Enabled And chkCalcDecryptorforT3.Checked)) _
-                                And InsertItem.Owned = "No" Then ' Only add decryptors to unowned T2 or T3 bps
+                                And (InsertItem.Owned = "No" Or (InsertItem.Owned = "Yes" And InsertItem.BPCType = BPType.Copy)) Then ' Only add decryptors to T2 or T3
 
                                 ' Select a decryptor
                                 DecryptorUsed = InventionDecryptors.GetDecryptor(CDbl(CalcDecryptorCheckBoxes(j).Text.Substring(0, 3)))
@@ -16456,11 +16492,6 @@ CheckTechs:
                                                         chkCalcIncludeNoTeamManufacturing.Checked, chkCalcIncludeNoTeamComponents.Checked, chkCalcIncludeNoTeamCopy.Checked)
                             End If
 
-                        End If
-
-                        ' Leave loop if this T2/T3 BP is owned
-                        If InsertItem.Owned = "Yes" Then
-                            Exit For
                         End If
 
                         ' If they don't want to include decryptors, then exit loop after adding none
@@ -18082,6 +18113,7 @@ ExitCalc:
         Public IPH As Double
         Public TotalCost As Double
         Public CalcType As String ' Type of calculation to get the profit - either Components, Raw Mats or Build/Buy
+        Public BPCType As BPType
 
         Public Runs As Integer
         Public ProductionLines As Integer
@@ -18155,6 +18187,7 @@ ExitCalc:
             CopyofMe.IPH = IPH
             CopyofMe.TotalCost = TotalCost
             CopyofMe.CalcType = CalcType
+            CopyofMe.BPCType = BPCType
 
             CopyofMe.Runs = Runs
             CopyofMe.ProductionLines = ProductionLines

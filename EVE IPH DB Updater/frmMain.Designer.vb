@@ -50,7 +50,7 @@ Partial Class frmMain
         '
         'pgMain
         '
-        Me.pgMain.Location = New System.Drawing.Point(14, 114)
+        Me.pgMain.Location = New System.Drawing.Point(19, 114)
         Me.pgMain.Name = "pgMain"
         Me.pgMain.Size = New System.Drawing.Size(226, 18)
         Me.pgMain.TabIndex = 2

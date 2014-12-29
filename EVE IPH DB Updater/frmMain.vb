@@ -5465,9 +5465,9 @@ Public Class frmMain
         ' Base loop to read the file
         For i = 0 To Lines.Count - 1
             ' TO DO - read if there is quotes around text
-            If Lines(i).Contains("74_03") Then
-                Application.DoEvents()
-            End If
+            'If Lines(i).Contains("34416") Then
+            '    Application.DoEvents()
+            'End If
 
             ' Get the next lines till a value is found and add it to this item then clear
             If i <> Lines.Count - 1 Then
@@ -5577,6 +5577,11 @@ Public Class frmMain
             End If
 
         Next
+
+        ' Add the last node processed
+        If BaseNode.Nodes.Count <> 0 Then
+            AnchorNode.Nodes.Add(CType(BaseNode, TreeNode))
+        End If
 
         ' For only one node in file
         If AnchorNode.Nodes.Count = 0 And BaseNode.Nodes.Count <> 0 Then
