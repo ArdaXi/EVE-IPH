@@ -40,8 +40,6 @@ Public Class Blueprint
     Private BPTaxes As Double ' Public updatable number for display updates, for easy updates when clicked
     Private BrokerFees As Double ' See above - Sell Order or Buy Order
     Private BPBrokerFees As Double ' Public updatable number for display updates, for easy updates when clicked
-    Private ManufacturingUsage As Double ' Total of all costs to manufacture
-    Private IncludeManufacturingUsage As Boolean
 
     ' New cost variables
     Private BaseJobCost As Double ' Total per material used * average price
@@ -51,9 +49,11 @@ Public Class Blueprint
 
     ' How much it costs to use each facility to manufacture items and parts
     Private ManufacturingFacilityUsage As Double
+    Private IncludeManufacturingUsage As Boolean
     Private ComponentFacilityUsage As Double
     Private CapComponentFacilityUsage As Double
 
+    ' Team costs
     Private ManufacturingTeamFee As Double
     Private ComponentTeamFee As Double
     Private InventionRETeamFee As Double
@@ -278,8 +278,6 @@ Public Class Blueprint
         ManufacturingTeamFee = 0
         ComponentTeamFee = 0
 
-        ManufacturingUsage = 0
-
         InventionREDecryptor = NoDecryptor
         TotalInventedREdRuns = 0
 
@@ -408,7 +406,7 @@ Public Class Blueprint
                 BaseJobCost += CurrentMaterial.GetQuantity * readerBP.GetDouble(8)
 
                 ' Set the quantity: required = max(runs,ceil(round(runs * baseQuantity * materialModifier,2))
-                CurrentMatQuantity = CLng(Math.Max(UserRuns, Math.Ceiling(Math.Round(UserRuns * CurrentMaterial.GetQuantity * GetBPMaterialModifier(), 2))))
+                CurrentMatQuantity = CLng(Math.Max(UserRuns, Math.Ceiling(Math.Round(UserRuns * CurrentMaterial.GetQuantity * SetBPMaterialModifier(), 2))))
 
                 ' Update the quantity - just add the negative percent of the ME modifier to 1 and multiply
                 Call CurrentMaterial.SetQuantity(CurrentMatQuantity)
@@ -483,10 +481,15 @@ Public Class Blueprint
                             TempSkills = ComponentBlueprint.GetReqBPSkills
 
                             ' Building this, so add fees to current (taxes for mats added in building item)
-                            ManufacturingUsage += ComponentBlueprint.GetManufacturingUsage
+                            ManufacturingFacilityUsage += ComponentBlueprint.GetManufacturingFacilityUsage
 
                             ' Get the component usage
-                            ComponentFacilityUsage += ComponentBlueprint.GetManufacturingUsage
+                            Select Case ComponentBlueprint.GetItemGroupID
+                                Case AdvCapitalComponentGroupID, CapitalComponentGroupID
+                                    CapComponentFacilityUsage += ComponentBlueprint.GetManufacturingFacilityUsage
+                                Case Else
+                                    ComponentFacilityUsage += ComponentBlueprint.GetManufacturingFacilityUsage
+                            End Select
 
                             ' Save the component team fees
                             ComponentTeamFee += ComponentBlueprint.GetManufacturingTeamFee
@@ -529,7 +532,12 @@ Public Class Blueprint
                         TempSkills = ComponentBlueprint.GetReqBPSkills
 
                         ' Get the component usage
-                        ComponentFacilityUsage += ComponentBlueprint.GetManufacturingFacilityUsage
+                        Select Case ComponentBlueprint.GetItemGroupID
+                            Case AdvCapitalComponentGroupID, CapitalComponentGroupID
+                                CapComponentFacilityUsage += ComponentBlueprint.GetManufacturingFacilityUsage
+                            Case Else
+                                ComponentFacilityUsage += ComponentBlueprint.GetManufacturingFacilityUsage
+                        End Select
 
                         ' Save the component team fees
                         ComponentTeamFee += ComponentBlueprint.GetManufacturingTeamFee
@@ -836,7 +844,7 @@ Public Class Blueprint
         Dim JobsPerBatch As Long = 0
 
         ' For 1 run of this item add in the modifier plus skill level modifiers
-        BPProductionTime = BaseProductionTime * GetBPTimeModifier() * (1 - (IndustrySkill * 0.04)) * (1 - (AdvancedIndustrySkill * 0.03)) * (1 - AdvManufacturingSkillLevels * 0.01)
+        BPProductionTime = BaseProductionTime * SetBPTimeModifier() * (1 - (IndustrySkill * 0.04)) * (1 - (AdvancedIndustrySkill * 0.03)) * (1 - AdvManufacturingSkillLevels * 0.01)
 
         ' Figure out how many jobs per batch we need to run, find the smallest of the two
         If NumberofBPs > NumberofProductionLines Then
@@ -876,7 +884,7 @@ Public Class Blueprint
             BPBrokerFees = 0
         End If
 
-        TaxesFeesUsage = BPTaxes + BPBrokerFees + ManufacturingUsage
+        TaxesFeesUsage = BPTaxes + BPBrokerFees + ManufacturingFacilityUsage
 
         ' Totals
         TotalRawCost = RawMaterials.GetTotalMaterialsCost + InventionRECost + AdditionalCosts
@@ -938,7 +946,7 @@ Public Class Blueprint
     End Function
 
     ' Calculates the total material muliplier for the blueprint based on the bp, facility and team bonuses
-    Private Function GetBPMaterialModifier() As Double
+    Private Function SetBPMaterialModifier() As Double
 
         Dim TeamBonus As Double = GetTeamBonus(ManufacturingTeam, "ME")
 
@@ -948,7 +956,7 @@ Public Class Blueprint
     End Function
 
     ' Calculates the total time muliplier for the blueprint based on the bp, facility, implants and team bonuses
-    Private Function GetBPTimeModifier() As Double
+    Private Function SetBPTimeModifier() As Double
 
         Dim TeamBonus As Double = GetTeamBonus(ManufacturingTeam, "TE")
 
@@ -996,6 +1004,7 @@ Public Class Blueprint
 
     ' Sets the fees for setting up a job to build this item
     Private Sub SetManufacturingCostsAndFees()
+        Dim FacilityUsage As Double = 0
 
         If IncludeManufacturingUsage Then
             ' baseJobCost = Sum(eachmaterialquantity * adjustedPrice) - set in build function
@@ -1005,21 +1014,22 @@ Public Class Blueprint
             ' teamCost = jobFee * teamCostModifier
             ManufacturingTeamFee = JobFee * ManufacturingTeam.CostModifier
 
-            ' facilityTax = (jobFee + teamCost) * taxRate
-            ManufacturingFacilityUsage = (JobFee + ManufacturingTeamFee) * ManufacturingFacility.TaxRate
+            ' facilityUsage = (jobFee + teamCost) * taxRate
+            FacilityUsage = (JobFee + ManufacturingTeamFee) * ManufacturingFacility.TaxRate
 
             ' totalInstallationCost = jobFee + teamCost + facilityTax
-            ManufacturingUsage = JobFee + ManufacturingTeamFee + ManufacturingFacilityUsage
+            ManufacturingFacilityUsage = JobFee + ManufacturingTeamFee + FacilityUsage
         Else
-            ManufacturingUsage = 0
+            ManufacturingFacilityUsage = 0
         End If
+
     End Sub
 
     ' Totals up all the skill levels for advanced manufacturing skills for TE reduction bonus
     Private Function SetAdvManufacturingSkillLevels(BuildSkills As EVESkillList) As Integer
         Dim LevelSum As Integer = 0
 
-        '•	These skills for T2 now reduce TE by 1% per level for the manufacturing job with Pheobe
+        'These skills for T2 now reduce TE by 1% per level for the manufacturing job with Pheobe
         '3398	Advanced Large Ship Construction
         '3397	Advanced Medium Ship Construction
         '3395	Advanced Small Ship Construction
@@ -1223,7 +1233,7 @@ Public Class Blueprint
 
         If IncludeCopyUsage And TechLevel <> BlueprintTechLevel.T3 Then
             ' Set the copy cost based on the number of copies we'll need
-            CopyUsage = GetCopyFees(NumInventionREJobs)
+            CopyUsage = GetCopyUsage(NumInventionREJobs)
         Else
             CopyUsage = 0 ' No copies for T3
         End If
@@ -1238,7 +1248,7 @@ Public Class Blueprint
         ' Set invention usage
         If IncludeInventionREUsage Then
             ' Set the usage for these invention jobs
-            InventionREUsage = GetInventionFees(NumInventionREJobs)
+            InventionREUsage = GetInventionUsage(NumInventionREJobs)
         Else
             InventionREUsage = 0
         End If
@@ -1334,7 +1344,7 @@ Public Class Blueprint
     End Function
 
     ' Sets the cost of doing the number of invention jobs sent
-    Private Function GetInventionFees(InventionJobs As Double) As Double
+    Private Function GetInventionUsage(InventionJobs As Double) As Double
         'jobFee = baseJobCost * systemCostIndex * 0.02
         Return BaseJobCost * InventionREFacility.CostIndex * 0.02 * InventionJobs
     End Function
@@ -1371,7 +1381,7 @@ Public Class Blueprint
     End Function
 
     ' Sets and returns the copy cost for the number of copies sent
-    Private Function GetCopyFees(NumberofCopies As Integer) As Double
+    Private Function GetCopyUsage(NumberofCopies As Integer) As Double
         ' jobFee = baseJobCost * systemCostIndex * 0.02 * runs * runsPerCopy (just use the total number of copies here)
         Return BaseJobCost * CopyFacility.CostIndex * 0.02 * NumberofCopies
     End Function
@@ -1498,6 +1508,7 @@ Public Class Blueprint
         Return ManufacturingTeamFee
     End Function
 
+    ' Returns the team fee for component team
     Public Function GetComponentTeamFee() As Double
         Return ComponentTeamFee
     End Function
@@ -1507,7 +1518,7 @@ Public Class Blueprint
         Return JobFee
     End Function
 
-    ' Returns the base facility tax/fee for this blueprint
+    ' Returns the cost of setting up a job to build this item
     Public Function GetManufacturingFacilityUsage() As Double
         Return ManufacturingFacilityUsage
     End Function
@@ -1562,11 +1573,6 @@ Public Class Blueprint
     ' Returns the total broker fees for 
     Public Function GetBPBrokerFees() As Double
         Return BPBrokerFees
-    End Function
-
-    ' Returns the cost of setting up a job to build this item
-    Public Function GetManufacturingUsage() As Double
-        Return ManufacturingUsage
     End Function
 
     ' Returns the total units this blueprint muliplied by runs, will create

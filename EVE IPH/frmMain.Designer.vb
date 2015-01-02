@@ -1307,6 +1307,7 @@ Partial Class frmMain
         '
         'mnuUpdateCRESTTeams
         '
+        Me.mnuUpdateCRESTTeams.Enabled = false
         Me.mnuUpdateCRESTTeams.Name = "mnuUpdateCRESTTeams"
         Me.mnuUpdateCRESTTeams.Size = New System.Drawing.Size(206, 22)
         Me.mnuUpdateCRESTTeams.Text = "Update Teams"
@@ -8665,6 +8666,7 @@ Partial Class frmMain
         Me.tabCalcTeams.Controls.Add(Me.tabCalcTeamComponents)
         Me.tabCalcTeams.Controls.Add(Me.tabCalcTeamInvention)
         Me.tabCalcTeams.Controls.Add(Me.tabCalcTeamCopy)
+        Me.tabCalcTeams.Enabled = false
         Me.tabCalcTeams.ItemSize = New System.Drawing.Size(49, 20)
         Me.tabCalcTeams.Location = New System.Drawing.Point(546, 176)
         Me.tabCalcTeams.Multiline = true
@@ -11396,6 +11398,7 @@ Partial Class frmMain
         '
         'tabFacility
         '
+        Me.tabFacility.Controls.Add(Me.cmbBPFacilityType)
         Me.tabFacility.Controls.Add(Me.lblBPFacilityDefault)
         Me.tabFacility.Controls.Add(Me.lblBPFacilityActivity)
         Me.tabFacility.Controls.Add(Me.cmbBPFacilityActivities)
@@ -11411,7 +11414,6 @@ Partial Class frmMain
         Me.tabFacility.Controls.Add(Me.lblBPFacilityLocation)
         Me.tabFacility.Controls.Add(Me.lblBPFacility)
         Me.tabFacility.Controls.Add(Me.chkBPFacilityIncludeUsage)
-        Me.tabFacility.Controls.Add(Me.cmbBPFacilityType)
         Me.tabFacility.Controls.Add(Me.lblBPFacilityManualME)
         Me.tabFacility.Controls.Add(Me.lblBPFacilityBonus)
         Me.tabFacility.Location = New System.Drawing.Point(4, 4)
@@ -11421,21 +11423,21 @@ Partial Class frmMain
         Me.tabFacility.Size = New System.Drawing.Size(281, 132)
         Me.tabFacility.TabIndex = 1
         Me.tabFacility.Text = "Facility"
-        Me.tabFacility.UseVisualStyleBackColor = true
+        Me.tabFacility.UseVisualStyleBackColor = True
         '
         'lblBPFacilityDefault
         '
         Me.lblBPFacilityDefault.ForeColor = System.Drawing.SystemColors.Highlight
-        Me.lblBPFacilityDefault.Location = New System.Drawing.Point(223, 6)
+        Me.lblBPFacilityDefault.Location = New System.Drawing.Point(237, 6)
         Me.lblBPFacilityDefault.Name = "lblBPFacilityDefault"
-        Me.lblBPFacilityDefault.Size = New System.Drawing.Size(55, 34)
+        Me.lblBPFacilityDefault.Size = New System.Drawing.Size(48, 34)
         Me.lblBPFacilityDefault.TabIndex = 5
         Me.lblBPFacilityDefault.Text = "Default Facility"
         Me.lblBPFacilityDefault.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
         'lblBPFacilityActivity
         '
-        Me.lblBPFacilityActivity.AutoSize = true
+        Me.lblBPFacilityActivity.AutoSize = True
         Me.lblBPFacilityActivity.Location = New System.Drawing.Point(3, 3)
         Me.lblBPFacilityActivity.Name = "lblBPFacilityActivity"
         Me.lblBPFacilityActivity.Size = New System.Drawing.Size(44, 13)
@@ -11444,23 +11446,23 @@ Partial Class frmMain
         '
         'cmbBPFacilityActivities
         '
-        Me.cmbBPFacilityActivities.FormattingEnabled = true
+        Me.cmbBPFacilityActivities.FormattingEnabled = True
         Me.cmbBPFacilityActivities.Items.AddRange(New Object() {"Manufacturing", "Invention", "Copying", "RE"})
         Me.cmbBPFacilityActivities.Location = New System.Drawing.Point(5, 19)
         Me.cmbBPFacilityActivities.Name = "cmbBPFacilityActivities"
-        Me.cmbBPFacilityActivities.Size = New System.Drawing.Size(151, 21)
+        Me.cmbBPFacilityActivities.Size = New System.Drawing.Size(170, 21)
         Me.cmbBPFacilityActivities.TabIndex = 2
         Me.cmbBPFacilityActivities.Text = "Select Activity"
         '
         'btnBPFacilitySave
         '
-        Me.btnBPFacilitySave.Enabled = false
+        Me.btnBPFacilitySave.Enabled = False
         Me.btnBPFacilitySave.Location = New System.Drawing.Point(222, 107)
         Me.btnBPFacilitySave.Name = "btnBPFacilitySave"
         Me.btnBPFacilitySave.Size = New System.Drawing.Size(56, 22)
         Me.btnBPFacilitySave.TabIndex = 18
         Me.btnBPFacilitySave.Text = "Save"
-        Me.btnBPFacilitySave.UseVisualStyleBackColor = true
+        Me.btnBPFacilitySave.UseVisualStyleBackColor = True
         '
         'lblBPFacilityTaxRate
         '
@@ -11471,7 +11473,7 @@ Partial Class frmMain
         Me.lblBPFacilityTaxRate.TabIndex = 17
         Me.lblBPFacilityTaxRate.Text = "Tax: 50.0%"
         Me.lblBPFacilityTaxRate.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
-        Me.lblBPFacilityTaxRate.Visible = false
+        Me.lblBPFacilityTaxRate.Visible = False
         '
         'txtBPFacilityManualTE
         '
@@ -11482,7 +11484,7 @@ Partial Class frmMain
         Me.txtBPFacilityManualTE.TabIndex = 16
         Me.txtBPFacilityManualTE.Text = "0%"
         Me.txtBPFacilityManualTE.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
-        Me.txtBPFacilityManualTE.Visible = false
+        Me.txtBPFacilityManualTE.Visible = False
         '
         'txtBPFacilityManualME
         '
@@ -11493,11 +11495,11 @@ Partial Class frmMain
         Me.txtBPFacilityManualME.TabIndex = 14
         Me.txtBPFacilityManualME.Text = "0%"
         Me.txtBPFacilityManualME.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
-        Me.txtBPFacilityManualME.Visible = false
+        Me.txtBPFacilityManualME.Visible = False
         '
         'cmbBPFacilityorArray
         '
-        Me.cmbBPFacilityorArray.FormattingEnabled = true
+        Me.cmbBPFacilityorArray.FormattingEnabled = True
         Me.cmbBPFacilityorArray.ItemHeight = 13
         Me.cmbBPFacilityorArray.Location = New System.Drawing.Point(5, 84)
         Me.cmbBPFacilityorArray.Name = "cmbBPFacilityorArray"
@@ -11517,7 +11519,7 @@ Partial Class frmMain
         '
         'cmbBPFacilitySystem
         '
-        Me.cmbBPFacilitySystem.FormattingEnabled = true
+        Me.cmbBPFacilitySystem.FormattingEnabled = True
         Me.cmbBPFacilitySystem.Location = New System.Drawing.Point(139, 61)
         Me.cmbBPFacilitySystem.Name = "cmbBPFacilitySystem"
         Me.cmbBPFacilitySystem.Size = New System.Drawing.Size(139, 21)
@@ -11526,7 +11528,7 @@ Partial Class frmMain
         '
         'cmbBPFacilityRegion
         '
-        Me.cmbBPFacilityRegion.FormattingEnabled = true
+        Me.cmbBPFacilityRegion.FormattingEnabled = True
         Me.cmbBPFacilityRegion.Location = New System.Drawing.Point(5, 61)
         Me.cmbBPFacilityRegion.Name = "cmbBPFacilityRegion"
         Me.cmbBPFacilityRegion.Size = New System.Drawing.Size(130, 21)
@@ -11535,17 +11537,17 @@ Partial Class frmMain
         '
         'lblBPFacilityManualTE
         '
-        Me.lblBPFacilityManualTE.AutoSize = true
+        Me.lblBPFacilityManualTE.AutoSize = True
         Me.lblBPFacilityManualTE.Location = New System.Drawing.Point(77, 111)
         Me.lblBPFacilityManualTE.Name = "lblBPFacilityManualTE"
         Me.lblBPFacilityManualTE.Size = New System.Drawing.Size(24, 13)
         Me.lblBPFacilityManualTE.TabIndex = 15
         Me.lblBPFacilityManualTE.Text = "TE:"
-        Me.lblBPFacilityManualTE.Visible = false
+        Me.lblBPFacilityManualTE.Visible = False
         '
         'lblBPFacilityLocation
         '
-        Me.lblBPFacilityLocation.AutoSize = true
+        Me.lblBPFacilityLocation.AutoSize = True
         Me.lblBPFacilityLocation.Location = New System.Drawing.Point(3, 44)
         Me.lblBPFacilityLocation.Name = "lblBPFacilityLocation"
         Me.lblBPFacilityLocation.Size = New System.Drawing.Size(51, 13)
@@ -11554,8 +11556,8 @@ Partial Class frmMain
         '
         'lblBPFacility
         '
-        Me.lblBPFacility.AutoSize = true
-        Me.lblBPFacility.Location = New System.Drawing.Point(155, 3)
+        Me.lblBPFacility.AutoSize = True
+        Me.lblBPFacility.Location = New System.Drawing.Point(174, 4)
         Me.lblBPFacility.Name = "lblBPFacility"
         Me.lblBPFacility.Size = New System.Drawing.Size(69, 13)
         Me.lblBPFacility.TabIndex = 3
@@ -11563,24 +11565,24 @@ Partial Class frmMain
         '
         'chkBPFacilityIncludeUsage
         '
-        Me.chkBPFacilityIncludeUsage.AutoSize = true
-        Me.chkBPFacilityIncludeUsage.Checked = true
+        Me.chkBPFacilityIncludeUsage.AutoSize = True
+        Me.chkBPFacilityIncludeUsage.Checked = True
         Me.chkBPFacilityIncludeUsage.CheckState = System.Windows.Forms.CheckState.Checked
-        Me.chkBPFacilityIncludeUsage.Enabled = false
+        Me.chkBPFacilityIncludeUsage.Enabled = False
         Me.chkBPFacilityIncludeUsage.Location = New System.Drawing.Point(80, 42)
         Me.chkBPFacilityIncludeUsage.Name = "chkBPFacilityIncludeUsage"
         Me.chkBPFacilityIncludeUsage.Size = New System.Drawing.Size(60, 17)
         Me.chkBPFacilityIncludeUsage.TabIndex = 7
         Me.chkBPFacilityIncludeUsage.Text = "Usage:"
-        Me.chkBPFacilityIncludeUsage.UseVisualStyleBackColor = true
+        Me.chkBPFacilityIncludeUsage.UseVisualStyleBackColor = True
         '
         'cmbBPFacilityType
         '
-        Me.cmbBPFacilityType.Enabled = false
-        Me.cmbBPFacilityType.FormattingEnabled = true
+        Me.cmbBPFacilityType.Enabled = False
+        Me.cmbBPFacilityType.FormattingEnabled = True
         Me.cmbBPFacilityType.ItemHeight = 13
         Me.cmbBPFacilityType.Items.AddRange(New Object() {"NPC Station", "Outpost", "POS"})
-        Me.cmbBPFacilityType.Location = New System.Drawing.Point(158, 19)
+        Me.cmbBPFacilityType.Location = New System.Drawing.Point(177, 19)
         Me.cmbBPFacilityType.Name = "cmbBPFacilityType"
         Me.cmbBPFacilityType.Size = New System.Drawing.Size(62, 21)
         Me.cmbBPFacilityType.TabIndex = 4
@@ -12024,6 +12026,7 @@ Partial Class frmMain
         Me.gbBPTeam.Controls.Add(Me.lblBPDefaultTeam)
         Me.gbBPTeam.Controls.Add(Me.btnBPSaveTeam)
         Me.gbBPTeam.Controls.Add(Me.cmbBPTeamActivities)
+        Me.gbBPTeam.Enabled = false
         Me.gbBPTeam.Location = New System.Drawing.Point(140, 7)
         Me.gbBPTeam.Name = "gbBPTeam"
         Me.gbBPTeam.Size = New System.Drawing.Size(310, 70)

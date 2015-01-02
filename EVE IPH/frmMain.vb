@@ -287,6 +287,7 @@ Public Class frmMain
     Private LoadingFacilityRegions As Boolean
     Private LoadingFacilitySystems As Boolean
     Private LoadingFacilities As Boolean
+    Private ChangingUsageChecks As Boolean
 
     ' For making sure they have a bp facility loaded
     Private FullyLoadedBPFacility As Boolean
@@ -423,24 +424,24 @@ Public Class frmMain
         Dim Timecheck As DateTime
 
         ' Update CREST Data - Teams
-        If UserApplicationSettings.LoadCRESTTeamDataonStartup Then
-            Application.UseWaitCursor = True
-            Application.DoEvents()
-            Timecheck = Now
-            Call SetProgress("Updating Industry Teams...")
-            Call CREST.UpdateIndustryTeams()
-            Debug.Print("Teams " & CStr(DateDiff(DateInterval.Second, Timecheck, Now)))
-            Timecheck = Now
-            Call SetProgress("Updating Industry Team Auctions...")
-            Call CREST.UpdateIndustryTeamAuctions()
-            Debug.Print("Team Auctions " & CStr(DateDiff(DateInterval.Second, Timecheck, Now)))
-            Timecheck = Now
-            Call SetProgress("Updating Industry Specialties...")
-            Call CREST.UpdateIndustrySpecialties()
-            Debug.Print("Specs " & CStr(DateDiff(DateInterval.Second, Timecheck, Now)))
-            Application.UseWaitCursor = False
-            Application.DoEvents()
-        End If
+        'If UserApplicationSettings.LoadCRESTTeamDataonStartup Then
+        '    Application.UseWaitCursor = True
+        '    Application.DoEvents()
+        '    Timecheck = Now
+        '    Call SetProgress("Updating Industry Teams...")
+        '    Call CREST.UpdateIndustryTeams()
+        '    Debug.Print("Teams " & CStr(DateDiff(DateInterval.Second, Timecheck, Now)))
+        '    Timecheck = Now
+        '    Call SetProgress("Updating Industry Team Auctions...")
+        '    Call CREST.UpdateIndustryTeamAuctions()
+        '    Debug.Print("Team Auctions " & CStr(DateDiff(DateInterval.Second, Timecheck, Now)))
+        '    Timecheck = Now
+        '    Call SetProgress("Updating Industry Specialties...")
+        '    Call CREST.UpdateIndustrySpecialties()
+        '    Debug.Print("Specs " & CStr(DateDiff(DateInterval.Second, Timecheck, Now)))
+        '    Application.UseWaitCursor = False
+        '    Application.DoEvents()
+        'End If
 
         ' CREST Facilities
         If UserApplicationSettings.LoadCRESTFacilityDataonStartup Then
@@ -1130,7 +1131,7 @@ NoBonus:
 
         If TeamActivity = ActivityComponentManufacturing Or TeamActivity = ActivityCapComponentManufacturing Then
             ' Reset the groupID list to just categories with components
-            DBCommand = New SQLiteCommand("SELECT groupID FROM INVENTORY_GROUPS WHERE categoryID = " & ComponentCategoryID2, DB)
+            DBCommand = New SQLiteCommand("SELECT groupID FROM INVENTORY_GROUPS WHERE categoryID = " & ComponentCategoryID, DB)
             rsLoader = DBCommand.ExecuteReader
             BPItemGroupIDList = New List(Of Long)
 
@@ -1618,7 +1619,7 @@ NoBonus:
                                 FacilityBonusLabel, FacilityDefaultLabel, FacilityManualMELabel, FacilityManualMETextBox, _
                                 FacilityManualTELabel, FacilityManualTETextBox, FacilitySaveButton, FacilityTaxRateLabel, Tab, _
                                 FacilityUsageCheck, FacilityActivityCostCheck, FacilityActivityTimeCheck, AutoLoad, _
-                                GetPOSManufacturingFacility(SelectedBPManufacturingFacility, ItemGroupID, ItemCategoryID, BPTab).FacilityName, FacilityUsageLabel)
+                                SelectedFacility.FacilityName, FacilityUsageLabel)
         ElseIf Tab = CalcTab Then
             ' Load all facilities for each calc tab facility
             Call LoadFacilities(ItemGroupID, ItemCategoryID, False, _
@@ -1630,6 +1631,7 @@ NoBonus:
         LoadingFacilities = False
 
         ' Usage checks
+        ChangingUsageChecks = True
         FacilityUsageCheck.Checked = SelectedFacility.IncludeActivityUsage
         If Not IsNothing(FacilityActivityCostCheck) Then
             FacilityActivityCostCheck.Checked = SelectedFacility.IncludeActivityCost
@@ -1638,6 +1640,7 @@ NoBonus:
         If Not IsNothing(FacilityActivityTimeCheck) Then
             FacilityActivityTimeCheck.Checked = SelectedFacility.IncludeActivityTime
         End If
+        ChangingUsageChecks = False
 
         ' Finally show the results and save the facility locally
         If Not AutoLoad Then
@@ -1855,14 +1858,8 @@ NoBonus:
                         SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID)
                     Case ActivityComponentManufacturing, ActivityCapComponentManufacturing
                         SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Manufacturing & " "
-                        ' Add category for component
-                        Select Case ItemGroupID
-                            Case TitanGroupID, SupercarrierGroupID, DreadnoughtGroupID, CarrierGroupID, _
-                                CapitalIndustrialShipGroupID, IndustrialCommandShipGroupID, FreighterGroupID, JumpFreighterGroupID
-                                SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(-1, CapitalComponentGroupID) ' These all use cap components
-                            Case Else
-                                SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(-1, ConstructionComponentsGroupID)
-                        End Select
+                        ' Add category for components - All types can be built in stations
+                        SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ComponentCategoryID, -1)
                     Case ActivityCopying
                         SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Copying & " "
                     Case ActivityInvention
@@ -1970,14 +1967,8 @@ NoBonus:
                         SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID)
                     Case ActivityComponentManufacturing
                         SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Manufacturing & " "
-                        ' Add category for component
-                        Select Case ItemGroupID
-                            Case TitanGroupID, SupercarrierGroupID, DreadnoughtGroupID, CarrierGroupID, _
-                                CapitalIndustrialShipGroupID, IndustrialCommandShipGroupID, FreighterGroupID, JumpFreighterGroupID
-                                SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(-1, CapitalComponentGroupID) ' These all use cap components
-                            Case Else
-                                SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(-1, ConstructionComponentsGroupID)
-                        End Select
+                        ' Add category for components - All types can be built in stations
+                        SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ComponentCategoryID, -1)
                     Case ActivityCopying
                         SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Copying & " "
                     Case ActivityInvention
@@ -2090,14 +2081,8 @@ NoBonus:
                         SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID)
                     Case ActivityComponentManufacturing, ActivityCapComponentManufacturing
                         SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Manufacturing & " "
-                        ' Add category for component
-                        Select Case ItemGroupID
-                            Case TitanGroupID, SupercarrierGroupID, DreadnoughtGroupID, CarrierGroupID, _
-                                CapitalIndustrialShipGroupID, IndustrialCommandShipGroupID, FreighterGroupID, JumpFreighterGroupID
-                                SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(-1, CapitalComponentGroupID) ' These all use cap components
-                            Case Else
-                                SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(-1, ConstructionComponentsGroupID)
-                        End Select
+                        ' Add category for components - All types can be built in stations
+                        SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ComponentCategoryID, -1)
                     Case ActivityCopying
                         SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Copying & " "
                     Case ActivityInvention
@@ -2124,11 +2109,10 @@ NoBonus:
                         Select Case ItemGroupID
                             Case TitanGroupID, SupercarrierGroupID, DreadnoughtGroupID, CarrierGroupID, _
                                 CapitalIndustrialShipGroupID, IndustrialCommandShipGroupID, FreighterGroupID, JumpFreighterGroupID
-                                SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(-1, CapitalComponentGroupID) ' These all use cap components
+                                SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ComponentCategoryID, CapitalComponentGroupID) ' These all use cap components
                             Case Else
-                                SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(-1, ConstructionComponentsGroupID)
+                                SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ComponentCategoryID, ConstructionComponentsGroupID)
                         End Select
-
                     Case ActivityCopying
                         SQL = SQL & CStr(IndustryActivities.Copying) & " "
                     Case ActivityInvention
@@ -2159,8 +2143,8 @@ NoBonus:
         While rsLoader.Read
             FacilityCombo.Items.Add(rsLoader.GetString(0))
             i += 1 ' get the count
-            ' Load the first one - auto choose subsystem array over advanced medium array
-            If AutoLoadName = "" Or rsLoader.GetString(0) = "Subsystem Assembly Array" Then
+            ' Load the first one - auto choose subsystem array over advanced medium array unless already selected
+            If AutoLoadName = "" Or (rsLoader.GetString(0) = "Subsystem Assembly Array" And OverrideFacilityName = "") Then
                 AutoLoadName = rsLoader.GetString(0)
             End If
         End While
@@ -2298,9 +2282,9 @@ NoBonus:
                     Select Case ItemGroupID
                         Case TitanGroupID, SupercarrierGroupID, DreadnoughtGroupID, CarrierGroupID, _
                             CapitalIndustrialShipGroupID, IndustrialCommandShipGroupID, FreighterGroupID, JumpFreighterGroupID
-                            SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ComponentCategoryID2, CapitalComponentGroupID) ' These all use cap components
+                            SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ComponentCategoryID, CapitalComponentGroupID) ' These all use cap components
                         Case Else
-                            SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ComponentCategoryID2, ConstructionComponentsGroupID)
+                            SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ComponentCategoryID, ConstructionComponentsGroupID)
                     End Select
                 Case ActivityCopying
                     SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Copying & " "
@@ -2384,9 +2368,9 @@ NoBonus:
         With SelectedFacility
             .FacilityName = FacilityName
             Select Case Activity
-                Case ActivityManufacturing, ActivityComponentManufacturing
+                Case ActivityManufacturing, ActivityComponentManufacturing, ActivityCapComponentManufacturing
                     .ActivityID = IndustryActivities.Manufacturing
-                    .Activity = ActivityManufacturing ' For both, same flag
+                    .Activity = ActivityManufacturing ' For all three, same flag
                 Case ActivityCopying
                     .ActivityID = IndustryActivities.Copying
                     .Activity = ActivityCopying
@@ -2402,7 +2386,9 @@ NoBonus:
             .RegionName = FacilityRegionCombo.Text
             .SolarSystemName = FacilitySystemCombo.Text
             .ProductionType = ProductionType
+            ChangingUsageChecks = True
             .IncludeActivityUsage = FacilityUsageCheck.Checked
+            ChangingUsageChecks = False
             .TaxRate = Tax
 
             If Not IsNothing(ActivityCostCheck) Then
@@ -2457,6 +2443,7 @@ NoBonus:
             End If
         End With
 
+        ChangingUsageChecks = True
         SelectedFacility.IncludeActivityUsage = FacilityUsageCheck.Checked
 
         If Not IsNothing(ActivityCostCheck) Then
@@ -2474,6 +2461,7 @@ NoBonus:
             ' Don't compare this value
             CompareTimeCheck = False
         End If
+        ChangingUsageChecks = False
 
         Call SetFacilityandDefault(SelectedFacility, ProductionType, Tab, FacilityType, FacilityCombo, _
                                    FacilityDefaultLabel, FacilitySaveButton, CompareCostCheck, CompareTimeCheck)
@@ -2506,7 +2494,21 @@ NoBonus:
             Select Case ProductionType
                 Case IndustryType.Manufacturing
                     PreviousFacility = CType(SelectedBPManufacturingFacility.Clone, IndustryFacility)
-                    SelectedBPManufacturingFacility = SelectedFacility
+                    SelectedBPManufacturingFacility = CType(SelectedFacility.Clone, IndustryFacility)
+                    ' Set the other three types for pos too
+                    If SelectedFacility.FacilityType = POSFacility Then
+                        SelectedFacility.FacilityName = SelectedBPPOSFuelBlockFacility.FacilityName
+                        SelectedFacility.FacilityType = SelectedBPPOSFuelBlockFacility.FacilityType
+                        SelectedBPPOSFuelBlockFacility = CType(SelectedFacility.Clone, IndustryFacility)
+
+                        SelectedFacility.FacilityName = SelectedBPPOSLargeShipFacility.FacilityName
+                        SelectedFacility.FacilityType = SelectedBPPOSLargeShipFacility.FacilityType
+                        SelectedBPPOSLargeShipFacility = CType(SelectedFacility.Clone, IndustryFacility)
+
+                        SelectedFacility.FacilityName = SelectedBPPOSModuleFacility.FacilityName
+                        SelectedFacility.FacilityType = SelectedBPPOSModuleFacility.FacilityType
+                        SelectedBPPOSModuleFacility = CType(SelectedFacility.Clone, IndustryFacility)
+                    End If
                     If SelectedBPManufacturingFacility.IsEqual(DefaultBPManufacturingFacility) Then
                         SelectedBPManufacturingFacility.IsDefault = True
                         SelectedFacility.IsDefault = True
@@ -2837,10 +2839,11 @@ NoBonus:
         End If
 
         ' Set the default 
-        If SelectedFacility.IsDefault = True Or (FacilityType = POSFacility And FacilityCombo.Items.Count = 1 And Tab = BPTab _
-                                                 And PreviousFacility.FacilityType = SelectedFacility.FacilityType _
-                                                 And PreviousFacility.SolarSystemName = SelectedFacility.SolarSystemName _
-                                                 And PreviousFacility.RegionName = SelectedFacility.RegionName) Then
+        If SelectedFacility.IsDefault = True Then 'Or (FacilityType = POSFacility And FacilityCombo.Items.Count = 1 And Tab = BPTab _
+            'And PreviousFacility.FacilityType = SelectedFacility.FacilityType _
+            'And PreviousFacility.SolarSystemName = SelectedFacility.SolarSystemName _
+            'And PreviousFacility.RegionName = SelectedFacility.RegionName _
+            'And PreviousFacility.IncludeActivityUsage = SelectedFacility.IncludeActivityUsage) Then
             FacilityDefaultLabel.Visible = True
             FacilitySaveButton.Enabled = False ' don't enable since it's already the default, it's pointless to save it
         Else
@@ -3004,76 +3007,76 @@ NoBonus:
         If Tab = BPTab Then
             Select Case ProductionType
                 Case IndustryType.Manufacturing
-                    SelectedFacility = SelectedBPManufacturingFacility
+                    SelectedFacility = CType(SelectedBPManufacturingFacility.Clone, IndustryFacility)
                 Case IndustryType.POSFuelBlockManufacturing
-                    SelectedFacility = SelectedBPPOSFuelBlockFacility
+                    SelectedFacility = CType(SelectedBPPOSFuelBlockFacility, IndustryFacility)
                 Case IndustryType.POSLargeShipManufacturing
-                    SelectedFacility = SelectedBPPOSLargeShipFacility
+                    SelectedFacility = CType(SelectedBPPOSLargeShipFacility, IndustryFacility)
                 Case IndustryType.POSModuleManufacturing
-                    SelectedFacility = SelectedBPPOSModuleFacility
+                    SelectedFacility = CType(SelectedBPPOSModuleFacility, IndustryFacility)
                 Case IndustryType.BoosterManufacturing
-                    SelectedFacility = SelectedBPBoosterManufacturingFacility
+                    SelectedFacility = CType(SelectedBPBoosterManufacturingFacility.Clone, IndustryFacility)
                 Case IndustryType.CapitalManufacturing
-                    SelectedFacility = SelectedBPCapitalManufacturingFacility
+                    SelectedFacility = CType(SelectedBPCapitalManufacturingFacility.Clone, IndustryFacility)
                 Case IndustryType.SuperManufacturing
-                    SelectedFacility = SelectedBPSuperManufacturingFacility
+                    SelectedFacility = CType(SelectedBPSuperManufacturingFacility.Clone, IndustryFacility)
                 Case IndustryType.T3CruiserManufacturing
-                    SelectedFacility = SelectedBPT3CruiserManufacturingFacility
+                    SelectedFacility = CType(SelectedBPT3CruiserManufacturingFacility.Clone, IndustryFacility)
                 Case IndustryType.T3DestroyerManufacturing
-                    SelectedFacility = SelectedBPT3DestroyerManufacturingFacility
+                    SelectedFacility = CType(SelectedBPT3DestroyerManufacturingFacility.Clone, IndustryFacility)
                 Case IndustryType.SubsystemManufacturing
-                    SelectedFacility = SelectedBPSubsystemManufacturingFacility
+                    SelectedFacility = CType(SelectedBPSubsystemManufacturingFacility.Clone, IndustryFacility)
                 Case IndustryType.ComponentManufacturing
-                    SelectedFacility = SelectedBPComponentManufacturingFacility
+                    SelectedFacility = CType(SelectedBPComponentManufacturingFacility.Clone, IndustryFacility)
                 Case IndustryType.CapitalComponentManufacturing
-                    SelectedFacility = SelectedBPCapitalComponentManufacturingFacility
+                    SelectedFacility = CType(SelectedBPCapitalComponentManufacturingFacility.Clone, IndustryFacility)
                 Case IndustryType.Invention
-                    SelectedFacility = SelectedBPInventionFacility
+                    SelectedFacility = CType(SelectedBPInventionFacility, IndustryFacility)
                 Case IndustryType.T3Invention
-                    SelectedFacility = SelectedBPT3InventionFacility
+                    SelectedFacility = CType(SelectedBPT3InventionFacility, IndustryFacility)
                 Case IndustryType.Copying
-                    SelectedFacility = SelectedBPCopyFacility
+                    SelectedFacility = CType(SelectedBPCopyFacility, IndustryFacility)
                 Case IndustryType.NoPOSManufacturing
-                    SelectedFacility = SelectedBPNoPOSFacility
+                    SelectedFacility = CType(SelectedBPNoPOSFacility, IndustryFacility)
                 Case Else
-                    SelectedFacility = SelectedBPManufacturingFacility
+                    SelectedFacility = CType(SelectedBPManufacturingFacility.Clone, IndustryFacility)
             End Select
         Else
             Select Case ProductionType
                 Case IndustryType.Manufacturing
-                    SelectedFacility = SelectedCalcBaseManufacturingFacility
+                    SelectedFacility = CType(SelectedCalcBaseManufacturingFacility.Clone, IndustryFacility)
                 Case IndustryType.POSFuelBlockManufacturing
-                    SelectedFacility = SelectedCalcPOSFuelBlockFacility
+                    SelectedFacility = CType(SelectedCalcPOSFuelBlockFacility, IndustryFacility)
                 Case IndustryType.POSLargeShipManufacturing
-                    SelectedFacility = SelectedCalcPOSLargeShipFacility
+                    SelectedFacility = CType(SelectedCalcPOSLargeShipFacility, IndustryFacility)
                 Case IndustryType.POSModuleManufacturing
-                    SelectedFacility = SelectedCalcPOSModuleFacility
+                    SelectedFacility = CType(SelectedCalcPOSModuleFacility, IndustryFacility)
                 Case IndustryType.BoosterManufacturing
-                    SelectedFacility = SelectedCalcBoosterManufacturingFacility
+                    SelectedFacility = CType(SelectedCalcBoosterManufacturingFacility.Clone, IndustryFacility)
                 Case IndustryType.CapitalManufacturing
-                    SelectedFacility = SelectedCalcCapitalManufacturingFacility
+                    SelectedFacility = CType(SelectedCalcCapitalManufacturingFacility.Clone, IndustryFacility)
                 Case IndustryType.SuperManufacturing
-                    SelectedFacility = SelectedCalcSuperManufacturingFacility
+                    SelectedFacility = CType(SelectedCalcSuperManufacturingFacility.Clone, IndustryFacility)
                 Case IndustryType.T3CruiserManufacturing
-                    SelectedFacility = SelectedCalcT3CruiserManufacturingFacility
+                    SelectedFacility = CType(SelectedCalcT3CruiserManufacturingFacility.Clone, IndustryFacility)
                 Case IndustryType.T3DestroyerManufacturing
-                    SelectedFacility = SelectedCalcT3DestroyerManufacturingFacility
+                    SelectedFacility = CType(SelectedCalcT3DestroyerManufacturingFacility.Clone, IndustryFacility)
                 Case IndustryType.SubsystemManufacturing
-                    SelectedFacility = SelectedCalcSubsystemManufacturingFacility
+                    SelectedFacility = CType(SelectedCalcSubsystemManufacturingFacility.Clone, IndustryFacility)
                 Case IndustryType.CapitalComponentManufacturing
-                    SelectedFacility = SelectedCalcCapitalComponentManufacturingFacility
+                    SelectedFacility = CType(SelectedCalcCapitalComponentManufacturingFacility.Clone, IndustryFacility)
                 Case IndustryType.ComponentManufacturing
-                    SelectedFacility = SelectedCalcComponentManufacturingFacility
+                    SelectedFacility = CType(SelectedCalcComponentManufacturingFacility.Clone, IndustryFacility)
                 Case IndustryType.Invention
-                    SelectedFacility = SelectedCalcInventionFacility
+                    SelectedFacility = CType(SelectedCalcInventionFacility, IndustryFacility)
                 Case IndustryType.T3Invention
-                    SelectedFacility = SelectedCalcT3InventionFacility
+                    SelectedFacility = CType(SelectedCalcT3InventionFacility, IndustryFacility)
                 Case IndustryType.Copying
-                    SelectedFacility = SelectedCalcCopyFacility
+                    SelectedFacility = CType(SelectedCalcCopyFacility, IndustryFacility)
                 Case IndustryType.NoPOSManufacturing
-                    SelectedFacility = SelectedCalcNoPOSFacility
+                    SelectedFacility = CType(SelectedCalcNoPOSFacility, IndustryFacility)
                 Case Else
-                    SelectedFacility = SelectedCalcBaseManufacturingFacility
+                    SelectedFacility = CType(SelectedCalcBaseManufacturingFacility.Clone, IndustryFacility)
             End Select
         End If
 
@@ -3219,35 +3222,53 @@ NoBonus:
     ' Loads all the teams
     Private Sub SetAllTeams(LoadDefault As Boolean)
 
-        If Not LoadDefault Then
-            Call SelectedBPManufacturingTeam.LoadTeamFromSettings(LoadTeamSettingsfromTeam(SelectedBPManufacturingTeam, BPTab))
-            Call SelectedBPComponentManufacturingTeam.LoadTeamFromSettings(LoadTeamSettingsfromTeam(SelectedBPComponentManufacturingTeam, BPTab))
-            Call SelectedBPCopyTeam.LoadTeamFromSettings(LoadTeamSettingsfromTeam(SelectedBPCopyTeam, BPTab))
-            Call SelectedBPInventionTeam.LoadTeamFromSettings(LoadTeamSettingsfromTeam(SelectedBPInventionTeam, BPTab))
+        SelectedBPManufacturingTeam = NoTeam
+        DefaultBPManufacturingTeam = SelectedBPManufacturingTeam
+        SelectedBPComponentManufacturingTeam = NoTeam
+        DefaultBPComponentManufacturingTeam = SelectedBPComponentManufacturingTeam
+        SelectedBPCopyTeam = NoTeam
+        DefaultBPCopyTeam = SelectedBPCopyTeam
+        SelectedBPInventionTeam = NoTeam
+        DefaultBPInventionTeam = SelectedBPInventionTeam
 
-            Call SelectedCalcManufacturingTeam.LoadTeamFromSettings(LoadTeamSettingsfromTeam(SelectedCalcManufacturingTeam, BPTab))
-            Call SelectedCalcComponentManufacturingTeam.LoadTeamFromSettings(LoadTeamSettingsfromTeam(SelectedCalcComponentManufacturingTeam, BPTab))
-            Call SelectedCalcCopyTeam.LoadTeamFromSettings(LoadTeamSettingsfromTeam(SelectedCalcCopyTeam, BPTab))
-            Call SelectedCalcInventionTeam.LoadTeamFromSettings(LoadTeamSettingsfromTeam(SelectedCalcInventionTeam, BPTab))
-        Else
-            Call SelectedBPManufacturingTeam.LoadTeamFromSettings(AllSettings.LoadTeamSettings(TeamType.Manufacturing, BPTab))
-            DefaultBPManufacturingTeam = SelectedBPManufacturingTeam
-            Call SelectedBPComponentManufacturingTeam.LoadTeamFromSettings(AllSettings.LoadTeamSettings(TeamType.ComponentManufacturing, BPTab))
-            DefaultBPComponentManufacturingTeam = SelectedBPComponentManufacturingTeam
-            Call SelectedBPCopyTeam.LoadTeamFromSettings(AllSettings.LoadTeamSettings(TeamType.Copy, BPTab))
-            DefaultBPCopyTeam = SelectedBPCopyTeam
-            Call SelectedBPInventionTeam.LoadTeamFromSettings(AllSettings.LoadTeamSettings(TeamType.Invention, BPTab))
-            DefaultBPInventionTeam = SelectedBPInventionTeam
+        SelectedCalcManufacturingTeam = NoTeam
+        DefaultCalcManufacturingTeam = SelectedCalcManufacturingTeam
+        SelectedCalcComponentManufacturingTeam = NoTeam
+        DefaultCalcComponentManufacturingTeam = SelectedCalcComponentManufacturingTeam
+        SelectedCalcCopyTeam = NoTeam
+        DefaultCalcCopyTeam = SelectedCalcCopyTeam
+        SelectedCalcInventionTeam = NoTeam
+        DefaultCalcInventionTeam = SelectedCalcInventionTeam
 
-            Call SelectedCalcManufacturingTeam.LoadTeamFromSettings(AllSettings.LoadTeamSettings(TeamType.Manufacturing, CalcTab))
-            DefaultCalcManufacturingTeam = SelectedCalcManufacturingTeam
-            Call SelectedCalcComponentManufacturingTeam.LoadTeamFromSettings(AllSettings.LoadTeamSettings(TeamType.ComponentManufacturing, CalcTab))
-            DefaultCalcComponentManufacturingTeam = SelectedCalcComponentManufacturingTeam
-            Call SelectedCalcCopyTeam.LoadTeamFromSettings(AllSettings.LoadTeamSettings(TeamType.Copy, CalcTab))
-            DefaultCalcCopyTeam = SelectedCalcCopyTeam
-            Call SelectedCalcInventionTeam.LoadTeamFromSettings(AllSettings.LoadTeamSettings(TeamType.Invention, CalcTab))
-            DefaultCalcInventionTeam = SelectedCalcInventionTeam
-        End If
+        'If Not LoadDefault Then
+        '    Call SelectedBPManufacturingTeam.LoadTeamFromSettings(LoadTeamSettingsfromTeam(SelectedBPManufacturingTeam, BPTab))
+        '    Call SelectedBPComponentManufacturingTeam.LoadTeamFromSettings(LoadTeamSettingsfromTeam(SelectedBPComponentManufacturingTeam, BPTab))
+        '    Call SelectedBPCopyTeam.LoadTeamFromSettings(LoadTeamSettingsfromTeam(SelectedBPCopyTeam, BPTab))
+        '    Call SelectedBPInventionTeam.LoadTeamFromSettings(LoadTeamSettingsfromTeam(SelectedBPInventionTeam, BPTab))
+
+        '    Call SelectedCalcManufacturingTeam.LoadTeamFromSettings(LoadTeamSettingsfromTeam(SelectedCalcManufacturingTeam, CalcTab))
+        '    Call SelectedCalcComponentManufacturingTeam.LoadTeamFromSettings(LoadTeamSettingsfromTeam(SelectedCalcComponentManufacturingTeam, CalcTab))
+        '    Call SelectedCalcCopyTeam.LoadTeamFromSettings(LoadTeamSettingsfromTeam(SelectedCalcCopyTeam, CalcTab))
+        '    Call SelectedCalcInventionTeam.LoadTeamFromSettings(LoadTeamSettingsfromTeam(SelectedCalcInventionTeam, CalcTab))
+        'Else
+        '    Call SelectedBPManufacturingTeam.LoadTeamFromSettings(AllSettings.LoadTeamSettings(TeamType.Manufacturing, BPTab))
+        '    DefaultBPManufacturingTeam = SelectedBPManufacturingTeam
+        '    Call SelectedBPComponentManufacturingTeam.LoadTeamFromSettings(AllSettings.LoadTeamSettings(TeamType.ComponentManufacturing, BPTab))
+        '    DefaultBPComponentManufacturingTeam = SelectedBPComponentManufacturingTeam
+        '    Call SelectedBPCopyTeam.LoadTeamFromSettings(AllSettings.LoadTeamSettings(TeamType.Copy, BPTab))
+        '    DefaultBPCopyTeam = SelectedBPCopyTeam
+        '    Call SelectedBPInventionTeam.LoadTeamFromSettings(AllSettings.LoadTeamSettings(TeamType.Invention, BPTab))
+        '    DefaultBPInventionTeam = SelectedBPInventionTeam
+
+        '    Call SelectedCalcManufacturingTeam.LoadTeamFromSettings(AllSettings.LoadTeamSettings(TeamType.Manufacturing, CalcTab))
+        '    DefaultCalcManufacturingTeam = SelectedCalcManufacturingTeam
+        '    Call SelectedCalcComponentManufacturingTeam.LoadTeamFromSettings(AllSettings.LoadTeamSettings(TeamType.ComponentManufacturing, CalcTab))
+        '    DefaultCalcComponentManufacturingTeam = SelectedCalcComponentManufacturingTeam
+        '    Call SelectedCalcCopyTeam.LoadTeamFromSettings(AllSettings.LoadTeamSettings(TeamType.Copy, CalcTab))
+        '    DefaultCalcCopyTeam = SelectedCalcCopyTeam
+        '    Call SelectedCalcInventionTeam.LoadTeamFromSettings(AllSettings.LoadTeamSettings(TeamType.Invention, CalcTab))
+        '    DefaultCalcInventionTeam = SelectedCalcInventionTeam
+        'End If
 
     End Sub
 
@@ -3385,7 +3406,7 @@ NoBonus:
 
                             If ItemCategoryID = SubsystemCategoryID Then
                                 SelectedIndyType = IndustryType.SubsystemManufacturing
-                            ElseIf ItemCategoryID = ComponentCategoryID2 And ItemGroupID <> StationPartsGroupID Then
+                            ElseIf ItemCategoryID = ComponentCategoryID And ItemGroupID <> StationPartsGroupID Then
                                 ' Add category for component
                                 If ItemGroupID = CapitalComponentGroupID Or ItemGroupID = AdvCapitalComponentGroupID Then
                                     SelectedIndyType = IndustryType.CapitalComponentManufacturing ' These all use cap components
@@ -3397,12 +3418,10 @@ NoBonus:
                                 SelectedIndyType = IndustryType.NoPOSManufacturing
                             End If
                     End Select
-                Case ActivityComponentManufacturing, ActivityCapComponentManufacturing
-                    If ItemGroupID = CapitalComponentGroupID Or ItemGroupID = AdvCapitalComponentGroupID Then
-                        SelectedIndyType = IndustryType.CapitalComponentManufacturing
-                    Else
-                        SelectedIndyType = IndustryType.ComponentManufacturing
-                    End If
+                Case ActivityComponentManufacturing
+                    SelectedIndyType = IndustryType.ComponentManufacturing
+                Case ActivityCapComponentManufacturing
+                    SelectedIndyType = IndustryType.CapitalComponentManufacturing
                 Case ActivityCopying
                     SelectedIndyType = IndustryType.Copying
                 Case ActivityInvention
@@ -3604,7 +3623,7 @@ NoBonus:
             SelectedBPCopyTeam = CType(CopyTeam.Clone, IndustryTeam)
 
             ' Check usage box
-            chkBPFacilityIncludeUsage.Checked = BuildFacility.IncludeActivityCost
+            chkBPFacilityIncludeUsage.Checked = BuildFacility.IncludeActivityUsage
 
             ' Always start with manufacturing team
             cmbBPTeamActivities.Text = ActivityManufacturing
@@ -4354,11 +4373,6 @@ NoBonus:
             ' Include cost for invention
             SelectedBPInventionFacility.IncludeActivityCost = chkBPIncludeInventionCosts.Checked
             ' Use the original ME and TE values when they change the meta level
-            If chkBPIncludeInventionCosts.Checked Then
-                SelectedBPInventionFacility.IncludeActivityCost = True
-            Else
-                SelectedBPInventionFacility.IncludeActivityCost = False
-            End If
             If Not IsNothing(SelectedBlueprint) Then
                 Call UpdateBPGrids(SelectedBlueprint.GetBPTypeID, SelectedBlueprint.GetTechLevel, False, SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID)
             End If
@@ -5237,95 +5251,118 @@ Tabs:
             Case ActivityManufacturing
                 Select Case BPGroupID
                     Case SuperCarrierGroupID, TitanGroupID
-                        SelectedBPManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
+                        SelectedBPManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                         Call SelectedBPSuperManufacturingFacility.SaveFacility(BPTab)
                         DefaultBPSuperManufacturingFacility = CType(SelectedBPSuperManufacturingFacility.Clone, IndustryFacility)
                     Case BoosterGroupID
-                        SelectedBPBoosterManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
+                        SelectedBPBoosterManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                         Call SelectedBPBoosterManufacturingFacility.SaveFacility(BPTab)
                         DefaultBPBoosterManufacturingFacility = CType(SelectedBPBoosterManufacturingFacility.Clone, IndustryFacility)
                     Case CarrierGroupID, DreadnoughtGroupID, CapitalIndustrialShipGroupID
-                        SelectedBPCapitalManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
+                        SelectedBPCapitalManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                         Call SelectedBPCapitalManufacturingFacility.SaveFacility(BPTab)
                         DefaultBPCapitalManufacturingFacility = CType(SelectedBPCapitalManufacturingFacility.Clone, IndustryFacility)
                     Case StrategicCruiserGroupID
-                        SelectedBPT3CruiserManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
+                        SelectedBPT3CruiserManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                         Call SelectedBPT3CruiserManufacturingFacility.SaveFacility(BPTab)
                         DefaultBPT3CruiserManufacturingFacility = CType(SelectedBPT3CruiserManufacturingFacility.Clone, IndustryFacility)
                     Case TacticalDestroyerGroupID
-                        SelectedBPT3DestroyerManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
+                        SelectedBPT3DestroyerManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                         Call SelectedBPT3DestroyerManufacturingFacility.SaveFacility(BPTab)
                         DefaultBPT3DestroyerManufacturingFacility = CType(SelectedBPT3DestroyerManufacturingFacility.Clone, IndustryFacility)
                     Case Else
                         If cmbBPFacilityType.Text = POSFacility Then
 
+                            Dim TempFacility As New IndustryFacility
+
                             ' Determine the pos facility if needed
                             Dim IndyType As IndustryType = GetProductionType(cmbBPFacilityActivities.Text, BPGroupID, BPCategoryID, POSFacility)
 
+                            ' Save all three types of POS facilities and the main manufacturing POS as the same so it's all consistent (assume only one pos for this stuff)
                             Select Case IndyType
                                 Case IndustryType.POSFuelBlockManufacturing
-                                    SelectedBPPOSFuelBlockFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
-                                    Call SelectedBPPOSFuelBlockFacility.SaveFacility(BPTab)
-                                    DefaultBPPOSFuelBlockFacility = CType(SelectedBPPOSFuelBlockFacility.Clone, IndustryFacility)
+                                    TempFacility = CType(SelectedBPPOSFuelBlockFacility.Clone, IndustryFacility)
                                 Case IndustryType.POSLargeShipManufacturing
-                                    SelectedBPPOSLargeShipFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
-                                    Call SelectedBPPOSLargeShipFacility.SaveFacility(BPTab)
-                                    DefaultBPPOSLargeShipFacility = CType(SelectedBPPOSLargeShipFacility.Clone, IndustryFacility)
+                                    TempFacility = CType(SelectedBPPOSLargeShipFacility.Clone, IndustryFacility)
                                 Case IndustryType.POSModuleManufacturing
-                                    SelectedBPPOSModuleFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
-                                    Call SelectedBPPOSModuleFacility.SaveFacility(BPTab)
-                                    DefaultBPPOSModuleFacility = CType(SelectedBPPOSModuleFacility.Clone, IndustryFacility)
+                                    TempFacility = CType(SelectedBPPOSModuleFacility.Clone, IndustryFacility)
+                                Case Else
+                                    TempFacility = CType(SelectedBPManufacturingFacility.Clone, IndustryFacility)
                             End Select
 
+                            TempFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
+
+                            ' Now using the temp, save all 4 types (manufacturing doesn't really matter)
+                            TempFacility.FacilityName = SelectedBPPOSFuelBlockFacility.FacilityName
+                            TempFacility.FacilityType = SelectedBPPOSFuelBlockFacility.FacilityType
+                            TempFacility.ProductionType = IndustryType.POSFuelBlockManufacturing
+                            SelectedBPPOSFuelBlockFacility = CType(TempFacility.Clone, IndustryFacility)
+                            Call SelectedBPPOSFuelBlockFacility.SaveFacility(BPTab)
+                            DefaultBPPOSFuelBlockFacility = CType(SelectedBPPOSFuelBlockFacility.Clone, IndustryFacility)
+
+                            TempFacility.FacilityName = SelectedBPPOSLargeShipFacility.FacilityName
+                            TempFacility.FacilityType = SelectedBPPOSLargeShipFacility.FacilityType
+                            TempFacility.ProductionType = IndustryType.POSLargeShipManufacturing
+                            SelectedBPPOSLargeShipFacility = CType(TempFacility.Clone, IndustryFacility)
+                            Call SelectedBPPOSLargeShipFacility.SaveFacility(BPTab)
+                            DefaultBPPOSLargeShipFacility = CType(SelectedBPPOSLargeShipFacility.Clone, IndustryFacility)
+
+                            TempFacility.FacilityName = SelectedBPPOSModuleFacility.FacilityName
+                            TempFacility.FacilityType = SelectedBPPOSModuleFacility.FacilityType
+                            TempFacility.ProductionType = IndustryType.POSModuleManufacturing
+                            SelectedBPPOSModuleFacility = CType(TempFacility.Clone, IndustryFacility)
+                            Call SelectedBPPOSModuleFacility.SaveFacility(BPTab)
+                            DefaultBPPOSModuleFacility = CType(SelectedBPPOSModuleFacility.Clone, IndustryFacility)
+
                             ' It's a pos, so always save the facility as well for all other manufacturing
-                            SelectedBPManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
-                            Dim SavedIndyType As IndustryType = SelectedBPManufacturingFacility.ProductionType
-                            SelectedBPManufacturingFacility.ProductionType = IndustryType.Manufacturing ' Save as the base manufacturing
+                            TempFacility.FacilityName = SelectedBPManufacturingFacility.FacilityName
+                            TempFacility.FacilityType = SelectedBPManufacturingFacility.FacilityType
+                            TempFacility.ProductionType = IndustryType.Manufacturing
+                            SelectedBPManufacturingFacility = CType(TempFacility.Clone, IndustryFacility)
                             Call SelectedBPManufacturingFacility.SaveFacility(BPTab)
-                            SelectedBPManufacturingFacility.ProductionType = SavedIndyType
                             DefaultBPManufacturingFacility = CType(SelectedBPManufacturingFacility.Clone, IndustryFacility)
 
                         Else
                             If BPCategoryID = SubsystemCategoryID Then
-                                SelectedBPSubsystemManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
+                                SelectedBPSubsystemManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                                 Call SelectedBPSubsystemManufacturingFacility.SaveFacility(BPTab)
                                 DefaultBPSubsystemManufacturingFacility = CType(SelectedBPSubsystemManufacturingFacility.Clone, IndustryFacility)
-                            ElseIf BPCategoryID = ComponentCategoryID2 Then
+                            ElseIf BPCategoryID = ComponentCategoryID Then
                                 If BPGroupID = AdvCapitalComponentGroupID Or BPGroupID = CapitalComponentGroupID Then
-                                    SelectedBPCapitalComponentManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
+                                    SelectedBPCapitalComponentManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                                     Call SelectedBPCapitalComponentManufacturingFacility.SaveFacility(BPTab)
                                     DefaultBPCapitalComponentManufacturingFacility = CType(SelectedBPCapitalComponentManufacturingFacility.Clone, IndustryFacility)
                                 Else
-                                    SelectedBPComponentManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
+                                    SelectedBPComponentManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                                     Call SelectedBPComponentManufacturingFacility.SaveFacility(BPTab)
                                     DefaultBPComponentManufacturingFacility = CType(SelectedBPComponentManufacturingFacility.Clone, IndustryFacility)
                                 End If
                             Else
-                                SelectedBPManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
+                                SelectedBPManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                                 Call SelectedBPManufacturingFacility.SaveFacility(BPTab)
                                 DefaultBPManufacturingFacility = CType(SelectedBPManufacturingFacility.Clone, IndustryFacility)
                             End If
                         End If
                 End Select
             Case ActivityComponentManufacturing
-                SelectedBPComponentManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
+                SelectedBPComponentManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                 Call SelectedBPComponentManufacturingFacility.SaveFacility(BPTab)
                 DefaultBPComponentManufacturingFacility = CType(SelectedBPComponentManufacturingFacility.Clone, IndustryFacility)
             Case ActivityCapComponentManufacturing
-                SelectedBPCapitalComponentManufacturingFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
+                SelectedBPCapitalComponentManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                 Call SelectedBPCapitalComponentManufacturingFacility.SaveFacility(BPTab)
                 DefaultBPCapitalComponentManufacturingFacility = CType(SelectedBPCapitalComponentManufacturingFacility.Clone, IndustryFacility)
             Case ActivityCopying
-                SelectedBPCopyFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
+                SelectedBPCopyFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                 Call SelectedBPCopyFacility.SaveFacility(BPTab)
                 DefaultBPCopyFacility = CType(SelectedBPCopyFacility.Clone, IndustryFacility)
             Case ActivityInvention
                 If SelectedBlueprint.GetItemGroupID = StrategicCruiserGroupID Or SelectedBlueprint.GetItemCategoryID = SubsystemCategoryID Then
-                    SelectedBPT3InventionFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
+                    SelectedBPT3InventionFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                     Call SelectedBPT3InventionFacility.SaveFacility(BPTab)
                     DefaultBPT3InventionFacility = CType(SelectedBPT3InventionFacility.Clone, IndustryFacility)
                 Else
-                    SelectedBPInventionFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
+                    SelectedBPInventionFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                     Call SelectedBPInventionFacility.SaveFacility(BPTab)
                     DefaultBPInventionFacility = CType(SelectedBPInventionFacility.Clone, IndustryFacility)
                 End If
@@ -5960,8 +5997,8 @@ Tabs:
         End If
     End Sub
 
-    Private Sub chkBPTotalInstallationCosts_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles chkBPFacilityIncludeUsage.CheckedChanged
-        If Not FirstLoad Then
+    Private Sub chkBPFacilityIncludeUsage_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles chkBPFacilityIncludeUsage.CheckedChanged
+        If Not FirstLoad And Not ChangingUsageChecks Then
             If Not IsNothing(SelectedBlueprint) Then
                 Call SetDefaultFacilitybyCheck(GetProductionType(cmbBPFacilityActivities.Text, SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID, cmbBPFacilityType.Text), _
                         chkBPFacilityIncludeUsage, BPTab, cmbBPFacilityType.Text, cmbBPFacilityorArray, _
@@ -6612,7 +6649,7 @@ Tabs:
         ' Default facility
         LoadingFacilityActivities = True ' Don't trigger a combo load yet
         cmbBPFacilityActivities.Text = ActivityManufacturing ' Always load the default manufacturing facility
-        chkBPFacilityIncludeUsage.Checked = DefaultBPManufacturingFacility.IncludeActivityCost ' Make sure this is set before loading
+        chkBPFacilityIncludeUsage.Checked = DefaultBPManufacturingFacility.IncludeActivityUsage ' Make sure this is set before loading
         Call LoadFacility(IndustryType.Manufacturing, True, False, _
                           cmbBPFacilityActivities.Text, cmbBPFacilityType, cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, _
                           lblBPFacilityBonus, lblBPFacilityDefault, lblBPFacilityManualME, txtBPFacilityManualME, _
@@ -7257,7 +7294,7 @@ Tabs:
 
         ' Determine the type of facility we want to build from for this blueprint first
         BlueprintBuildFacility = GetManufacturingFacility(GetProductionType(ActivityManufacturing, BPGroupID, BPCategoryID, cmbBPFacilityType.Text), BPTab)
-        BlueprintBuildFacility.IncludeActivityCost = chkBPFacilityIncludeUsage.Checked
+        BlueprintBuildFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
 
         ' Select the component facility for the Blueprints components
         Select Case BPGroupID
@@ -7638,7 +7675,7 @@ ExitForm:
 
         ' Enable Teams and facility selectors
         tabBPInventionREEquip.Enabled = True
-        gbBPTeam.Enabled = True
+        'gbBPTeam.Enabled = True
 
         Me.Cursor = Cursors.Default
 
@@ -7913,7 +7950,7 @@ ExitForm:
                         DBCommand = New SQLiteCommand(SQL, DB)
                         rsLookup = DBCommand.ExecuteReader
                         rsLookup.Read()
-                        If rsLookup.GetInt64(1) = ComponentCategoryID2 Then
+                        If rsLookup.GetInt64(1) = ComponentCategoryID Then
                             ' Only add this if it's a component - ingore all T1 and other items
                             TempList.Add(rsLookup.GetInt64(0))
                         End If
@@ -7973,7 +8010,7 @@ ExitForm:
         If chkBPFacilityIncludeUsage.Checked Then
             Select Case cmbBPFacilityActivities.Text
                 Case ActivityManufacturing
-                    lblBPFacilityUsage.Text = FormatNumber(SelectedBlueprint.GetManufacturingUsage / DivideUnits, 2)
+                    lblBPFacilityUsage.Text = FormatNumber(SelectedBlueprint.GetManufacturingFacilityUsage / DivideUnits, 2)
                 Case ActivityInvention
                     lblBPFacilityUsage.Text = FormatNumber(SelectedBlueprint.GetInventionREUsage() / DivideUnits, 2)
                 Case ActivityCopying
@@ -7988,8 +8025,8 @@ ExitForm:
         End If
 
         ' Total
-        lblBPRawTotalCost.Text = FormatNumber((SelectedBlueprint.GetTotalRawCost + SelectedBlueprint.GetBPTaxes + SelectedBlueprint.GetBPBrokerFees + SelectedBlueprint.GetManufacturingUsage) / DivideUnits, 2)
-        lblBPTotalCompCost.Text = FormatNumber((SelectedBlueprint.GetTotalComponentCost + SelectedBlueprint.GetBPTaxes + SelectedBlueprint.GetBPBrokerFees + SelectedBlueprint.GetManufacturingUsage) / DivideUnits, 2)
+        lblBPRawTotalCost.Text = FormatNumber((SelectedBlueprint.GetTotalRawCost + SelectedBlueprint.GetBPTaxes + SelectedBlueprint.GetBPBrokerFees + SelectedBlueprint.GetManufacturingFacilityUsage) / DivideUnits, 2)
+        lblBPTotalCompCost.Text = FormatNumber((SelectedBlueprint.GetTotalComponentCost + SelectedBlueprint.GetBPTaxes + SelectedBlueprint.GetBPBrokerFees + SelectedBlueprint.GetManufacturingFacilityUsage) / DivideUnits, 2)
 
         ' Profit labels (market cost - total cost of mats and invention)
         TotalRawProfit = SelectedBlueprint.GetTotalRawProfit / DivideUnits
@@ -10691,7 +10728,7 @@ ExitSub:
                 With DefaultCalcBaseManufacturingFacility
                     If cmbCalcBaseFacilityRegion.Text = .RegionName _
                         And cmbCalcBaseFacilitySystem.Text = .SolarSystemName _
-                        And chkCalcBaseFacilityIncludeUsage.Checked = .IncludeActivityCost Then
+                        And chkCalcBaseFacilityIncludeUsage.Checked = .IncludeActivityUsage Then
                         ' Is the default, set it
                         btnCalcBaseFacilitySave.Enabled = False
                         lblCalcBaseFacilityDefault.Visible = True
@@ -10783,7 +10820,7 @@ ExitSub:
 
     Private Sub btnCalcBaseFacilitySave_Click(sender As System.Object, e As System.EventArgs) Handles btnCalcBaseFacilitySave.Click
 
-        SelectedCalcBaseManufacturingFacility.IncludeActivityCost = chkCalcBaseFacilityIncludeUsage.Checked
+        SelectedCalcBaseManufacturingFacility.IncludeActivityUsage = chkCalcBaseFacilityIncludeUsage.Checked
         Call SelectedCalcBaseManufacturingFacility.SaveFacility(CalcTab)
         DefaultCalcBaseManufacturingFacility = CType(SelectedCalcBaseManufacturingFacility.Clone, IndustryFacility)
 
@@ -11061,7 +11098,7 @@ ExitSub:
 
     Private Sub btnCalcComponentFacilitySave_Click(sender As System.Object, e As System.EventArgs) Handles btnCalcComponentFacilitySave.Click
 
-        SelectedCalcComponentManufacturingFacility.IncludeActivityCost = chkCalcComponentFacilityIncludeUsage.Checked
+        SelectedCalcComponentManufacturingFacility.IncludeActivityUsage = chkCalcComponentFacilityIncludeUsage.Checked
         Call SelectedCalcComponentManufacturingFacility.SaveFacility(CalcTab)
         DefaultCalcComponentManufacturingFacility = CType(SelectedCalcComponentManufacturingFacility.Clone, IndustryFacility)
 
@@ -12151,7 +12188,7 @@ ExitSub:
 
     Private Sub btnCalcNoPOSFacilitySave_Click(sender As System.Object, e As System.EventArgs) Handles btnCalcNoPOSFacilitySave.Click
 
-        SelectedCalcNoPOSFacility.IncludeActivityCost = chkCalcNoPOSFacilityIncludeUsage.Checked
+        SelectedCalcNoPOSFacility.IncludeActivityUsage = chkCalcNoPOSFacilityIncludeUsage.Checked
         Call SelectedCalcNoPOSFacility.SaveFacility(CalcTab)
         DefaultCalcNoPOSFacility = CType(SelectedCalcNoPOSFacility.Clone, IndustryFacility)
 
@@ -12386,7 +12423,7 @@ ExitSub:
 
     Private Sub btnCalcSuperFacilitySave_Click(sender As System.Object, e As System.EventArgs) Handles btnCalcSuperFacilitySave.Click
 
-        SelectedCalcSuperManufacturingFacility.IncludeActivityCost = chkCalcSuperFacilityIncludeUsage.Checked
+        SelectedCalcSuperManufacturingFacility.IncludeActivityUsage = chkCalcSuperFacilityIncludeUsage.Checked
         Call SelectedCalcSuperManufacturingFacility.SaveFacility(CalcTab)
         DefaultCalcSuperManufacturingFacility = CType(SelectedCalcSuperManufacturingFacility.Clone, IndustryFacility)
 
@@ -12620,7 +12657,7 @@ ExitSub:
 
     Private Sub btnCalcCapitalFacilitySave_Click(sender As System.Object, e As System.EventArgs) Handles btnCalcCapitalFacilitySave.Click
 
-        SelectedCalcCapitalManufacturingFacility.IncludeActivityCost = chkCalcCapitalFacilityIncludeUsage.Checked
+        SelectedCalcCapitalManufacturingFacility.IncludeActivityUsage = chkCalcCapitalFacilityIncludeUsage.Checked
         Call SelectedCalcCapitalManufacturingFacility.SaveFacility(CalcTab)
         DefaultCalcCapitalManufacturingFacility = CType(SelectedCalcCapitalManufacturingFacility.Clone, IndustryFacility)
 
@@ -12858,7 +12895,7 @@ ExitSub:
 
     Private Sub btnCalcT3FacilitySave_Click(sender As System.Object, e As System.EventArgs) Handles btnCalcT3FacilitySave.Click
 
-        SelectedCalcT3CruiserManufacturingFacility.IncludeActivityCost = chkCalcT3FacilityIncludeUsage.Checked
+        SelectedCalcT3CruiserManufacturingFacility.IncludeActivityUsage = chkCalcT3FacilityIncludeUsage.Checked
         Call SelectedCalcT3CruiserManufacturingFacility.SaveFacility(CalcTab)
         DefaultCalcT3CruiserManufacturingFacility = CType(SelectedCalcT3CruiserManufacturingFacility.Clone, IndustryFacility)
 
@@ -13092,7 +13129,7 @@ ExitSub:
 
     Private Sub btnCalcSubsystemFacilitySave_Click(sender As System.Object, e As System.EventArgs) Handles btnCalcSubsystemFacilitySave.Click
 
-        SelectedCalcSubsystemManufacturingFacility.IncludeActivityCost = chkCalcSubsystemFacilityIncludeUsage.Checked
+        SelectedCalcSubsystemManufacturingFacility.IncludeActivityUsage = chkCalcSubsystemFacilityIncludeUsage.Checked
         Call SelectedCalcSubsystemManufacturingFacility.SaveFacility(CalcTab)
         DefaultCalcSubsystemManufacturingFacility = CType(SelectedCalcSubsystemManufacturingFacility.Clone, IndustryFacility)
 
@@ -13326,7 +13363,7 @@ ExitSub:
 
     Private Sub btnCalcBoosterFacilitySave_Click(sender As System.Object, e As System.EventArgs) Handles btnCalcBoosterFacilitySave.Click
 
-        SelectedCalcBoosterManufacturingFacility.IncludeActivityCost = chkCalcBoosterFacilityIncludeUsage.Checked
+        SelectedCalcBoosterManufacturingFacility.IncludeActivityUsage = chkCalcBoosterFacilityIncludeUsage.Checked
         Call SelectedCalcBoosterManufacturingFacility.SaveFacility(CalcTab)
         DefaultCalcBoosterManufacturingFacility = CType(SelectedCalcBoosterManufacturingFacility.Clone, IndustryFacility)
 
@@ -15594,7 +15631,7 @@ CheckTechs:
 
             LoadingFacilityActivities = True
             CalcNoPOSFacilityLoaded = False
-            chkCalcNoPOSFacilityIncludeUsage.Checked = DefaultCalcNoPOSFacility.IncludeActivityCost
+            chkCalcNoPOSFacilityIncludeUsage.Checked = DefaultCalcNoPOSFacility.IncludeActivityUsage
             Call LoadFacility(IndustryType.NoPOSManufacturing, True, False, _
                               ActivityManufacturing, cmbCalcNoPOSFacilityType, cmbCalcNoPOSFacilityRegion, cmbCalcNoPOSFacilitySystem, cmbCalcNoPOSFacilityorArray, _
                               lblCalcNoPOSFacilityBonus, lblCalcNoPOSFacilityDefault, lblCalcNoPOSFacilityManualME, txtCalcNoPOSFacilityManualME, _
@@ -16699,8 +16736,8 @@ CheckTechs:
                                 InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourComponents
                                 InsertItem.CalcType = "Components"
                                 InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetProductionTime, ManufacturingBlueprint.GetTotalUnits)
-                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalComponentCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetManufacturingUsage
-                                InsertItem.TotalManufacturingCost = ManufacturingBlueprint.GetManufacturingUsage
+                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalComponentCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetManufacturingFacilityUsage
+                                InsertItem.TotalManufacturingCost = ManufacturingBlueprint.GetManufacturingFacilityUsage
                                 InsertItem.Taxes = ManufacturingBlueprint.GetBPTaxes
                                 InsertItem.BrokerFees = ManufacturingBlueprint.GetBPBrokerFees
                                 InsertItem.BPProductionTime = FormatIPHTime(ManufacturingBlueprint.GetProductionTime)
@@ -16734,7 +16771,7 @@ CheckTechs:
                             InsertItem.CalcType = "Raw Materials"
                             InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetTotalProductionTime, ManufacturingBlueprint.GetTotalUnits)
                             InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost
-                            InsertItem.TotalManufacturingCost = ManufacturingBlueprint.GetManufacturingUsage
+                            InsertItem.TotalManufacturingCost = ManufacturingBlueprint.GetManufacturingFacilityUsage
                             InsertItem.Taxes = ManufacturingBlueprint.GetBPTaxes
                             InsertItem.BrokerFees = ManufacturingBlueprint.GetBPBrokerFees
                             InsertItem.BPProductionTime = FormatIPHTime(ManufacturingBlueprint.GetProductionTime)
@@ -16792,8 +16829,8 @@ CheckTechs:
                                 InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourRaw
                                 InsertItem.CalcType = "Build/Buy"
                                 InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetTotalProductionTime, ManufacturingBlueprint.GetTotalUnits)
-                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetManufacturingUsage
-                                InsertItem.TotalManufacturingCost = ManufacturingBlueprint.GetManufacturingUsage
+                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetManufacturingFacilityUsage
+                                InsertItem.TotalManufacturingCost = ManufacturingBlueprint.GetManufacturingFacilityUsage
                                 InsertItem.Taxes = ManufacturingBlueprint.GetBPTaxes
                                 InsertItem.BrokerFees = ManufacturingBlueprint.GetBPBrokerFees
                                 InsertItem.BPProductionTime = FormatIPHTime(ManufacturingBlueprint.GetProductionTime)
@@ -16827,7 +16864,7 @@ CheckTechs:
                                 InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourComponents
                                 InsertItem.CalcType = "Components"
                                 InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetProductionTime, ManufacturingBlueprint.GetTotalUnits)
-                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalComponentCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetManufacturingUsage
+                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalComponentCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetManufacturingFacilityUsage
                             ElseIf rbtnCalcCompareRawMats.Checked Then
                                 ' Use the Raw values 
                                 InsertItem.ProfitPercent = ManufacturingBlueprint.GetTotalRawProfitPercent
@@ -16835,7 +16872,7 @@ CheckTechs:
                                 InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourRaw
                                 InsertItem.CalcType = "Raw Materials"
                                 InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetTotalProductionTime, ManufacturingBlueprint.GetTotalUnits)
-                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetManufacturingUsage
+                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetManufacturingFacilityUsage
                             ElseIf rbtnCalcCompareBuildBuy.Checked Then
                                 ' Use the Build/Buy best rate values (the blueprint was set to get these values above)
                                 InsertItem.ProfitPercent = ManufacturingBlueprint.GetTotalRawProfitPercent
@@ -16843,10 +16880,10 @@ CheckTechs:
                                 InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourRaw
                                 InsertItem.CalcType = "Build/Buy"
                                 InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetTotalProductionTime, ManufacturingBlueprint.GetTotalUnits)
-                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetManufacturingUsage
+                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetManufacturingFacilityUsage
                             End If
                             InsertItem.ItemMarketPrice = ManufacturingBlueprint.GetItemMarketPrice
-                            InsertItem.TotalManufacturingCost = ManufacturingBlueprint.GetManufacturingUsage
+                            InsertItem.TotalManufacturingCost = ManufacturingBlueprint.GetManufacturingFacilityUsage
                             InsertItem.Taxes = ManufacturingBlueprint.GetBPTaxes
                             InsertItem.BrokerFees = ManufacturingBlueprint.GetBPBrokerFees
                             InsertItem.BPProductionTime = FormatIPHTime(ManufacturingBlueprint.GetProductionTime)

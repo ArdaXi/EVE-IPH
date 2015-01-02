@@ -178,7 +178,7 @@ Public Module Public_Variables
     Public Const BlueprintCategoryID As Integer = 9
 
     Public Const ConstructionComponentsGroupID As Integer = 334 ' Use this for all non-capital components
-    Public Const ComponentCategoryID2 As Integer = 17
+    Public Const ComponentCategoryID As Integer = 17
     Public Const CapitalComponentGroupID As Integer = 873
     Public Const AdvCapitalComponentGroupID As Integer = 913
 
@@ -835,7 +835,7 @@ Public Module Public_Variables
             ' Taxes and usage
             .ItemTaxes = SentBlueprint.GetBPTaxes
             .ItemBrokerFees = SentBlueprint.GetBPBrokerFees
-            .ItemUsage = SentBlueprint.GetManufacturingUsage
+            .ItemUsage = SentBlueprint.GetManufacturingFacilityUsage
 
             ' Volume of the item(s)
             .BuildVolume = SentBlueprint.GetTotalBuiltItemVolume

@@ -570,6 +570,7 @@ Partial Class frmSettings
         'chkRefreshTeamDataonStartup
         '
         Me.chkRefreshTeamDataonStartup.AutoSize = True
+        Me.chkRefreshTeamDataonStartup.Enabled = False
         Me.chkRefreshTeamDataonStartup.Location = New System.Drawing.Point(17, 71)
         Me.chkRefreshTeamDataonStartup.Name = "chkRefreshTeamDataonStartup"
         Me.chkRefreshTeamDataonStartup.Size = New System.Drawing.Size(158, 17)

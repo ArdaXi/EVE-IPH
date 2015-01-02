@@ -195,8 +195,8 @@ Public Class ProgramSettings
     Public DefaultNullFacilityRegion As String = "Providence"
 
     Public FacilityDefaultActivityCostperSecond As Double = 0
-    Public FacilityDefaultIncludeUsage As Boolean = False
-    Public FacilityDefaultIncludeCost As Boolean = False
+    Public FacilityDefaultIncludeUsage As Boolean = True
+    Public FacilityDefaultIncludeCost As Boolean = False ' Only for Invention, Copy, and RE so let this get set 
     Public FacilityDefaultIncludeTime As Boolean = False ' Only for Invention, Copy, and RE so let this get set 
 
     ' Set here, but use in Update Prices - 6 hours to refresh prices
@@ -4255,7 +4255,7 @@ Public Class ProgramSettings
                     Call WriteSettingsToFile(Tab & ManufacturingFacilitySettingsFileName, FacilitySettingsList, Tab & "ManufacturingFacilitySettings")
                 Case IndustryType.ComponentManufacturing
                     Call WriteSettingsToFile(Tab & ComponentsManufacturingFacilitySettingsFileName, FacilitySettingsList, Tab & "ComponentsManufacturingFacilitySettings")
-                Case IndustryType.ComponentManufacturing
+                Case IndustryType.CapitalComponentManufacturing
                     Call WriteSettingsToFile(Tab & CapitalComponentsManufacturingFacilitySettingsFileName, FacilitySettingsList, Tab & "CapitalComponentsManufacturingFacilitySettings")
                 Case IndustryType.SubsystemManufacturing
                     Call WriteSettingsToFile(Tab & SubsystemManufacturingFacilitySettingsFileName, FacilitySettingsList, Tab & "SubsystemManufacturingFacilitySettings")
