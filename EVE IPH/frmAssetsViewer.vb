@@ -711,7 +711,7 @@ Public Class frmAssetsViewer
                     End If
 
                     If chkModules.Checked Then ' Not rigs but Modules
-                        SQL = SQL & "(ITEM_CATEGORYIN ('Module', 'Deployable') AND " & "ITEM_GROUP NOT LIKE 'Rig%' AND " & TechSQL & ") OR "
+                        SQL = SQL & "(ITEM_CATEGORY IN ('Module', 'Deployable') AND " & "ITEM_GROUP NOT LIKE 'Rig%' AND " & TechSQL & ") OR "
                     End If
 
                     If chkShips.Checked Then
@@ -731,11 +731,11 @@ Public Class frmAssetsViewer
                     End If
 
                     If chkRigs.Checked Then ' Rigs
-                        SQL = SQL & "(ITEM_CATEGORY= 'Module' AND ITEM_GROUP LIKE 'Rig%' AND " & TechSQL & ") OR "
+                        SQL = SQL & "(ITEM_CATEGORY = 'Module' AND ITEM_GROUP LIKE 'Rig%' AND " & TechSQL & ") OR "
                     End If
 
                     If chkStructures.Checked Then
-                        SQL = SQL & "(ITEM_CATEGORY= 'Structure' AND " & TechSQL & ") OR "
+                        SQL = SQL & "(ITEM_CATEGORY = 'Structure' AND " & TechSQL & ") OR "
                     End If
                 Else
                     ' No tech level chosen, so just continue with other options and skip these that require a tech selection

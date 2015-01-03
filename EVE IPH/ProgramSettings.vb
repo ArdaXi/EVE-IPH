@@ -291,6 +291,8 @@ Public Class ProgramSettings
     Public DefaultCalcLaboratoryLines As Integer = 1
     Public DefaultCalcRuns As Integer = 1
     Public DefaultCalcSizeChecks As Boolean = False
+    Public DefaultCheckT3Destroyers As Boolean = False
+    Public DefaultCheckCapComponents As Boolean = False
 
     ' Datacore Default Settings
     Public DefaultDCPricesFrom As String = "Updated Prices"
@@ -1587,6 +1589,8 @@ Public Class ProgramSettings
                     .CheckMedium = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "CheckMedium", DefaultCalcSizeChecks))
                     .CheckLarge = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "CheckLarge", DefaultCalcSizeChecks))
                     .CheckXL = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "CheckXL", DefaultCalcSizeChecks))
+                    .CheckCapitalComponentsFacility = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "CheckCapitalComponentsFacility", DefaultCheckT3Destroyers))
+                    .CheckT3DestroyerFacility = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "CheckT3DestroyerFacility", DefaultCheckCapComponents))
                 End With
 
             Else
@@ -1676,7 +1680,8 @@ Public Class ProgramSettings
             .CheckMedium = DefaultCalcSizeChecks
             .CheckLarge = DefaultCalcSizeChecks
             .CheckXL = DefaultCalcSizeChecks
-
+            .CheckT3DestroyerFacility = DefaultCheckT3Destroyers
+            .CheckCapitalComponentsFacility = DefaultCheckCapComponents
         End With
 
         ' Save locally
@@ -1687,7 +1692,7 @@ Public Class ProgramSettings
 
     ' Saves the tab settings to XML
     Public Sub SaveManufacturingSettings(SentSettings As ManufacturingTabSettings)
-        Dim ManufacturingSettingsList(63) As Setting
+        Dim ManufacturingSettingsList(65) As Setting
 
         Try
             ManufacturingSettingsList(0) = New Setting("BlueprintType", CStr(SentSettings.BlueprintType))
@@ -1754,6 +1759,8 @@ Public Class ProgramSettings
             ManufacturingSettingsList(61) = New Setting("CheckIncludeBrokersFees", CStr(SentSettings.CheckIncludeBrokersFees))
             ManufacturingSettingsList(62) = New Setting("CheckDecryptorUseforT2", CStr(SentSettings.CheckDecryptorUseforT2))
             ManufacturingSettingsList(63) = New Setting("CheckDecryptorUseforT3", CStr(SentSettings.CheckDecryptorUseforT3))
+            ManufacturingSettingsList(64) = New Setting("CheckCapitalComponentsFacility", CStr(SentSettings.CheckCapitalComponentsFacility))
+            ManufacturingSettingsList(65) = New Setting("CheckT3DestroyerFacility", CStr(SentSettings.CheckT3DestroyerFacility))
 
             Call WriteSettingsToFile(ManufacturingSettingsFileName, ManufacturingSettingsList, "ManufacturingSettings")
 
@@ -4640,6 +4647,9 @@ Public Structure ManufacturingTabSettings
     Dim CheckBPTypeDeployables As Boolean
     Dim CheckBPTypeCelestials As Boolean
     Dim CheckBPTypeStationParts As Boolean
+
+    Dim CheckCapitalComponentsFacility As Boolean
+    Dim CheckT3DestroyerFacility As Boolean
 
     Dim AveragePriceDuration As String
 

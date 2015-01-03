@@ -22,7 +22,7 @@ Public Class frmBlueprintManagement
     Private NextCell As ListViewItem.ListViewSubItem
 
     Private MEUpdate As Boolean
-    Private PEUpdate As Boolean
+    Private TEUpdate As Boolean
     Private FavoriteUpdate As Boolean
     Private BPTypeUpdate As Boolean
 
@@ -1010,7 +1010,7 @@ Public Class frmBlueprintManagement
             Copies = " AND BP_TYPE = " & CStr(BPType.Copy) & " " ' Only Copies
         End If
 
-        Return WhereClause & Copies & RaceClause & GetSizesClause
+        Return WhereClause & Copies & RaceClause & GetSizesClause()
 
     End Function
 
@@ -1629,9 +1629,9 @@ Public Class frmBlueprintManagement
             End If
 
             If iSubIndex = 7 Then
-                PEUpdate = True
+                TEUpdate = True
             Else
-                PEUpdate = False
+                TEUpdate = False
             End If
 
             FavoriteUpdate = False
@@ -1641,7 +1641,7 @@ Public Class frmBlueprintManagement
         ElseIf iSubIndex = 8 Then
 
             MEUpdate = False
-            PEUpdate = False
+            TEUpdate = False
             FavoriteUpdate = True
 
             Call ShowEditBoxes()
@@ -1674,7 +1674,7 @@ Public Class frmBlueprintManagement
                 Exit Sub
             End If
 
-            If Not IsNumeric(txtBPEdit.Text) And PEUpdate Then
+            If Not IsNumeric(txtBPEdit.Text) And TEUpdate Then
                 MsgBox("Invalid TE Value", vbExclamation)
                 Exit Sub
             End If
@@ -1686,7 +1686,7 @@ Public Class frmBlueprintManagement
                 MEValue = CInt(CurrentRow.SubItems(6).Text)
             End If
 
-            If PEUpdate Then
+            If TEUpdate Then
                 TEValue = CInt(txtBPEdit.Text)
             Else
                 TEValue = CInt(CurrentRow.SubItems(7).Text)
@@ -1823,7 +1823,7 @@ Tabs:
             PreviousCell = PreviousRow.SubItems.Item(8) ' On previous line Favorite combo
             PreviousCellRow = PreviousRow
             MEUpdate = True
-            PEUpdate = False
+            TEUpdate = False
             FavoriteUpdate = False
         ElseIf iSubIndex = 7 Then ' TE box is selected
             ' Set the next and previous ME or favorite boxes (subitems)
@@ -1831,7 +1831,7 @@ Tabs:
             NextCellRow = CurrentRow
             PreviousCell = CurrentRow.SubItems.Item(6) ' On same line ME box
             PreviousCellRow = CurrentRow
-            PEUpdate = True
+            TEUpdate = True
             MEUpdate = False
             FavoriteUpdate = False
         ElseIf iSubIndex = 8 Then ' Favorite combo
@@ -1840,7 +1840,7 @@ Tabs:
             NextCellRow = NextRow
             PreviousCell = CurrentRow.SubItems.Item(7) ' On same line TE box
             PreviousCellRow = CurrentRow
-            PEUpdate = False
+            TEUpdate = False
             MEUpdate = False
             FavoriteUpdate = True
         Else
@@ -1859,7 +1859,7 @@ Tabs:
         lLeft = CurrentCell.Bounds.Left + 2
         lWidth = CurrentCell.Bounds.Width
 
-        If MEUpdate Or PEUpdate Then
+        If MEUpdate Or TEUpdate Then
             With txtBPEdit
                 .Hide()
                 .SetBounds(lLeft + lstBPs.Left, CurrentCell.Bounds.Top + _
@@ -1944,7 +1944,11 @@ Tabs:
     End Sub
 
     Private Sub txtBPEdit_TextChanged(sender As Object, e As System.EventArgs) Handles txtBPEdit.TextChanged
-        Call VerifyMETEEntry(txtBPEdit, "ME")
+        If MEUpdate Then
+            Call VerifyMETEEntry(txtBPEdit, "ME")
+        Else
+            Call VerifyMETEEntry(txtBPEdit, "TE")
+        End If
     End Sub
 
 #End Region
