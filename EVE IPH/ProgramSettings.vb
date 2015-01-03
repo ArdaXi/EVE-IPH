@@ -110,6 +110,7 @@ Public Class ProgramSettings
 
     Public DefaultCheckBuildBuy As Boolean = False
     Public DefaultLinkTeamstoFacilitySystems As Boolean = False
+    Public DefaultSaveBPRelicsDecryptors As Boolean = False
 
     Public DefaultSettingME As Integer = 0
     Public DefaultSettingTE As Integer = 0
@@ -220,6 +221,8 @@ Public Class ProgramSettings
     Public DefaultBPProductionLines As Integer = 1
     Public DefaultBPLaboratoryLines As Integer = 1
     Public DefaultBPRELines As Integer = 1
+    Public DefaultBPRelicType As String = "" ' If they want to save and auto load relic types
+    Public DefaultBPDecryptorType As String = "" ' if they want to save and auto load decryptors
 
     ' Update Prices Default Settings
     Public DefaultPriceChecks As Boolean = False
@@ -918,6 +921,7 @@ Public Class ProgramSettings
                     .EVECentralRefreshInterval = CInt(GetSettingValue(AppSettingsFileName, SettingTypes.TypeInteger, "ApplicationSettings", "EVECentralRefreshInterval", DefaultEVECentralRefreshInterval))
                     .DisableSound = CBool(GetSettingValue(AppSettingsFileName, SettingTypes.TypeBoolean, "ApplicationSettings", "DisableSound", DefaultDisableSound))
                     .LinkBPTabtoFacilitySystem = CBool(GetSettingValue(AppSettingsFileName, SettingTypes.TypeBoolean, "ApplicationSettings", "LinkBPTabtoFacilitySystem", DefaultLinkTeamstoFacilitySystems))
+                    .SaveBPRelicsDecryptors = CBool(GetSettingValue(AppSettingsFileName, SettingTypes.TypeBoolean, "ApplicationSettings", "SaveBPRelicsDecryptors", DefaultSaveBPRelicsDecryptors))
                 End With
 
                 Select Case TempSettings.RefiningEfficiency
@@ -981,6 +985,7 @@ Public Class ProgramSettings
         TempSettings.DisableSVR = DefaultDisableSVR
         TempSettings.SuggestBuildBPNotOwned = DefaultSuggestBuildBPNotOwned
         TempSettings.LinkBPTabtoFacilitySystem = DefaultLinkTeamstoFacilitySystems
+        TempSettings.SaveBPRelicsDecryptors = DefaultSaveBPRelicsDecryptors
 
         TempSettings.ShopListIncludeInventMats = DefaultShopListIncludeInventMats
         TempSettings.ShopListIncludeREMats = DefaultShopListIncludeREMats
@@ -995,7 +1000,7 @@ Public Class ProgramSettings
 
     ' Saves the application settings to XML
     Public Sub SaveApplicationSettings(SentSettings As ApplicationSettings)
-        Dim ApplicationSettingsList(25) As Setting
+        Dim ApplicationSettingsList(26) As Setting
 
         Try
             ApplicationSettingsList(0) = New Setting("CheckforUpdatesonStart", CStr(SentSettings.CheckforUpdatesonStart))
@@ -1024,6 +1029,7 @@ Public Class ProgramSettings
             ApplicationSettingsList(23) = New Setting("LoadCRESTFacilityDataonStartup", CStr(SentSettings.LoadCRESTFacilityDataonStartup))
             ApplicationSettingsList(24) = New Setting("LoadCRESTMarketDataonStartup", CStr(SentSettings.LoadCRESTMarketDataonStartup))
             ApplicationSettingsList(25) = New Setting("LinkBPTabtoFacilitySystem", CStr(SentSettings.LinkBPTabtoFacilitySystem))
+            ApplicationSettingsList(26) = New Setting("SaveBPRelicsDecryptors", CStr(SentSettings.SaveBPRelicsDecryptors))
 
             Call WriteSettingsToFile(AppSettingsFileName, ApplicationSettingsList, "ApplicationSettings")
 
@@ -1161,6 +1167,8 @@ Public Class ProgramSettings
                     .LargeCheck = CBool(GetSettingValue(BPSettingsFileName, SettingTypes.TypeBoolean, "BPSettings", "SmallCheck", DefaultSizeChecks))
                     .XLCheck = CBool(GetSettingValue(BPSettingsFileName, SettingTypes.TypeBoolean, "BPSettings", "SmallCheck", DefaultSizeChecks))
                     .IncludeFees = CBool(GetSettingValue(BPSettingsFileName, SettingTypes.TypeBoolean, "BPSettings", "IncludeFees", DefaultBPIncludeFees))
+                    .RelicType = CStr(GetSettingValue(BPSettingsFileName, SettingTypes.TypeString, "BPSettings", "RelicType", DefaultBPRelicType))
+                    .DecryptorType = CStr(GetSettingValue(BPSettingsFileName, SettingTypes.TypeString, "BPSettings", "DecryptorType", DefaultBPDecryptorType))
                 End With
 
             Else
@@ -1183,7 +1191,7 @@ Public Class ProgramSettings
 
     ' Saves the tab settings to XML
     Public Sub SaveBPSettings(SentSettings As BPTabSettings)
-        Dim BPSettingsList(23) As Setting
+        Dim BPSettingsList(25) As Setting
 
         Try
             BPSettingsList(0) = New Setting("BlueprintTypeSelection", CStr(SentSettings.BlueprintTypeSelection))
@@ -1211,6 +1219,8 @@ Public Class ProgramSettings
             BPSettingsList(21) = New Setting("IncludeCopyTime", CStr(SentSettings.IncludeCopyTime))
             BPSettingsList(22) = New Setting("IncludeT3Cost", CStr(SentSettings.IncludeT3Cost))
             BPSettingsList(23) = New Setting("IncludeT3Time", CStr(SentSettings.IncludeT3Time))
+            BPSettingsList(24) = New Setting("RelicType", CStr(SentSettings.RelicType))
+            BPSettingsList(25) = New Setting("DecryptorType", CStr(SentSettings.DecryptorType))
 
             Call WriteSettingsToFile(BPSettingsFileName, BPSettingsList, "BPSettings")
 
@@ -1254,6 +1264,9 @@ Public Class ProgramSettings
         LocalSettings.IncludeCopyTime = DefaultBPIncludeCopyTime
         LocalSettings.IncludeT3Cost = DefaultBPIncludeT3Cost
         LocalSettings.IncludeT3Time = DefaultBPIncludeT3Time
+
+        LocalSettings.RelicType = DefaultBPRelicType
+        LocalSettings.DecryptorType = DefaultBPDecryptorType
 
         ' Save locally
         BPSettings = LocalSettings
@@ -4507,6 +4520,7 @@ Public Structure ApplicationSettings
     ' For Build/Buy 
     Dim CheckBuildBuy As Boolean ' Default for setting the check box for build/buy on the blueprints screen
     Dim SuggestBuildBPNotOwned As Boolean ' For Build/Buy suggestions
+    Dim SaveBPRelicsDecryptors As Boolean ' For auto-loading relics and decryptor types
 
     Dim LinkBPTabtoFacilitySystem As Boolean ' Links the team drop downs to only teams or auctions in the selected facility system
 
@@ -4553,6 +4567,9 @@ Public Structure BPTabSettings
     Dim ProductionLines As Integer
     Dim LaboratoryLines As Integer
     Dim T3Lines As Integer
+
+    Dim RelicType As String
+    Dim DecryptorType As String
 
 End Structure
 

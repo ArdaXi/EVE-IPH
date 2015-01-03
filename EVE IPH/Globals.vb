@@ -127,8 +127,8 @@ Public Module Public_Variables
 
     ' For T3 Relics
     Public Const IntactRelic As String = "Intact"
-    Public Const MalfunctioningRelic As String = "Malfun"
-    Public Const WreckedRelic As String = "Wrecke"
+    Public Const MalfunctioningRelic As String = "Malfunctioning"
+    Public Const WreckedRelic As String = "Wrecked"
 
     ' T2 BPC base ME/TE
     Public Const BaseT2T3ME As Double = 2

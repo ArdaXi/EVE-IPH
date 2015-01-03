@@ -248,9 +248,6 @@ Public Class frmMain
     Private CalcComponentFacilityRegionsLoaded As Boolean
     Private CalcComponentFacilitySystemsLoaded As Boolean
     Private CalcComponentFacilitiesLoaded As Boolean
-    Private CalcCapitalComponentFacilityRegionsLoaded As Boolean
-    Private CalcCapitalComponentFacilitySystemsLoaded As Boolean
-    Private CalcCapitalComponentFacilitiesLoaded As Boolean
     Private CalcInventionFacilityRegionsLoaded As Boolean
     Private CalcInventionFacilitySystemsLoaded As Boolean
     Private CalcInventionFacilitiesLoaded As Boolean
@@ -272,9 +269,6 @@ Public Class frmMain
     Private CalcT3FacilityRegionsLoaded As Boolean
     Private CalcT3FacilitySystemsLoaded As Boolean
     Private CalcT3FacilitiesLoaded As Boolean
-    Private CalcT3DestroyerFacilityRegionsLoaded As Boolean
-    Private CalcT3DestroyerFacilitySystemsLoaded As Boolean
-    Private CalcT3DestroyerFacilitiesLoaded As Boolean
     Private CalcSubsystemFacilityRegionsLoaded As Boolean
     Private CalcSubsystemFacilitySystemsLoaded As Boolean
     Private CalcSubsystemFacilitiesLoaded As Boolean
@@ -294,10 +288,12 @@ Public Class frmMain
 
     ' For manufacturing tab
     Private CalcBaseFacilityLoaded As Boolean ' To check that a full facility is loaded or we can't build anything
+    Private TempCalcComponentFacilityLoaded As Boolean ' Need to set this for both
     Private CalcComponentFacilityLoaded As Boolean
     Private CalcCapitalComponentFacilityLoaded As Boolean
     Private CalcSuperFacilityLoaded As Boolean
     Private CalcCapitalFacilityLoaded As Boolean
+    Private TempCalcT3FacilityLoaded As Boolean
     Private CalcT3FacilityLoaded As Boolean
     Private CalcT3DestroyerFacilityLoaded As Boolean
     Private CalcSubsystemFacilityLoaded As Boolean
@@ -5858,7 +5854,12 @@ Tabs:
         LoadingT3Decryptors = True
         InventionDecryptorsLoaded = False
         T3DecryptorsLoaded = False
-        cmbBPInventionDecryptor.Text = None
+        ' Auto load the decryptor if they want
+        If UserApplicationSettings.SaveBPRelicsDecryptors And UserBPTabSettings.DecryptorType <> "" Then
+            cmbBPInventionDecryptor.Text = UserBPTabSettings.DecryptorType
+        Else
+            cmbBPInventionDecryptor.Text = None
+        End If
         cmbBPT3Decryptor.Text = None
         SelectedDecryptor = NoDecryptor ' Reset the selected decryptor too
         LoadingInventionDecryptors = False
@@ -6141,23 +6142,38 @@ Tabs:
         Dim SQL As String
         Dim readerRelic As SQLiteDataReader
         Dim RelicName As String
+        Dim UserRelicType As String = ""
 
         LoadingRelics = True
 
         SQL = "SELECT typeName FROM INVENTORY_TYPES, INDUSTRY_ACTIVITY_PRODUCTS WHERE productTypeID =" & BPID & " "
-        SQL = SQL & "and typeID = blueprintTypeID"
+        SQL = SQL & "AND typeID = blueprintTypeID"
 
         DBCommand = New SQLiteCommand(SQL, DB)
         readerRelic = DBCommand.ExecuteReader
+
+        If UserBPTabSettings.RelicType <> "" Then
+            If UserBPTabSettings.RelicType.Contains(WreckedRelic) Then
+                UserRelicType = WreckedRelic
+            ElseIf UserBPTabSettings.RelicType.Contains(MalfunctioningRelic) Then
+                UserRelicType = MalfunctioningRelic
+            ElseIf UserBPTabSettings.RelicType.Contains(IntactRelic) Then
+                UserRelicType = IntactRelic
+            End If
+        End If
 
         cmbBPRelic.Items.Clear()
 
         While readerRelic.Read
             RelicName = readerRelic.GetString(0)
             cmbBPRelic.Items.Add(RelicName)
-            ' Load the name of the Wrecked Relic or base tactical destroyer relic in the combo when found - TO DO - see if there is a wrecked version of this, not in DB
-            If RelicName.Substring(0, 7) = "Wrecked" Or RelicName = "Small Malfunctioning Hull Section" Then
+            ' Load the name of the Wrecked Relic or base tactical destroyer relic in the combo when found 
+            If RelicName.Contains(WreckedRelic) And UserBPTabSettings.RelicType = "" Then
                 cmbBPRelic.Text = RelicName
+            ElseIf UserRelicType <> "" Then
+                If RelicName.Contains(UserRelicType) Then
+                    cmbBPRelic.Text = RelicName
+                End If
             End If
         End While
 
@@ -6805,6 +6821,19 @@ Tabs:
 
         TempSettings.PricePerUnit = chkBPPricePerUnit.Checked
 
+        ' Save the relic and decryptor if they have the setting set
+        If UserApplicationSettings.SaveBPRelicsDecryptors Then
+            ' See if the T2 window is open and has a decryptor then save, only will be open if they have a t2 bp loaded
+            If SelectedBlueprint.GetTechLevel = BlueprintTechLevel.T2 Then
+                TempSettings.DecryptorType = cmbBPInventionDecryptor.Text
+            End If
+
+            ' See if the T3 window is open and has a decryptor then save, only will be open if they have a t3 bp loaded
+            If SelectedBlueprint.GetTechLevel = BlueprintTechLevel.T3 Then
+                TempSettings.RelicType = cmbBPRelic.Text
+            End If
+        End If
+
         ' Save these here too
         UserApplicationSettings.CheckBuildBuy = chkBPBuildBuy.Checked
 
@@ -7166,7 +7195,6 @@ Tabs:
         Dim ZeroCostToolTipText As String = ""
 
         Dim BlueprintBuildFacility As IndustryFacility
-        Dim BlueprintComponentFacility As IndustryFacility
         Dim InventionFacility As IndustryFacility
         Dim IndyType As IndustryType
 
@@ -7282,14 +7310,6 @@ Tabs:
         BlueprintBuildFacility = GetManufacturingFacility(GetProductionType(ActivityManufacturing, BPGroupID, BPCategoryID, cmbBPFacilityType.Text), BPTab)
         BlueprintBuildFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
 
-        ' Select the component facility for the Blueprints components
-        Select Case BPGroupID
-            Case TitanGroupID, SupercarrierGroupID, CarrierGroupID, DreadnoughtGroupID, FreighterGroupID, JumpFreighterGroupID, CapitalIndustrialShipGroupID, IndustrialCommandShipGroupID
-                BlueprintComponentFacility = CType(SelectedBPCapitalComponentManufacturingFacility.Clone, IndustryFacility)
-            Case Else
-                BlueprintComponentFacility = CType(SelectedBPComponentManufacturingFacility.Clone, IndustryFacility)
-        End Select
-
         ' Working
         ' Now load the materials into the lists
         ' Clear Lists
@@ -7328,7 +7348,8 @@ Tabs:
 
             SelectedBlueprint = New Blueprint(BPID, SelectedRuns, BPME, BPTE, CInt(txtBPNumBPs.Text), CInt(txtBPLines.Text), CInt(txtBPInventionLines.Text), SelectedCharacter, _
                                   UserApplicationSettings, AdditionalCosts, SelectedBPManufacturingTeam, BlueprintBuildFacility, _
-                                  SelectedBPComponentManufacturingTeam, BlueprintComponentFacility, _
+                                  SelectedBPComponentManufacturingTeam, SelectedBPComponentManufacturingFacility, _
+                                  SelectedBPCapitalComponentManufacturingFacility, _
                                   chkBPBuildBuy.Checked, SelectedDecryptor, _
                                   InventionFacility, SelectedBPInventionTeam, _
                                   SelectedBPCopyFacility, SelectedBPCopyTeam, GetInventItemTypeID(BPID, RelicName))
@@ -7337,7 +7358,7 @@ Tabs:
             ' Construct our Blueprint
             SelectedBlueprint = New Blueprint(BPID, SelectedRuns, BPME, BPTE, CInt(txtBPNumBPs.Text), CInt(txtBPLines.Text), SelectedCharacter, _
                                               UserApplicationSettings, chkBPBuildBuy.Checked, AdditionalCosts, SelectedBPManufacturingTeam, BlueprintBuildFacility, _
-                                              SelectedBPComponentManufacturingTeam, BlueprintComponentFacility)
+                                              SelectedBPComponentManufacturingTeam, SelectedBPComponentManufacturingFacility, SelectedBPCapitalComponentManufacturingFacility)
         End If
 
         ' Build the item and get the list of materials
@@ -7997,14 +8018,19 @@ ExitForm:
             Select Case cmbBPFacilityActivities.Text
                 Case ActivityManufacturing
                     lblBPFacilityUsage.Text = FormatNumber(SelectedBlueprint.GetManufacturingFacilityUsage / DivideUnits, 2)
+                    ttMain.SetToolTip(lblBPFacilityUsage, GetUsageToolTipText(SelectedBlueprint.GetManufacturingFacility, True))
                 Case ActivityInvention
                     lblBPFacilityUsage.Text = FormatNumber(SelectedBlueprint.GetInventionREUsage() / DivideUnits, 2)
+                    ttMain.SetToolTip(lblBPFacilityUsage, GetUsageToolTipText(SelectedBlueprint.GetInventionFacility, False))
                 Case ActivityCopying
                     lblBPFacilityUsage.Text = FormatNumber(SelectedBlueprint.GetBPCCopyUsage() / DivideUnits, 2)
+                    ttMain.SetToolTip(lblBPFacilityUsage, GetUsageToolTipText(SelectedBlueprint.GetCopyFacility, False))
                 Case ActivityComponentManufacturing
                     lblBPFacilityUsage.Text = FormatNumber(SelectedBlueprint.GetComponentFacilityUsage() / DivideUnits, 2)
+                    ttMain.SetToolTip(lblBPFacilityUsage, GetUsageToolTipText(SelectedBlueprint.GetComponentManufacturingFacility, True))
                 Case ActivityCapComponentManufacturing
                     lblBPFacilityUsage.Text = FormatNumber(SelectedBlueprint.GetCapComponentFacilityUsage() / DivideUnits, 2)
+                    ttMain.SetToolTip(lblBPFacilityUsage, GetUsageToolTipText(SelectedBlueprint.GetCapitalComponentManufacturingFacility, True))
             End Select
         Else
             lblBPFacilityUsage.Text = "0.00"
@@ -8150,16 +8176,16 @@ ExitForm:
                         readerOwned.Close()
                     Else ' base T3 runs off of the relic
                         ' Base it off of the relic type - need to look it up based on the TypeID
-                        Select Case cmbBPRelic.Text
-                            Case IntactRelic
-                                MaxProductionRuns = 20
-                            Case MalfunctioningRelic
-                                MaxProductionRuns = 10
-                            Case WreckedRelic
-                                MaxProductionRuns = 3
-                            Case Else
-                                MaxProductionRuns = 3
-                        End Select
+                        ' TO DO - use industry products to get the quantity for the runs on t3 - make new function
+                        If cmbBPRelic.Text.Contains(IntactRelic) Then
+                            MaxProductionRuns = 20
+                        ElseIf cmbBPRelic.Text.Contains(MalfunctioningRelic) Then
+                            MaxProductionRuns = 10
+                        ElseIf cmbBPRelic.Text.Contains(WreckedRelic) Then
+                            MaxProductionRuns = 3
+                        Else
+                            MaxProductionRuns = 3
+                        End If
                     End If
 
                     MaxProductionRuns = CInt(Math.Min(Math.Ceiling((MaxProductionRuns) + SelectedDecryptor.RunMod), MaxProductionRuns))
@@ -8206,6 +8232,23 @@ ExitForm:
 
         End If
     End Sub
+
+    ' Takes the facility and sets all the tool tip text based on the data it used
+    Private Function GetUsageToolTipText(SentFacility As IndustryFacility, IncludeTax As Boolean) As String
+        ' Set the usage tool tip data
+        Dim TTString As String
+
+        ' TO DO - need to update if they add Teams back in
+        TTString = "Total cost of doing the selected activity at this facility using:" & vbCrLf
+        TTString = TTString & "Base Job Cost = " & FormatNumber(SelectedBlueprint.GetBaseJobCost, 2) & " " & vbCrLf
+        TTString = TTString & "System Index = " & FormatPercent(SentFacility.CostIndex, 2) & " " & vbCrLf
+        If IncludeTax Then
+            TTString = TTString & "Facility Tax Rate = " & FormatPercent(SentFacility.TaxRate, 2) & " " & vbCrLf
+        End If
+
+        Return TTString
+
+    End Function
 
 #End Region
 
@@ -10954,19 +10997,20 @@ ExitSub:
     Private Sub chkCalcCapComponents_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcCapComponentsFacility.CheckedChanged
 
         LoadingFacilityActivities = True
-        CalcComponentFacilityLoaded = False
         If chkCalcCapComponentsFacility.Checked Then
             chkCalcComponentFacilityIncludeUsage.Checked = DefaultCalcCapitalComponentManufacturingFacility.IncludeActivityUsage
         Else
             chkCalcComponentFacilityIncludeUsage.Checked = DefaultCalcComponentManufacturingFacility.IncludeActivityUsage
         End If
+        Call SetComponentFacilityLoaded(chkCalcComponentFacilityIncludeUsage.Checked, False)
         Call LoadFacility(GetComponentsIndustryType(chkCalcCapComponentsFacility.Checked), False, False, _
                           GetComponentActivityType(chkCalcCapComponentsFacility.Checked), cmbCalcComponentFacilityType, _
                           cmbCalcComponentFacilityRegion, cmbCalcComponentFacilitySystem, cmbCalcComponentFacilityorArray, _
                           lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
                           lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, _
-                          CalcTab, chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcComponentFacilityLoaded, _
+                          CalcTab, chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, Nothing, TempCalcComponentFacilityLoaded, _
                           Nothing, 1, GetComponentsGroupID(chkCalcCapComponentsFacility.Checked), -1, False)
+        Call SetComponentFacilityLoaded(chkCalcComponentFacilityIncludeUsage.Checked, TempCalcComponentFacilityLoaded) ' Set if the facility loaded here
         LoadingFacilityActivities = False
         CalcComponentFacilitiesLoaded = False ' Reset dropdowns
     End Sub
@@ -10992,7 +11036,7 @@ ExitSub:
 
             ' Anytime this changes, set all the other ME/TE boxes to not viewed
             Call HideFacilityBonusBoxes(lblCalcComponentFacilityBonus, lblCalcComponentFacilityTaxRate, lblCalcComponentFacilityManualME, lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualME, txtCalcComponentFacilityManualTE)
-            CalcComponentFacilityLoaded = False
+            Call SetComponentFacilityLoaded(chkCalcComponentFacilityIncludeUsage.Checked, False)
             PreviousFacilityType = cmbCalcComponentFacilityType.Text
         End If
     End Sub
@@ -11020,7 +11064,7 @@ ExitSub:
                                      lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, lblCalcComponentFacilityDefault, btnCalcComponentFacilitySave, CalcTab, chkCalcComponentFacilityIncludeUsage)
             Call cmbCalcComponentFacilitySystem.Focus()
             Call HideFacilityBonusBoxes(lblCalcComponentFacilityBonus, lblCalcComponentFacilityTaxRate, lblCalcComponentFacilityManualME, lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualME, txtCalcComponentFacilityManualTE)
-            CalcComponentFacilityLoaded = False
+            Call SetComponentFacilityLoaded(chkCalcComponentFacilityIncludeUsage.Checked, False)
         End If
     End Sub
 
@@ -11087,8 +11131,8 @@ ExitSub:
                                       cmbCalcComponentFacilityRegion, cmbCalcComponentFacilitySystem, cmbCalcComponentFacilityorArray, _
                                       lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
                                       lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, _
-                                      chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, CalcTab, CalcComponentFacilityLoaded, chkCalcComponentFacilityIncludeUsage.Checked)
-
+                                      chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, CalcTab, TempCalcComponentFacilityLoaded, chkCalcComponentFacilityIncludeUsage.Checked)
+            Call SetComponentFacilityLoaded(chkCalcComponentFacilityIncludeUsage.Checked, TempCalcComponentFacilityLoaded)
             If txtCalcComponentFacilityManualME.Visible Then
                 Call txtCalcComponentFacilityManualME.Focus()
             End If
@@ -12779,7 +12823,7 @@ ExitSub:
     ' CalcT3Facility functions
     Private Sub chkCalcT3Destroyers_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcT3DestroyersFacility.CheckedChanged
         LoadingFacilityActivities = True
-        CalcT3FacilityLoaded = False
+        Call SetT3FacilityLoaded(chkCalcT3DestroyersFacility.Checked, False)
         If chkCalcT3DestroyersFacility.Checked Then
             chkCalcCapitalFacilityIncludeUsage.Checked = DefaultCalcT3DestroyerManufacturingFacility.IncludeActivityUsage
         Else
@@ -12789,8 +12833,9 @@ ExitSub:
                           ActivityManufacturing, cmbCalcT3FacilityType, cmbCalcT3FacilityRegion, cmbCalcT3FacilitySystem, cmbCalcT3FacilityorArray, _
                           lblCalcT3FacilityBonus, lblCalcT3FacilityDefault, lblCalcT3FacilityManualME, txtCalcT3FacilityManualME, _
                           lblCalcT3FacilityManualTE, txtCalcT3FacilityManualTE, btnCalcT3FacilitySave, lblCalcT3FacilityTaxRate, _
-                          CalcTab, chkCalcT3FacilityIncludeUsage, Nothing, Nothing, Nothing, CalcT3FacilityLoaded, Nothing, _
+                          CalcTab, chkCalcT3FacilityIncludeUsage, Nothing, Nothing, Nothing, TempCalcT3FacilityLoaded, Nothing, _
                           1, GetT3ShipGroupID(chkCalcT3DestroyersFacility.Checked), -1, False)
+        Call SetT3FacilityLoaded(chkCalcT3DestroyersFacility.Checked, TempCalcT3FacilityLoaded)
         LoadingFacilityActivities = False
         CalcT3FacilitiesLoaded = False
     End Sub
@@ -12816,7 +12861,7 @@ ExitSub:
 
             ' Anytime this changes, set all the other ME/TE boxes to not viewed
             Call HideFacilityBonusBoxes(lblCalcT3FacilityBonus, lblCalcT3FacilityTaxRate, lblCalcT3FacilityManualME, lblCalcT3FacilityManualTE, txtCalcT3FacilityManualME, txtCalcT3FacilityManualTE)
-            CalcT3FacilityLoaded = False
+            Call SetT3FacilityLoaded(chkCalcT3DestroyersFacility.Checked, False)
             PreviousCalcT3FacilityType = cmbCalcT3FacilityType.Text
         End If
     End Sub
@@ -12844,7 +12889,7 @@ ExitSub:
                                      lblCalcT3FacilityManualTE, txtCalcT3FacilityManualTE, lblCalcT3FacilityDefault, btnCalcT3FacilitySave, CalcTab, chkCalcT3FacilityIncludeUsage)
             Call cmbCalcT3FacilitySystem.Focus()
             Call HideFacilityBonusBoxes(lblCalcT3FacilityBonus, lblCalcT3FacilityTaxRate, lblCalcT3FacilityManualME, lblCalcT3FacilityManualTE, txtCalcT3FacilityManualME, txtCalcT3FacilityManualTE)
-            CalcT3FacilityLoaded = False
+            Call SetT3FacilityLoaded(chkCalcT3DestroyersFacility.Checked, False)
         End If
     End Sub
 
@@ -12911,8 +12956,8 @@ ExitSub:
                                       cmbCalcT3FacilityRegion, cmbCalcT3FacilitySystem, cmbCalcT3FacilityorArray, _
                                       lblCalcT3FacilityBonus, lblCalcT3FacilityDefault, lblCalcT3FacilityManualME, txtCalcT3FacilityManualME, _
                                       lblCalcT3FacilityManualTE, txtCalcT3FacilityManualTE, btnCalcT3FacilitySave, lblCalcT3FacilityTaxRate, _
-                                      chkCalcT3FacilityIncludeUsage, Nothing, Nothing, CalcTab, CalcT3FacilityLoaded, chkCalcT3FacilityIncludeUsage.Checked)
-
+                                      chkCalcT3FacilityIncludeUsage, Nothing, Nothing, CalcTab, TempCalcT3FacilityLoaded, chkCalcT3FacilityIncludeUsage.Checked)
+            Call SetT3FacilityLoaded(chkCalcT3DestroyersFacility.Checked, TempCalcT3FacilityLoaded)
             If txtCalcT3FacilityManualME.Visible Then
                 Call txtCalcT3FacilityManualME.Focus()
             End If
@@ -15625,7 +15670,7 @@ CheckTechs:
 
             ' Based on the settings, load either the cap stuff or the base component stuff
             LoadingFacilityActivities = True
-            CalcComponentFacilityLoaded = False
+            Call SetComponentFacilityLoaded(chkCalcComponentFacilityIncludeUsage.Checked, False)
             If .CheckCapitalComponentsFacility Then
                 chkCalcComponentFacilityIncludeUsage.Checked = DefaultCalcCapitalComponentManufacturingFacility.IncludeActivityUsage
             Else
@@ -15635,8 +15680,9 @@ CheckTechs:
                               ActivityComponentManufacturing, cmbCalcComponentFacilityType, cmbCalcComponentFacilityRegion, cmbCalcComponentFacilitySystem, cmbCalcComponentFacilityorArray, _
                               lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
                               lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, _
-                              CalcTab, chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcComponentFacilityLoaded, _
+                              CalcTab, chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, Nothing, TempCalcComponentFacilityLoaded, _
                               Nothing, 1, GetComponentsGroupID(.CheckCapitalComponentsFacility), -1, False)
+            Call SetComponentFacilityLoaded(chkCalcComponentFacilityIncludeUsage.Checked, TempCalcComponentFacilityLoaded)
             LoadingFacilityActivities = False
 
             LoadingFacilityActivities = True
@@ -15708,7 +15754,7 @@ CheckTechs:
 
             ' Based on the settings, load either the T3 Cruiser or Destroyer facility
             LoadingFacilityActivities = True
-            CalcT3FacilityLoaded = False
+            Call SetT3FacilityLoaded(chkCalcT3DestroyersFacility.Checked, False)
             If .CheckT3DestroyerFacility Then
                 chkCalcCapitalFacilityIncludeUsage.Checked = DefaultCalcT3DestroyerManufacturingFacility.IncludeActivityUsage
             Else
@@ -15718,8 +15764,9 @@ CheckTechs:
                               ActivityManufacturing, cmbCalcT3FacilityType, cmbCalcT3FacilityRegion, cmbCalcT3FacilitySystem, cmbCalcT3FacilityorArray, _
                               lblCalcT3FacilityBonus, lblCalcT3FacilityDefault, lblCalcT3FacilityManualME, txtCalcT3FacilityManualME, _
                               lblCalcT3FacilityManualTE, txtCalcT3FacilityManualTE, btnCalcT3FacilitySave, lblCalcT3FacilityTaxRate, _
-                              CalcTab, chkCalcT3FacilityIncludeUsage, Nothing, Nothing, Nothing, CalcT3FacilityLoaded, Nothing, _
+                              CalcTab, chkCalcT3FacilityIncludeUsage, Nothing, Nothing, Nothing, TempCalcT3FacilityLoaded, Nothing, _
                               1, GetT3ShipGroupID(.CheckT3DestroyerFacility), -1, False)
+            Call SetT3FacilityLoaded(chkCalcT3DestroyersFacility.Checked, TempCalcT3FacilityLoaded)
             LoadingFacilityActivities = False
 
             LoadingFacilityActivities = True
@@ -16106,21 +16153,23 @@ CheckTechs:
         If Not CalcComponentFacilityLoaded Then
             ' Get the type of facility we are doing
             Call LoadFacility(IndustryType.Manufacturing, True, True, _
-                              ActivityManufacturing, cmbCalcComponentFacilityType, cmbCalcComponentFacilityRegion, cmbCalcComponentFacilitySystem, cmbCalcComponentFacilityorArray, _
+                              ActivityComponentManufacturing, cmbCalcComponentFacilityType, cmbCalcComponentFacilityRegion, cmbCalcComponentFacilitySystem, cmbCalcComponentFacilityorArray, _
                               lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
                               lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, CalcTab, _
-                              chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcComponentFacilityLoaded)
+                              chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, Nothing, TempCalcComponentFacilityLoaded)
+            Call SetComponentFacilityLoaded(chkCalcComponentFacilityIncludeUsage.Checked, TempCalcComponentFacilityLoaded)
         End If
 
         ' Capital Component
-        'If Not CalcCapitalComponentFacilityLoaded Then
-        '    ' Get the type of facility we are doing
-        '    Call LoadFacility(IndustryType.Manufacturing, True, True, _
-        '                      ActivityManufacturing, cmbCalcComponentFacilityType, cmbCalcComponentFacilityRegion, cmbCalcComponentFacilitySystem, cmbCalcComponentFacilityorArray, _
-        '                      lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
-        '                      lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, CalcTab, _
-        '                      chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcComponentFacilityLoaded)
-        'End If
+        If Not CalcCapitalComponentFacilityLoaded Then
+            ' Get the type of facility we are doing
+            Call LoadFacility(IndustryType.Manufacturing, True, True, _
+                              ActivityCapComponentManufacturing, cmbCalcComponentFacilityType, cmbCalcComponentFacilityRegion, cmbCalcComponentFacilitySystem, cmbCalcComponentFacilityorArray, _
+                              lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
+                              lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, CalcTab, _
+                              chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, Nothing, TempCalcComponentFacilityLoaded)
+            Call SetComponentFacilityLoaded(chkCalcComponentFacilityIncludeUsage.Checked, TempCalcComponentFacilityLoaded)
+        End If
 
         ' Invention
         If Not CalcInventionFacilityLoaded Then
@@ -16189,18 +16238,20 @@ CheckTechs:
                               ActivityManufacturing, cmbCalcT3FacilityType, cmbCalcT3FacilityRegion, cmbCalcT3FacilitySystem, cmbCalcT3FacilityorArray, _
                               lblCalcT3FacilityBonus, lblCalcT3FacilityDefault, lblCalcT3FacilityManualME, txtCalcT3FacilityManualME, _
                               lblCalcT3FacilityManualTE, txtCalcT3FacilityManualTE, btnCalcT3FacilitySave, lblCalcT3FacilityTaxRate, CalcTab, _
-                              chkCalcT3FacilityIncludeUsage, Nothing, Nothing, Nothing, CalcT3FacilityLoaded)
+                              chkCalcT3FacilityIncludeUsage, Nothing, Nothing, Nothing, TempCalcT3FacilityLoaded)
+            Call SetT3FacilityLoaded(chkCalcT3DestroyersFacility.Checked, TempCalcT3FacilityLoaded)
         End If
 
         ' T3 Destroyers
-        'If Not CalcT3DestroyerFacilityLoaded Then
-        '    ' Get the type of facility we are doing
-        '    Call LoadFacility(IndustryType.Manufacturing, True, True, _
-        '                      ActivityManufacturing, cmbCalcT3FacilityType, cmbCalcT3FacilityRegion, cmbCalcT3FacilitySystem, cmbCalcT3FacilityorArray, _
-        '                      lblCalcT3FacilityBonus, lblCalcT3FacilityDefault, lblCalcT3FacilityManualME, txtCalcT3FacilityManualME, _
-        '                      lblCalcT3FacilityManualTE, txtCalcT3FacilityManualTE, btnCalcT3FacilitySave, lblCalcT3FacilityTaxRate, CalcTab, _
-        '                      chkCalcT3FacilityIncludeUsage, Nothing, Nothing, Nothing, CalcT3FacilityLoaded)
-        'End If
+        If Not CalcT3DestroyerFacilityLoaded Then
+            ' Get the type of facility we are doing
+            Call LoadFacility(IndustryType.Manufacturing, True, True, _
+                              ActivityManufacturing, cmbCalcT3FacilityType, cmbCalcT3FacilityRegion, cmbCalcT3FacilitySystem, cmbCalcT3FacilityorArray, _
+                              lblCalcT3FacilityBonus, lblCalcT3FacilityDefault, lblCalcT3FacilityManualME, txtCalcT3FacilityManualME, _
+                              lblCalcT3FacilityManualTE, txtCalcT3FacilityManualTE, btnCalcT3FacilitySave, lblCalcT3FacilityTaxRate, CalcTab, _
+                              chkCalcT3FacilityIncludeUsage, Nothing, Nothing, Nothing, TempCalcT3FacilityLoaded)
+            Call SetT3FacilityLoaded(chkCalcT3DestroyersFacility.Checked, TempCalcT3FacilityLoaded)
+        End If
 
         ' Subsystem
         If Not CalcSubsystemFacilityLoaded Then
@@ -16481,8 +16532,9 @@ CheckTechs:
                 End If
 
                 ' Set the component, and copy facilities
-                InsertItem.ComponentManufacturingFacility = GetManufacturingFacility(GetProductionType(ActivityComponentManufacturing, InsertItem.ItemGroupID, InsertItem.ItemCategoryID, StationFacility), CalcTab)
-                InsertItem.CopyFacility = GetManufacturingFacility(GetProductionType(ActivityCopying, InsertItem.ItemGroupID, InsertItem.ItemCategoryID, StationFacility), CalcTab)
+                InsertItem.ComponentManufacturingFacility = SelectedCalcComponentManufacturingFacility
+                InsertItem.CapComponentManufacturingFacility = SelectedCalcCapitalComponentManufacturingFacility
+                InsertItem.CopyFacility = SelectedCalcCopyFacility
 
                 ' Now determine how many copies of the base item we need with different data changed
                 ' If T1, just select compare types (raw and components)
@@ -16736,7 +16788,7 @@ CheckTechs:
                         ManufacturingBlueprint = New Blueprint(InsertItem.BPID, CInt(txtCalcRuns.Text), InsertItem.BPME, InsertItem.BPTE, _
                                                                CInt(txtCalcProdLines.Text), CInt(txtCalcProdLines.Text), CInt(txtCalcLabLines.Text), SelectedCharacter, _
                                                                UserApplicationSettings, 0, InsertItem.ManufacturingTeam, InsertItem.ManufacturingFacility, _
-                                                               InsertItem.ComponentTeam, InsertItem.ComponentManufacturingFacility, _
+                                                               InsertItem.ComponentTeam, InsertItem.ComponentManufacturingFacility, InsertItem.CapComponentManufacturingFacility, _
                                                                rbtnCalcCompareBuildBuy.Checked, SelectedDecryptor, _
                                                                InsertItem.InventionREFacility, InsertItem.InventionRETeam, _
                                                                InsertItem.CopyFacility, InsertItem.CopyTeam, GetInventItemTypeID(InsertItem.BPID, InsertItem.Relic))
@@ -16747,7 +16799,7 @@ CheckTechs:
                         ManufacturingBlueprint = New Blueprint(InsertItem.BPID, CInt(txtCalcRuns.Text), InsertItem.BPME, InsertItem.BPTE, _
                                        CInt(txtCalcProdLines.Text), CInt(txtCalcProdLines.Text), SelectedCharacter, _
                                        UserApplicationSettings, rbtnCalcCompareBuildBuy.Checked, 0, InsertItem.ManufacturingTeam, InsertItem.ManufacturingFacility, _
-                                       InsertItem.ComponentTeam, InsertItem.ComponentManufacturingFacility)
+                                       InsertItem.ComponentTeam, InsertItem.ComponentManufacturingFacility, InsertItem.CapComponentManufacturingFacility)
                     End If
 
                     ' Get the list of materials
@@ -16858,7 +16910,8 @@ CheckTechs:
                                 ManufacturingBlueprint = New Blueprint(InsertItem.BPID, CInt(txtCalcRuns.Text), InsertItem.BPME, InsertItem.BPTE, _
                                                CInt(txtCalcProdLines.Text), CInt(txtCalcProdLines.Text), SelectedCharacter, _
                                                UserApplicationSettings, True, 0, InsertItem.ManufacturingTeam, _
-                                               InsertItem.ManufacturingFacility, InsertItem.ComponentTeam, InsertItem.ComponentManufacturingFacility)
+                                               InsertItem.ManufacturingFacility, InsertItem.ComponentTeam, _
+                                               InsertItem.ComponentManufacturingFacility, InsertItem.CapComponentManufacturingFacility)
 
                             ElseIf InsertItem.TechLevel = "T2" Or InsertItem.TechLevel = "T3" Then
 
@@ -16866,7 +16919,7 @@ CheckTechs:
                                 ManufacturingBlueprint = New Blueprint(InsertItem.BPID, CInt(txtCalcRuns.Text), InsertItem.BPME, InsertItem.BPTE, _
                                                                        CInt(txtCalcProdLines.Text), CInt(txtCalcProdLines.Text), CInt(txtCalcLabLines.Text), SelectedCharacter, _
                                                                        UserApplicationSettings, 0, InsertItem.ManufacturingTeam, InsertItem.ManufacturingFacility, _
-                                                                       InsertItem.ComponentTeam, InsertItem.ComponentManufacturingFacility, _
+                                                                       InsertItem.ComponentTeam, InsertItem.ComponentManufacturingFacility, InsertItem.CapComponentManufacturingFacility, _
                                                                        True, SelectedDecryptor, _
                                                                        InsertItem.InventionREFacility, InsertItem.InventionRETeam, _
                                                                        InsertItem.CopyFacility, InsertItem.CopyTeam, GetInventItemTypeID(InsertItem.BPID, InsertItem.Relic))
@@ -18233,6 +18286,7 @@ ExitCalc:
 
         Public ManufacturingFacility As IndustryFacility
         Public ComponentManufacturingFacility As IndustryFacility
+        Public CapComponentManufacturingFacility As IndustryFacility
         Public InventionREFacility As IndustryFacility
         Public CopyFacility As IndustryFacility
 
@@ -18457,6 +18511,15 @@ ExitCalc:
         End If
     End Function
 
+    ' Sets the type of facility loaded for T3 ships
+    Private Sub SetT3FacilityLoaded(T3DestroyerCheck As Boolean, LoadedValue As Boolean)
+        If T3DestroyerCheck Then
+            CalcT3DestroyerFacilityLoaded = LoadedValue
+        Else
+            CalcT3FacilityLoaded = LoadedValue
+        End If
+    End Sub
+
     ' Gets the industry type for components
     Private Function GetComponentsIndustryType(CapitalComponentCheck As Boolean) As IndustryType
         If CapitalComponentCheck Then
@@ -18483,6 +18546,16 @@ ExitCalc:
             Return ActivityComponentManufacturing
         End If
     End Function
+
+    ' Sets the type of facility loaded for components
+    Private Sub SetComponentFacilityLoaded(CapitalComponentCheck As Boolean, LoadedValue As Boolean)
+        If CapitalComponentCheck Then
+            CalcCapitalComponentFacilityLoaded = LoadedValue
+        Else
+            CalcComponentFacilityLoaded = LoadedValue
+        End If
+    End Sub
+
 #End Region
 
 #Region "Datacores"

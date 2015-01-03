@@ -214,6 +214,7 @@ Public Class frmSettings
             ToolTip1.SetToolTip(rbtnExportCSV, "Exports data in Common Separated Values with periods for decimals")
             ToolTip1.SetToolTip(rbtnExportSSV, "Exports data in SemiColon Separated Values with commas for decimals")
             ToolTip1.SetToolTip(rbtnExportDefault, "Exports data in basic space or dashes to separate data for easy readability")
+            ToolTip1.SetToolTip(chkSaveBPRelicsDecryptors, "When selected, Saving Settings on the BP tab will also save the Decryptor and Relic Types if selected and autoload them for each relevant BP.")
         End If
 
     End Sub
@@ -343,6 +344,7 @@ Public Class frmSettings
             ' For Build/Buy
             chkBuildBuyDefault.Checked = .CheckBuildBuy
             chkSuggestBuildwhenBPnotOwned.Checked = .SuggestBuildBPNotOwned
+            chkSaveBPRelicsDecryptors.Checked = .SaveBPRelicsDecryptors
 
             chkDisableSVR.Checked = .DisableSVR
 
@@ -482,6 +484,7 @@ Public Class frmSettings
 
             TempSettings.DisableSVR = chkDisableSVR.Checked
             TempSettings.SuggestBuildBPNotOwned = chkSuggestBuildwhenBPnotOwned.Checked
+            TempSettings.SaveBPRelicsDecryptors = chkSaveBPRelicsDecryptors.Checked
             TempSettings.LinkBPTabtoFacilitySystem = chkLinkBPTabTeamstoSystem.Checked
 
             TempSettings.ShopListIncludeInventMats = chkIncludeShopListInventMats.Checked
@@ -664,4 +667,7 @@ InvalidData:
         btnSave.Text = "Save"
     End Sub
 
+    Private Sub chkSaveBPRelicsDecryptors_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkSaveBPRelicsDecryptors.CheckedChanged
+        btnSave.Text = "Save"
+    End Sub
 End Class

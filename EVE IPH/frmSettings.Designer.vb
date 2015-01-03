@@ -77,6 +77,7 @@ Partial Class frmSettings
         Me.rbtnExportSSV = New System.Windows.Forms.RadioButton()
         Me.rbtnExportCSV = New System.Windows.Forms.RadioButton()
         Me.rbtnExportDefault = New System.Windows.Forms.RadioButton()
+        Me.chkSaveBPRelicsDecryptors = New System.Windows.Forms.CheckBox()
         Me.gbGeneral.SuspendLayout()
         Me.gbStationStandings.SuspendLayout()
         Me.gbBuildBuySettings.SuspendLayout()
@@ -101,7 +102,7 @@ Partial Class frmSettings
         '
         'btnSave
         '
-        Me.btnSave.Location = New System.Drawing.Point(137, 302)
+        Me.btnSave.Location = New System.Drawing.Point(137, 315)
         Me.btnSave.Name = "btnSave"
         Me.btnSave.Size = New System.Drawing.Size(117, 30)
         Me.btnSave.TabIndex = 29
@@ -110,7 +111,7 @@ Partial Class frmSettings
         '
         'btnCancel
         '
-        Me.btnCancel.Location = New System.Drawing.Point(399, 302)
+        Me.btnCancel.Location = New System.Drawing.Point(399, 315)
         Me.btnCancel.Name = "btnCancel"
         Me.btnCancel.Size = New System.Drawing.Size(117, 30)
         Me.btnCancel.TabIndex = 31
@@ -162,6 +163,7 @@ Partial Class frmSettings
         '
         'chkLinkBPTabTeamstoSystem
         '
+        Me.chkLinkBPTabTeamstoSystem.Enabled = False
         Me.chkLinkBPTabTeamstoSystem.Location = New System.Drawing.Point(17, 70)
         Me.chkLinkBPTabTeamstoSystem.Name = "chkLinkBPTabTeamstoSystem"
         Me.chkLinkBPTabTeamstoSystem.Size = New System.Drawing.Size(184, 32)
@@ -237,7 +239,7 @@ Partial Class frmSettings
         Me.gbStationStandings.Controls.Add(Me.chkBrokerCorpStanding)
         Me.gbStationStandings.Controls.Add(Me.txtBrokerFactionStanding)
         Me.gbStationStandings.Controls.Add(Me.chkBrokerFactionStanding)
-        Me.gbStationStandings.Location = New System.Drawing.Point(248, 209)
+        Me.gbStationStandings.Location = New System.Drawing.Point(248, 218)
         Me.gbStationStandings.Name = "gbStationStandings"
         Me.gbStationStandings.Size = New System.Drawing.Size(157, 86)
         Me.gbStationStandings.TabIndex = 7
@@ -300,7 +302,7 @@ Partial Class frmSettings
         '
         'btnReset
         '
-        Me.btnReset.Location = New System.Drawing.Point(268, 302)
+        Me.btnReset.Location = New System.Drawing.Point(268, 315)
         Me.btnReset.Name = "btnReset"
         Me.btnReset.Size = New System.Drawing.Size(117, 30)
         Me.btnReset.TabIndex = 30
@@ -309,11 +311,12 @@ Partial Class frmSettings
         '
         'gbBuildBuySettings
         '
+        Me.gbBuildBuySettings.Controls.Add(Me.chkSaveBPRelicsDecryptors)
         Me.gbBuildBuySettings.Controls.Add(Me.chkBuildBuyDefault)
         Me.gbBuildBuySettings.Controls.Add(Me.chkSuggestBuildwhenBPnotOwned)
         Me.gbBuildBuySettings.Location = New System.Drawing.Point(411, 231)
         Me.gbBuildBuySettings.Name = "gbBuildBuySettings"
-        Me.gbBuildBuySettings.Size = New System.Drawing.Size(237, 64)
+        Me.gbBuildBuySettings.Size = New System.Drawing.Size(237, 73)
         Me.gbBuildBuySettings.TabIndex = 9
         Me.gbBuildBuySettings.TabStop = False
         Me.gbBuildBuySettings.Text = "Build Settings:"
@@ -331,7 +334,7 @@ Partial Class frmSettings
         'chkSuggestBuildwhenBPnotOwned
         '
         Me.chkSuggestBuildwhenBPnotOwned.AutoSize = True
-        Me.chkSuggestBuildwhenBPnotOwned.Location = New System.Drawing.Point(9, 39)
+        Me.chkSuggestBuildwhenBPnotOwned.Location = New System.Drawing.Point(9, 34)
         Me.chkSuggestBuildwhenBPnotOwned.Name = "chkSuggestBuildwhenBPnotOwned"
         Me.chkSuggestBuildwhenBPnotOwned.Size = New System.Drawing.Size(222, 17)
         Me.chkSuggestBuildwhenBPnotOwned.TabIndex = 37
@@ -462,7 +465,7 @@ Partial Class frmSettings
         '
         Me.gbShoppingList.Controls.Add(Me.chkIncludeShopListREMats)
         Me.gbShoppingList.Controls.Add(Me.chkIncludeShopListInventMats)
-        Me.gbShoppingList.Location = New System.Drawing.Point(248, 82)
+        Me.gbShoppingList.Location = New System.Drawing.Point(248, 83)
         Me.gbShoppingList.Name = "gbShoppingList"
         Me.gbShoppingList.Size = New System.Drawing.Size(157, 63)
         Me.gbShoppingList.TabIndex = 37
@@ -493,7 +496,7 @@ Partial Class frmSettings
         '
         Me.gbEVECentral.Controls.Add(Me.txtEVECentralInterval)
         Me.gbEVECentral.Controls.Add(Me.chkEVECentralInterval)
-        Me.gbEVECentral.Location = New System.Drawing.Point(248, 151)
+        Me.gbEVECentral.Location = New System.Drawing.Point(248, 154)
         Me.gbEVECentral.Name = "gbEVECentral"
         Me.gbEVECentral.Size = New System.Drawing.Size(157, 56)
         Me.gbEVECentral.TabIndex = 38
@@ -540,7 +543,7 @@ Partial Class frmSettings
         Me.gbStartupOptions.Controls.Add(Me.chkRefreshBPsonStartup)
         Me.gbStartupOptions.Controls.Add(Me.chkCheckUpdatesStartup)
         Me.gbStartupOptions.Controls.Add(Me.chkRefreshAssetsonStartup)
-        Me.gbStartupOptions.Location = New System.Drawing.Point(5, 165)
+        Me.gbStartupOptions.Location = New System.Drawing.Point(5, 174)
         Me.gbStartupOptions.Name = "gbStartupOptions"
         Me.gbStartupOptions.Size = New System.Drawing.Size(237, 130)
         Me.gbStartupOptions.TabIndex = 39
@@ -583,9 +586,9 @@ Partial Class frmSettings
         Me.gbExportOptions.Controls.Add(Me.rbtnExportSSV)
         Me.gbExportOptions.Controls.Add(Me.rbtnExportCSV)
         Me.gbExportOptions.Controls.Add(Me.rbtnExportDefault)
-        Me.gbExportOptions.Location = New System.Drawing.Point(5, 120)
+        Me.gbExportOptions.Location = New System.Drawing.Point(5, 123)
         Me.gbExportOptions.Name = "gbExportOptions"
-        Me.gbExportOptions.Size = New System.Drawing.Size(237, 41)
+        Me.gbExportOptions.Size = New System.Drawing.Size(237, 44)
         Me.gbExportOptions.TabIndex = 38
         Me.gbExportOptions.TabStop = False
         Me.gbExportOptions.Text = "Export Data in:"
@@ -593,7 +596,7 @@ Partial Class frmSettings
         'rbtnExportSSV
         '
         Me.rbtnExportSSV.AutoSize = True
-        Me.rbtnExportSSV.Location = New System.Drawing.Point(172, 17)
+        Me.rbtnExportSSV.Location = New System.Drawing.Point(172, 19)
         Me.rbtnExportSSV.Name = "rbtnExportSSV"
         Me.rbtnExportSSV.Size = New System.Drawing.Size(46, 17)
         Me.rbtnExportSSV.TabIndex = 2
@@ -604,7 +607,7 @@ Partial Class frmSettings
         'rbtnExportCSV
         '
         Me.rbtnExportCSV.AutoSize = True
-        Me.rbtnExportCSV.Location = New System.Drawing.Point(101, 17)
+        Me.rbtnExportCSV.Location = New System.Drawing.Point(101, 19)
         Me.rbtnExportCSV.Name = "rbtnExportCSV"
         Me.rbtnExportCSV.Size = New System.Drawing.Size(46, 17)
         Me.rbtnExportCSV.TabIndex = 1
@@ -615,7 +618,7 @@ Partial Class frmSettings
         'rbtnExportDefault
         '
         Me.rbtnExportDefault.AutoSize = True
-        Me.rbtnExportDefault.Location = New System.Drawing.Point(17, 17)
+        Me.rbtnExportDefault.Location = New System.Drawing.Point(17, 19)
         Me.rbtnExportDefault.Name = "rbtnExportDefault"
         Me.rbtnExportDefault.Size = New System.Drawing.Size(59, 17)
         Me.rbtnExportDefault.TabIndex = 0
@@ -623,11 +626,21 @@ Partial Class frmSettings
         Me.rbtnExportDefault.Text = "Default"
         Me.rbtnExportDefault.UseVisualStyleBackColor = True
         '
+        'chkSaveBPRelicsDecryptors
+        '
+        Me.chkSaveBPRelicsDecryptors.AutoSize = True
+        Me.chkSaveBPRelicsDecryptors.Location = New System.Drawing.Point(9, 51)
+        Me.chkSaveBPRelicsDecryptors.Name = "chkSaveBPRelicsDecryptors"
+        Me.chkSaveBPRelicsDecryptors.Size = New System.Drawing.Size(212, 17)
+        Me.chkSaveBPRelicsDecryptors.TabIndex = 38
+        Me.chkSaveBPRelicsDecryptors.Text = "Save Relics and Decryptors on BP Tab"
+        Me.chkSaveBPRelicsDecryptors.UseVisualStyleBackColor = True
+        '
         'frmSettings
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(653, 339)
+        Me.ClientSize = New System.Drawing.Size(653, 357)
         Me.Controls.Add(Me.gbExportOptions)
         Me.Controls.Add(Me.gbStartupOptions)
         Me.Controls.Add(Me.gbImplants)
@@ -724,4 +737,5 @@ Partial Class frmSettings
     Friend WithEvents rbtnExportDefault As System.Windows.Forms.RadioButton
     Friend WithEvents rbtnExportSSV As System.Windows.Forms.RadioButton
     Friend WithEvents rbtnExportCSV As System.Windows.Forms.RadioButton
+    Friend WithEvents chkSaveBPRelicsDecryptors As System.Windows.Forms.CheckBox
 End Class

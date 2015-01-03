@@ -145,17 +145,20 @@ Public Class Blueprint
     ' What facility are they using to produce?
     Private ManufacturingFacility As IndustryFacility
     Private ComponentManufacturingFacility As IndustryFacility
+    Private CapitalComponentManufacturingFacility As IndustryFacility ' For all capital parts
     Private CopyFacility As IndustryFacility
-    Private InventionREFacility As IndustryFacility
+    Private InventionFacility As IndustryFacility
 
     ' T1 Constructor
     Public Sub New(ByVal BlueprintID As Long, ByVal BPRuns As Long, ByVal BPME As Double, ByVal BPTE As Double,
                    ByVal NumBlueprints As Integer, ByVal NumProductionLines As Integer, ByVal BPCharacter As Character, _
                    ByVal UserSettings As ApplicationSettings, ByVal BPBuildBuy As Boolean, ByVal UserAddlCosts As Double, BPTeam As IndustryTeam, _
-                   ByVal BPProductionFacility As IndustryFacility, BPComponentProductionTeam As IndustryTeam, BPComponentProductionFacility As IndustryFacility)
+                   ByVal BPProductionFacility As IndustryFacility, ByVal BPComponentProductionTeam As IndustryTeam, ByVal BPComponentProductionFacility As IndustryFacility, _
+                   ByVal BPCapComponentProductionFacility As IndustryFacility)
 
         Call InitClass(BlueprintID, BPRuns, BPME, BPTE, NumBlueprints, NumProductionLines, BPCharacter, _
-                       UserSettings, BPBuildBuy, UserAddlCosts, BPTeam, BPProductionFacility, BPComponentProductionTeam, BPComponentProductionFacility)
+                       UserSettings, BPBuildBuy, UserAddlCosts, BPTeam, _
+                       BPProductionFacility, BPComponentProductionTeam, BPComponentProductionFacility, BPCapComponentProductionFacility)
 
     End Sub
 
@@ -165,6 +168,7 @@ Public Class Blueprint
                    ByVal UserSettings As ApplicationSettings, ByVal UserAddlCosts As Double, _
                    ByVal BPProductionTeam As IndustryTeam, ByVal BPProductionFacility As IndustryFacility, _
                    ByVal BPComponentProductionTeam As IndustryTeam, ByVal BPComponentProductionFacility As IndustryFacility, _
+                   ByVal BPCapComponentProductionFacility As IndustryFacility, _
                    ByVal BPBuildBuy As Boolean, ByVal BPDecryptor As Decryptor, _
                    ByVal BPInventionREFacility As IndustryFacility, BPInventionRETeam As IndustryTeam, _
                    ByVal BPCopyFacility As IndustryFacility, BPCopyTeam As IndustryTeam, InventionItemTypeID As Long)
@@ -173,14 +177,15 @@ Public Class Blueprint
 
         ' Init the class first
         Call InitClass(BlueprintID, BPRuns, BPME, BPTE, NumBlueprints, NumProductionLines, BPCharacter, _
-               UserSettings, BPBuildBuy, UserAddlCosts, BPProductionTeam, BPProductionFacility, BPComponentProductionTeam, BPComponentProductionFacility)
+               UserSettings, BPBuildBuy, UserAddlCosts, BPProductionTeam, _
+               BPProductionFacility, BPComponentProductionTeam, BPComponentProductionFacility, BPCapComponentProductionFacility)
 
         ' 3406 laboratory operation and 24624 is adv laboratory operation
         NumberofLaboratoryLines = NumLaboratoryLines
 
         ' Save copy and invention facility
         CopyFacility = BPCopyFacility
-        InventionREFacility = BPInventionREFacility
+        InventionFacility = BPInventionREFacility
 
         ' Invention variable inputs - The BPC or Relic first
         InventionT3BPCTypeID = InventionItemTypeID
@@ -189,9 +194,9 @@ Public Class Blueprint
         InventionREDecryptor = BPDecryptor
 
         ' Invention and Copy costs/times are set after getting the full base job materials
-        IncludeInventionRECosts = InventionREFacility.IncludeActivityCost
-        IncludeInventionRETime = InventionREFacility.IncludeActivityTime
-        IncludeInventionREUsage = InventionREFacility.IncludeActivityUsage
+        IncludeInventionRECosts = InventionFacility.IncludeActivityCost
+        IncludeInventionRETime = InventionFacility.IncludeActivityTime
+        IncludeInventionREUsage = InventionFacility.IncludeActivityUsage
 
         IncludeCopyCosts = CopyFacility.IncludeActivityCost
         IncludeCopyTime = CopyFacility.IncludeActivityTime
@@ -210,8 +215,9 @@ Public Class Blueprint
     Private Sub InitClass(ByVal InitBPID As Long, ByVal InitBPRuns As Long, ByVal InitBPME As Double, ByVal InitBPTE As Double,
                           ByVal NumBlueprints As Integer, ByVal NumProductionLines As Integer, ByVal InitCharacter As Character, _
                           ByVal InitBPUserSettings As ApplicationSettings, ByVal BPBuildBuy As Boolean, ByVal UserAddlCosts As Double, _
-                          ByVal InitBPProductionTeam As IndustryTeam, InitProductionFacility As IndustryFacility, _
-                          InitComponentProductionTeam As IndustryTeam, InitComponentProductionFacility As IndustryFacility)
+                          ByVal InitBPProductionTeam As IndustryTeam, ByVal InitProductionFacility As IndustryFacility, _
+                          ByVal InitComponentProductionTeam As IndustryTeam, ByVal InitComponentProductionFacility As IndustryFacility, _
+                          ByVal InitCapComponentPRoductionFacilty As IndustryFacility)
 
         Dim readerBP As SQLiteDataReader
         Dim readerCost As SQLiteDataReader
@@ -324,6 +330,7 @@ Public Class Blueprint
         ' Production facilities
         ManufacturingFacility = InitProductionFacility
         ComponentManufacturingFacility = InitComponentProductionFacility
+        CapitalComponentManufacturingFacility = InitCapComponentPRoductionFacilty
 
         ' Set the flag if the user sent to this blueprint can invent it
         CanInventRE = False ' Can invent T1 BP to this T2 BP
@@ -385,9 +392,9 @@ Public Class Blueprint
         Dim TempNumBPs As Integer = 1
 
         ' Select all materials to buid this BP
-        SQL = "SELECT BLUEPRINT_ID, MATERIAL_ID, QUANTITY, MATERIAL, MATERIAL_CATEGORY, ACTIVITY, MATERIAL_VOLUME, PRICE, ADJUSTED_PRICE "
-        SQL = SQL & "FROM ALL_BLUEPRINT_MATERIALS LEFT OUTER JOIN ITEM_PRICES ON ALL_BLUEPRINT_MATERIALS.MATERIAL_ID = ITEM_PRICES.ITEM_ID "
-        SQL = SQL & "WHERE ALL_BLUEPRINT_MATERIALS.BLUEPRINT_ID =" & BlueprintID & " AND ACTIVITY = 1"
+        SQL = "SELECT BLUEPRINT_ID, MATERIAL_ID, QUANTITY, MATERIAL, MATERIAL_CATEGORY, ACTIVITY, MATERIAL_VOLUME, PRICE, ADJUSTED_PRICE, groupID "
+        SQL = SQL & "FROM ALL_BLUEPRINT_MATERIALS LEFT OUTER JOIN ITEM_PRICES ON ALL_BLUEPRINT_MATERIALS.MATERIAL_ID = ITEM_PRICES.ITEM_ID, INVENTORY_TYPES "
+        SQL = SQL & "WHERE ALL_BLUEPRINT_MATERIALS.BLUEPRINT_ID =" & BlueprintID & " AND ACTIVITY = 1 AND MATERIAL_ID = INVENTORY_TYPES.typeID"
 
         DBCommand = New SQLiteCommand(SQL, DB)
         readerBP = DBCommand.ExecuteReader
@@ -457,10 +464,23 @@ Public Class Blueprint
                             T1BaseItem = False
                     End Select
 
+                    Dim TempComponentFacility As IndustryFacility
+
                     ' Build the T1 component
+                    If readerBP.GetDouble(9) = AdvCapitalComponentGroupID Or readerBP.GetDouble(9) = CapitalComponentGroupID Then
+                        ' Use capital component facility
+                        TempComponentFacility = CapitalComponentManufacturingFacility
+                    ElseIf T1BaseItem Then
+                        ' Want to build this in the manufacturing facility we are using
+                        TempComponentFacility = ManufacturingFacility
+                    Else ' Components
+                        TempComponentFacility = ComponentManufacturingFacility
+                    End If
+
                     ComponentBlueprint = New Blueprint(readerME.GetInt64(0), CLng(CurrentMaterial.GetQuantity), TempME, TempTE, _
-                                                  1, NumberofProductionLines, BPCharacter, UserSettings, BuildBuy, _
-                                                  0, ComponentManufacturingTeam, ComponentManufacturingFacility, ComponentManufacturingTeam, ComponentManufacturingFacility)
+                              1, NumberofProductionLines, BPCharacter, UserSettings, BuildBuy, _
+                              0, ComponentManufacturingTeam, TempComponentFacility, _
+                              ComponentManufacturingTeam, ComponentManufacturingFacility, CapitalComponentManufacturingFacility)
 
                     ' Set this blueprint with the quantity needed and get it's mats *** Recursive Call *** - Changed Recyle to use varible instead of False - 3/16/2014
                     Call ComponentBlueprint.BuildItem(SetTaxes, SetBrokerFees, SetProductionCosts)
@@ -586,10 +606,10 @@ Public Class Blueprint
 
                 End If
 
-                readerME.Close()
-                readerME = Nothing
+                    readerME.Close()
+                    readerME = Nothing
 
-            End If
+                End If
 
         End While
 
@@ -1182,18 +1202,17 @@ Public Class Blueprint
             readerBP = DBCommand.ExecuteReader()
 
             ' Base it off of the relic type - need to look it up based on the TypeID
-            ' TO DO - use industry products to get the quantity for the runs on t3
+            ' TO DO - use industry products to get the quantity for the runs on t3 - make new function
             If readerBP.Read Then
-                Select Case readerBP.GetString(0).Substring(0, 6)
-                    Case IntactRelic
-                        MaxProductionLimit = 20
-                    Case MalfunctioningRelic
-                        MaxProductionLimit = 10
-                    Case WreckedRelic
-                        MaxProductionLimit = 3
-                    Case Else
-                        MaxProductionLimit = 3
-                End Select
+                If readerBP.GetString(0).Contains(IntactRelic) Then
+                    MaxProductionLimit = 20
+                ElseIf readerBP.GetString(0).Contains(MalfunctioningRelic) Then
+                    MaxProductionLimit = 10
+                ElseIf readerBP.GetString(0).Contains(WreckedRelic) Then
+                    MaxProductionLimit = 3
+                Else
+                    MaxProductionLimit = 3
+                End If
             Else
                 MaxProductionLimit = 3
             End If
@@ -1346,7 +1365,7 @@ Public Class Blueprint
     ' Sets the cost of doing the number of invention jobs sent
     Private Function GetInventionUsage(InventionJobs As Double) As Double
         'jobFee = baseJobCost * systemCostIndex * 0.02
-        Return BaseJobCost * InventionREFacility.CostIndex * 0.02 * InventionJobs
+        Return BaseJobCost * InventionFacility.CostIndex * 0.02 * InventionJobs
     End Function
 
     ' Gets the invention time for the sent BP and returns it in seconds
@@ -1368,7 +1387,7 @@ Public Class Blueprint
 
             ' inventionTime = baseInventionTime * facilityModifier * 3% of AI level * implant (doesn't work) * team if set
             If readerLookup.Read Then
-                TempTime = CDbl(readerLookup.GetInt64(0)) * InventionREFacility.TimeMultiplier * (1 - 0.03 * AdvancedIndustrySkill) * GetTeamBonus(InventionRETeam, "TE") * 1 '* InventionImplantValue
+                TempTime = CDbl(readerLookup.GetInt64(0)) * InventionFacility.TimeMultiplier * (1 - 0.03 * AdvancedIndustrySkill) * GetTeamBonus(InventionRETeam, "TE") * 1 '* InventionImplantValue
             Else
                 TempTime = 0
             End If
@@ -1447,11 +1466,12 @@ Public Class Blueprint
         Return CopyTime
     End Function
 
-    ' Returns the total bpc cost
+    ' Returns the total cost of materials for the copy - TO DO need to add this, zero for now
     Public Function GetBPCCopyCost() As Double
         Return CopyCost ' Only return the cost of the materials
     End Function
 
+    ' Returns the total usage cost to make the copy
     Public Function GetBPCCopyUsage() As Double
         Return CopyUsage
     End Function
@@ -1496,7 +1516,32 @@ Public Class Blueprint
         Return NumInventionREJobs
     End Function
 
+    ' Returns the Invention facility we used
+    Public Function GetInventionFacility() As IndustryFacility
+        Return InventionFacility
+    End Function
+
+    ' Returns the Copy facility we used
+    Public Function GetCopyFacility() As IndustryFacility
+        Return CopyFacility
+    End Function
+
 #End Region
+
+    ' Returns the manufacturing facility used
+    Public Function GetManufacturingFacility() As IndustryFacility
+        Return ManufacturingFacility
+    End Function
+
+    ' Returns the component manufacturing facility used
+    Public Function GetComponentManufacturingFacility() As IndustryFacility
+        Return ComponentManufacturingFacility
+    End Function
+
+    ' Returns the capital component manufacturing facility used
+    Public Function GetCapitalComponentManufacturingFacility() As IndustryFacility
+        Return CapitalComponentManufacturingFacility
+    End Function
 
     ' Returns the base job cost for this blueprint
     Public Function GetBaseJobCost() As Double

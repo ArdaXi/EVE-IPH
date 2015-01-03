@@ -1138,11 +1138,11 @@ Public Class frmShoppingList
                         If readerBP.GetInt32(1) = 1 Then
                             TempBP = New Blueprint(CLng(readerBP.GetValue(0)), ItemList(i).ItemQuantity, ItemList(i).ItemME, 0, 1, 1, _
                                                    SelectedCharacter, UserApplicationSettings, False, 0, NoTeam, SelectedBPManufacturingFacility, _
-                                                   NoTeam, SelectedBPComponentManufacturingFacility)
+                                                   NoTeam, SelectedBPComponentManufacturingFacility, SelectedBPCapitalComponentManufacturingFacility)
                         ElseIf readerBP.GetInt32(1) = 2 Or readerBP.GetInt32(1) = 3 Then
                             TempBP = New Blueprint(CLng(readerBP.GetValue(0)), ItemList(i).ItemQuantity, ItemList(i).ItemME, 0, 1, 1, 1, _
                                                    SelectedCharacter, UserApplicationSettings, 0, NoTeam, SelectedBPManufacturingFacility, _
-                                                   NoTeam, SelectedBPComponentManufacturingFacility, BuildBuy, TempDecryptor, _
+                                                   NoTeam, SelectedBPComponentManufacturingFacility, SelectedBPCapitalComponentManufacturingFacility, BuildBuy, TempDecryptor, _
                                                    SelectedBPInventionFacility, SelectedBPInventionTeam, _
                                                    SelectedBPCopyFacility, SelectedBPCopyTeam, GetInventItemTypeID(CLng(readerBP.GetValue(0)), "")) ' TO DO - Fix this to split out Decryptors and Relics from the import/export
                         End If
