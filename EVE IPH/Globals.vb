@@ -11,7 +11,7 @@ Public Module Public_Variables
     Public Const DataDumpVersion As String = "Rhea_1.0_109013"
     Public Const VersionNumber As String = "3.1.*"
 
-    Public UpdaterTesting As Boolean ' This flag will test the test downloads from the server for an update
+    Public TestingVersion As Boolean ' This flag will test the test downloads from the server for an update
     Public Developer As Boolean ' This is if I'm developing something and only want me to see it instead of public release
 
     Public LocalCulture As CultureInfo
@@ -1384,7 +1384,7 @@ InvalidDate:
 
         If RelicName <> "" Then
             ' Need to add the relic variant to the query for just one item
-            SQL = SQL & " AND typeName LIKE '" & RelicName & "%'"
+            SQL = SQL & " AND typeName LIKE '%" & RelicName & "%'"
         End If
 
         DBCommand = New SQLiteCommand(Sql, DB)

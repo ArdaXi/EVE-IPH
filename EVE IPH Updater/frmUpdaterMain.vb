@@ -41,7 +41,7 @@ Public Class frmUpdaterMain
 
     ' Worker
     Public worker As BackgroundWorker
-    Public UpdaterTesting As Boolean ' For testing downloads from the server for a new update
+    Public TestingVersion As Boolean ' For testing downloads from the server for a new update
     Public LocalXMLFileName As String
 
     Public UpdateFileList() As FileEntry = Nothing ' List of files that need updating, will download and rename all at the same time
@@ -87,38 +87,29 @@ Public Class frmUpdaterMain
 
         ' Add any initialization after the InitializeComponent() call.
 
-        ' Set the Path Variables
-        'UserPath = System.Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) & "\"
-        '
-        UPDATES_FOLDER = "Updates\" 'UserPath & AppDataPath
-        ROOT_FOLDER = "" 'UserPath & AppDataPath
+        ' Update folder path
+        UPDATES_FOLDER = "Updates\"
+        ROOT_FOLDER = ""
 
-        ' Set test platform flag
-        UpdaterTesting = False
+        ' Set test platform
+        If File.Exists("Test.txt") Then
+            TestingVersion = True
+        Else
+            TestingVersion = False
+        End If
 
-        '' Get the argument string, which for this program will only be the path to shell back to the calling program
-        'For Each arg As String In Environment.GetCommandLineArgs()
-        '    ' arguments passed are space delimited
-        '    ROOT_FOLDER = ROOT_FOLDER & " " & arg
-        'Next arg
-
-        'If Testing Then 'And ROOT_FOLDER.Substring(Len(ROOT_FOLDER) - 3) = "exe" Then
-        '    ROOT_FOLDER = "C:\Users\Brian\EVE Stuff\EVE VB Project\Root Directory\"
-        'Else
-        If Not UpdaterTesting Then
-            If ROOT_FOLDER.Contains("vshost") Then
-                MsgBox("This program cannot be run in standalone mode.", vbInformation, Application.ProductName)
-                End
-            Else
-                ' Take out the string after the |, which will be the directory for shelling (this is added in main program)
-                ROOT_FOLDER = "" 'ROOT_FOLDER.Substring(InStr(ROOT_FOLDER, "|")) & "\"
-            End If
+        ' See if they are running this from the folder directly
+        If ROOT_FOLDER.Contains("vshost") Then
+            MsgBox("This program cannot be run in standalone mode.", vbInformation, Application.ProductName)
+            End
+        Else
+            ROOT_FOLDER = ""
         End If
 
         EVEIPH_SHELL_PATH = ROOT_FOLDER & EVEIPH_EXE
 
         ' Set the version of the XML file we will use
-        If UpdaterTesting Then
+        If TestingVersion Then
             LocalXMLFileName = XMLLatestVersionTest
         Else
             LocalXMLFileName = XMLLatestVersionFileName
@@ -209,7 +200,7 @@ Public Class frmUpdaterMain
         Me.Invoke(UpdateStatusDelegate, False, "Checking for Updates...")
 
         ' Get the newest update file from server
-        If UpdaterTesting Then
+        If TestingVersion Then
             ServerXMLLastUpdatePath = DownloadFileFromServer(XMLUpdateTestServerURL, UPDATES_FOLDER & LocalXMLFileName)
         Else
             ServerXMLLastUpdatePath = DownloadFileFromServer(XMLUpdateServerURL, UPDATES_FOLDER & LocalXMLFileName)
@@ -285,14 +276,8 @@ Public Class frmUpdaterMain
                         If ServerFileList(i).Name = LocalFileList(j).Name Then
                             ' For the zip file, save the name of the current image folder (based on xml file)
                             If ServerFileList(i).Name = EVE_IMAGES_ZIP Then
-                                If LocalFileList(j).Version <> "" Then
-                                    EVEImagesLocalFolderName = LocalFileList(j).Name.Substring(0, Len(LocalFileList(j).Name) - 4) & " " & LocalFileList(j).Version
-                                Else
-                                    EVEImagesLocalFolderName = LocalFileList(j).Name.Substring(0, Len(LocalFileList(j).Name) - 4)
-                                End If
-                            End If
-
-                            If ServerFileList(i).Name = EVE_DB Then
+                                EVEImagesLocalFolderName = LocalFileList(j).Name.Substring(0, Len(LocalFileList(j).Name) - 4)
+                            ElseIf ServerFileList(i).Name = EVE_DB Then
                                 EVEDBLocalFileVersion = LocalFileList(j).Version
                             End If
 
@@ -1124,7 +1109,7 @@ Public Class frmUpdaterMain
                             SQL = SQL & BuildInsertFieldString(readerUpdate.Item(2)) & ","
                             SQL = SQL & BuildInsertFieldString(readerUpdate.Item(3)) & ","
                             SQL = SQL & BuildInsertFieldString(readerUpdate.Item(4)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(5)) 
+                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(5))
                             SQL = SQL & ")"
 
                             Call ExecuteNonQuerySQL(SQL, DBNEW)

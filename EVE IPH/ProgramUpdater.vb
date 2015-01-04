@@ -22,7 +22,7 @@ Public Class ProgramUpdater
         Directory.CreateDirectory(UpdaterFilePath)
 
         ' Get the newest updatefile from server
-        If UpdaterTesting Then
+        If TestingVersion Then
             ServerXMLLastUpdatePath = DownloadFileFromServer(XMLUpdateTestServerURL, UpdaterFilePath & XMLLatestVersionTest)
         Else
             ServerXMLLastUpdatePath = DownloadFileFromServer(XMLUpdateServerURL, UpdaterFilePath & XMLLatestVersionFileName)
@@ -144,7 +144,7 @@ DownloadError:
 
         On Error GoTo ErrHandle
 
-        If UpdaterTesting Then
+        If TestingVersion Then
             XMLFile = XMLLatestVersionTest
         Else
             XMLFile = XMLLatestVersionFileName

@@ -369,9 +369,9 @@ Public Class frmMain
 
         ' Set test platform
         If File.Exists("Test.txt") Then
-            UpdaterTesting = True
+            TestingVersion = True
         Else
-            UpdaterTesting = False
+            TestingVersion = False
         End If
 
         Call SetProgress("Initializing...")
@@ -469,7 +469,7 @@ Public Class frmMain
             Application.DoEvents()
         End If
 
-        If UpdaterTesting Then
+        If TestingVersion Then
             Me.Text = Me.Text & " - Testing"
         End If
 
@@ -6628,7 +6628,7 @@ Tabs:
         Call LoadNextBlueprint()
     End Sub
 
-    Private Sub tabBPInventionEquip_Click(sender As System.Object, e As System.EventArgs)
+    Private Sub tabBPInventionEquip_Click(sender As System.Object, e As System.EventArgs) Handles tabBPInventionEquip.Click
         SelectedBPTabIndex = tabBPInventionEquip.SelectedIndex
     End Sub
 
@@ -16743,13 +16743,14 @@ CheckTechs:
                             End If
 
                             InsertItem.InventionTeam = NoTeam ' Disable until CCP implements
+                            Dim BaseInputs As String = InsertItem.Inputs
 
                             If InsertItem.TechLevel = "T3" Then
                                 ' For T3 need to insert a relic for each one selected
                                 If chkCalcRERelic1.Checked Then
                                     InsertItem.Relic = chkCalcRERelic1.Text
                                     ' Add to the inputs
-                                    InsertItem.Inputs = InsertItem.Inputs & " - " & InsertItem.Relic
+                                    InsertItem.Inputs = BaseInputs & " - " & InsertItem.Relic
                                     ' Insert the items based with decryptor data
                                     Call InsertItemCalcType(BaseItems, InsertItem, ProcessAllMultiUsePOSArrays, MultiUsePOSArrays, _
                                                             chkCalcIncludeNoTeamManufacturing.Checked, chkCalcIncludeNoTeamComponents.Checked, chkCalcIncludeNoTeamCopy.Checked)
@@ -16757,7 +16758,7 @@ CheckTechs:
 
                                 If chkCalcRERelic2.Checked Then
                                     InsertItem.Relic = chkCalcRERelic2.Text
-                                    InsertItem.Inputs = InsertItem.Inputs & " - " & InsertItem.Relic
+                                    InsertItem.Inputs = BaseInputs & " - " & InsertItem.Relic
                                     ' Insert the items based with decryptor data
                                     Call InsertItemCalcType(BaseItems, InsertItem, ProcessAllMultiUsePOSArrays, MultiUsePOSArrays, _
                                                             chkCalcIncludeNoTeamManufacturing.Checked, chkCalcIncludeNoTeamComponents.Checked, chkCalcIncludeNoTeamCopy.Checked)
@@ -16765,7 +16766,7 @@ CheckTechs:
 
                                 If chkCalcRERelic3.Checked Then
                                     InsertItem.Relic = chkCalcRERelic3.Text
-                                    InsertItem.Inputs = InsertItem.Inputs & " - " & InsertItem.Relic
+                                    InsertItem.Inputs = BaseInputs & " - " & InsertItem.Relic
                                     ' Insert the items based with decryptor data
                                     Call InsertItemCalcType(BaseItems, InsertItem, ProcessAllMultiUsePOSArrays, MultiUsePOSArrays, _
                                                             chkCalcIncludeNoTeamManufacturing.Checked, chkCalcIncludeNoTeamComponents.Checked, chkCalcIncludeNoTeamCopy.Checked)

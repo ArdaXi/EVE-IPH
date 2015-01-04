@@ -10,7 +10,7 @@ Imports System.Runtime.InteropServices
 
 <Assembly: AssemblyTitle("EVEIPH Updater")> 
 <Assembly: AssemblyDescription("")> 
-<Assembly: AssemblyCompany("Home")> 
+<Assembly: AssemblyCompany("EVE IPH")> 
 <Assembly: AssemblyProduct("EVEIPH Updater")> 
 <Assembly: AssemblyCopyright("Copyright © Home 2012")> 
 <Assembly: AssemblyTrademark("")> 

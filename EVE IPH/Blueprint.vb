@@ -372,7 +372,19 @@ Public Class Blueprint
 
     ' Base build function that takes a look at the number of blueprints the user wants to use and then builts each blueprint batch
     Public Sub BuildItems(ByVal SetTaxes As Boolean, ByVal SetBrokerFees As Boolean, ByVal SetProductionCosts As Boolean)
-        Call BuildItem(SetTaxes, SetBrokerFees, SetProductionCosts)
+
+        ' Need to check for the number of BPs sent and run multiple batches if necessary. Also, look at the number of lines per batch
+        If NumberofBPs = 1 Then
+            ' Just run the normal function and it will set everything
+            Call BuildItem(SetTaxes, SetBrokerFees, SetProductionCosts)
+        Else
+            ' Need to figure out the number of batches - Treat Invented T2 BPCs differently based on the number of runs per bp
+            ' Assumptions - They want the most effcient way to build. Ie, 96 runs, 10 bps, then do 9 batches of 10, and 1 of 6. 
+
+
+
+        End If
+
     End Sub
 
     ' Sets the material versions for our blueprint
@@ -708,7 +720,7 @@ Public Class Blueprint
             Return 0
         End If
 
-        'If UpdaterTesting Then
+        'If TestingVersion Then
         '    ' Simple case 1
         '    If NumberofProductionLines = 1 Then
         '        ' Just sum up the times
