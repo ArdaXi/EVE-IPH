@@ -147,6 +147,18 @@
     <Compile Include="ApplicationEvents.vb" />
     <Compile Include="Blueprint.vb" />
     <Compile Include="Character.vb" />
+    <Compile Include="frmUsageViewer.Designer.vb">
+      <DependentUpon>frmUsageViewer.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmUsageViewer.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmCostSplitViewer.Designer.vb">
+      <DependentUpon>frmCostSplitViewer.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmCostSplitViewer.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="frmSelectManufacturingTabColumns.Designer.vb">
       <DependentUpon>frmSelectManufacturingTabColumns.vb</DependentUpon>
     </Compile>
@@ -168,10 +180,10 @@
     <Compile Include="frmRefinery.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmInventionREMats.Designer.vb">
-      <DependentUpon>frmInventionREMats.vb</DependentUpon>
+    <Compile Include="frmInventionMats.Designer.vb">
+      <DependentUpon>frmInventionMats.vb</DependentUpon>
     </Compile>
-    <Compile Include="frmInventionREMats.vb">
+    <Compile Include="frmInventionMats.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="frmCopyandPaste.Designer.vb">
@@ -378,6 +390,14 @@
     <Compile Include="TopMostMessageBox.vb" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="frmUsageViewer.resx">
+      <DependentUpon>frmUsageViewer.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmCostSplitViewer.resx">
+      <DependentUpon>frmCostSplitViewer.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmSelectManufacturingTabColumns.resx">
       <DependentUpon>frmSelectManufacturingTabColumns.vb</DependentUpon>
     </EmbeddedResource>
@@ -389,8 +409,8 @@
       <DependentUpon>frmRefinery.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="frmInventionREMats.resx">
-      <DependentUpon>frmInventionREMats.vb</DependentUpon>
+    <EmbeddedResource Include="frmInventionMats.resx">
+      <DependentUpon>frmInventionMats.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="frmCopyandPaste.resx">

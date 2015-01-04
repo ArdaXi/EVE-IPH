@@ -35,6 +35,7 @@ Public Class frmMain
 
     Public SQLExpressConnection As SqlConnection
     Public SQLExpressConnection2 As SqlConnection ' For updating while another connection is open
+    Public SQLExpressConnection3 As SqlConnection ' For updating while another connection is open
     Public SQLiteDB As New SQLiteConnection
     Public UniverseDB As New SQLiteConnection
 
@@ -52,6 +53,7 @@ Public Class frmMain
         MyBase.Finalize()
         SQLExpressConnection.Close()
         SQLExpressConnection2.Close()
+        SQLExpressConnection3.Close()
     End Sub
 
     ' Copy just the bp images that I use for EVE IPH from the latest dump into a new folder - TO DO
@@ -255,6 +257,8 @@ Public Class frmMain
         SQLExpressConnection.Open()
         SQLExpressConnection2 = New SqlConnection("Server=" & Environment.MachineName & "\EVESDE;Database=" & DatabaseName & ";Trusted_Connection=True; Connection Timeout=300;")
         SQLExpressConnection2.Open()
+        SQLExpressConnection3 = New SqlConnection("Server=" & Environment.MachineName & "\EVESDE;Database=" & DatabaseName & ";Trusted_Connection=True; Connection Timeout=300;")
+        SQLExpressConnection3.Open()
 
         ' SQL Lite DB
         If File.Exists(DatabasePath & DatabaseName & ".s3db") Then
@@ -4659,6 +4663,8 @@ Public Class frmMain
         ' Plutonium (3727), Carbon (9826), Janitor (13267), Slaves (3721), Quafe (3699), 
         msSQL = msSQL & "OR invTypes.typeID IN (21815, 33195, 33539, 33577) " ' Spatial Attunement (33195), Shattered Villard Wheel (33539), 21815 - Elite Drone AI, (33577) Covert Research Tools
         msSQL = msSQL & "OR invTypes.typeID IN (3583,3584) " ' 3583	Badly Mangled Components, 3584	True Slave Decryption Node
+        msSQL = msSQL & "OR invTypes.typeID IN (3812,3814) " ' 3812 Data Sheets, 3814 Reports
+        msSQL = msSQL & "OR invTypes.typeID IN (27274,29203) " ' 27274 Villard Wheel, 29203 Minmatar DNA
 
         Execute_msSQL(msSQL)
 
@@ -4820,7 +4826,6 @@ Public Class frmMain
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
     End Sub
-
 
     ' EMD_ITEM_PRICE_HISTORY
     Private Sub Build_EMD_Item_Price_History()
@@ -5817,6 +5822,42 @@ Public Class frmMain
             Next
             Count += 1
         Next
+
+        ' Now that this is all imported, check the industryActivityMaterials table for activites that aren't in industryActivityProducts and insert
+        ' setting the productID = blueprintID. This is so we can get materials for ME/TE and copying
+        Dim mySQLQuery As New SqlCommand
+        Dim mySQLReader As SqlDataReader
+        Dim msSQL As String
+        Dim mySQLQuery2 As New SqlCommand
+        Dim mySQLReader2 As SqlDataReader
+        Dim msSQL2 As String
+
+        ' Pull distinct bps and activities from materials
+        msSQL = "SELECT distinct blueprintTypeID, activityID FROM industryActivityMaterials"
+        mySQLQuery = New SqlCommand(msSQL, SQLExpressConnection)
+        mySQLReader = mySQLQuery.ExecuteReader()
+
+        While mySQLReader.Read
+            ' Check each one and see if there is the bp with that activity, if not add the record
+            msSQL2 = "SELECT 'X' FROM industryActivityProducts WHERE blueprintTypeID = " & mySQLReader.GetInt64(0) & " AND activityID = " & mySQLReader.GetInt32(1)
+            mySQLQuery2 = New SqlCommand(msSQL2, SQLExpressConnection2)
+            mySQLReader2 = mySQLQuery2.ExecuteReader()
+
+            If Not mySQLReader2.Read Then
+                ' Need to add this record - productTypeID is the blueprintTypeID
+                SQL = "INSERT INTO industryActivityProducts VALUES (" & mySQLReader.GetInt64(0) & "," & mySQLReader.GetInt32(1) & ","
+                SQL = SQL & mySQLReader.GetInt64(0) & ",1,1)"
+                Call Execute_msSQL(SQL)
+            End If
+
+            mySQLReader2.Close()
+            mySQLReader2 = Nothing
+            mySQLQuery2 = Nothing
+        End While
+
+        mySQLReader.Close()
+        mySQLReader = Nothing
+        mySQLQuery = Nothing
 
         lblTableName.Text = ""
         pgMain.Visible = False
@@ -7073,7 +7114,7 @@ Public Class frmMain
     Private Sub Execute_msSQL(ByVal SQL As String)
         Dim Command As SqlCommand
 
-        Command = New SqlCommand(SQL, SQLExpressConnection2)
+        Command = New SqlCommand(SQL, SQLExpressConnection3)
         Command.ExecuteNonQuery()
 
         Command = Nothing

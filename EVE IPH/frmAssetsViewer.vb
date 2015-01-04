@@ -537,7 +537,7 @@ Public Class frmAssetsViewer
                 ItemChecked = True
             End If
             If chkMisc.Checked Then
-                SQL = SQL & "(" & "ITEM_GROUP IN ('General','Livestock','Radioactive','Biohazard','Commodities') AND ITEM_NAME NOT IN ('Oxygen','Water')) OR "
+                SQL = SQL & "(" & "ITEM_GROUP IN ('General','Livestock','Radioactive','Biohazard','Commodities', 'Miscellaneous') AND ITEM_NAME NOT IN ('Oxygen','Water')) OR "
                 ItemChecked = True
             End If
             If chkSalvage.Checked Then

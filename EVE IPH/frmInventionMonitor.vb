@@ -371,12 +371,12 @@ Public Class frmInventionMonitor
                                         SelectedBPComponentManufacturingFacility, SelectedBPCapitalComponentManufacturingFacility, _
                                         False, SelectedDecryptor, SelectedBPInventionFacility, NoTeam, SelectedBPCopyFacility, NoTeam, 0)
 
-        Call TempBlueprint.BuildItem(False, False, False)
+        Call TempBlueprint.BuildItems(False, False, False)
 
         ' Now get the data from the blueprint
-        lblSuccessChance.Text = FormatPercent(TempBlueprint.GetInventionREChance, 2)
+        lblSuccessChance.Text = FormatPercent(TempBlueprint.GetInventionChance, 2)
         ' Skills
-        InventionSkills = TempBlueprint.GetReqInventionRESkills()
+        InventionSkills = TempBlueprint.GetReqInventionSkills()
 
         ' Set the combos and labels for skills
         SettingComboSkills = True

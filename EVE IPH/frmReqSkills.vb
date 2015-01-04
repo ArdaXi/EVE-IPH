@@ -40,7 +40,7 @@ Public Class frmReqSkills
             Exit Sub
         End If
 
-        If SelectedBlueprint.GetReqInventionRESkills.NumSkills = 0 And SkillTypeDisplay = SkillType.InventionReqSkills Then
+        If SelectedBlueprint.GetReqInventionSkills.NumSkills = 0 And SkillTypeDisplay = SkillType.InventionReqSkills Then
             SkillTree.Nodes.Clear()
             Exit Sub
         End If
@@ -64,7 +64,7 @@ Public Class frmReqSkills
                 End If
             Case SkillType.InventionReqSkills
                 CurrentNode = SkillTree.Nodes.Add("Required Invention / RE Skills")
-                DisplaySkills = SelectedBlueprint.GetReqInventionRESkills
+                DisplaySkills = SelectedBlueprint.GetReqInventionSkills
         End Select
 
         ' Add the nodes

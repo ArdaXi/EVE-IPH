@@ -6,7 +6,7 @@ Public Class ShoppingList
     Private TotalItemList As List(Of ShoppingListItem) ' This is the total list of items
     Private TotalBuyList As Materials ' Buy mats
     Private TotalBuildList As BuiltItemList ' Build mats (components)
-    Private TotalInventionREMats As Materials ' All Invention/RE materials used
+    Private TotalInventionMats As Materials ' All Invention/RE materials used
 
     ' Array of all the items sent with their base build & sell prices and time to build
     Private ItemProfitIPHList As List(Of ItemProfitIPH)
@@ -43,8 +43,8 @@ Public Class ShoppingList
 
         ' Other Costs
         Public Usage As Double
-        Public InventionREUsage As Double
-        Public InventionRERunsCost As Double ' Cost to invent/RE the quantity given
+        Public InventionUsage As Double
+        Public InventionRunsCost As Double ' Cost to invent/RE the quantity given
 
         Public ItemtoFind As String
 
@@ -55,8 +55,8 @@ Public Class ShoppingList
             SavedItemQuantity = 0
             SavedTechLevel = 0
             Usage = 0
-            InventionREUsage = 0
-            InventionRERunsCost = 0
+            InventionUsage = 0
+            InventionRunsCost = 0
         End Sub
 
         Public Function Clone() As Object Implements System.ICloneable.Clone
@@ -69,8 +69,8 @@ Public Class ShoppingList
                 CopyOfMe.SavedItemQuantity = Me.SavedItemQuantity
                 CopyOfMe.SavedTechLevel = Me.SavedTechLevel
                 CopyOfMe.Usage = Me.Usage
-                CopyOfMe.InventionREUsage = Me.InventionREUsage
-                CopyOfMe.InventionRERunsCost = Me.InventionRERunsCost
+                CopyOfMe.InventionUsage = Me.InventionUsage
+                CopyOfMe.InventionRunsCost = Me.InventionRunsCost
             End With
 
             Return CopyOfMe
@@ -92,7 +92,7 @@ Public Class ShoppingList
         TotalBuildList = New BuiltItemList
         TotalBuyList = New Materials
 
-        TotalInventionREMats = New Materials
+        TotalInventionMats = New Materials
 
         AdditionalCosts = 0
         ItemsTax = 0
@@ -183,9 +183,9 @@ Public Class ShoppingList
         End If
 
         ' Update Buy List with Materials, Invention Mats, and RE mats (if they exist)
-        If Not IsNothing(FoundItem.InventionREMaterials) Then
-            If Not IsNothing(FoundItem.InventionREMaterials.GetMaterialList) Then
-                With FoundItem.InventionREMaterials ' Update all base materials for this item first
+        If Not IsNothing(FoundItem.InventionMaterials) Then
+            If Not IsNothing(FoundItem.InventionMaterials.GetMaterialList) Then
+                With FoundItem.InventionMaterials ' Update all base materials for this item first
                     For i = 0 To .GetMaterialList.Count - 1
                         ' Make sure the material exists (might have been deleted already in the main list) before updating
                         If Not IsNothing(TotalBuyList.SearchListbyName(.GetMaterialList(i).GetMaterialName)) Then
@@ -199,14 +199,14 @@ Public Class ShoppingList
                             Call UpdateShoppingBuyQuantity(.GetMaterialList(i).GetMaterialName, UpdatedQuantity)
                             ' Update this material in the item's invention list for copy/paste function
                             If UpdatedQuantity <= 0 Then
-                                Call TotalInventionREMats.RemoveMaterial(.GetMaterialList(i))
+                                Call TotalInventionMats.RemoveMaterial(.GetMaterialList(i))
                             Else
                                 ' Need to copy, remove, update, then add to update the volumes and prices of the material lists
                                 Dim TempMat As Material
-                                TempMat = CType(TotalInventionREMats.SearchListbyName(.GetMaterialList(i).GetMaterialName).Clone, Material)
+                                TempMat = CType(TotalInventionMats.SearchListbyName(.GetMaterialList(i).GetMaterialName).Clone, Material)
                                 TempMat.SetQuantity(UpdatedQuantity)
-                                Call TotalInventionREMats.RemoveMaterial(.GetMaterialList(i))
-                                Call TotalInventionREMats.InsertMaterial(TempMat)
+                                Call TotalInventionMats.RemoveMaterial(.GetMaterialList(i))
+                                Call TotalInventionMats.InsertMaterial(TempMat)
                             End If
                         End If
                     Next
@@ -387,12 +387,12 @@ Public Class ShoppingList
 
         If QuantityType = "Invention" Or QuantityType = "RE" Then
             ' For invention materials, find out how many mats we need by calcuating the new value
-            Dim MatsPerJob As Long = CLng(Math.Ceiling(FoundItem.AvgInvRERunsforSuccess))
+            Dim MatsPerJob As Long = CLng(Math.Ceiling(FoundItem.AvgInvRunsforSuccess))
             If UpdateItemQuantity <> 0 Then
                 ' Need number of jobs times mats per job
-                UpdatedQuantity = MatsPerJob * CLng(Math.Ceiling(FoundItem.AvgInvRERunsforSuccess * Math.Ceiling(UpdateItemQuantity / FoundItem.InventedREdRuns)))
+                UpdatedQuantity = MatsPerJob * CLng(Math.Ceiling(FoundItem.AvgInvRunsforSuccess * Math.Ceiling(UpdateItemQuantity / FoundItem.InventedRuns)))
             Else
-                UpdatedQuantity = MatsPerJob * CLng(Math.Ceiling(FoundItem.AvgInvRERunsforSuccess * Math.Ceiling(FoundItem.Quantity / FoundItem.InventedREdRuns)))
+                UpdatedQuantity = MatsPerJob * CLng(Math.Ceiling(FoundItem.AvgInvRunsforSuccess * Math.Ceiling(FoundItem.Quantity / FoundItem.InventedRuns)))
             End If
         ElseIf QuantityType = "Buy" Then
 
@@ -525,8 +525,8 @@ Public Class ShoppingList
         End If
 
         ' Invention/RE Materials
-        If Not IsNothing(SentItem.InventionREMaterials) Then
-            TotalInventionREMats.InsertMaterialList(SentItem.InventionREMaterials.GetMaterialList)
+        If Not IsNothing(SentItem.InventionMaterials) Then
+            TotalInventionMats.InsertMaterialList(SentItem.InventionMaterials.GetMaterialList)
         End If
 
         ' Add this item to the saved list of with all the base price data
@@ -536,8 +536,8 @@ Public Class ShoppingList
         TempProfitIPH.SavedItemQuantity = SentItem.Quantity
         TempProfitIPH.SavedTechLevel = SentItem.TechLevel
         TempProfitIPH.Usage = SentItem.ItemUsage
-        TempProfitIPH.InventionRERunsCost = SentItem.InventionRECost
-        TempProfitIPH.InventionREUsage = SentItem.InventionREUsage
+        TempProfitIPH.InventionRunsCost = SentItem.InventionCost
+        TempProfitIPH.InventionUsage = SentItem.InventionUsage
 
         Call ItemProfitIPHList.Add(TempProfitIPH)
 
@@ -549,7 +549,7 @@ Public Class ShoppingList
     Public Sub UpdateListPrices()
         Dim TempBuyList As New Materials ' Buy mats
         Dim TempBuildList As New BuiltItemList ' Build mats (components)
-        Dim TempInventionREMats As New Materials ' All Invention/RE materials used
+        Dim TempInventionMats As New Materials ' All Invention/RE materials used
         Dim TempBPMatList As New Materials ' For the Total Item List
 
         Dim TransferMaterial As Material
@@ -589,20 +589,20 @@ Public Class ShoppingList
         TotalBuyList = TempBuyList
 
         ' Invention/RE List
-        If Not IsNothing(TotalInventionREMats.GetMaterialList) Then
-            For i = 0 To TotalInventionREMats.GetMaterialList.Count - 1
-                With TotalInventionREMats.GetMaterialList(i)
+        If Not IsNothing(TotalInventionMats.GetMaterialList) Then
+            For i = 0 To TotalInventionMats.GetMaterialList.Count - 1
+                With TotalInventionMats.GetMaterialList(i)
                     TransferMaterial = New Material(.GetMaterialTypeID, .GetMaterialName, .GetMaterialGroup, .GetQuantity, .GetVolume, 0, .GetItemME, .GetBuildItem, .GetItemType)
                 End With
 
                 ' Add the material with new price to list
-                Call TempInventionREMats.InsertMaterial(TransferMaterial)
+                Call TempInventionMats.InsertMaterial(TransferMaterial)
 
             Next
         End If
 
         ' Reset List
-        TotalInventionREMats = TempInventionREMats
+        TotalInventionMats = TempInventionMats
 
         ' Build Item List
         If TotalBuildList.GetBuiltItemList.Count <> 0 Then
@@ -864,8 +864,8 @@ Public Class ShoppingList
         Dim TotalInventionMats As New Materials
 
         For i = 0 To TotalItemList.Count - 1
-            If TotalItemList(i).TechLevel = 2 And Not IsNothing(TotalItemList(i).InventionREMaterials) Then
-                TotalInventionMats.InsertMaterialList(TotalItemList(i).InventionREMaterials.GetMaterialList)
+            If TotalItemList(i).TechLevel = 2 And Not IsNothing(TotalItemList(i).InventionMaterials) Then
+                TotalInventionMats.InsertMaterialList(TotalItemList(i).InventionMaterials.GetMaterialList)
             End If
         Next
 
@@ -878,8 +878,8 @@ Public Class ShoppingList
         Dim TotalREMats As New Materials
 
         For i = 0 To TotalItemList.Count - 1
-            If TotalItemList(i).TechLevel = 3 And Not IsNothing(TotalItemList(i).InventionREMaterials) Then
-                TotalREMats.InsertMaterialList(TotalItemList(i).InventionREMaterials.GetMaterialList)
+            If TotalItemList(i).TechLevel = 3 And Not IsNothing(TotalItemList(i).InventionMaterials) Then
+                TotalREMats.InsertMaterialList(TotalItemList(i).InventionMaterials.GetMaterialList)
             End If
         Next
         Return TotalREMats
@@ -1055,10 +1055,10 @@ Public Class ShoppingList
 
         ' Total up the material costs
         For i = 0 To TotalItemList.Count - 1
-            If Not IsNothing(TotalItemList(i).InventionREMaterials) And TotalItemList(i).TechLevel = 2 Then
-                MaterialCosts += TotalItemList(i).InventionREMaterials.GetTotalMaterialsCost
+            If Not IsNothing(TotalItemList(i).InventionMaterials) And TotalItemList(i).TechLevel = 2 Then
+                MaterialCosts += TotalItemList(i).InventionMaterials.GetTotalMaterialsCost
                 ' Find out how many invention runs we are going to do
-                TotalCost += (TotalItemList(i).InventionREJobs * TotalItemList(i).InventionREUsage)
+                TotalCost += (TotalItemList(i).InventionJobs * TotalItemList(i).InventionUsage)
             End If
         Next
 
@@ -1066,7 +1066,7 @@ Public Class ShoppingList
         If MaterialCosts = 0 Then
             For i = 0 To ItemProfitIPHList.Count - 1
                 If ItemProfitIPHList(i).SavedTechLevel = 2 Then
-                    TotalCost += ItemProfitIPHList(i).InventionRERunsCost
+                    TotalCost += ItemProfitIPHList(i).InventionRunsCost
                 End If
             Next
         End If
@@ -1083,10 +1083,10 @@ Public Class ShoppingList
 
         ' Total up the material costs
         For i = 0 To TotalItemList.Count - 1
-            If Not IsNothing(TotalItemList(i).InventionREMaterials) And TotalItemList(i).TechLevel = 3 Then
-                MaterialCosts += TotalItemList(i).InventionREMaterials.GetTotalMaterialsCost
+            If Not IsNothing(TotalItemList(i).InventionMaterials) And TotalItemList(i).TechLevel = 3 Then
+                MaterialCosts += TotalItemList(i).InventionMaterials.GetTotalMaterialsCost
                 ' Find out how many invention runs we are going to do
-                TotalCost += (TotalItemList(i).InventionREJobs * TotalItemList(i).InventionREUsage)
+                TotalCost += (TotalItemList(i).InventionJobs * TotalItemList(i).InventionUsage)
             End If
         Next
 
@@ -1094,7 +1094,7 @@ Public Class ShoppingList
         If MaterialCosts = 0 Then
             For i = 0 To ItemProfitIPHList.Count - 1
                 If ItemProfitIPHList(i).SavedTechLevel = 3 Then
-                    TotalCost += ItemProfitIPHList(i).InventionRERunsCost
+                    TotalCost += ItemProfitIPHList(i).InventionRunsCost
                 End If
             Next
         End If
@@ -1192,7 +1192,7 @@ Public Class ShoppingList
             CopyOfMe.TotalItemList = .TotalItemList
             CopyOfMe.TotalBuyList = CType(.TotalBuyList.Clone, Materials)
             CopyOfMe.TotalBuildList = CType(.TotalBuildList.Clone, BuiltItemList)
-            CopyOfMe.TotalInventionREMats = CType(.TotalInventionREMats, Materials)
+            CopyOfMe.TotalInventionMats = CType(.TotalInventionMats, Materials)
 
             'For i = 0 To .ItemProfitIPHList.Count - 1
             '    Call NewItemProfitItemList.Add(CType(.ItemProfitIPHList(i).Clone, ItemProfitIPH))
@@ -1234,12 +1234,12 @@ Public Class ShoppingListItem
 
     Public DecryptorRelic As String ' If it's invented or RE'd, then store the Relic or Decryptor name here * Key value
 
-    Public InventionREMaterials As New Materials ' The List of Invention materials needed to build the T2 item
-    Public AvgInvRERunsforSuccess As Double ' How many Invention/RE runs we need for success - used to calculate correct changes in list for mats
-    Public InventionREJobs As Long ' How many jobs did we do
-    Public InventedREdRuns As Long ' How many Invented or RE'd runs are produced
-    Public InventionRECost As Double ' Cost of materials to Invent or RE the the quantity of items sent
-    Public InventionREUsage As Double ' Cost of installing and using the industry line for a single RE or Invention job
+    Public InventionMaterials As New Materials ' The List of Invention materials needed to build the T2 item
+    Public AvgInvRunsforSuccess As Double ' How many Invention/RE runs we need for success - used to calculate correct changes in list for mats
+    Public InventionJobs As Long ' How many jobs did we do
+    Public InventedRuns As Long ' How many Invented or RE'd runs are produced
+    Public InventionCost As Double ' Cost of materials to Invent or RE the the quantity of items sent
+    Public InventionUsage As Double ' Cost of installing and using the industry line for a single RE or Invention job
 
     Public BPMaterialList As New Materials ' This is the list of items on the Blueprint so we have a record of what they are building - it is not updated
 
@@ -1263,12 +1263,12 @@ Public Class ShoppingListItem
 
         DecryptorRelic = ""
 
-        InventionREMaterials = Nothing
-        AvgInvRERunsforSuccess = 0
-        InventedREdRuns = 0
-        InventionRECost = 0
-        InventionREUsage = 0
-        InventionREJobs = 0
+        InventionMaterials = Nothing
+        AvgInvRunsforSuccess = 0
+        InventedRuns = 0
+        InventionCost = 0
+        InventionUsage = 0
+        InventionJobs = 0
 
         BPMaterialList = Nothing
 

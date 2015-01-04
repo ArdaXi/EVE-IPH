@@ -267,7 +267,7 @@ Public Class ProgramSettings
     Public DefaultCheckDecryptor19 As Boolean = False
     Public DefaultCheckDecryptorUseforT2 As Boolean = True
     Public defaultCheckDecryptorUseforT3 As Boolean = True
-    Public DefaultCheckIgnoreInventionRE As Boolean = False
+    Public DefaultCheckIgnoreInvention As Boolean = False
     Public DefaultCheckRelicWrecked As Boolean = True
     Public DefaultCheckRelicIntact As Boolean = False
     Public DefaultCheckRelicMalfunction As Boolean = False
@@ -444,8 +444,8 @@ Public Class ProgramSettings
     Public DefaultMTRuns As Integer = 10
     Public DefaultMTProductionLines As Integer = 11
     Public DefaultMTLaboratoryLines As Integer = 12
-    Public DefaultMTTotalInventionRECost As Integer = 13
-    Public DefaultMTTotalCopyCost As Integer = 14
+    Public DefaultMTInventionCost As Integer = 13
+    Public DefaultMTCopyCost As Integer = 14
     Public DefaultMTTotalManufacturingCost As Integer = 15
     Public DefaultMTTaxes As Integer = 16
     Public DefaultMTBrokerFees As Integer = 17
@@ -483,14 +483,14 @@ Public Class ProgramSettings
     Public DefaultMTCopyingFacilityMEBonus As Integer = 49
     Public DefaultMTCopyingFacilityTEBonus As Integer = 50
     Public DefaultMTCopyingFacilityUsage As Integer = 51
-    Public DefaultMTInventionREFacilityName As Integer = 52
-    Public DefaultMTInventionREFacilitySystem As Integer = 53
-    Public DefaultMTInventionREFacilitySystemIndex As Integer = 54
-    Public DefaultMTInventionREFacilityTax As Integer = 55
-    Public DefaultMTInventionREFacilityRegion As Integer = 56
-    Public DefaultMTInventionREFacilityMEBonus As Integer = 57
-    Public DefaultMTInventionREFacilityTEBonus As Integer = 58
-    Public DefaultMTInventionREFacilityUsage As Integer = 59
+    Public DefaultMTInventionFacilityName As Integer = 52
+    Public DefaultMTInventionFacilitySystem As Integer = 53
+    Public DefaultMTInventionFacilitySystemIndex As Integer = 54
+    Public DefaultMTInventionFacilityTax As Integer = 55
+    Public DefaultMTInventionFacilityRegion As Integer = 56
+    Public DefaultMTInventionFacilityMEBonus As Integer = 57
+    Public DefaultMTInventionFacilityTEBonus As Integer = 58
+    Public DefaultMTInventionFacilityUsage As Integer = 59
     Public DefaultMTManufacturingTeamName As Integer = 60
     Public DefaultMTManufacturingTeamBonuses As Integer = 61
     Public DefaultMTManufacturingTeamUsage As Integer = 62
@@ -503,10 +503,10 @@ Public Class ProgramSettings
     Public DefaultMTCopyingTeamBonuses As Integer = 69
     Public DefaultMTCopyingTeamUsage As Integer = 70
     Public DefaultMTCopyingTeamCostModifier As Integer = 71
-    Public DefaultMTInventionRETeamName As Integer = 72
-    Public DefaultMTInventionRETeamBonuses As Integer = 73
-    Public DefaultMTInventionRETeamUsage As Integer = 74
-    Public DefaultMTInventionRETeamCostModifier As Integer = 75
+    Public DefaultMTInventionTeamName As Integer = 72
+    Public DefaultMTInventionTeamBonuses As Integer = 73
+    Public DefaultMTInventionTeamUsage As Integer = 74
+    Public DefaultMTInventionTeamCostModifier As Integer = 75
 
     Public DefaultMTOrderType As String = "Ascending"
     Public DefaultMTColumnWidth As Integer = 100
@@ -525,8 +525,8 @@ Public Class ProgramSettings
     Public Const RunsColumnName As String = "Runs"
     Public Const ProductionLinesColumnName As String = "Production Lines"
     Public Const LaboratoryLinesColumnName As String = "Laboratory Lines"
-    Public Const TotalInventionRECostColumnName As String = "Total Invention / RE Cost"
-    Public Const TotalCopyCostColumnName As String = "Total Copy Cost"
+    Public Const InventionCostColumnName As String = "Total Invention / RE Cost"
+    Public Const CopyCostColumnName As String = "Total Copy Cost"
     Public Const TotalManufacturingCostColumnName As String = "Total Manufacturing Cost"
     Public Const TaxesColumnName As String = "Taxes"
     Public Const BrokerFeesColumnName As String = "BrokerFees"
@@ -564,14 +564,14 @@ Public Class ProgramSettings
     Public Const CopyingFacilityMEBonusColumnName As String = "Copying Facility ME Bonus"
     Public Const CopyingFacilityTEBonusColumnName As String = "Copying Facility TE Bonus"
     Public Const CopyingFacilityUsageColumnName As String = "Copying Facility Usage"
-    Public Const InventionREFacilityNameColumnName As String = "Invention / RE Facility Name"
-    Public Const InventionREFacilitySystemColumnName As String = "Invention / RE Facility System"
-    Public Const InventionREFacilitySystemIndexColumnName As String = "Invention / RE Facility System Index"
-    Public Const InventionREFacilityTaxColumnName As String = "Invention / RE Facility Tax"
-    Public Const InventionREFacilityRegionColumnName As String = "Invention / RE  Facility Region"
-    Public Const InventionREFacilityMEBonusColumnName As String = "Invention / RE Facility ME Bonus"
-    Public Const InventionREFacilityTEBonusColumnName As String = "Invention / RE Facility TE Bonus"
-    Public Const InventionREFacilityUsageColumnName As String = "Invention / RE Facility Usage"
+    Public Const InventionFacilityNameColumnName As String = "Invention / RE Facility Name"
+    Public Const InventionFacilitySystemColumnName As String = "Invention / RE Facility System"
+    Public Const InventionFacilitySystemIndexColumnName As String = "Invention / RE Facility System Index"
+    Public Const InventionFacilityTaxColumnName As String = "Invention / RE Facility Tax"
+    Public Const InventionFacilityRegionColumnName As String = "Invention / RE  Facility Region"
+    Public Const InventionFacilityMEBonusColumnName As String = "Invention / RE Facility ME Bonus"
+    Public Const InventionFacilityTEBonusColumnName As String = "Invention / RE Facility TE Bonus"
+    Public Const InventionFacilityUsageColumnName As String = "Invention / RE Facility Usage"
     Public Const ManufacturingTeamNameColumnName As String = "Manufacturing Team Name"
     Public Const ManufacturingTeamBonusesColumnName As String = "Manufacturing Team Bonuses"
     Public Const ManufacturingTeamUsageColumnName As String = "Manufacturing Team Usage"
@@ -584,10 +584,10 @@ Public Class ProgramSettings
     Public Const CopyingTeamBonusesColumnName As String = "Copying Team Bonuses"
     Public Const CopyingTeamUsageColumnName As String = "Copying Team Usage"
     Public Const CopyingTeamCostModifierColumnName As String = "Copying Team Cost Modifier"
-    Public Const InventionRETeamNameColumnName As String = "Invention / RE Team Name"
-    Public Const InventionRETeamBonusesColumnName As String = "Invention / RE Team Bonuses"
-    Public Const InventionRETeamUsageColumnName As String = "Invention / RE Team Usage"
-    Public Const InventionRETeamCostModifierColumnName As String = "Invention / RE Team Cost Modifier"
+    Public Const InventionTeamNameColumnName As String = "Invention / RE Team Name"
+    Public Const InventionTeamBonusesColumnName As String = "Invention / RE Team Bonuses"
+    Public Const InventionTeamUsageColumnName As String = "Invention / RE Team Usage"
+    Public Const InventionTeamCostModifierColumnName As String = "Invention / RE Team Cost Modifier"
 
     ' Industry Flip Belt settings
     Private DefaultCycleTime As Double = 180
@@ -1572,7 +1572,7 @@ Public Class ProgramSettings
                     .CheckDecryptor19 = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "CheckDecryptor19", DefaultCheckDecryptor19))
                     .CheckDecryptorUseforT2 = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "CheckDecryptorUseforT2", DefaultCheckDecryptorUseforT2))
                     .CheckDecryptorUseforT3 = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "CheckDecryptorUseforT3", defaultCheckDecryptorUseforT3))
-                    .CheckIgnoreInventionRE = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "CheckIgnoreInventionRE", DefaultCheckIgnoreInventionRE))
+                    .CheckIgnoreInvention = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "CheckIgnoreInvention", DefaultCheckIgnoreInvention))
                     .CheckRelicWrecked = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "CheckRelicWrecked", DefaultCheckRelicWrecked))
                     .CheckRelicIntact = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "CheckRelicIntact", DefaultCheckRelicIntact))
                     .CheckRelicMalfunction = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "CheckRelicMalfunction", DefaultCheckRelicMalfunction))
@@ -1663,7 +1663,7 @@ Public Class ProgramSettings
             .CheckDecryptor19 = DefaultCheckDecryptor19
             .CheckDecryptorUseforT2 = DefaultCheckDecryptorUseforT2
             .CheckDecryptorUseforT3 = defaultCheckDecryptorUseforT3
-            .CheckIgnoreInventionRE = DefaultCheckIgnoreInventionRE
+            .CheckIgnoreInvention = DefaultCheckIgnoreInvention
             .CheckRelicWrecked = DefaultCheckRelicWrecked
             .CheckRelicIntact = DefaultCheckRelicIntact
             .CheckRelicMalfunction = DefaultCheckRelicMalfunction
@@ -1734,7 +1734,7 @@ Public Class ProgramSettings
             ManufacturingSettingsList(23) = New Setting("CheckDecryptor11", CStr(SentSettings.CheckDecryptor11))
             ManufacturingSettingsList(24) = New Setting("CheckDecryptor12", CStr(SentSettings.CheckDecryptor12))
             ManufacturingSettingsList(25) = New Setting("CheckDecryptor18", CStr(SentSettings.CheckDecryptor18))
-            ManufacturingSettingsList(26) = New Setting("CheckIgnoreInventionRE", CStr(SentSettings.CheckIgnoreInventionRE))
+            ManufacturingSettingsList(26) = New Setting("CheckIgnoreInvention", CStr(SentSettings.CheckIgnoreInvention))
             ManufacturingSettingsList(27) = New Setting("CheckRelicWrecked", CStr(SentSettings.CheckRelicWrecked))
             ManufacturingSettingsList(28) = New Setting("CheckRelicIntact", CStr(SentSettings.CheckRelicIntact))
             ManufacturingSettingsList(29) = New Setting("CheckRelicMalfunction", CStr(SentSettings.CheckRelicMalfunction))
@@ -2521,8 +2521,8 @@ Public Class ProgramSettings
                     .Runs = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "Runs", DefaultMTRuns))
                     .ProductionLines = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "ProductionLines", DefaultMTProductionLines))
                     .LaboratoryLines = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "LaboratoryLines", DefaultMTLaboratoryLines))
-                    .TotalInventionRECost = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "TotalInventionRECost", DefaultMTTotalInventionRECost))
-                    .TotalCopyCost = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "TotalCopyCost", DefaultMTTotalCopyCost))
+                    .InventionCost = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionCost", DefaultMTInventionCost))
+                    .CopyCost = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "CopyCost", DefaultMTCopyCost))
                     .TotalManufacturingCost = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "TotalManufacturingCost", DefaultMTTotalManufacturingCost))
                     .Taxes = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "Taxes", DefaultMTTaxes))
                     .BrokerFees = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "BrokerFees", DefaultMTBrokerFees))
@@ -2560,14 +2560,14 @@ Public Class ProgramSettings
                     .CopyingFacilityMEBonus = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "CopyingFacilityMEBonus", DefaultMTCopyingFacilityMEBonus))
                     .CopyingFacilityTEBonus = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "CopyingFacilityTEBonus", DefaultMTCopyingFacilityTEBonus))
                     .CopyingFacilityUsage = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "CopyingFacilityUsage", DefaultMTCopyingFacilityUsage))
-                    .InventionREFacilityName = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionREFacilityName", DefaultMTInventionREFacilityName))
-                    .InventionREFacilitySystem = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionREFacilitySystem", DefaultMTInventionREFacilitySystem))
-                    .InventionREFacilitySystemIndex = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionREFacilitySystemIndex", DefaultMTInventionREFacilitySystemIndex))
-                    .InventionREFacilityTax = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionREFacilityTax", DefaultMTInventionREFacilityTax))
-                    .InventionREFacilityRegion = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionREFacilityRegion", DefaultMTInventionREFacilityRegion))
-                    .InventionREFacilityMEBonus = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionREFacilityMEBonus", DefaultMTInventionREFacilityMEBonus))
-                    .InventionREFacilityTEBonus = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionREFacilityTEBonus", DefaultMTInventionREFacilityTEBonus))
-                    .InventionREFacilityUsage = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionREFacilityUsage", DefaultMTInventionREFacilityUsage))
+                    .InventionFacilityName = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionFacilityName", DefaultMTInventionFacilityName))
+                    .InventionFacilitySystem = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionFacilitySystem", DefaultMTInventionFacilitySystem))
+                    .InventionFacilitySystemIndex = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionFacilitySystemIndex", DefaultMTInventionFacilitySystemIndex))
+                    .InventionFacilityTax = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionFacilityTax", DefaultMTInventionFacilityTax))
+                    .InventionFacilityRegion = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionFacilityRegion", DefaultMTInventionFacilityRegion))
+                    .InventionFacilityMEBonus = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionFacilityMEBonus", DefaultMTInventionFacilityMEBonus))
+                    .InventionFacilityTEBonus = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionFacilityTEBonus", DefaultMTInventionFacilityTEBonus))
+                    .InventionFacilityUsage = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionFacilityUsage", DefaultMTInventionFacilityUsage))
                     .ManufacturingTeamName = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "ManufacturingTeamName", DefaultMTManufacturingTeamName))
                     .ManufacturingTeamBonuses = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "ManufacturingTeamBonuses", DefaultMTManufacturingTeamBonuses))
                     .ManufacturingTeamUsage = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "ManufacturingTeamUsage", DefaultMTManufacturingTeamUsage))
@@ -2580,10 +2580,10 @@ Public Class ProgramSettings
                     .CopyingTeamBonuses = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "CopyingTeamBonuses", DefaultMTCopyingTeamBonuses))
                     .CopyingTeamUsage = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "CopyingTeamUsage", DefaultMTCopyingTeamUsage))
                     .CopyingTeamCostModifier = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "CopyingTeamCostModifier", DefaultMTCopyingTeamCostModifier))
-                    .InventionRETeamName = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionRETeamName", DefaultMTInventionRETeamName))
-                    .InventionRETeamBonuses = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionRETeamBonuses", DefaultMTInventionRETeamBonuses))
-                    .InventionRETeamUsage = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionRETeamUsage", DefaultMTInventionRETeamUsage))
-                    .InventionRETeamCostModifier = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionRETeamCostModifier", DefaultMTInventionRETeamCostModifier))
+                    .InventionTeamName = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionTeamName", DefaultMTInventionTeamName))
+                    .InventionTeamBonuses = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionTeamBonuses", DefaultMTInventionTeamBonuses))
+                    .InventionTeamUsage = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionTeamUsage", DefaultMTInventionTeamUsage))
+                    .InventionTeamCostModifier = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionTeamCostModifier", DefaultMTInventionTeamCostModifier))
 
                     .ItemCategoryWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "ItemCategoryWidth", DefaultMTColumnWidth))
                     .ItemGroupWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "ItemGroupWidth", DefaultMTColumnWidth))
@@ -2597,8 +2597,8 @@ Public Class ProgramSettings
                     .RunsWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "RunsWidth", DefaultMTColumnWidth))
                     .ProductionLinesWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "ProductionLinesWidth", DefaultMTColumnWidth))
                     .LaboratoryLinesWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "LaboratoryLinesWidth", DefaultMTColumnWidth))
-                    .TotalInventionRECostWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "TotalInventionRECostWidth", DefaultMTColumnWidth))
-                    .TotalCopyCostWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "TotalCopyCostWidth", DefaultMTColumnWidth))
+                    .InventionCostWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionCostWidth", DefaultMTColumnWidth))
+                    .CopyCostWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "CopyCostWidth", DefaultMTColumnWidth))
                     .TotalManufacturingCostWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "TotalManufacturingCostWidth", DefaultMTColumnWidth))
                     .TaxesWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "TaxesWidth", DefaultMTColumnWidth))
                     .BrokerFeesWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "BrokerFeesWidth", DefaultMTColumnWidth))
@@ -2636,14 +2636,14 @@ Public Class ProgramSettings
                     .CopyingFacilityMEBonusWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "CopyingFacilityMEBonusWidth", DefaultMTColumnWidth))
                     .CopyingFacilityTEBonusWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "CopyingFacilityTEBonusWidth", DefaultMTColumnWidth))
                     .CopyingFacilityUsageWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "CopyingFacilityUsageWidth", DefaultMTColumnWidth))
-                    .InventionREFacilityNameWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionREFacilityNameWidth", DefaultMTColumnWidth))
-                    .InventionREFacilitySystemWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionREFacilitySystemWidth", DefaultMTColumnWidth))
-                    .InventionREFacilitySystemIndexWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionREFacilitySystemIndexWidth", DefaultMTColumnWidth))
-                    .InventionREFacilityTaxWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionREFacilityTaxWidth", DefaultMTColumnWidth))
-                    .InventionREFacilityRegionWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionREFacilityRegionWidth", DefaultMTColumnWidth))
-                    .InventionREFacilityMEBonusWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionREFacilityMEBonusWidth", DefaultMTColumnWidth))
-                    .InventionREFacilityTEBonusWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionREFacilityTEBonusWidth", DefaultMTColumnWidth))
-                    .InventionREFacilityUsageWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionREFacilityUsageWidth", DefaultMTColumnWidth))
+                    .InventionFacilityNameWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionFacilityNameWidth", DefaultMTColumnWidth))
+                    .InventionFacilitySystemWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionFacilitySystemWidth", DefaultMTColumnWidth))
+                    .InventionFacilitySystemIndexWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionFacilitySystemIndexWidth", DefaultMTColumnWidth))
+                    .InventionFacilityTaxWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionFacilityTaxWidth", DefaultMTColumnWidth))
+                    .InventionFacilityRegionWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionFacilityRegionWidth", DefaultMTColumnWidth))
+                    .InventionFacilityMEBonusWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionFacilityMEBonusWidth", DefaultMTColumnWidth))
+                    .InventionFacilityTEBonusWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionFacilityTEBonusWidth", DefaultMTColumnWidth))
+                    .InventionFacilityUsageWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionFacilityUsageWidth", DefaultMTColumnWidth))
                     .ManufacturingTeamNameWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "ManufacturingTeamNameWidth", DefaultMTColumnWidth))
                     .ManufacturingTeamBonusesWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "ManufacturingTeamBonusesWidth", DefaultMTColumnWidth))
                     .ManufacturingTeamUsageWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "ManufacturingTeamUsageWidth", DefaultMTColumnWidth))
@@ -2656,10 +2656,10 @@ Public Class ProgramSettings
                     .CopyingTeamBonusesWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "CopyingTeamBonusesWidth", DefaultMTColumnWidth))
                     .CopyingTeamUsageWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "CopyingTeamUsageWidth", DefaultMTColumnWidth))
                     .CopyingTeamCostModifierWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "CopyingTeamCostModifierWidth", DefaultMTColumnWidth))
-                    .InventionRETeamNameWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionRETeamNameWidth", DefaultMTColumnWidth))
-                    .InventionRETeamBonusesWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionRETeamBonusesWidth", DefaultMTColumnWidth))
-                    .InventionRETeamUsageWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionRETeamUsageWidth", DefaultMTColumnWidth))
-                    .InventionRETeamCostModifierWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionRETeamCostModifierWidth", DefaultMTColumnWidth))
+                    .InventionTeamNameWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionTeamNameWidth", DefaultMTColumnWidth))
+                    .InventionTeamBonusesWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionTeamBonusesWidth", DefaultMTColumnWidth))
+                    .InventionTeamUsageWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionTeamUsageWidth", DefaultMTColumnWidth))
+                    .InventionTeamCostModifierWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionTeamCostModifierWidth", DefaultMTColumnWidth))
 
                     .OrderByColumn = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "OrderByColumn", DefaultMTOrderByColumn))
                     .OrderType = CStr(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeString, "ManufacturingTabColumnSettings", "OrderType", DefaultMTOrderType))
@@ -2701,8 +2701,8 @@ Public Class ProgramSettings
             .Runs = DefaultMTRuns
             .ProductionLines = DefaultMTProductionLines
             .LaboratoryLines = DefaultMTLaboratoryLines
-            .TotalInventionRECost = DefaultMTTotalInventionRECost
-            .TotalCopyCost = DefaultMTTotalCopyCost
+            .InventionCost = DefaultMTInventionCost
+            .CopyCost = DefaultMTCopyCost
             .TotalManufacturingCost = DefaultMTTotalManufacturingCost
             .Taxes = DefaultMTTaxes
             .BrokerFees = DefaultMTBrokerFees
@@ -2740,14 +2740,14 @@ Public Class ProgramSettings
             .CopyingFacilityMEBonus = DefaultMTCopyingFacilityMEBonus
             .CopyingFacilityTEBonus = DefaultMTCopyingFacilityTEBonus
             .CopyingFacilityUsage = DefaultMTCopyingFacilityUsage
-            .InventionREFacilityName = DefaultMTInventionREFacilityName
-            .InventionREFacilitySystem = DefaultMTInventionREFacilitySystem
-            .InventionREFacilitySystemIndex = DefaultMTInventionREFacilitySystemIndex
-            .InventionREFacilityTax = DefaultMTInventionREFacilityTax
-            .InventionREFacilityRegion = DefaultMTInventionREFacilityRegion
-            .InventionREFacilityMEBonus = DefaultMTInventionREFacilityMEBonus
-            .InventionREFacilityTEBonus = DefaultMTInventionREFacilityTEBonus
-            .InventionREFacilityUsage = DefaultMTInventionREFacilityUsage
+            .InventionFacilityName = DefaultMTInventionFacilityName
+            .InventionFacilitySystem = DefaultMTInventionFacilitySystem
+            .InventionFacilitySystemIndex = DefaultMTInventionFacilitySystemIndex
+            .InventionFacilityTax = DefaultMTInventionFacilityTax
+            .InventionFacilityRegion = DefaultMTInventionFacilityRegion
+            .InventionFacilityMEBonus = DefaultMTInventionFacilityMEBonus
+            .InventionFacilityTEBonus = DefaultMTInventionFacilityTEBonus
+            .InventionFacilityUsage = DefaultMTInventionFacilityUsage
             .ManufacturingTeamName = DefaultMTManufacturingTeamName
             .ManufacturingTeamBonuses = DefaultMTManufacturingTeamBonuses
             .ManufacturingTeamUsage = DefaultMTManufacturingTeamUsage
@@ -2760,10 +2760,10 @@ Public Class ProgramSettings
             .CopyingTeamBonuses = DefaultMTCopyingTeamBonuses
             .CopyingTeamUsage = DefaultMTCopyingTeamUsage
             .CopyingTeamCostModifier = DefaultMTCopyingTeamCostModifier
-            .InventionRETeamName = DefaultMTInventionRETeamName
-            .InventionRETeamBonuses = DefaultMTInventionRETeamBonuses
-            .InventionRETeamUsage = DefaultMTInventionRETeamUsage
-            .InventionRETeamCostModifier = DefaultMTInventionRETeamCostModifier
+            .InventionTeamName = DefaultMTInventionTeamName
+            .InventionTeamBonuses = DefaultMTInventionTeamBonuses
+            .InventionTeamUsage = DefaultMTInventionTeamUsage
+            .InventionTeamCostModifier = DefaultMTInventionTeamCostModifier
 
             .ItemCategoryWidth = DefaultMTColumnWidth
             .ItemGroupWidth = DefaultMTColumnWidth
@@ -2777,8 +2777,8 @@ Public Class ProgramSettings
             .RunsWidth = DefaultMTColumnWidth
             .ProductionLinesWidth = DefaultMTColumnWidth
             .LaboratoryLinesWidth = DefaultMTColumnWidth
-            .TotalInventionRECostWidth = DefaultMTColumnWidth
-            .TotalCopyCostWidth = DefaultMTColumnWidth
+            .InventionCostWidth = DefaultMTColumnWidth
+            .CopyCostWidth = DefaultMTColumnWidth
             .TotalManufacturingCostWidth = DefaultMTColumnWidth
             .TaxesWidth = DefaultMTColumnWidth
             .BrokerFeesWidth = DefaultMTColumnWidth
@@ -2816,14 +2816,14 @@ Public Class ProgramSettings
             .CopyingFacilityMEBonusWidth = DefaultMTColumnWidth
             .CopyingFacilityTEBonusWidth = DefaultMTColumnWidth
             .CopyingFacilityUsageWidth = DefaultMTColumnWidth
-            .InventionREFacilityNameWidth = DefaultMTColumnWidth
-            .InventionREFacilitySystemWidth = DefaultMTColumnWidth
-            .InventionREFacilitySystemIndexWidth = DefaultMTColumnWidth
-            .InventionREFacilityTaxWidth = DefaultMTColumnWidth
-            .InventionREFacilityRegionWidth = DefaultMTColumnWidth
-            .InventionREFacilityMEBonusWidth = DefaultMTColumnWidth
-            .InventionREFacilityTEBonusWidth = DefaultMTColumnWidth
-            .InventionREFacilityUsageWidth = DefaultMTColumnWidth
+            .InventionFacilityNameWidth = DefaultMTColumnWidth
+            .InventionFacilitySystemWidth = DefaultMTColumnWidth
+            .InventionFacilitySystemIndexWidth = DefaultMTColumnWidth
+            .InventionFacilityTaxWidth = DefaultMTColumnWidth
+            .InventionFacilityRegionWidth = DefaultMTColumnWidth
+            .InventionFacilityMEBonusWidth = DefaultMTColumnWidth
+            .InventionFacilityTEBonusWidth = DefaultMTColumnWidth
+            .InventionFacilityUsageWidth = DefaultMTColumnWidth
             .ManufacturingTeamNameWidth = DefaultMTColumnWidth
             .ManufacturingTeamBonusesWidth = DefaultMTColumnWidth
             .ManufacturingTeamUsageWidth = DefaultMTColumnWidth
@@ -2836,10 +2836,10 @@ Public Class ProgramSettings
             .CopyingTeamBonusesWidth = DefaultMTColumnWidth
             .CopyingTeamUsageWidth = DefaultMTColumnWidth
             .CopyingTeamCostModifierWidth = DefaultMTColumnWidth
-            .InventionRETeamNameWidth = DefaultMTColumnWidth
-            .InventionRETeamBonusesWidth = DefaultMTColumnWidth
-            .InventionRETeamUsageWidth = DefaultMTColumnWidth
-            .InventionRETeamCostModifierWidth = DefaultMTColumnWidth
+            .InventionTeamNameWidth = DefaultMTColumnWidth
+            .InventionTeamBonusesWidth = DefaultMTColumnWidth
+            .InventionTeamUsageWidth = DefaultMTColumnWidth
+            .InventionTeamCostModifierWidth = DefaultMTColumnWidth
 
             .OrderByColumn = DefaultMTOrderByColumn
             .OrderType = DefaultMTOrderType
@@ -2869,8 +2869,8 @@ Public Class ProgramSettings
             ManufacturingTabColumnSettingsList(9) = New Setting("Runs", CStr(SentSettings.Runs))
             ManufacturingTabColumnSettingsList(10) = New Setting("ProductionLines", CStr(SentSettings.ProductionLines))
             ManufacturingTabColumnSettingsList(11) = New Setting("LaboratoryLines", CStr(SentSettings.LaboratoryLines))
-            ManufacturingTabColumnSettingsList(12) = New Setting("TotalInventionRECost", CStr(SentSettings.TotalInventionRECost))
-            ManufacturingTabColumnSettingsList(13) = New Setting("TotalCopyCost", CStr(SentSettings.TotalCopyCost))
+            ManufacturingTabColumnSettingsList(12) = New Setting("InventionCost", CStr(SentSettings.InventionCost))
+            ManufacturingTabColumnSettingsList(13) = New Setting("CopyCost", CStr(SentSettings.CopyCost))
             ManufacturingTabColumnSettingsList(14) = New Setting("TotalManufacturingCost", CStr(SentSettings.TotalManufacturingCost))
             ManufacturingTabColumnSettingsList(15) = New Setting("Taxes", CStr(SentSettings.Taxes))
             ManufacturingTabColumnSettingsList(16) = New Setting("BrokerFees", CStr(SentSettings.BrokerFees))
@@ -2908,14 +2908,14 @@ Public Class ProgramSettings
             ManufacturingTabColumnSettingsList(48) = New Setting("CopyingFacilityMEBonus", CStr(SentSettings.CopyingFacilityMEBonus))
             ManufacturingTabColumnSettingsList(49) = New Setting("CopyingFacilityTEBonus", CStr(SentSettings.CopyingFacilityTEBonus))
             ManufacturingTabColumnSettingsList(50) = New Setting("CopyingFacilityUsage", CStr(SentSettings.CopyingFacilityUsage))
-            ManufacturingTabColumnSettingsList(51) = New Setting("InventionREFacilityName", CStr(SentSettings.InventionREFacilityName))
-            ManufacturingTabColumnSettingsList(52) = New Setting("InventionREFacilitySystem", CStr(SentSettings.InventionREFacilitySystem))
-            ManufacturingTabColumnSettingsList(53) = New Setting("InventionREFacilitySystemIndex", CStr(SentSettings.InventionREFacilitySystemIndex))
-            ManufacturingTabColumnSettingsList(54) = New Setting("InventionREFacilityTax", CStr(SentSettings.InventionREFacilityTax))
-            ManufacturingTabColumnSettingsList(55) = New Setting("InventionREFacilityRegion", CStr(SentSettings.InventionREFacilityRegion))
-            ManufacturingTabColumnSettingsList(56) = New Setting("InventionREFacilityMEBonus", CStr(SentSettings.InventionREFacilityMEBonus))
-            ManufacturingTabColumnSettingsList(57) = New Setting("InventionREFacilityTEBonus", CStr(SentSettings.InventionREFacilityTEBonus))
-            ManufacturingTabColumnSettingsList(58) = New Setting("InventionREFacilityUsage", CStr(SentSettings.InventionREFacilityUsage))
+            ManufacturingTabColumnSettingsList(51) = New Setting("InventionFacilityName", CStr(SentSettings.InventionFacilityName))
+            ManufacturingTabColumnSettingsList(52) = New Setting("InventionFacilitySystem", CStr(SentSettings.InventionFacilitySystem))
+            ManufacturingTabColumnSettingsList(53) = New Setting("InventionFacilitySystemIndex", CStr(SentSettings.InventionFacilitySystemIndex))
+            ManufacturingTabColumnSettingsList(54) = New Setting("InventionFacilityTax", CStr(SentSettings.InventionFacilityTax))
+            ManufacturingTabColumnSettingsList(55) = New Setting("InventionFacilityRegion", CStr(SentSettings.InventionFacilityRegion))
+            ManufacturingTabColumnSettingsList(56) = New Setting("InventionFacilityMEBonus", CStr(SentSettings.InventionFacilityMEBonus))
+            ManufacturingTabColumnSettingsList(57) = New Setting("InventionFacilityTEBonus", CStr(SentSettings.InventionFacilityTEBonus))
+            ManufacturingTabColumnSettingsList(58) = New Setting("InventionFacilityUsage", CStr(SentSettings.InventionFacilityUsage))
             ManufacturingTabColumnSettingsList(59) = New Setting("ManufacturingTeamName", CStr(SentSettings.ManufacturingTeamName))
             ManufacturingTabColumnSettingsList(60) = New Setting("ManufacturingTeamBonuses", CStr(SentSettings.ManufacturingTeamBonuses))
             ManufacturingTabColumnSettingsList(61) = New Setting("ManufacturingTeamUsage", CStr(SentSettings.ManufacturingTeamUsage))
@@ -2928,10 +2928,10 @@ Public Class ProgramSettings
             ManufacturingTabColumnSettingsList(68) = New Setting("CopyingTeamBonuses", CStr(SentSettings.CopyingTeamBonuses))
             ManufacturingTabColumnSettingsList(69) = New Setting("CopyingTeamUsage", CStr(SentSettings.CopyingTeamUsage))
             ManufacturingTabColumnSettingsList(70) = New Setting("CopyingTeamCostModifier", CStr(SentSettings.CopyingTeamCostModifier))
-            ManufacturingTabColumnSettingsList(71) = New Setting("InventionRETeamName", CStr(SentSettings.InventionRETeamName))
-            ManufacturingTabColumnSettingsList(72) = New Setting("InventionRETeamBonuses", CStr(SentSettings.InventionRETeamBonuses))
-            ManufacturingTabColumnSettingsList(73) = New Setting("InventionRETeamUsage", CStr(SentSettings.InventionRETeamUsage))
-            ManufacturingTabColumnSettingsList(74) = New Setting("InventionRETeamCostModifier", CStr(SentSettings.InventionRETeamCostModifier))
+            ManufacturingTabColumnSettingsList(71) = New Setting("InventionTeamName", CStr(SentSettings.InventionTeamName))
+            ManufacturingTabColumnSettingsList(72) = New Setting("InventionTeamBonuses", CStr(SentSettings.InventionTeamBonuses))
+            ManufacturingTabColumnSettingsList(73) = New Setting("InventionTeamUsage", CStr(SentSettings.InventionTeamUsage))
+            ManufacturingTabColumnSettingsList(74) = New Setting("InventionTeamCostModifier", CStr(SentSettings.InventionTeamCostModifier))
 
             ManufacturingTabColumnSettingsList(75) = New Setting("ItemCategoryWidth", CStr(SentSettings.ItemCategoryWidth))
             ManufacturingTabColumnSettingsList(76) = New Setting("ItemGroupWidth", CStr(SentSettings.ItemGroupWidth))
@@ -2945,8 +2945,8 @@ Public Class ProgramSettings
             ManufacturingTabColumnSettingsList(84) = New Setting("RunsWidth", CStr(SentSettings.RunsWidth))
             ManufacturingTabColumnSettingsList(85) = New Setting("ProductionLinesWidth", CStr(SentSettings.ProductionLinesWidth))
             ManufacturingTabColumnSettingsList(86) = New Setting("LaboratoryLinesWidth", CStr(SentSettings.LaboratoryLinesWidth))
-            ManufacturingTabColumnSettingsList(87) = New Setting("TotalInventionRECostWidth", CStr(SentSettings.TotalInventionRECostWidth))
-            ManufacturingTabColumnSettingsList(88) = New Setting("TotalCopyCostWidth", CStr(SentSettings.TotalCopyCostWidth))
+            ManufacturingTabColumnSettingsList(87) = New Setting("InventionCostWidth", CStr(SentSettings.InventionCostWidth))
+            ManufacturingTabColumnSettingsList(88) = New Setting("CopyCostWidth", CStr(SentSettings.CopyCostWidth))
             ManufacturingTabColumnSettingsList(89) = New Setting("TotalManufacturingCostWidth", CStr(SentSettings.TotalManufacturingCostWidth))
             ManufacturingTabColumnSettingsList(90) = New Setting("TaxesWidth", CStr(SentSettings.TaxesWidth))
             ManufacturingTabColumnSettingsList(91) = New Setting("BrokerFeesWidth", CStr(SentSettings.BrokerFeesWidth))
@@ -2984,14 +2984,14 @@ Public Class ProgramSettings
             ManufacturingTabColumnSettingsList(123) = New Setting("CopyingFacilityMEBonusWidth", CStr(SentSettings.CopyingFacilityMEBonusWidth))
             ManufacturingTabColumnSettingsList(124) = New Setting("CopyingFacilityTEBonusWidth", CStr(SentSettings.CopyingFacilityTEBonusWidth))
             ManufacturingTabColumnSettingsList(125) = New Setting("CopyingFacilityUsageWidth", CStr(SentSettings.CopyingFacilityUsageWidth))
-            ManufacturingTabColumnSettingsList(126) = New Setting("InventionREFacilityNameWidth", CStr(SentSettings.InventionREFacilityNameWidth))
-            ManufacturingTabColumnSettingsList(127) = New Setting("InventionREFacilitySystemWidth", CStr(SentSettings.InventionREFacilitySystemWidth))
-            ManufacturingTabColumnSettingsList(128) = New Setting("InventionREFacilitySystemIndexWidth", CStr(SentSettings.InventionREFacilitySystemIndexWidth))
-            ManufacturingTabColumnSettingsList(129) = New Setting("InventionREFacilityTaxWidth", CStr(SentSettings.InventionREFacilityTaxWidth))
-            ManufacturingTabColumnSettingsList(130) = New Setting("InventionREFacilityRegionWidth", CStr(SentSettings.InventionREFacilityRegionWidth))
-            ManufacturingTabColumnSettingsList(131) = New Setting("InventionREFacilityMEBonusWidth", CStr(SentSettings.InventionREFacilityMEBonusWidth))
-            ManufacturingTabColumnSettingsList(132) = New Setting("InventionREFacilityTEBonusWidth", CStr(SentSettings.InventionREFacilityTEBonusWidth))
-            ManufacturingTabColumnSettingsList(133) = New Setting("InventionREFacilityUsageWidth", CStr(SentSettings.InventionREFacilityUsageWidth))
+            ManufacturingTabColumnSettingsList(126) = New Setting("InventionFacilityNameWidth", CStr(SentSettings.InventionFacilityNameWidth))
+            ManufacturingTabColumnSettingsList(127) = New Setting("InventionFacilitySystemWidth", CStr(SentSettings.InventionFacilitySystemWidth))
+            ManufacturingTabColumnSettingsList(128) = New Setting("InventionFacilitySystemIndexWidth", CStr(SentSettings.InventionFacilitySystemIndexWidth))
+            ManufacturingTabColumnSettingsList(129) = New Setting("InventionFacilityTaxWidth", CStr(SentSettings.InventionFacilityTaxWidth))
+            ManufacturingTabColumnSettingsList(130) = New Setting("InventionFacilityRegionWidth", CStr(SentSettings.InventionFacilityRegionWidth))
+            ManufacturingTabColumnSettingsList(131) = New Setting("InventionFacilityMEBonusWidth", CStr(SentSettings.InventionFacilityMEBonusWidth))
+            ManufacturingTabColumnSettingsList(132) = New Setting("InventionFacilityTEBonusWidth", CStr(SentSettings.InventionFacilityTEBonusWidth))
+            ManufacturingTabColumnSettingsList(133) = New Setting("InventionFacilityUsageWidth", CStr(SentSettings.InventionFacilityUsageWidth))
             ManufacturingTabColumnSettingsList(134) = New Setting("ManufacturingTeamNameWidth", CStr(SentSettings.ManufacturingTeamNameWidth))
             ManufacturingTabColumnSettingsList(135) = New Setting("ManufacturingTeamBonusesWidth", CStr(SentSettings.ManufacturingTeamBonusesWidth))
             ManufacturingTabColumnSettingsList(136) = New Setting("ManufacturingTeamUsageWidth", CStr(SentSettings.ManufacturingTeamUsageWidth))
@@ -3004,10 +3004,10 @@ Public Class ProgramSettings
             ManufacturingTabColumnSettingsList(143) = New Setting("CopyingTeamBonusesWidth", CStr(SentSettings.CopyingTeamBonusesWidth))
             ManufacturingTabColumnSettingsList(144) = New Setting("CopyingTeamUsageWidth", CStr(SentSettings.CopyingTeamUsageWidth))
             ManufacturingTabColumnSettingsList(145) = New Setting("CopyingTeamCostModifierWidth", CStr(SentSettings.CopyingTeamCostModifierWidth))
-            ManufacturingTabColumnSettingsList(146) = New Setting("InventionRETeamNameWidth", CStr(SentSettings.InventionRETeamNameWidth))
-            ManufacturingTabColumnSettingsList(147) = New Setting("InventionRETeamBonusesWidth", CStr(SentSettings.InventionRETeamBonusesWidth))
-            ManufacturingTabColumnSettingsList(148) = New Setting("InventionRETeamUsageWidth", CStr(SentSettings.InventionRETeamUsageWidth))
-            ManufacturingTabColumnSettingsList(149) = New Setting("InventionRETeamCostModifierWidth", CStr(SentSettings.InventionRETeamCostModifierWidth))
+            ManufacturingTabColumnSettingsList(146) = New Setting("InventionTeamNameWidth", CStr(SentSettings.InventionTeamNameWidth))
+            ManufacturingTabColumnSettingsList(147) = New Setting("InventionTeamBonusesWidth", CStr(SentSettings.InventionTeamBonusesWidth))
+            ManufacturingTabColumnSettingsList(148) = New Setting("InventionTeamUsageWidth", CStr(SentSettings.InventionTeamUsageWidth))
+            ManufacturingTabColumnSettingsList(149) = New Setting("InventionTeamCostModifierWidth", CStr(SentSettings.InventionTeamCostModifierWidth))
 
             ManufacturingTabColumnSettingsList(150) = New Setting("OrderMTByColumn", CStr(SentSettings.OrderByColumn))
             ManufacturingTabColumnSettingsList(151) = New Setting("OrderMTType", CStr(SentSettings.OrderType))
@@ -4683,7 +4683,7 @@ Public Structure ManufacturingTabSettings
     Dim CheckDecryptorUseforT2 As Boolean
     Dim CheckDecryptorUseforT3 As Boolean
 
-    Dim CheckIgnoreInventionRE As Boolean
+    Dim CheckIgnoreInvention As Boolean
 
     Dim CheckRelicWrecked As Boolean
     Dim CheckRelicIntact As Boolean
@@ -4947,8 +4947,8 @@ Public Structure ManufacturingTabColumnSettings
     Dim Runs As Integer
     Dim ProductionLines As Integer
     Dim LaboratoryLines As Integer
-    Dim TotalInventionRECost As Integer
-    Dim TotalCopyCost As Integer
+    Dim InventionCost As Integer
+    Dim CopyCost As Integer
     Dim TotalManufacturingCost As Integer
     Dim Taxes As Integer
     Dim BrokerFees As Integer
@@ -4986,14 +4986,14 @@ Public Structure ManufacturingTabColumnSettings
     Dim CopyingFacilityMEBonus As Integer
     Dim CopyingFacilityTEBonus As Integer
     Dim CopyingFacilityUsage As Integer
-    Dim InventionREFacilityName As Integer
-    Dim InventionREFacilitySystem As Integer
-    Dim InventionREFacilitySystemIndex As Integer
-    Dim InventionREFacilityTax As Integer
-    Dim InventionREFacilityRegion As Integer
-    Dim InventionREFacilityMEBonus As Integer
-    Dim InventionREFacilityTEBonus As Integer
-    Dim InventionREFacilityUsage As Integer
+    Dim InventionFacilityName As Integer
+    Dim InventionFacilitySystem As Integer
+    Dim InventionFacilitySystemIndex As Integer
+    Dim InventionFacilityTax As Integer
+    Dim InventionFacilityRegion As Integer
+    Dim InventionFacilityMEBonus As Integer
+    Dim InventionFacilityTEBonus As Integer
+    Dim InventionFacilityUsage As Integer
     Dim ManufacturingTeamName As Integer
     Dim ManufacturingTeamBonuses As Integer
     Dim ManufacturingTeamUsage As Integer
@@ -5006,10 +5006,10 @@ Public Structure ManufacturingTabColumnSettings
     Dim CopyingTeamBonuses As Integer
     Dim CopyingTeamUsage As Integer
     Dim CopyingTeamCostModifier As Integer
-    Dim InventionRETeamName As Integer
-    Dim InventionRETeamBonuses As Integer
-    Dim InventionRETeamUsage As Integer
-    Dim InventionRETeamCostModifier As Integer
+    Dim InventionTeamName As Integer
+    Dim InventionTeamBonuses As Integer
+    Dim InventionTeamUsage As Integer
+    Dim InventionTeamCostModifier As Integer
 
     Dim ItemCategoryWidth As Integer
     Dim ItemGroupWidth As Integer
@@ -5023,8 +5023,8 @@ Public Structure ManufacturingTabColumnSettings
     Dim RunsWidth As Integer
     Dim ProductionLinesWidth As Integer
     Dim LaboratoryLinesWidth As Integer
-    Dim TotalInventionRECostWidth As Integer
-    Dim TotalCopyCostWidth As Integer
+    Dim InventionCostWidth As Integer
+    Dim CopyCostWidth As Integer
     Dim TotalManufacturingCostWidth As Integer
     Dim TaxesWidth As Integer
     Dim BrokerFeesWidth As Integer
@@ -5062,14 +5062,14 @@ Public Structure ManufacturingTabColumnSettings
     Dim CopyingFacilityMEBonusWidth As Integer
     Dim CopyingFacilityTEBonusWidth As Integer
     Dim CopyingFacilityUsageWidth As Integer
-    Dim InventionREFacilityNameWidth As Integer
-    Dim InventionREFacilitySystemWidth As Integer
-    Dim InventionREFacilitySystemIndexWidth As Integer
-    Dim InventionREFacilityTaxWidth As Integer
-    Dim InventionREFacilityRegionWidth As Integer
-    Dim InventionREFacilityMEBonusWidth As Integer
-    Dim InventionREFacilityTEBonusWidth As Integer
-    Dim InventionREFacilityUsageWidth As Integer
+    Dim InventionFacilityNameWidth As Integer
+    Dim InventionFacilitySystemWidth As Integer
+    Dim InventionFacilitySystemIndexWidth As Integer
+    Dim InventionFacilityTaxWidth As Integer
+    Dim InventionFacilityRegionWidth As Integer
+    Dim InventionFacilityMEBonusWidth As Integer
+    Dim InventionFacilityTEBonusWidth As Integer
+    Dim InventionFacilityUsageWidth As Integer
     Dim ManufacturingTeamNameWidth As Integer
     Dim ManufacturingTeamBonusesWidth As Integer
     Dim ManufacturingTeamUsageWidth As Integer
@@ -5082,10 +5082,10 @@ Public Structure ManufacturingTabColumnSettings
     Dim CopyingTeamBonusesWidth As Integer
     Dim CopyingTeamUsageWidth As Integer
     Dim CopyingTeamCostModifierWidth As Integer
-    Dim InventionRETeamNameWidth As Integer
-    Dim InventionRETeamBonusesWidth As Integer
-    Dim InventionRETeamUsageWidth As Integer
-    Dim InventionRETeamCostModifierWidth As Integer
+    Dim InventionTeamNameWidth As Integer
+    Dim InventionTeamBonusesWidth As Integer
+    Dim InventionTeamUsageWidth As Integer
+    Dim InventionTeamCostModifierWidth As Integer
 
     Dim OrderByColumn As Integer ' What column index the jobs are sorted
     Dim OrderType As String ' Ascending or Descending

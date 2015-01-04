@@ -809,26 +809,26 @@ Public Module Public_Variables
             If SentBlueprint.GetTechLevel = BlueprintTechLevel.T2 Or SentBlueprint.GetTechLevel = BlueprintTechLevel.T3 Then
                 If UserApplicationSettings.ShopListIncludeInventMats = True Then
                     ' Save the list of invention materials
-                    .InventionREMaterials = SentBlueprint.GetInventionREMaterials
+                    .InventionMaterials = SentBlueprint.GetInventionMaterials
 
                     ' Now insert into main buy List 
-                    ShoppingBuyList.InsertMaterialList(.InventionREMaterials.GetMaterialList)
+                    ShoppingBuyList.InsertMaterialList(.InventionMaterials.GetMaterialList)
 
                     ' Remove the data interface though, we will assume they don't want to buy this but this will get listed in the copy output (sent above)
-                    ShoppingBuyList.RemoveMaterial(SentBlueprint.GetInventionREMaterials.SearchListbyName("Data Interface"))
+                    ShoppingBuyList.RemoveMaterial(SentBlueprint.GetInventionMaterials.SearchListbyName("Data Interface"))
                 End If
 
                 ' How many runs do we need to invent this?
-                .AvgInvRERunsforSuccess = 1 / SentBlueprint.GetInventionREChance
-                .InventedREdRuns = SentBlueprint.GetInventedREdRuns
-                .InventionREJobs = SentBlueprint.GetInventionREJobs
+                .AvgInvRunsforSuccess = 1 / SentBlueprint.GetInventionChance
+                .InventedRuns = SentBlueprint.GetInventedRuns
+                .InventionJobs = SentBlueprint.GetInventionJobs
 
                 ' Decryptor if used
                 .DecryptorRelic = SentBlueprint.GetDecryptor.Name
 
                 ' Add the cost
-                .InventionRECost = SentBlueprint.GetTotalInventionRECost
-                .InventionREUsage = SentBlueprint.GetInventionREUsage
+                .InventionCost = SentBlueprint.GetBPInventionCost
+                .InventionUsage = SentBlueprint.GetBPInventionUsage
 
             End If
 

@@ -48,8 +48,8 @@
             Call UpdateListCheck(.Runs, 9)
             Call UpdateListCheck(.ProductionLines, 10)
             Call UpdateListCheck(.LaboratoryLines, 11)
-            Call UpdateListCheck(.TotalInventionRECost, 12)
-            Call UpdateListCheck(.TotalCopyCost, 13)
+            Call UpdateListCheck(.InventionCost, 12)
+            Call UpdateListCheck(.CopyCost, 13)
             Call UpdateListCheck(.TotalManufacturingCost, 14)
             Call UpdateListCheck(.Taxes, 15)
             Call UpdateListCheck(.BrokerFees, 16)
@@ -87,14 +87,14 @@
             Call UpdateListCheck(.CopyingFacilityMEBonus, 48)
             Call UpdateListCheck(.CopyingFacilityTEBonus, 49)
             Call UpdateListCheck(.CopyingFacilityUsage, 50)
-            Call UpdateListCheck(.InventionREFacilityName, 51)
-            Call UpdateListCheck(.InventionREFacilitySystem, 52)
-            Call UpdateListCheck(.InventionREFacilitySystemIndex, 53)
-            Call UpdateListCheck(.InventionREFacilityTax, 54)
-            Call UpdateListCheck(.InventionREFacilityRegion, 55)
-            Call UpdateListCheck(.InventionREFacilityMEBonus, 56)
-            Call UpdateListCheck(.InventionREFacilityTEBonus, 57)
-            Call UpdateListCheck(.InventionREFacilityUsage, 58)
+            Call UpdateListCheck(.InventionFacilityName, 51)
+            Call UpdateListCheck(.InventionFacilitySystem, 52)
+            Call UpdateListCheck(.InventionFacilitySystemIndex, 53)
+            Call UpdateListCheck(.InventionFacilityTax, 54)
+            Call UpdateListCheck(.InventionFacilityRegion, 55)
+            Call UpdateListCheck(.InventionFacilityMEBonus, 56)
+            Call UpdateListCheck(.InventionFacilityTEBonus, 57)
+            Call UpdateListCheck(.InventionFacilityUsage, 58)
             Call UpdateListCheck(.ManufacturingTeamName, 59)
             Call UpdateListCheck(.ManufacturingTeamBonuses, 60)
             Call UpdateListCheck(.ManufacturingTeamUsage, 61)
@@ -107,10 +107,10 @@
             Call UpdateListCheck(.CopyingTeamBonuses, 68)
             Call UpdateListCheck(.CopyingTeamUsage, 69)
             Call UpdateListCheck(.CopyingTeamCostModifier, 70)
-            Call UpdateListCheck(.InventionRETeamName, 71)
-            Call UpdateListCheck(.InventionRETeamBonuses, 72)
-            Call UpdateListCheck(.InventionRETeamUsage, 73)
-            Call UpdateListCheck(.InventionRETeamCostModifier, 74)
+            Call UpdateListCheck(.InventionTeamName, 71)
+            Call UpdateListCheck(.InventionTeamBonuses, 72)
+            Call UpdateListCheck(.InventionTeamUsage, 73)
+            Call UpdateListCheck(.InventionTeamCostModifier, 74)
 
             chkLstBoxColumns.Update()
 
@@ -181,8 +181,8 @@
             .Runs = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(9), .Runs)
             .ProductionLines = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(10), .ProductionLines)
             .LaboratoryLines = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(11), .LaboratoryLines)
-            .TotalInventionRECost = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(12), .TotalInventionRECost)
-            .TotalCopyCost = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(13), .TotalCopyCost)
+            .InventionCost = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(12), .InventionCost)
+            .CopyCost = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(13), .CopyCost)
             .TotalManufacturingCost = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(14), .TotalManufacturingCost)
             .Taxes = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(15), .Taxes)
             .BrokerFees = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(16), .BrokerFees)
@@ -220,14 +220,14 @@
             .CopyingFacilityMEBonus = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(48), .CopyingFacilityMEBonus)
             .CopyingFacilityTEBonus = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(49), .CopyingFacilityTEBonus)
             .CopyingFacilityUsage = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(50), .CopyingFacilityUsage)
-            .InventionREFacilityName = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(51), .InventionREFacilityName)
-            .InventionREFacilitySystem = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(52), .InventionREFacilitySystem)
-            .InventionREFacilitySystemIndex = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(53), .InventionREFacilitySystemIndex)
-            .InventionREFacilityTax = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(54), .InventionREFacilityTax)
-            .InventionREFacilityRegion = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(55), .InventionREFacilityRegion)
-            .InventionREFacilityMEBonus = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(56), .InventionREFacilityMEBonus)
-            .InventionREFacilityTEBonus = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(57), .InventionREFacilityTEBonus)
-            .InventionREFacilityUsage = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(58), .InventionREFacilityUsage)
+            .InventionFacilityName = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(51), .InventionFacilityName)
+            .InventionFacilitySystem = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(52), .InventionFacilitySystem)
+            .InventionFacilitySystemIndex = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(53), .InventionFacilitySystemIndex)
+            .InventionFacilityTax = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(54), .InventionFacilityTax)
+            .InventionFacilityRegion = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(55), .InventionFacilityRegion)
+            .InventionFacilityMEBonus = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(56), .InventionFacilityMEBonus)
+            .InventionFacilityTEBonus = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(57), .InventionFacilityTEBonus)
+            .InventionFacilityUsage = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(58), .InventionFacilityUsage)
             .ManufacturingTeamName = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(59), .ManufacturingTeamName)
             .ManufacturingTeamBonuses = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(60), .ManufacturingTeamBonuses)
             .ManufacturingTeamUsage = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(61), .ManufacturingTeamUsage)
@@ -240,10 +240,10 @@
             .CopyingTeamBonuses = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(68), .CopyingTeamBonuses)
             .CopyingTeamUsage = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(69), .CopyingTeamUsage)
             .CopyingTeamCostModifier = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(70), .CopyingTeamCostModifier)
-            .InventionRETeamName = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(71), .InventionRETeamName)
-            .InventionRETeamBonuses = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(72), .InventionRETeamBonuses)
-            .InventionRETeamUsage = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(73), .InventionRETeamUsage)
-            .InventionRETeamCostModifier = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(74), .InventionRETeamCostModifier)
+            .InventionTeamName = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(71), .InventionTeamName)
+            .InventionTeamBonuses = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(72), .InventionTeamBonuses)
+            .InventionTeamUsage = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(73), .InventionTeamUsage)
+            .InventionTeamCostModifier = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(74), .InventionTeamCostModifier)
 
             ' Now in case something was removed, we want to update the indicies
             With UserManufacturingTabColumnSettings
@@ -264,8 +264,8 @@
                     ColumnPositions(.Runs) = ProgramSettings.RunsColumnName
                     ColumnPositions(.ProductionLines) = ProgramSettings.ProductionLinesColumnName
                     ColumnPositions(.LaboratoryLines) = ProgramSettings.LaboratoryLinesColumnName
-                    ColumnPositions(.TotalInventionRECost) = ProgramSettings.TotalInventionRECostColumnName
-                    ColumnPositions(.TotalCopyCost) = ProgramSettings.TotalCopyCostColumnName
+                    ColumnPositions(.InventionCost) = ProgramSettings.InventionCostColumnName
+                    ColumnPositions(.CopyCost) = ProgramSettings.CopyCostColumnName
                     ColumnPositions(.TotalManufacturingCost) = ProgramSettings.TotalManufacturingCostColumnName
                     ColumnPositions(.Taxes) = ProgramSettings.TaxesColumnName
                     ColumnPositions(.BrokerFees) = ProgramSettings.BrokerFeesColumnName
@@ -303,14 +303,14 @@
                     ColumnPositions(.CopyingFacilityMEBonus) = ProgramSettings.CopyingFacilityMEBonusColumnName
                     ColumnPositions(.CopyingFacilityTEBonus) = ProgramSettings.CopyingFacilityTEBonusColumnName
                     ColumnPositions(.CopyingFacilityUsage) = ProgramSettings.CopyingFacilityUsageColumnName
-                    ColumnPositions(.InventionREFacilityName) = ProgramSettings.InventionREFacilityNameColumnName
-                    ColumnPositions(.InventionREFacilitySystem) = ProgramSettings.InventionREFacilitySystemColumnName
-                    ColumnPositions(.InventionREFacilitySystemIndex) = ProgramSettings.InventionREFacilitySystemIndexColumnName
-                    ColumnPositions(.InventionREFacilityTax) = ProgramSettings.InventionREFacilityTaxColumnName
-                    ColumnPositions(.InventionREFacilityRegion) = ProgramSettings.InventionREFacilityRegionColumnName
-                    ColumnPositions(.InventionREFacilityMEBonus) = ProgramSettings.InventionREFacilityMEBonusColumnName
-                    ColumnPositions(.InventionREFacilityTEBonus) = ProgramSettings.InventionREFacilityTEBonusColumnName
-                    ColumnPositions(.InventionREFacilityUsage) = ProgramSettings.InventionREFacilityUsageColumnName
+                    ColumnPositions(.InventionFacilityName) = ProgramSettings.InventionFacilityNameColumnName
+                    ColumnPositions(.InventionFacilitySystem) = ProgramSettings.InventionFacilitySystemColumnName
+                    ColumnPositions(.InventionFacilitySystemIndex) = ProgramSettings.InventionFacilitySystemIndexColumnName
+                    ColumnPositions(.InventionFacilityTax) = ProgramSettings.InventionFacilityTaxColumnName
+                    ColumnPositions(.InventionFacilityRegion) = ProgramSettings.InventionFacilityRegionColumnName
+                    ColumnPositions(.InventionFacilityMEBonus) = ProgramSettings.InventionFacilityMEBonusColumnName
+                    ColumnPositions(.InventionFacilityTEBonus) = ProgramSettings.InventionFacilityTEBonusColumnName
+                    ColumnPositions(.InventionFacilityUsage) = ProgramSettings.InventionFacilityUsageColumnName
                     ColumnPositions(.ManufacturingTeamName) = ProgramSettings.ManufacturingTeamNameColumnName
                     ColumnPositions(.ManufacturingTeamBonuses) = ProgramSettings.ManufacturingTeamBonusesColumnName
                     ColumnPositions(.ManufacturingTeamUsage) = ProgramSettings.ManufacturingTeamUsageColumnName
@@ -323,10 +323,10 @@
                     ColumnPositions(.CopyingTeamBonuses) = ProgramSettings.CopyingTeamBonusesColumnName
                     ColumnPositions(.CopyingTeamUsage) = ProgramSettings.CopyingTeamUsageColumnName
                     ColumnPositions(.CopyingTeamCostModifier) = ProgramSettings.CopyingTeamCostModifierColumnName
-                    ColumnPositions(.InventionRETeamName) = ProgramSettings.InventionRETeamNameColumnName
-                    ColumnPositions(.InventionRETeamBonuses) = ProgramSettings.InventionRETeamBonusesColumnName
-                    ColumnPositions(.InventionRETeamUsage) = ProgramSettings.InventionRETeamUsageColumnName
-                    ColumnPositions(.InventionRETeamCostModifier) = ProgramSettings.InventionRETeamCostModifierColumnName
+                    ColumnPositions(.InventionTeamName) = ProgramSettings.InventionTeamNameColumnName
+                    ColumnPositions(.InventionTeamBonuses) = ProgramSettings.InventionTeamBonusesColumnName
+                    ColumnPositions(.InventionTeamUsage) = ProgramSettings.InventionTeamUsageColumnName
+                    ColumnPositions(.InventionTeamCostModifier) = ProgramSettings.InventionTeamCostModifierColumnName
                 End With
 
                 ' Reset the first one with nothing since the first column is empty
@@ -387,10 +387,10 @@
                                 .ProductionLines = i
                             Case ProgramSettings.LaboratoryLinesColumnName
                                 .LaboratoryLines = i
-                            Case ProgramSettings.TotalInventionRECostColumnName
-                                .TotalInventionRECost = i
-                            Case ProgramSettings.TotalCopyCostColumnName
-                                .TotalCopyCost = i
+                            Case ProgramSettings.InventionCostColumnName
+                                .InventionCost = i
+                            Case ProgramSettings.CopyCostColumnName
+                                .CopyCost = i
                             Case ProgramSettings.TotalManufacturingCostColumnName
                                 .TotalManufacturingCost = i
                             Case ProgramSettings.TaxesColumnName
@@ -465,22 +465,22 @@
                                 .CopyingFacilityTEBonus = i
                             Case ProgramSettings.CopyingFacilityUsageColumnName
                                 .CopyingFacilityUsage = i
-                            Case ProgramSettings.InventionREFacilityNameColumnName
-                                .InventionREFacilityName = i
-                            Case ProgramSettings.InventionREFacilitySystemColumnName
-                                .InventionREFacilitySystem = i
-                            Case ProgramSettings.InventionREFacilitySystemIndexColumnName
-                                .InventionREFacilitySystemIndex = i
-                            Case ProgramSettings.InventionREFacilityTaxColumnName
-                                .InventionREFacilityTax = i
-                            Case ProgramSettings.InventionREFacilityRegionColumnName
-                                .InventionREFacilityRegion = i
-                            Case ProgramSettings.InventionREFacilityMEBonusColumnName
-                                .InventionREFacilityMEBonus = i
-                            Case ProgramSettings.InventionREFacilityTEBonusColumnName
-                                .InventionREFacilityTEBonus = i
-                            Case ProgramSettings.InventionREFacilityUsageColumnName
-                                .InventionREFacilityUsage = i
+                            Case ProgramSettings.InventionFacilityNameColumnName
+                                .InventionFacilityName = i
+                            Case ProgramSettings.InventionFacilitySystemColumnName
+                                .InventionFacilitySystem = i
+                            Case ProgramSettings.InventionFacilitySystemIndexColumnName
+                                .InventionFacilitySystemIndex = i
+                            Case ProgramSettings.InventionFacilityTaxColumnName
+                                .InventionFacilityTax = i
+                            Case ProgramSettings.InventionFacilityRegionColumnName
+                                .InventionFacilityRegion = i
+                            Case ProgramSettings.InventionFacilityMEBonusColumnName
+                                .InventionFacilityMEBonus = i
+                            Case ProgramSettings.InventionFacilityTEBonusColumnName
+                                .InventionFacilityTEBonus = i
+                            Case ProgramSettings.InventionFacilityUsageColumnName
+                                .InventionFacilityUsage = i
                             Case ProgramSettings.ManufacturingTeamNameColumnName
                                 .ManufacturingTeamName = i
                             Case ProgramSettings.ManufacturingTeamBonusesColumnName
@@ -505,14 +505,14 @@
                                 .CopyingTeamUsage = i
                             Case ProgramSettings.CopyingTeamCostModifierColumnName
                                 .CopyingTeamCostModifier = i
-                            Case ProgramSettings.InventionRETeamNameColumnName
-                                .InventionRETeamName = i
-                            Case ProgramSettings.InventionRETeamBonusesColumnName
-                                .InventionRETeamBonuses = i
-                            Case ProgramSettings.InventionRETeamUsageColumnName
-                                .InventionRETeamUsage = i
-                            Case ProgramSettings.InventionRETeamCostModifierColumnName
-                                .InventionRETeamCostModifier = i
+                            Case ProgramSettings.InventionTeamNameColumnName
+                                .InventionTeamName = i
+                            Case ProgramSettings.InventionTeamBonusesColumnName
+                                .InventionTeamBonuses = i
+                            Case ProgramSettings.InventionTeamUsageColumnName
+                                .InventionTeamUsage = i
+                            Case ProgramSettings.InventionTeamCostModifierColumnName
+                                .InventionTeamCostModifier = i
                         End Select
                     Next
                 End With

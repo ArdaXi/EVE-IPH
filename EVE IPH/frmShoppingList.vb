@@ -1148,7 +1148,7 @@ Public Class frmShoppingList
                         End If
 
                         ' Build the item and get the list of materials
-                        Call TempBP.BuildItem(frmMain.chkBPTaxes.Checked, frmMain.chkBPTaxes.Checked, frmMain.chkBPFacilityIncludeUsage.Checked)
+                        Call TempBP.BuildItems(frmMain.chkBPTaxes.Checked, frmMain.chkBPTaxes.Checked, frmMain.chkBPFacilityIncludeUsage.Checked)
 
                         ' Add to shopping list but use BP tab settings
                         Call AddToShoppingList(TempBP, BuildBuy, frmMain.rbtnBPRawmatCopy.Checked, frmMain.rbtnBPComponentCopy.Checked, True)
