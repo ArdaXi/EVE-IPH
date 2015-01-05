@@ -113,7 +113,7 @@ Public Class Blueprint
     Private IncludeCopyUsage As Boolean
 
     Private InventionTime As Double ' Total time in seconds to invent this bp
-    Private InventionCosts As Double ' Total cost of materials only
+    Private InventionCosts As Double ' Total cost for all the invention runs to get enough successful inventions for these runs
     Private InventionUsage As Double ' Total cost to do this activity in a facility
 
     Private TotalInventionCost As Double ' Total cost to run this invention job for this bp
@@ -374,16 +374,16 @@ Public Class Blueprint
     Public Sub BuildItems(ByVal SetTaxes As Boolean, ByVal SetBrokerFees As Boolean, ByVal SetProductionCosts As Boolean)
 
         ' Need to check for the number of BPs sent and run multiple batches if necessary. Also, look at the number of lines per batch
-        If NumberofBPs = 1 Then
-            ' Just run the normal function and it will set everything
-            Call BuildItem(SetTaxes, SetBrokerFees, SetProductionCosts)
-        Else
-            ' Need to figure out the number of batches - Treat Invented T2 BPCs differently based on the number of runs per bp
-            ' Assumptions - They want the most effcient way to build. Ie, 96 runs, 10 bps, then do 9 batches of 10, and 1 of 6. 
+        'If NumberofBPs = 1 Then
+        ' Just run the normal function and it will set everything
+        Call BuildItem(SetTaxes, SetBrokerFees, SetProductionCosts)
+        'Else
+        '    ' Need to figure out the number of batches - Treat Invented T2 BPCs differently based on the number of runs per bp
+        '    ' Assumptions - They want the most effcient way to build. Ie, 96 runs, 10 bps, then do 9 batches of 10, and 1 of 6. 
 
 
 
-        End If
+        'End If
 
     End Sub
 
@@ -1709,6 +1709,11 @@ Public Class Blueprint
     ' Returns the Tech Level of the blueprint
     Public Function GetTechLevel() As Integer
         Return TechLevel
+    End Function
+
+    ' Returns the Runs that were sent to this blueprint
+    Public Function GetUserRuns() As Long
+        Return UserRuns
     End Function
 
     ' Returns the item type of the blueprint, which is really the Tech that I set instead of what is in the DB I.e. 'Augmented' drones show as T2 but act more like faction even though the BP's need T2 skills - however, they can't be invented anymore

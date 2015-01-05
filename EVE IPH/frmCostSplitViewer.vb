@@ -51,7 +51,7 @@ Public Class frmCostSplitViewer
             Next
         End If
 
-        ' Finally add the usage cost
+        ' Finally add the total cost
         MatList = lstCosts.Items.Add("Total Cost")
         ' Color this last line grey
         MatList.BackColor = Color.LightGray

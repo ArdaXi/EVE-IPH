@@ -606,25 +606,25 @@ Public Class frmMain
 
         ' Tool Tips
         If UserApplicationSettings.ShowToolTips Then
-            ttMain.SetToolTip(lblBPInventionCost, "Invention Cost for Runs entered = (Datacores + Decryptors) / Invented Runs * Runs" & vbCrLf & "Double-Click for material list")
-            ttMain.SetToolTip(lblBPRECost, "Invention Cost for Runs entered = (Datacores + Decryptors + Relics) / Invented Runs * Runs" & vbCrLf & "Double-Click for material list")
-            ttMain.SetToolTip(lblBPCopyCosts, "Total Cost of materials to make enough BPCs for the number of invention jobs needed" & vbCrLf & "Double-Click for material list")
+            ttMain.SetToolTip(lblBPInventionCost, "Invention Cost for Runs entered = (Datacores + Decryptors) / Invented Runs * Runs" & vbCrLf & "Double-Click for material list needed for enough successful BPCs for runs entered")
+            ttMain.SetToolTip(lblBPRECost, "Invention Cost for Runs entered = (Datacores + Decryptors + Relics) / Invented Runs * Runs" & vbCrLf & "Double-Click for material list needed for enough successful BPCs for runs entered")
+            ttMain.SetToolTip(lblBPCopyCosts, "Total Cost of materials to make enough BPCs for the number of invention jobs needed" & vbCrLf & "Double-Click for material list needed for enough successful BPCs for runs entered")
             ttMain.SetToolTip(lblBPFacilityUsage, "") ' Set when loaded with data
-            ttMain.SetToolTip(lblBPRuns, "Total number of items to produce. I.e. If you have 5 blueprints with 4 runs each, then enter 20.")
+            ttMain.SetToolTip(lblBPRuns, "Total number of items to produce. I.e. If you have 5 blueprints with 4 runs each, then enter 20")
             ttMain.SetToolTip(lblBPTaxes, "Sales Taxes to set up a sell order at an NPC Station")
             ttMain.SetToolTip(lblBPBrokerFees, "Broker's Fees to set up a sell order at an NPC Station")
             ttMain.SetToolTip(lblBPTotalCompCost, "Total Cost of Component Materials, InventionCosts, Usage, Taxes and Fees - Double Click for list of costs")
             ttMain.SetToolTip(lblBPRawTotalCost, "Total Cost of Raw Materials, InventionCosts, Usage, Taxes and Fees - Double Click for list of costs")
-            ttMain.SetToolTip(lblBPPT, "This is the time to build the item (including skill and implant modifiers) from the blueprint after all materials are gathered.")
-            ttMain.SetToolTip(lblBPCPTPT, "This is the total time to build the item and components and if selected, time to complete invention, copy and RE.")
+            ttMain.SetToolTip(lblBPPT, "This is the time to build the item (including skill and implant modifiers) from the blueprint after all materials are gathered")
+            ttMain.SetToolTip(lblBPCPTPT, "This is the total time to build the item and components and if selected, time to complete invention, copy and RE")
             ttMain.SetToolTip(lblBPCanMakeBP, "Double-Click here to see required skills to make this BP")
             ttMain.SetToolTip(lblBPCanMakeBPAll, "Double-Click here to see required skills to make all the items for this BP")
             ttMain.SetToolTip(lblBPT2InventStatus, "Double-Click here to see required skills to invent this BP")
-            ttMain.SetToolTip(chkBPPricePerUnit, "Show Price per Unit - All price data in this frame will be updated to show the prices for 1 unit.")
-            ttMain.SetToolTip(lblBPProductionTime, "Total time to build this blueprint with listed components.")
-            ttMain.SetToolTip(lblBPTotalItemPT, "Total time to build selected build components and this blueprint.")
-            ttMain.SetToolTip(lblBPComponentMats, "Total list of components, which can be built, and materials to build this blueprint.")
-            ttMain.SetToolTip(lblBPRawMats, "Total list of materials to build all components and base materials for this blueprint.")
+            ttMain.SetToolTip(chkBPPricePerUnit, "Show Price per Unit - All price data in this frame will be updated to show the prices for 1 unit")
+            ttMain.SetToolTip(lblBPProductionTime, "Total time to build this blueprint with listed components")
+            ttMain.SetToolTip(lblBPTotalItemPT, "Total time to build selected build components and this blueprint")
+            ttMain.SetToolTip(lblBPComponentMats, "Total list of components, which can be built, and materials to build this blueprint")
+            ttMain.SetToolTip(lblBPRawMats, "Total list of materials to build all components and base materials for this blueprint")
             ttMain.SetToolTip(chkBPSmall, "'Small' or 'S' in Name or 5m3 (Light) Drones")
             ttMain.SetToolTip(chkBPMedium, "'Medium' or 'M' in Name or 10m3 (Medium) Drones")
             ttMain.SetToolTip(chkBPLarge, "'Large' or 'L' in Name or 25m3 (Heavy) Drones")
@@ -3693,12 +3693,16 @@ NoBonus:
 
         If Not IsNothing(SelectedBlueprint) Then
             If SelectedBlueprint.GetTechLevel = BlueprintTechLevel.T2 Then
-                f1.MatType = "T2 Invention Materials"
+                f1.MatType = "T2 Invention Materials needed for enough successful BPCs for " & CStr(SelectedBlueprint.GetUserRuns)
+                If SelectedBlueprint.GetUserRuns = 1 Then
+                    f1.MatType = f1.MatType & " Run"
+                Else
+                    f1.MatType = f1.MatType & " Runs"
+                End If
                 f1.MaterialList = SelectedBlueprint.GetInventionMaterials
-                'f1.InventionUsage = SelectedBlueprint.GetBPInventionUsage
             End If
-            f1.Show()
-        End If
+                f1.Show()
+            End If
 
     End Sub
 
@@ -3708,7 +3712,12 @@ NoBonus:
 
         If Not IsNothing(SelectedBlueprint) Then
             If SelectedBlueprint.GetTechLevel = BlueprintTechLevel.T2 Then
-                f1.MatType = "T2 Copy Materials"
+                f1.MatType = "T2 Copy Materials needed for enough successful BPCs for " & CStr(SelectedBlueprint.GetUserRuns)
+                If SelectedBlueprint.GetUserRuns = 1 Then
+                    f1.MatType = f1.MatType & " Run"
+                Else
+                    f1.MatType = f1.MatType & " Runs"
+                End If
                 f1.MaterialList = SelectedBlueprint.GetBPCCopyMaterials
                 'f1.InventionUsage = SelectedBlueprint.GetBPCCopyUsage
             End If
@@ -3723,7 +3732,12 @@ NoBonus:
 
         If Not IsNothing(SelectedBlueprint) Then
             If SelectedBlueprint.GetTechLevel = BlueprintTechLevel.T3 Then
-                f1.MatType = "T3 Invention Materials"
+                f1.MatType = "T3 Invention Materials needed for enough successful BPCs for " & CStr(SelectedBlueprint.GetUserRuns)
+                If SelectedBlueprint.GetUserRuns = 1 Then
+                    f1.MatType = f1.MatType & " Run"
+                Else
+                    f1.MatType = f1.MatType & " Runs"
+                End If
                 f1.MaterialList = SelectedBlueprint.GetInventionMaterials
                 'f1.InventionUsage = SelectedBlueprint.GetBPInventionUsage
             End If
@@ -7632,8 +7646,9 @@ Tabs:
                     lblBPT2InventStatus.ForeColor = Color.Red
                 End If
 
-                ' Invention
-                lblBPInventionCost.Text = FormatNumber(SelectedBlueprint.GetBPInventionCost(), 2)
+                ' Invention cost to get enough success for the runs entered
+                lblBPInventionCost.Text = FormatNumber(SelectedBlueprint.GetBPTotalInventionCosts(), 2)
+
                 ' Invention Chance
                 lblBPInventionChance.Text = FormatPercent(SelectedBlueprint.GetInventionChance(), 2)
 
@@ -7695,7 +7710,7 @@ Tabs:
             tabBPInventionEquip.SelectTab(SelectedBPTabIndex)
 
             ' RE Cost and time
-            lblBPRECost.Text = FormatNumber(SelectedBlueprint.GetBPInventionCost(), 2)
+            lblBPRECost.Text = FormatNumber(SelectedBlueprint.GetBPTotalInventionCosts(), 2)
             lblBPRETime.Text = FormatIPHTime(SelectedBlueprint.GetBPInventionTime())
 
             ' Update the decryptor stats box ME: -4, TE: -3, Runs: +9

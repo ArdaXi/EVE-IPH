@@ -27,7 +27,8 @@
     Private Sub frmInventionREMats_Shown(sender As Object, e As System.EventArgs) Handles Me.Shown
         Dim MatList As ListViewItem
         Dim Quantity As Long
-        Dim TotalCost As Double
+        Dim MatCost As Double
+        Dim TotalCost As Double ' For summing up all the costs
 
         Application.UseWaitCursor = True
         Application.DoEvents()
@@ -47,13 +48,21 @@
             For i = 0 To MaterialList.GetMaterialList.Count - 1
                 Application.DoEvents()
                 MatList = lstMats.Items.Add(MaterialList.GetMaterialList(i).GetMaterialName)
-                TotalCost = CDbl(MaterialList.GetMaterialList(i).GetTotalCost)
+                MatCost = CDbl(MaterialList.GetMaterialList(i).GetTotalCost)
                 Quantity = CLng(MaterialList.GetMaterialList(i).GetQuantity)
-                MatList.SubItems.Add(FormatNumber(TotalCost / Quantity, 2))
-                MatList.SubItems.Add(FormatNumber(TotalCost, 2))
+                MatList.SubItems.Add(FormatNumber(MatCost / Quantity, 2))
+                MatList.SubItems.Add(FormatNumber(MatCost, 2))
                 MatList.SubItems.Add(FormatNumber(Quantity, 0))
+                TotalCost += MatCost
             Next
         End If
+
+        ' Finally add the total cost
+        MatList = lstMats.Items.Add("Total Cost")
+        ' Color this last line grey
+        MatList.BackColor = Color.LightGray
+        MatList.SubItems.Add("")
+        MatList.SubItems.Add(FormatNumber(TotalCost, 2)) ' Put in the Total Cost column
 
         '' Finally add the usage cost
         'MatList = lstMats.Items.Add("Usage (Not included in Total)")
