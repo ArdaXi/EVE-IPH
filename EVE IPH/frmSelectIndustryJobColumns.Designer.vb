@@ -33,7 +33,7 @@ Partial Class frmSelectIndustryJobColumns
         '
         'btnCancel
         '
-        Me.btnCancel.Location = New System.Drawing.Point(154, 372)
+        Me.btnCancel.Location = New System.Drawing.Point(154, 387)
         Me.btnCancel.Name = "btnCancel"
         Me.btnCancel.Size = New System.Drawing.Size(97, 25)
         Me.btnCancel.TabIndex = 67
@@ -42,7 +42,7 @@ Partial Class frmSelectIndustryJobColumns
         '
         'btnSaveSettings
         '
-        Me.btnSaveSettings.Location = New System.Drawing.Point(35, 372)
+        Me.btnSaveSettings.Location = New System.Drawing.Point(35, 387)
         Me.btnSaveSettings.Name = "btnSaveSettings"
         Me.btnSaveSettings.Size = New System.Drawing.Size(97, 25)
         Me.btnSaveSettings.TabIndex = 69
@@ -59,7 +59,7 @@ Partial Class frmSelectIndustryJobColumns
         '
         'lblTip
         '
-        Me.lblTip.Location = New System.Drawing.Point(12, 308)
+        Me.lblTip.Location = New System.Drawing.Point(12, 323)
         Me.lblTip.Name = "lblTip"
         Me.lblTip.Size = New System.Drawing.Size(260, 30)
         Me.lblTip.TabIndex = 71
@@ -69,15 +69,15 @@ Partial Class frmSelectIndustryJobColumns
         'chkLstBoxColumns
         '
         Me.chkLstBoxColumns.FormattingEnabled = True
-        Me.chkLstBoxColumns.Items.AddRange(New Object() {"Job State", "Time to Complete", "Activity", "Status", "Start Time", "End Time", "Completed Time", "Blueprint", "Output Item", "Output Item Type", "Install Solar System", "Install Region", "Licensed Runs", "Runs", "Successful Runs", "Blueprint Location", "Output Location"})
+        Me.chkLstBoxColumns.Items.AddRange(New Object() {"Job State", "Installer", "Time to Complete", "Activity", "Status", "Start Time", "End Time", "Completed Time", "Blueprint", "Output Item", "Output Item Type", "Install Solar System", "Install Region", "Licensed Runs", "Runs", "Successful Runs", "Blueprint Location", "Output Location", "Job Type"})
         Me.chkLstBoxColumns.Location = New System.Drawing.Point(15, 31)
         Me.chkLstBoxColumns.Name = "chkLstBoxColumns"
-        Me.chkLstBoxColumns.Size = New System.Drawing.Size(257, 274)
+        Me.chkLstBoxColumns.Size = New System.Drawing.Size(257, 289)
         Me.chkLstBoxColumns.TabIndex = 72
         '
         'btnDefaults
         '
-        Me.btnDefaults.Location = New System.Drawing.Point(95, 341)
+        Me.btnDefaults.Location = New System.Drawing.Point(95, 356)
         Me.btnDefaults.Name = "btnDefaults"
         Me.btnDefaults.Size = New System.Drawing.Size(97, 25)
         Me.btnDefaults.TabIndex = 73
@@ -88,7 +88,7 @@ Partial Class frmSelectIndustryJobColumns
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(287, 408)
+        Me.ClientSize = New System.Drawing.Size(287, 423)
         Me.Controls.Add(Me.btnDefaults)
         Me.Controls.Add(Me.chkLstBoxColumns)
         Me.Controls.Add(Me.lblTip)

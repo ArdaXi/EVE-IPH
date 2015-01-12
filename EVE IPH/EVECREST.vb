@@ -849,11 +849,12 @@ Public Class EVECREST
                     Call ExecuteNonQuerySQL(SQL)
 
                     ' Create it
-                    SQL = "CREATE TABLE STATIONS AS SELECT DISTINCT FACILITY_ID, FACILITY_NAME, FACILITY_TYPE_ID, SOLAR_SYSTEM_ID, SOLAR_SYSTEM_SECURITY, REGION_ID FROM STATION_FACILITIES "
+                    SQL = "CREATE TABLE STATIONS AS SELECT DISTINCT FACILITY_ID AS STATION_ID, FACILITY_NAME AS STATION_NAME, FACILITY_TYPE_ID AS STATION_TYPE_ID, "
+                    SQL = SQL & "SOLAR_SYSTEM_ID, SOLAR_SYSTEM_SECURITY, REGION_ID FROM STATION_FACILITIES "
                     Call ExecuteNonQuerySQL(SQL)
 
                     ' Index the ID
-                    SQL = "CREATE INDEX IDX_FN_FID ON STATIONS (FACILITY_ID)"
+                    SQL = "CREATE INDEX IDX_FN_FID ON STATIONS (STATION_ID)"
                     Call ExecuteNonQuerySQL(SQL)
 
                     ' Set the Cache Date to now plus the length since it's not sent in the file

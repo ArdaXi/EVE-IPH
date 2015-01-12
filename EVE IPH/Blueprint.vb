@@ -952,8 +952,8 @@ Public Class Blueprint
             TotalRawProfitPercent = 0
             TotalComponentProfitPercent = 0
         Else
-            TotalRawProfitPercent = 1 - ((TotalRawCost + TaxesFeesUsage) / ItemMarketCost)
-            TotalComponentProfitPercent = 1 - ((TotalComponentCost + TaxesFeesUsage) / ItemMarketCost)
+            TotalRawProfitPercent = 1 - (TotalRawCost / ItemMarketCost)
+            TotalComponentProfitPercent = 1 - (TotalComponentCost / ItemMarketCost)
         End If
 
         ' Final Calculation
@@ -1107,7 +1107,7 @@ Public Class Blueprint
         For i = 0 To BuildSkills.NumSkills - 1
             Select Case BuildSkills.GetSkillList(i).TypeID
                 Case 3398, 3397, 3395, 11444, 11454, 11448, 11453, 11450, 11446, 11433, 11443, 11447, 11452, 11445, 11529, 11451, 11441, 11455, 11449
-                    LevelSum += BuildSkills.GetSkillList(i).Level
+                    LevelSum += BPCharacter.Skills.GetSkillLevel(BuildSkills.GetSkillList(i).TypeID)
             End Select
         Next
 

@@ -175,8 +175,9 @@ Public Class Character
 
     End Sub
 
-    ' Sets the default character for the program. If we can't find it in DB, then return false
-    Public Function LoadDefaultCharacter(Optional ReloadAPIData As Boolean = False, Optional RefreshAssets As Boolean = False, Optional RefreshBlueprints As Boolean = False) As Boolean
+    ' Sets the default character for the program if no character ID sent, else it returns the character ID. If we can't find it in DB, then return false
+    Public Function LoadDefaultCharacter(Optional ReloadAPIData As Boolean = False, Optional RefreshAssets As Boolean = False, Optional RefreshBlueprints As Boolean = False, _
+                                         Optional ByVal CharacterID As Long = 0, Optional ByVal OverrideCacheDate As Boolean = False) As Boolean
         Dim readerCharacter As SQLiteDataReader
         Dim SQL As String
         Dim RefreshDate As Date ' To check for update of the API. 
@@ -222,7 +223,7 @@ Public Class Character
             End If
 
             ' See if we want to refresh the data from API
-            If RefreshDate < DateTime.UtcNow Then
+            If RefreshDate < DateTime.UtcNow Or OverrideCacheDate Then
                 ' Refresh data, update loadnewdata if we error - used later on in updates
                 UpdatedNewData = UpdateAccountAPIData(readerCharacter.GetInt64(1), readerCharacter.GetString(2), readerCharacter.GetString(4), readerCharacter.GetInt64(3), True)
             Else
@@ -235,7 +236,7 @@ Public Class Character
             End If
 
             ' Get the latest data for this character
-            Call LoadDefaultCharacterData(RefreshAssets, RefreshBlueprints)
+            Call LoadCharacterData(RefreshAssets, RefreshBlueprints, CharacterID)
 
             readerCharacter.Close()
             Return True
@@ -247,15 +248,21 @@ Public Class Character
 
     End Function
 
-    ' Load the latest data for the default character from the DB
-    Private Sub LoadDefaultCharacterData(ByVal RefreshAssets As Boolean, ByVal RefreshBlueprints As Boolean)
+    ' Load the latest data for the character sent or the default if no character sent from the DB
+    Private Sub LoadCharacterData(ByVal RefreshAssets As Boolean, ByVal RefreshBlueprints As Boolean, Optional ByVal CharacterID As Long = 0)
         Dim readerCharacter As SQLiteDataReader
         Dim SQL As String
 
         SQL = "SELECT KEY_ID, API_KEY, CHARACTER_ID, CHARACTER_NAME, "
         SQL = SQL & "CORPORATION_ID, CORPORATION_NAME, CACHED_UNTIL, IS_DEFAULT, "
         SQL = SQL & "OVERRIDE_SKILLS, ACCESS_MASK, KEY_EXPIRATION_DATE "
-        SQL = SQL & "FROM API WHERE IS_DEFAULT <> 0 AND API_TYPE NOT IN ('Old Key','Corporation')"
+        SQL = SQL & "FROM API "
+        If CharacterID = 0 Then
+            SQL = SQL & "WHERE IS_DEFAULT <> 0 "
+        Else
+            SQL = SQL & "WHERE CHARACTER_ID = " & CStr(CharacterID) & " "
+        End If
+        SQL = SQL & "AND API_TYPE NOT IN ('Old Key','Corporation')"
 
         DBCommand = New SQLiteCommand(SQL, DB)
         readerCharacter = DBCommand.ExecuteReader
@@ -369,7 +376,7 @@ Public Class Character
 #Region "Standings Processing"
 
     ' Updates and Loads the character's standings from DB
-    Public Sub LoadCharacterStandings(UpdateAPIData As Boolean)
+    Private Sub LoadCharacterStandings(UpdateAPIData As Boolean)
         Dim SQL As String
         Dim readerStandings As SQLiteDataReader
         Dim Tempstandings As New NPCStandings
@@ -452,7 +459,7 @@ Public Class Character
 
 #Region "Skills Processing"
 
-    ' Updates and Loads the character's skills from DB
+    ' Updates and Loads the character's skills from DB - Should be public for processing skills in the skill window
     Public Sub LoadSkills(Optional ByVal LoadAllSkillsforOverride As Boolean = False, Optional UpdateAPIData As Boolean = True, Optional SkillNameFilter As String = "")
         Dim readerSkills As SQLiteDataReader
         Dim SQL As String

@@ -2139,9 +2139,9 @@ Public Class frmMain
         Dim i As Integer
 
         SQL = "CREATE TABLE STATIONS ("
-        SQL = SQL & "FACILITY_ID INTEGER PRIMARY KEY,"
-        SQL = SQL & "FACILITY_NAME VARCHAR(100) NOT NULL,"
-        SQL = SQL & "FACILITY_TYPE_ID INTEGER NOT NULL,"
+        SQL = SQL & "STATION_ID INTEGER PRIMARY KEY,"
+        SQL = SQL & "STATION_NAME VARCHAR(100) NOT NULL,"
+        SQL = SQL & "STATION_TYPE_ID INTEGER NOT NULL,"
         SQL = SQL & "SOLAR_SYSTEM_ID INTEGER,"
         SQL = SQL & "SOLAR_SYSTEM_SECURITY FLOAT NOT NULL,"
         SQL = SQL & "REGION_ID INTEGER NOT NULL"
@@ -5965,8 +5965,12 @@ Public Class frmMain
 
         ' Random updates
 
-        ' Delete these 4 records from super capital ship assembly arrays - not sure if it's right or not but dump them for now since they give incorrect values
-        'Call Execute_msSQL("DELETE FROM ramAssemblyLineTypeDetailPerGroup WHERE assemblyLineTypeID = 10 AND groupID IN (485, 513, 547, 883)")
+        ' Rename the gallente and amarr data cores to reflect the name change for the skills and research types
+        msSQL = "UPDATE invTypes SET typeName = 'Datacore - Gallente Starship Engineering' WHERE typeid = 20410"
+        Call Execute_msSQL(msSQL)
+
+        msSQL = "UPDATE invTypes SET typeName = 'Datacore - Amarr Starship Engineering' WHERE typeid = 20421"
+        Call Execute_msSQL(msSQL)
 
         mySQLReader.Close()
 

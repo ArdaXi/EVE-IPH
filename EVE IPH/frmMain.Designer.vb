@@ -3786,12 +3786,12 @@ Partial Class frmMain
         '
         'btnDCSaveSettings
         '
-        Me.btnDCSaveSettings.Location = New System.Drawing.Point(980, 180)
+        Me.btnDCSaveSettings.Location = New System.Drawing.Point(980, 176)
         Me.btnDCSaveSettings.Name = "btnDCSaveSettings"
-        Me.btnDCSaveSettings.Size = New System.Drawing.Size(138, 23)
+        Me.btnDCSaveSettings.Size = New System.Drawing.Size(138, 30)
         Me.btnDCSaveSettings.TabIndex = 71
         Me.btnDCSaveSettings.Text = "Save Settings"
-        Me.btnDCSaveSettings.UseVisualStyleBackColor = true
+        Me.btnDCSaveSettings.UseVisualStyleBackColor = True
         '
         'gbDCAgentLocSov
         '
@@ -3807,88 +3807,88 @@ Partial Class frmMain
         Me.gbDCAgentLocSov.Name = "gbDCAgentLocSov"
         Me.gbDCAgentLocSov.Size = New System.Drawing.Size(372, 76)
         Me.gbDCAgentLocSov.TabIndex = 63
-        Me.gbDCAgentLocSov.TabStop = false
+        Me.gbDCAgentLocSov.TabStop = False
         Me.gbDCAgentLocSov.Text = "Agent Location Sovergnity:"
         '
         'chkDCThukkerSov
         '
-        Me.chkDCThukkerSov.AutoSize = true
+        Me.chkDCThukkerSov.AutoSize = True
         Me.chkDCThukkerSov.Location = New System.Drawing.Point(272, 36)
         Me.chkDCThukkerSov.Name = "chkDCThukkerSov"
         Me.chkDCThukkerSov.Size = New System.Drawing.Size(93, 17)
         Me.chkDCThukkerSov.TabIndex = 34
         Me.chkDCThukkerSov.Text = "Thukker Tribe"
-        Me.chkDCThukkerSov.UseVisualStyleBackColor = true
+        Me.chkDCThukkerSov.UseVisualStyleBackColor = True
         '
         'chkDCKhanidSov
         '
-        Me.chkDCKhanidSov.AutoSize = true
+        Me.chkDCKhanidSov.AutoSize = True
         Me.chkDCKhanidSov.Location = New System.Drawing.Point(127, 36)
         Me.chkDCKhanidSov.Name = "chkDCKhanidSov"
         Me.chkDCKhanidSov.Size = New System.Drawing.Size(103, 17)
         Me.chkDCKhanidSov.TabIndex = 31
         Me.chkDCKhanidSov.Text = "Khanid Kingdom"
-        Me.chkDCKhanidSov.UseVisualStyleBackColor = true
+        Me.chkDCKhanidSov.UseVisualStyleBackColor = True
         '
         'chkDCMinmatarSov
         '
-        Me.chkDCMinmatarSov.AutoSize = true
+        Me.chkDCMinmatarSov.AutoSize = True
         Me.chkDCMinmatarSov.Location = New System.Drawing.Point(127, 53)
         Me.chkDCMinmatarSov.Name = "chkDCMinmatarSov"
         Me.chkDCMinmatarSov.Size = New System.Drawing.Size(114, 17)
         Me.chkDCMinmatarSov.TabIndex = 32
         Me.chkDCMinmatarSov.Text = "Minmatar Republic"
-        Me.chkDCMinmatarSov.UseVisualStyleBackColor = true
+        Me.chkDCMinmatarSov.UseVisualStyleBackColor = True
         '
         'chkDCSyndicateSov
         '
-        Me.chkDCSyndicateSov.AutoSize = true
+        Me.chkDCSyndicateSov.AutoSize = True
         Me.chkDCSyndicateSov.Location = New System.Drawing.Point(272, 19)
         Me.chkDCSyndicateSov.Name = "chkDCSyndicateSov"
         Me.chkDCSyndicateSov.Size = New System.Drawing.Size(95, 17)
         Me.chkDCSyndicateSov.TabIndex = 33
         Me.chkDCSyndicateSov.Text = "The Syndicate"
-        Me.chkDCSyndicateSov.UseVisualStyleBackColor = true
+        Me.chkDCSyndicateSov.UseVisualStyleBackColor = True
         '
         'chkDCGallenteSov
         '
-        Me.chkDCGallenteSov.AutoSize = true
+        Me.chkDCGallenteSov.AutoSize = True
         Me.chkDCGallenteSov.Location = New System.Drawing.Point(127, 19)
         Me.chkDCGallenteSov.Name = "chkDCGallenteSov"
         Me.chkDCGallenteSov.Size = New System.Drawing.Size(118, 17)
         Me.chkDCGallenteSov.TabIndex = 30
         Me.chkDCGallenteSov.Text = "Gallente Federation"
-        Me.chkDCGallenteSov.UseVisualStyleBackColor = true
+        Me.chkDCGallenteSov.UseVisualStyleBackColor = True
         '
         'chkDCAmarrSov
         '
-        Me.chkDCAmarrSov.AutoSize = true
+        Me.chkDCAmarrSov.AutoSize = True
         Me.chkDCAmarrSov.Location = New System.Drawing.Point(12, 19)
         Me.chkDCAmarrSov.Name = "chkDCAmarrSov"
         Me.chkDCAmarrSov.Size = New System.Drawing.Size(88, 17)
         Me.chkDCAmarrSov.TabIndex = 27
         Me.chkDCAmarrSov.Text = "Amarr Empire"
-        Me.chkDCAmarrSov.UseVisualStyleBackColor = true
+        Me.chkDCAmarrSov.UseVisualStyleBackColor = True
         '
         'chkDCAmmatarSov
         '
-        Me.chkDCAmmatarSov.AutoSize = true
+        Me.chkDCAmmatarSov.AutoSize = True
         Me.chkDCAmmatarSov.Location = New System.Drawing.Point(12, 36)
         Me.chkDCAmmatarSov.Name = "chkDCAmmatarSov"
         Me.chkDCAmmatarSov.Size = New System.Drawing.Size(112, 17)
         Me.chkDCAmmatarSov.TabIndex = 28
         Me.chkDCAmmatarSov.Text = "Ammatar Mandate"
-        Me.chkDCAmmatarSov.UseVisualStyleBackColor = true
+        Me.chkDCAmmatarSov.UseVisualStyleBackColor = True
         '
         'chkDCCaldariSov
         '
-        Me.chkDCCaldariSov.AutoSize = true
+        Me.chkDCCaldariSov.AutoSize = True
         Me.chkDCCaldariSov.Location = New System.Drawing.Point(12, 53)
         Me.chkDCCaldariSov.Name = "chkDCCaldariSov"
         Me.chkDCCaldariSov.Size = New System.Drawing.Size(86, 17)
         Me.chkDCCaldariSov.TabIndex = 29
         Me.chkDCCaldariSov.Text = "Caldari State"
-        Me.chkDCCaldariSov.UseVisualStyleBackColor = true
+        Me.chkDCCaldariSov.UseVisualStyleBackColor = True
         '
         'gbDCTotalIPH
         '
@@ -3898,14 +3898,14 @@ Partial Class frmMain
         Me.gbDCTotalIPH.Controls.Add(Me.txtDCTotalOptIPH)
         Me.gbDCTotalIPH.Location = New System.Drawing.Point(978, 11)
         Me.gbDCTotalIPH.Name = "gbDCTotalIPH"
-        Me.gbDCTotalIPH.Size = New System.Drawing.Size(140, 115)
+        Me.gbDCTotalIPH.Size = New System.Drawing.Size(140, 101)
         Me.gbDCTotalIPH.TabIndex = 70
-        Me.gbDCTotalIPH.TabStop = false
+        Me.gbDCTotalIPH.TabStop = False
         Me.gbDCTotalIPH.Text = "Total Isk per Hour:"
         '
         'lblDCTotalOptIPH
         '
-        Me.lblDCTotalOptIPH.Location = New System.Drawing.Point(5, 70)
+        Me.lblDCTotalOptIPH.Location = New System.Drawing.Point(5, 56)
         Me.lblDCTotalOptIPH.Name = "lblDCTotalOptIPH"
         Me.lblDCTotalOptIPH.Size = New System.Drawing.Size(81, 13)
         Me.lblDCTotalOptIPH.TabIndex = 47
@@ -3913,7 +3913,7 @@ Partial Class frmMain
         '
         'lblDCTotalSelectedIPH
         '
-        Me.lblDCTotalSelectedIPH.Location = New System.Drawing.Point(5, 28)
+        Me.lblDCTotalSelectedIPH.Location = New System.Drawing.Point(5, 19)
         Me.lblDCTotalSelectedIPH.Name = "lblDCTotalSelectedIPH"
         Me.lblDCTotalSelectedIPH.Size = New System.Drawing.Size(81, 13)
         Me.lblDCTotalSelectedIPH.TabIndex = 46
@@ -3921,7 +3921,7 @@ Partial Class frmMain
         '
         'txtDCTotalSelectedIPH
         '
-        Me.txtDCTotalSelectedIPH.Location = New System.Drawing.Point(5, 42)
+        Me.txtDCTotalSelectedIPH.Location = New System.Drawing.Point(5, 33)
         Me.txtDCTotalSelectedIPH.Name = "txtDCTotalSelectedIPH"
         Me.txtDCTotalSelectedIPH.Size = New System.Drawing.Size(129, 20)
         Me.txtDCTotalSelectedIPH.TabIndex = 41
@@ -3929,7 +3929,7 @@ Partial Class frmMain
         '
         'txtDCTotalOptIPH
         '
-        Me.txtDCTotalOptIPH.Location = New System.Drawing.Point(5, 85)
+        Me.txtDCTotalOptIPH.Location = New System.Drawing.Point(5, 71)
         Me.txtDCTotalOptIPH.Name = "txtDCTotalOptIPH"
         Me.txtDCTotalOptIPH.Size = New System.Drawing.Size(129, 20)
         Me.txtDCTotalOptIPH.TabIndex = 40
@@ -3944,41 +3944,41 @@ Partial Class frmMain
         Me.gbDCPrices.Name = "gbDCPrices"
         Me.gbDCPrices.Size = New System.Drawing.Size(506, 40)
         Me.gbDCPrices.TabIndex = 7
-        Me.gbDCPrices.TabStop = false
+        Me.gbDCPrices.TabStop = False
         Me.gbDCPrices.Text = "Use Prices From:"
         '
         'rbtnDCSystemPrices
         '
-        Me.rbtnDCSystemPrices.AutoSize = true
+        Me.rbtnDCSystemPrices.AutoSize = True
         Me.rbtnDCSystemPrices.Location = New System.Drawing.Point(313, 16)
         Me.rbtnDCSystemPrices.Name = "rbtnDCSystemPrices"
         Me.rbtnDCSystemPrices.Size = New System.Drawing.Size(90, 17)
         Me.rbtnDCSystemPrices.TabIndex = 2
-        Me.rbtnDCSystemPrices.TabStop = true
+        Me.rbtnDCSystemPrices.TabStop = True
         Me.rbtnDCSystemPrices.Text = "Agent System"
-        Me.rbtnDCSystemPrices.UseVisualStyleBackColor = true
+        Me.rbtnDCSystemPrices.UseVisualStyleBackColor = True
         '
         'rbtnDCRegionPrices
         '
-        Me.rbtnDCRegionPrices.AutoSize = true
+        Me.rbtnDCRegionPrices.AutoSize = True
         Me.rbtnDCRegionPrices.Location = New System.Drawing.Point(164, 16)
         Me.rbtnDCRegionPrices.Name = "rbtnDCRegionPrices"
         Me.rbtnDCRegionPrices.Size = New System.Drawing.Size(90, 17)
         Me.rbtnDCRegionPrices.TabIndex = 1
-        Me.rbtnDCRegionPrices.TabStop = true
+        Me.rbtnDCRegionPrices.TabStop = True
         Me.rbtnDCRegionPrices.Text = "Agent Region"
-        Me.rbtnDCRegionPrices.UseVisualStyleBackColor = true
+        Me.rbtnDCRegionPrices.UseVisualStyleBackColor = True
         '
         'rbtnDCUpdatedPrices
         '
-        Me.rbtnDCUpdatedPrices.AutoSize = true
+        Me.rbtnDCUpdatedPrices.AutoSize = True
         Me.rbtnDCUpdatedPrices.Location = New System.Drawing.Point(7, 16)
         Me.rbtnDCUpdatedPrices.Name = "rbtnDCUpdatedPrices"
         Me.rbtnDCUpdatedPrices.Size = New System.Drawing.Size(98, 17)
         Me.rbtnDCUpdatedPrices.TabIndex = 0
-        Me.rbtnDCUpdatedPrices.TabStop = true
+        Me.rbtnDCUpdatedPrices.TabStop = True
         Me.rbtnDCUpdatedPrices.Text = "Updated Prices"
-        Me.rbtnDCUpdatedPrices.UseVisualStyleBackColor = true
+        Me.rbtnDCUpdatedPrices.UseVisualStyleBackColor = True
         '
         'gbDCAgentTypes
         '
@@ -3991,12 +3991,12 @@ Partial Class frmMain
         Me.gbDCAgentTypes.Name = "gbDCAgentTypes"
         Me.gbDCAgentTypes.Size = New System.Drawing.Size(222, 104)
         Me.gbDCAgentTypes.TabIndex = 69
-        Me.gbDCAgentTypes.TabStop = false
+        Me.gbDCAgentTypes.TabStop = False
         Me.gbDCAgentTypes.Text = "Agents:"
         '
         'cmbDCRegions
         '
-        Me.cmbDCRegions.FormattingEnabled = true
+        Me.cmbDCRegions.FormattingEnabled = True
         Me.cmbDCRegions.Location = New System.Drawing.Point(65, 70)
         Me.cmbDCRegions.Name = "cmbDCRegions"
         Me.cmbDCRegions.Size = New System.Drawing.Size(144, 21)
@@ -4013,33 +4013,33 @@ Partial Class frmMain
         '
         'chkDCLowSecAgents
         '
-        Me.chkDCLowSecAgents.AutoSize = true
+        Me.chkDCLowSecAgents.AutoSize = True
         Me.chkDCLowSecAgents.Location = New System.Drawing.Point(97, 21)
         Me.chkDCLowSecAgents.Name = "chkDCLowSecAgents"
         Me.chkDCLowSecAgents.Size = New System.Drawing.Size(91, 17)
         Me.chkDCLowSecAgents.TabIndex = 1
         Me.chkDCLowSecAgents.Text = "Low/Null Sec"
-        Me.chkDCLowSecAgents.UseVisualStyleBackColor = true
+        Me.chkDCLowSecAgents.UseVisualStyleBackColor = True
         '
         'chkDCHighSecAgents
         '
-        Me.chkDCHighSecAgents.AutoSize = true
+        Me.chkDCHighSecAgents.AutoSize = True
         Me.chkDCHighSecAgents.Location = New System.Drawing.Point(12, 21)
         Me.chkDCHighSecAgents.Name = "chkDCHighSecAgents"
         Me.chkDCHighSecAgents.Size = New System.Drawing.Size(70, 17)
         Me.chkDCHighSecAgents.TabIndex = 0
         Me.chkDCHighSecAgents.Text = "High Sec"
-        Me.chkDCHighSecAgents.UseVisualStyleBackColor = true
+        Me.chkDCHighSecAgents.UseVisualStyleBackColor = True
         '
         'chkDCIncludeAllAgents
         '
-        Me.chkDCIncludeAllAgents.AutoSize = true
+        Me.chkDCIncludeAllAgents.AutoSize = True
         Me.chkDCIncludeAllAgents.Location = New System.Drawing.Point(12, 44)
         Me.chkDCIncludeAllAgents.Name = "chkDCIncludeAllAgents"
         Me.chkDCIncludeAllAgents.Size = New System.Drawing.Size(178, 17)
         Me.chkDCIncludeAllAgents.TabIndex = 0
         Me.chkDCIncludeAllAgents.Text = "Include Agents I Cannot Access"
-        Me.chkDCIncludeAllAgents.UseVisualStyleBackColor = true
+        Me.chkDCIncludeAllAgents.UseVisualStyleBackColor = True
         '
         'gbDCBaseSkills
         '
@@ -4053,13 +4053,13 @@ Partial Class frmMain
         Me.gbDCBaseSkills.Name = "gbDCBaseSkills"
         Me.gbDCBaseSkills.Size = New System.Drawing.Size(506, 40)
         Me.gbDCBaseSkills.TabIndex = 9
-        Me.gbDCBaseSkills.TabStop = false
+        Me.gbDCBaseSkills.TabStop = False
         Me.gbDCBaseSkills.Text = "Base Skills:"
         '
         'cmbDCResearchMgmt
         '
         Me.cmbDCResearchMgmt.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbDCResearchMgmt.FormattingEnabled = true
+        Me.cmbDCResearchMgmt.FormattingEnabled = True
         Me.cmbDCResearchMgmt.Items.AddRange(New Object() {"0", "1", "2", "3", "4", "5"})
         Me.cmbDCResearchMgmt.Location = New System.Drawing.Point(396, 13)
         Me.cmbDCResearchMgmt.Name = "cmbDCResearchMgmt"
@@ -4068,7 +4068,7 @@ Partial Class frmMain
         '
         'lblDCResearchManagement
         '
-        Me.lblDCResearchManagement.AutoSize = true
+        Me.lblDCResearchManagement.AutoSize = True
         Me.lblDCResearchManagement.Location = New System.Drawing.Point(269, 17)
         Me.lblDCResearchManagement.Name = "lblDCResearchManagement"
         Me.lblDCResearchManagement.Size = New System.Drawing.Size(121, 13)
@@ -4077,7 +4077,7 @@ Partial Class frmMain
         '
         'lblDCNegotiation
         '
-        Me.lblDCNegotiation.AutoSize = true
+        Me.lblDCNegotiation.AutoSize = True
         Me.lblDCNegotiation.Location = New System.Drawing.Point(6, 17)
         Me.lblDCNegotiation.Name = "lblDCNegotiation"
         Me.lblDCNegotiation.Size = New System.Drawing.Size(64, 13)
@@ -4087,7 +4087,7 @@ Partial Class frmMain
         'cmbDCConnections
         '
         Me.cmbDCConnections.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbDCConnections.FormattingEnabled = true
+        Me.cmbDCConnections.FormattingEnabled = True
         Me.cmbDCConnections.Items.AddRange(New Object() {"0", "1", "2", "3", "4", "5"})
         Me.cmbDCConnections.Location = New System.Drawing.Point(218, 13)
         Me.cmbDCConnections.Name = "cmbDCConnections"
@@ -4096,7 +4096,7 @@ Partial Class frmMain
         '
         'lblDCConnections
         '
-        Me.lblDCConnections.AutoSize = true
+        Me.lblDCConnections.AutoSize = True
         Me.lblDCConnections.Location = New System.Drawing.Point(143, 17)
         Me.lblDCConnections.Name = "lblDCConnections"
         Me.lblDCConnections.Size = New System.Drawing.Size(69, 13)
@@ -4106,7 +4106,7 @@ Partial Class frmMain
         'cmbDCNegotiation
         '
         Me.cmbDCNegotiation.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbDCNegotiation.FormattingEnabled = true
+        Me.cmbDCNegotiation.FormattingEnabled = True
         Me.cmbDCNegotiation.Items.AddRange(New Object() {"0", "1", "2", "3", "4", "5"})
         Me.cmbDCNegotiation.Location = New System.Drawing.Point(76, 13)
         Me.cmbDCNegotiation.Name = "cmbDCNegotiation"
@@ -4171,13 +4171,13 @@ Partial Class frmMain
         Me.gbDCDatacores.Name = "gbDCDatacores"
         Me.gbDCDatacores.Size = New System.Drawing.Size(506, 224)
         Me.gbDCDatacores.TabIndex = 3
-        Me.gbDCDatacores.TabStop = false
+        Me.gbDCDatacores.TabStop = False
         Me.gbDCDatacores.Text = "Datacore Skills:"
         '
         'cmbDCSkillLevel17
         '
         Me.cmbDCSkillLevel17.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbDCSkillLevel17.FormattingEnabled = true
+        Me.cmbDCSkillLevel17.FormattingEnabled = True
         Me.cmbDCSkillLevel17.Items.AddRange(New Object() {"0", "1", "2", "3", "4", "5"})
         Me.cmbDCSkillLevel17.Location = New System.Drawing.Point(465, 167)
         Me.cmbDCSkillLevel17.Name = "cmbDCSkillLevel17"
@@ -4187,7 +4187,7 @@ Partial Class frmMain
         'cmbDCSkillLevel16
         '
         Me.cmbDCSkillLevel16.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbDCSkillLevel16.FormattingEnabled = true
+        Me.cmbDCSkillLevel16.FormattingEnabled = True
         Me.cmbDCSkillLevel16.Items.AddRange(New Object() {"0", "1", "2", "3", "4", "5"})
         Me.cmbDCSkillLevel16.Location = New System.Drawing.Point(465, 145)
         Me.cmbDCSkillLevel16.Name = "cmbDCSkillLevel16"
@@ -4197,7 +4197,7 @@ Partial Class frmMain
         'cmbDCSkillLevel15
         '
         Me.cmbDCSkillLevel15.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbDCSkillLevel15.FormattingEnabled = true
+        Me.cmbDCSkillLevel15.FormattingEnabled = True
         Me.cmbDCSkillLevel15.Items.AddRange(New Object() {"0", "1", "2", "3", "4", "5"})
         Me.cmbDCSkillLevel15.Location = New System.Drawing.Point(465, 122)
         Me.cmbDCSkillLevel15.Name = "cmbDCSkillLevel15"
@@ -4207,7 +4207,7 @@ Partial Class frmMain
         'cmbDCSkillLevel14
         '
         Me.cmbDCSkillLevel14.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbDCSkillLevel14.FormattingEnabled = true
+        Me.cmbDCSkillLevel14.FormattingEnabled = True
         Me.cmbDCSkillLevel14.Items.AddRange(New Object() {"0", "1", "2", "3", "4", "5"})
         Me.cmbDCSkillLevel14.Location = New System.Drawing.Point(465, 100)
         Me.cmbDCSkillLevel14.Name = "cmbDCSkillLevel14"
@@ -4217,7 +4217,7 @@ Partial Class frmMain
         'cmbDCSkillLevel13
         '
         Me.cmbDCSkillLevel13.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbDCSkillLevel13.FormattingEnabled = true
+        Me.cmbDCSkillLevel13.FormattingEnabled = True
         Me.cmbDCSkillLevel13.Items.AddRange(New Object() {"0", "1", "2", "3", "4", "5"})
         Me.cmbDCSkillLevel13.Location = New System.Drawing.Point(465, 78)
         Me.cmbDCSkillLevel13.Name = "cmbDCSkillLevel13"
@@ -4227,7 +4227,7 @@ Partial Class frmMain
         'cmbDCSkillLevel12
         '
         Me.cmbDCSkillLevel12.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbDCSkillLevel12.FormattingEnabled = true
+        Me.cmbDCSkillLevel12.FormattingEnabled = True
         Me.cmbDCSkillLevel12.Items.AddRange(New Object() {"0", "1", "2", "3", "4", "5"})
         Me.cmbDCSkillLevel12.Location = New System.Drawing.Point(465, 55)
         Me.cmbDCSkillLevel12.Name = "cmbDCSkillLevel12"
@@ -4237,7 +4237,7 @@ Partial Class frmMain
         'cmbDCSkillLevel11
         '
         Me.cmbDCSkillLevel11.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbDCSkillLevel11.FormattingEnabled = true
+        Me.cmbDCSkillLevel11.FormattingEnabled = True
         Me.cmbDCSkillLevel11.Items.AddRange(New Object() {"0", "1", "2", "3", "4", "5"})
         Me.cmbDCSkillLevel11.Location = New System.Drawing.Point(465, 33)
         Me.cmbDCSkillLevel11.Name = "cmbDCSkillLevel11"
@@ -4247,7 +4247,7 @@ Partial Class frmMain
         'cmbDCSkillLevel10
         '
         Me.cmbDCSkillLevel10.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbDCSkillLevel10.FormattingEnabled = true
+        Me.cmbDCSkillLevel10.FormattingEnabled = True
         Me.cmbDCSkillLevel10.Items.AddRange(New Object() {"0", "1", "2", "3", "4", "5"})
         Me.cmbDCSkillLevel10.Location = New System.Drawing.Point(218, 191)
         Me.cmbDCSkillLevel10.Name = "cmbDCSkillLevel10"
@@ -4257,7 +4257,7 @@ Partial Class frmMain
         'cmbDCSkillLevel9
         '
         Me.cmbDCSkillLevel9.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbDCSkillLevel9.FormattingEnabled = true
+        Me.cmbDCSkillLevel9.FormattingEnabled = True
         Me.cmbDCSkillLevel9.Items.AddRange(New Object() {"0", "1", "2", "3", "4", "5"})
         Me.cmbDCSkillLevel9.Location = New System.Drawing.Point(465, 11)
         Me.cmbDCSkillLevel9.Name = "cmbDCSkillLevel9"
@@ -4267,7 +4267,7 @@ Partial Class frmMain
         'cmbDCSkillLevel8
         '
         Me.cmbDCSkillLevel8.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbDCSkillLevel8.FormattingEnabled = true
+        Me.cmbDCSkillLevel8.FormattingEnabled = True
         Me.cmbDCSkillLevel8.Items.AddRange(New Object() {"0", "1", "2", "3", "4", "5"})
         Me.cmbDCSkillLevel8.Location = New System.Drawing.Point(218, 169)
         Me.cmbDCSkillLevel8.Name = "cmbDCSkillLevel8"
@@ -4277,7 +4277,7 @@ Partial Class frmMain
         'cmbDCSkillLevel7
         '
         Me.cmbDCSkillLevel7.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbDCSkillLevel7.FormattingEnabled = true
+        Me.cmbDCSkillLevel7.FormattingEnabled = True
         Me.cmbDCSkillLevel7.Items.AddRange(New Object() {"0", "1", "2", "3", "4", "5"})
         Me.cmbDCSkillLevel7.Location = New System.Drawing.Point(218, 147)
         Me.cmbDCSkillLevel7.Name = "cmbDCSkillLevel7"
@@ -4287,7 +4287,7 @@ Partial Class frmMain
         'cmbDCSkillLevel6
         '
         Me.cmbDCSkillLevel6.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbDCSkillLevel6.FormattingEnabled = true
+        Me.cmbDCSkillLevel6.FormattingEnabled = True
         Me.cmbDCSkillLevel6.Items.AddRange(New Object() {"0", "1", "2", "3", "4", "5"})
         Me.cmbDCSkillLevel6.Location = New System.Drawing.Point(218, 124)
         Me.cmbDCSkillLevel6.Name = "cmbDCSkillLevel6"
@@ -4297,7 +4297,7 @@ Partial Class frmMain
         'cmbDCSkillLevel5
         '
         Me.cmbDCSkillLevel5.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbDCSkillLevel5.FormattingEnabled = true
+        Me.cmbDCSkillLevel5.FormattingEnabled = True
         Me.cmbDCSkillLevel5.Items.AddRange(New Object() {"0", "1", "2", "3", "4", "5"})
         Me.cmbDCSkillLevel5.Location = New System.Drawing.Point(218, 102)
         Me.cmbDCSkillLevel5.Name = "cmbDCSkillLevel5"
@@ -4307,7 +4307,7 @@ Partial Class frmMain
         'cmbDCSkillLevel4
         '
         Me.cmbDCSkillLevel4.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbDCSkillLevel4.FormattingEnabled = true
+        Me.cmbDCSkillLevel4.FormattingEnabled = True
         Me.cmbDCSkillLevel4.Items.AddRange(New Object() {"0", "1", "2", "3", "4", "5"})
         Me.cmbDCSkillLevel4.Location = New System.Drawing.Point(218, 80)
         Me.cmbDCSkillLevel4.Name = "cmbDCSkillLevel4"
@@ -4317,7 +4317,7 @@ Partial Class frmMain
         'cmbDCSkillLevel3
         '
         Me.cmbDCSkillLevel3.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbDCSkillLevel3.FormattingEnabled = true
+        Me.cmbDCSkillLevel3.FormattingEnabled = True
         Me.cmbDCSkillLevel3.Items.AddRange(New Object() {"0", "1", "2", "3", "4", "5"})
         Me.cmbDCSkillLevel3.Location = New System.Drawing.Point(218, 57)
         Me.cmbDCSkillLevel3.Name = "cmbDCSkillLevel3"
@@ -4327,7 +4327,7 @@ Partial Class frmMain
         'cmbDCSkillLevel2
         '
         Me.cmbDCSkillLevel2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbDCSkillLevel2.FormattingEnabled = true
+        Me.cmbDCSkillLevel2.FormattingEnabled = True
         Me.cmbDCSkillLevel2.Items.AddRange(New Object() {"0", "1", "2", "3", "4", "5"})
         Me.cmbDCSkillLevel2.Location = New System.Drawing.Point(218, 35)
         Me.cmbDCSkillLevel2.Name = "cmbDCSkillLevel2"
@@ -4337,7 +4337,7 @@ Partial Class frmMain
         'cmbDCSkillLevel1
         '
         Me.cmbDCSkillLevel1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
-        Me.cmbDCSkillLevel1.FormattingEnabled = true
+        Me.cmbDCSkillLevel1.FormattingEnabled = True
         Me.cmbDCSkillLevel1.Items.AddRange(New Object() {"0", "1", "2", "3", "4", "5"})
         Me.cmbDCSkillLevel1.Location = New System.Drawing.Point(218, 13)
         Me.cmbDCSkillLevel1.Name = "cmbDCSkillLevel1"
@@ -4346,39 +4346,39 @@ Partial Class frmMain
         '
         'chkDC17
         '
-        Me.chkDC17.AutoSize = true
+        Me.chkDC17.AutoSize = True
         Me.chkDC17.Location = New System.Drawing.Point(277, 172)
         Me.chkDC17.Name = "chkDC17"
         Me.chkDC17.Size = New System.Drawing.Size(15, 14)
         Me.chkDC17.TabIndex = 38
-        Me.chkDC17.UseVisualStyleBackColor = true
+        Me.chkDC17.UseVisualStyleBackColor = True
         '
         'chkDC4
         '
-        Me.chkDC4.AutoSize = true
+        Me.chkDC4.AutoSize = True
         Me.chkDC4.Location = New System.Drawing.Point(7, 83)
         Me.chkDC4.Name = "chkDC4"
         Me.chkDC4.Size = New System.Drawing.Size(15, 14)
         Me.chkDC4.TabIndex = 30
-        Me.chkDC4.UseVisualStyleBackColor = true
+        Me.chkDC4.UseVisualStyleBackColor = True
         '
         'chkDC16
         '
-        Me.chkDC16.AutoSize = true
+        Me.chkDC16.AutoSize = True
         Me.chkDC16.Location = New System.Drawing.Point(277, 150)
         Me.chkDC16.Name = "chkDC16"
         Me.chkDC16.Size = New System.Drawing.Size(15, 14)
         Me.chkDC16.TabIndex = 37
-        Me.chkDC16.UseVisualStyleBackColor = true
+        Me.chkDC16.UseVisualStyleBackColor = True
         '
         'chkDC3
         '
-        Me.chkDC3.AutoSize = true
+        Me.chkDC3.AutoSize = True
         Me.chkDC3.Location = New System.Drawing.Point(7, 60)
         Me.chkDC3.Name = "chkDC3"
         Me.chkDC3.Size = New System.Drawing.Size(15, 14)
         Me.chkDC3.TabIndex = 29
-        Me.chkDC3.UseVisualStyleBackColor = true
+        Me.chkDC3.UseVisualStyleBackColor = True
         '
         'lblDatacore17
         '
@@ -4390,75 +4390,75 @@ Partial Class frmMain
         '
         'chkDC15
         '
-        Me.chkDC15.AutoSize = true
+        Me.chkDC15.AutoSize = True
         Me.chkDC15.Location = New System.Drawing.Point(277, 127)
         Me.chkDC15.Name = "chkDC15"
         Me.chkDC15.Size = New System.Drawing.Size(15, 14)
         Me.chkDC15.TabIndex = 36
-        Me.chkDC15.UseVisualStyleBackColor = true
+        Me.chkDC15.UseVisualStyleBackColor = True
         '
         'chkDC2
         '
-        Me.chkDC2.AutoSize = true
+        Me.chkDC2.AutoSize = True
         Me.chkDC2.Location = New System.Drawing.Point(7, 38)
         Me.chkDC2.Name = "chkDC2"
         Me.chkDC2.Size = New System.Drawing.Size(15, 14)
         Me.chkDC2.TabIndex = 28
-        Me.chkDC2.UseVisualStyleBackColor = true
+        Me.chkDC2.UseVisualStyleBackColor = True
         '
         'chkDC14
         '
-        Me.chkDC14.AutoSize = true
+        Me.chkDC14.AutoSize = True
         Me.chkDC14.Location = New System.Drawing.Point(277, 105)
         Me.chkDC14.Name = "chkDC14"
         Me.chkDC14.Size = New System.Drawing.Size(15, 14)
         Me.chkDC14.TabIndex = 35
-        Me.chkDC14.UseVisualStyleBackColor = true
+        Me.chkDC14.UseVisualStyleBackColor = True
         '
         'chkDC1
         '
-        Me.chkDC1.AutoSize = true
+        Me.chkDC1.AutoSize = True
         Me.chkDC1.Location = New System.Drawing.Point(7, 16)
         Me.chkDC1.Name = "chkDC1"
         Me.chkDC1.Size = New System.Drawing.Size(15, 14)
         Me.chkDC1.TabIndex = 27
-        Me.chkDC1.UseVisualStyleBackColor = true
+        Me.chkDC1.UseVisualStyleBackColor = True
         '
         'chkDC13
         '
-        Me.chkDC13.AutoSize = true
+        Me.chkDC13.AutoSize = True
         Me.chkDC13.Location = New System.Drawing.Point(277, 83)
         Me.chkDC13.Name = "chkDC13"
         Me.chkDC13.Size = New System.Drawing.Size(15, 14)
         Me.chkDC13.TabIndex = 34
-        Me.chkDC13.UseVisualStyleBackColor = true
+        Me.chkDC13.UseVisualStyleBackColor = True
         '
         'chkDC12
         '
-        Me.chkDC12.AutoSize = true
+        Me.chkDC12.AutoSize = True
         Me.chkDC12.Location = New System.Drawing.Point(277, 60)
         Me.chkDC12.Name = "chkDC12"
         Me.chkDC12.Size = New System.Drawing.Size(15, 14)
         Me.chkDC12.TabIndex = 33
-        Me.chkDC12.UseVisualStyleBackColor = true
+        Me.chkDC12.UseVisualStyleBackColor = True
         '
         'chkDC11
         '
-        Me.chkDC11.AutoSize = true
+        Me.chkDC11.AutoSize = True
         Me.chkDC11.Location = New System.Drawing.Point(277, 38)
         Me.chkDC11.Name = "chkDC11"
         Me.chkDC11.Size = New System.Drawing.Size(15, 14)
         Me.chkDC11.TabIndex = 32
-        Me.chkDC11.UseVisualStyleBackColor = true
+        Me.chkDC11.UseVisualStyleBackColor = True
         '
         'chkDC10
         '
-        Me.chkDC10.AutoSize = true
+        Me.chkDC10.AutoSize = True
         Me.chkDC10.Location = New System.Drawing.Point(7, 194)
         Me.chkDC10.Name = "chkDC10"
         Me.chkDC10.Size = New System.Drawing.Size(15, 14)
         Me.chkDC10.TabIndex = 31
-        Me.chkDC10.UseVisualStyleBackColor = true
+        Me.chkDC10.UseVisualStyleBackColor = True
         '
         'lblDatacore16
         '
@@ -4486,12 +4486,12 @@ Partial Class frmMain
         '
         'chkDC9
         '
-        Me.chkDC9.AutoSize = true
+        Me.chkDC9.AutoSize = True
         Me.chkDC9.Location = New System.Drawing.Point(277, 16)
         Me.chkDC9.Name = "chkDC9"
         Me.chkDC9.Size = New System.Drawing.Size(15, 14)
         Me.chkDC9.TabIndex = 30
-        Me.chkDC9.UseVisualStyleBackColor = true
+        Me.chkDC9.UseVisualStyleBackColor = True
         '
         'lblDatacore14
         '
@@ -4507,16 +4507,16 @@ Partial Class frmMain
         Me.lblDatacore3.Name = "lblDatacore3"
         Me.lblDatacore3.Size = New System.Drawing.Size(158, 13)
         Me.lblDatacore3.TabIndex = 3
-        Me.lblDatacore3.Text = "Gallentean Starship Engineering"
+        Me.lblDatacore3.Text = "Gallente Starship Engineering"
         '
         'chkDC8
         '
-        Me.chkDC8.AutoSize = true
+        Me.chkDC8.AutoSize = True
         Me.chkDC8.Location = New System.Drawing.Point(7, 172)
         Me.chkDC8.Name = "chkDC8"
         Me.chkDC8.Size = New System.Drawing.Size(15, 14)
         Me.chkDC8.TabIndex = 29
-        Me.chkDC8.UseVisualStyleBackColor = true
+        Me.chkDC8.UseVisualStyleBackColor = True
         '
         'lblDatacore13
         '
@@ -4536,21 +4536,21 @@ Partial Class frmMain
         '
         'chkDC7
         '
-        Me.chkDC7.AutoSize = true
+        Me.chkDC7.AutoSize = True
         Me.chkDC7.Location = New System.Drawing.Point(7, 150)
         Me.chkDC7.Name = "chkDC7"
         Me.chkDC7.Size = New System.Drawing.Size(15, 14)
         Me.chkDC7.TabIndex = 28
-        Me.chkDC7.UseVisualStyleBackColor = true
+        Me.chkDC7.UseVisualStyleBackColor = True
         '
         'chkDC6
         '
-        Me.chkDC6.AutoSize = true
+        Me.chkDC6.AutoSize = True
         Me.chkDC6.Location = New System.Drawing.Point(7, 127)
         Me.chkDC6.Name = "chkDC6"
         Me.chkDC6.Size = New System.Drawing.Size(15, 14)
         Me.chkDC6.TabIndex = 27
-        Me.chkDC6.UseVisualStyleBackColor = true
+        Me.chkDC6.UseVisualStyleBackColor = True
         '
         'lblDatacore1
         '
@@ -4558,16 +4558,16 @@ Partial Class frmMain
         Me.lblDatacore1.Name = "lblDatacore1"
         Me.lblDatacore1.Size = New System.Drawing.Size(158, 13)
         Me.lblDatacore1.TabIndex = 1
-        Me.lblDatacore1.Text = "Amarrian Starship Engineering"
+        Me.lblDatacore1.Text = "Amarr Starship Engineering"
         '
         'chkDC5
         '
-        Me.chkDC5.AutoSize = true
+        Me.chkDC5.AutoSize = True
         Me.chkDC5.Location = New System.Drawing.Point(7, 105)
         Me.chkDC5.Name = "chkDC5"
         Me.chkDC5.Size = New System.Drawing.Size(15, 14)
         Me.chkDC5.TabIndex = 26
-        Me.chkDC5.UseVisualStyleBackColor = true
+        Me.chkDC5.UseVisualStyleBackColor = True
         '
         'lblDatacore5
         '
@@ -4645,11 +4645,11 @@ Partial Class frmMain
         Me.gbDCCodes.Name = "gbDCCodes"
         Me.gbDCCodes.Size = New System.Drawing.Size(224, 30)
         Me.gbDCCodes.TabIndex = 56
-        Me.gbDCCodes.TabStop = false
+        Me.gbDCCodes.TabStop = False
         '
         'lblDCColors
         '
-        Me.lblDCColors.AutoSize = true
+        Me.lblDCColors.AutoSize = True
         Me.lblDCColors.Location = New System.Drawing.Point(8, 11)
         Me.lblDCColors.Name = "lblDCColors"
         Me.lblDCColors.Size = New System.Drawing.Size(63, 13)
@@ -4732,7 +4732,7 @@ Partial Class frmMain
         Me.gbDCCorpMinmatar.Name = "gbDCCorpMinmatar"
         Me.gbDCCorpMinmatar.Size = New System.Drawing.Size(228, 122)
         Me.gbDCCorpMinmatar.TabIndex = 64
-        Me.gbDCCorpMinmatar.TabStop = false
+        Me.gbDCCorpMinmatar.TabStop = False
         Me.gbDCCorpMinmatar.Text = "Minmatar Republic/Thukker Tribe/Khanid"
         '
         'lblDCCorp13
@@ -4745,12 +4745,12 @@ Partial Class frmMain
         '
         'chkDCCorp13
         '
-        Me.chkDCCorp13.AutoSize = true
+        Me.chkDCCorp13.AutoSize = True
         Me.chkDCCorp13.Location = New System.Drawing.Point(12, 100)
         Me.chkDCCorp13.Name = "chkDCCorp13"
         Me.chkDCCorp13.Size = New System.Drawing.Size(15, 14)
         Me.chkDCCorp13.TabIndex = 47
-        Me.chkDCCorp13.UseVisualStyleBackColor = true
+        Me.chkDCCorp13.UseVisualStyleBackColor = True
         '
         'txtDCStanding13
         '
@@ -4762,8 +4762,8 @@ Partial Class frmMain
         '
         'lblDCCorpLabel4
         '
-        Me.lblDCCorpLabel4.AutoSize = true
-        Me.lblDCCorpLabel4.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.lblDCCorpLabel4.AutoSize = True
+        Me.lblDCCorpLabel4.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblDCCorpLabel4.Location = New System.Drawing.Point(33, 16)
         Me.lblDCCorpLabel4.Name = "lblDCCorpLabel4"
         Me.lblDCCorpLabel4.Size = New System.Drawing.Size(72, 13)
@@ -4797,30 +4797,30 @@ Partial Class frmMain
         '
         'chkDCCorp10
         '
-        Me.chkDCCorp10.AutoSize = true
+        Me.chkDCCorp10.AutoSize = True
         Me.chkDCCorp10.Location = New System.Drawing.Point(12, 34)
         Me.chkDCCorp10.Name = "chkDCCorp10"
         Me.chkDCCorp10.Size = New System.Drawing.Size(15, 14)
         Me.chkDCCorp10.TabIndex = 27
-        Me.chkDCCorp10.UseVisualStyleBackColor = true
+        Me.chkDCCorp10.UseVisualStyleBackColor = True
         '
         'chkDCCorp11
         '
-        Me.chkDCCorp11.AutoSize = true
+        Me.chkDCCorp11.AutoSize = True
         Me.chkDCCorp11.Location = New System.Drawing.Point(12, 56)
         Me.chkDCCorp11.Name = "chkDCCorp11"
         Me.chkDCCorp11.Size = New System.Drawing.Size(15, 14)
         Me.chkDCCorp11.TabIndex = 28
-        Me.chkDCCorp11.UseVisualStyleBackColor = true
+        Me.chkDCCorp11.UseVisualStyleBackColor = True
         '
         'chkDCCorp12
         '
-        Me.chkDCCorp12.AutoSize = true
+        Me.chkDCCorp12.AutoSize = True
         Me.chkDCCorp12.Location = New System.Drawing.Point(12, 78)
         Me.chkDCCorp12.Name = "chkDCCorp12"
         Me.chkDCCorp12.Size = New System.Drawing.Size(15, 14)
         Me.chkDCCorp12.TabIndex = 29
-        Me.chkDCCorp12.UseVisualStyleBackColor = true
+        Me.chkDCCorp12.UseVisualStyleBackColor = True
         '
         'txtDCStanding10
         '
@@ -4848,7 +4848,7 @@ Partial Class frmMain
         '
         'lblDCStanding4
         '
-        Me.lblDCStanding4.AutoSize = true
+        Me.lblDCStanding4.AutoSize = True
         Me.lblDCStanding4.Location = New System.Drawing.Point(169, 16)
         Me.lblDCStanding4.Name = "lblDCStanding4"
         Me.lblDCStanding4.Size = New System.Drawing.Size(49, 13)
@@ -4858,12 +4858,12 @@ Partial Class frmMain
         '
         'btnDCExporttoClip
         '
-        Me.btnDCExporttoClip.Location = New System.Drawing.Point(980, 205)
+        Me.btnDCExporttoClip.Location = New System.Drawing.Point(980, 206)
         Me.btnDCExporttoClip.Name = "btnDCExporttoClip"
         Me.btnDCExporttoClip.Size = New System.Drawing.Size(138, 35)
         Me.btnDCExporttoClip.TabIndex = 68
         Me.btnDCExporttoClip.Text = "Copy Selected to Clipboard"
-        Me.btnDCExporttoClip.UseVisualStyleBackColor = true
+        Me.btnDCExporttoClip.UseVisualStyleBackColor = True
         '
         'gbDCCorpAmarr
         '
@@ -4882,13 +4882,13 @@ Partial Class frmMain
         Me.gbDCCorpAmarr.Name = "gbDCCorpAmarr"
         Me.gbDCCorpAmarr.Size = New System.Drawing.Size(222, 100)
         Me.gbDCCorpAmarr.TabIndex = 63
-        Me.gbDCCorpAmarr.TabStop = false
+        Me.gbDCCorpAmarr.TabStop = False
         Me.gbDCCorpAmarr.Text = "Amarr Empire/Ammatar Mandate"
         '
         'lblDCCorpLabel1
         '
-        Me.lblDCCorpLabel1.AutoSize = true
-        Me.lblDCCorpLabel1.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.lblDCCorpLabel1.AutoSize = True
+        Me.lblDCCorpLabel1.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblDCCorpLabel1.Location = New System.Drawing.Point(33, 15)
         Me.lblDCCorpLabel1.Name = "lblDCCorpLabel1"
         Me.lblDCCorpLabel1.Size = New System.Drawing.Size(72, 13)
@@ -4922,30 +4922,30 @@ Partial Class frmMain
         '
         'chkDCCorp1
         '
-        Me.chkDCCorp1.AutoSize = true
+        Me.chkDCCorp1.AutoSize = True
         Me.chkDCCorp1.Location = New System.Drawing.Point(12, 33)
         Me.chkDCCorp1.Name = "chkDCCorp1"
         Me.chkDCCorp1.Size = New System.Drawing.Size(15, 14)
         Me.chkDCCorp1.TabIndex = 27
-        Me.chkDCCorp1.UseVisualStyleBackColor = true
+        Me.chkDCCorp1.UseVisualStyleBackColor = True
         '
         'chkDCCorp2
         '
-        Me.chkDCCorp2.AutoSize = true
+        Me.chkDCCorp2.AutoSize = True
         Me.chkDCCorp2.Location = New System.Drawing.Point(12, 55)
         Me.chkDCCorp2.Name = "chkDCCorp2"
         Me.chkDCCorp2.Size = New System.Drawing.Size(15, 14)
         Me.chkDCCorp2.TabIndex = 28
-        Me.chkDCCorp2.UseVisualStyleBackColor = true
+        Me.chkDCCorp2.UseVisualStyleBackColor = True
         '
         'chkDCCorp3
         '
-        Me.chkDCCorp3.AutoSize = true
+        Me.chkDCCorp3.AutoSize = True
         Me.chkDCCorp3.Location = New System.Drawing.Point(12, 77)
         Me.chkDCCorp3.Name = "chkDCCorp3"
         Me.chkDCCorp3.Size = New System.Drawing.Size(15, 14)
         Me.chkDCCorp3.TabIndex = 29
-        Me.chkDCCorp3.UseVisualStyleBackColor = true
+        Me.chkDCCorp3.UseVisualStyleBackColor = True
         '
         'txtDCStanding1
         '
@@ -4973,7 +4973,7 @@ Partial Class frmMain
         '
         'lblDCStanding1
         '
-        Me.lblDCStanding1.AutoSize = true
+        Me.lblDCStanding1.AutoSize = True
         Me.lblDCStanding1.Location = New System.Drawing.Point(165, 14)
         Me.lblDCStanding1.Name = "lblDCStanding1"
         Me.lblDCStanding1.Size = New System.Drawing.Size(49, 13)
@@ -4983,12 +4983,12 @@ Partial Class frmMain
         '
         'btnDCReset
         '
-        Me.btnDCReset.Location = New System.Drawing.Point(980, 155)
+        Me.btnDCReset.Location = New System.Drawing.Point(980, 146)
         Me.btnDCReset.Name = "btnDCReset"
-        Me.btnDCReset.Size = New System.Drawing.Size(138, 23)
+        Me.btnDCReset.Size = New System.Drawing.Size(138, 30)
         Me.btnDCReset.TabIndex = 67
         Me.btnDCReset.Text = "Reset"
-        Me.btnDCReset.UseVisualStyleBackColor = true
+        Me.btnDCReset.UseVisualStyleBackColor = True
         '
         'gbDCCorpsCaldari
         '
@@ -5007,13 +5007,13 @@ Partial Class frmMain
         Me.gbDCCorpsCaldari.Name = "gbDCCorpsCaldari"
         Me.gbDCCorpsCaldari.Size = New System.Drawing.Size(222, 100)
         Me.gbDCCorpsCaldari.TabIndex = 62
-        Me.gbDCCorpsCaldari.TabStop = false
+        Me.gbDCCorpsCaldari.TabStop = False
         Me.gbDCCorpsCaldari.Text = "Caldari State"
         '
         'lblDCCorpLabel2
         '
-        Me.lblDCCorpLabel2.AutoSize = true
-        Me.lblDCCorpLabel2.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.lblDCCorpLabel2.AutoSize = True
+        Me.lblDCCorpLabel2.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblDCCorpLabel2.Location = New System.Drawing.Point(33, 16)
         Me.lblDCCorpLabel2.Name = "lblDCCorpLabel2"
         Me.lblDCCorpLabel2.Size = New System.Drawing.Size(72, 13)
@@ -5047,30 +5047,30 @@ Partial Class frmMain
         '
         'chkDCCorp4
         '
-        Me.chkDCCorp4.AutoSize = true
+        Me.chkDCCorp4.AutoSize = True
         Me.chkDCCorp4.Location = New System.Drawing.Point(10, 33)
         Me.chkDCCorp4.Name = "chkDCCorp4"
         Me.chkDCCorp4.Size = New System.Drawing.Size(15, 14)
         Me.chkDCCorp4.TabIndex = 27
-        Me.chkDCCorp4.UseVisualStyleBackColor = true
+        Me.chkDCCorp4.UseVisualStyleBackColor = True
         '
         'chkDCCorp5
         '
-        Me.chkDCCorp5.AutoSize = true
+        Me.chkDCCorp5.AutoSize = True
         Me.chkDCCorp5.Location = New System.Drawing.Point(10, 55)
         Me.chkDCCorp5.Name = "chkDCCorp5"
         Me.chkDCCorp5.Size = New System.Drawing.Size(15, 14)
         Me.chkDCCorp5.TabIndex = 28
-        Me.chkDCCorp5.UseVisualStyleBackColor = true
+        Me.chkDCCorp5.UseVisualStyleBackColor = True
         '
         'chkDCCorp6
         '
-        Me.chkDCCorp6.AutoSize = true
+        Me.chkDCCorp6.AutoSize = True
         Me.chkDCCorp6.Location = New System.Drawing.Point(10, 77)
         Me.chkDCCorp6.Name = "chkDCCorp6"
         Me.chkDCCorp6.Size = New System.Drawing.Size(15, 14)
         Me.chkDCCorp6.TabIndex = 29
-        Me.chkDCCorp6.UseVisualStyleBackColor = true
+        Me.chkDCCorp6.UseVisualStyleBackColor = True
         '
         'txtDCStanding4
         '
@@ -5098,7 +5098,7 @@ Partial Class frmMain
         '
         'lblDCStanding2
         '
-        Me.lblDCStanding2.AutoSize = true
+        Me.lblDCStanding2.AutoSize = True
         Me.lblDCStanding2.Location = New System.Drawing.Point(163, 16)
         Me.lblDCStanding2.Name = "lblDCStanding2"
         Me.lblDCStanding2.Size = New System.Drawing.Size(49, 13)
@@ -5123,13 +5123,13 @@ Partial Class frmMain
         Me.gbDCCorpsGallente.Name = "gbDCCorpsGallente"
         Me.gbDCCorpsGallente.Size = New System.Drawing.Size(226, 100)
         Me.gbDCCorpsGallente.TabIndex = 61
-        Me.gbDCCorpsGallente.TabStop = false
+        Me.gbDCCorpsGallente.TabStop = False
         Me.gbDCCorpsGallente.Text = "Gallente Federation"
         '
         'lblDCCorpLabel3
         '
-        Me.lblDCCorpLabel3.AutoSize = true
-        Me.lblDCCorpLabel3.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.lblDCCorpLabel3.AutoSize = True
+        Me.lblDCCorpLabel3.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblDCCorpLabel3.Location = New System.Drawing.Point(33, 16)
         Me.lblDCCorpLabel3.Name = "lblDCCorpLabel3"
         Me.lblDCCorpLabel3.Size = New System.Drawing.Size(72, 13)
@@ -5163,30 +5163,30 @@ Partial Class frmMain
         '
         'chkDCCorp7
         '
-        Me.chkDCCorp7.AutoSize = true
+        Me.chkDCCorp7.AutoSize = True
         Me.chkDCCorp7.Location = New System.Drawing.Point(12, 34)
         Me.chkDCCorp7.Name = "chkDCCorp7"
         Me.chkDCCorp7.Size = New System.Drawing.Size(15, 14)
         Me.chkDCCorp7.TabIndex = 27
-        Me.chkDCCorp7.UseVisualStyleBackColor = true
+        Me.chkDCCorp7.UseVisualStyleBackColor = True
         '
         'chkDCCorp8
         '
-        Me.chkDCCorp8.AutoSize = true
+        Me.chkDCCorp8.AutoSize = True
         Me.chkDCCorp8.Location = New System.Drawing.Point(12, 56)
         Me.chkDCCorp8.Name = "chkDCCorp8"
         Me.chkDCCorp8.Size = New System.Drawing.Size(15, 14)
         Me.chkDCCorp8.TabIndex = 28
-        Me.chkDCCorp8.UseVisualStyleBackColor = true
+        Me.chkDCCorp8.UseVisualStyleBackColor = True
         '
         'chkDCCorp9
         '
-        Me.chkDCCorp9.AutoSize = true
+        Me.chkDCCorp9.AutoSize = True
         Me.chkDCCorp9.Location = New System.Drawing.Point(12, 78)
         Me.chkDCCorp9.Name = "chkDCCorp9"
         Me.chkDCCorp9.Size = New System.Drawing.Size(15, 14)
         Me.chkDCCorp9.TabIndex = 29
-        Me.chkDCCorp9.UseVisualStyleBackColor = true
+        Me.chkDCCorp9.UseVisualStyleBackColor = True
         '
         'txtDCStanding7
         '
@@ -5214,7 +5214,7 @@ Partial Class frmMain
         '
         'lblDCStanding3
         '
-        Me.lblDCStanding3.AutoSize = true
+        Me.lblDCStanding3.AutoSize = True
         Me.lblDCStanding3.Location = New System.Drawing.Point(169, 15)
         Me.lblDCStanding3.Name = "lblDCStanding3"
         Me.lblDCStanding3.Size = New System.Drawing.Size(49, 13)
@@ -5224,9 +5224,9 @@ Partial Class frmMain
         '
         'btnDCRefresh
         '
-        Me.btnDCRefresh.Location = New System.Drawing.Point(980, 130)
+        Me.btnDCRefresh.Location = New System.Drawing.Point(980, 116)
         Me.btnDCRefresh.Name = "btnDCRefresh"
-        Me.btnDCRefresh.Size = New System.Drawing.Size(138, 23)
+        Me.btnDCRefresh.Size = New System.Drawing.Size(138, 30)
         Me.btnDCRefresh.TabIndex = 66
         Me.btnDCRefresh.Text = "Refresh"
         Me.btnDCRefresh.UseVisualStyleBackColor = true

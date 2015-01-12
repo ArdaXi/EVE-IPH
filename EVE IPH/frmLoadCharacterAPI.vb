@@ -248,6 +248,7 @@ Public Class frmLoadCharacterAPI
         End If
 
         CharactersLoaded = True
+        APIAdded = True
 
         Me.Close()
 

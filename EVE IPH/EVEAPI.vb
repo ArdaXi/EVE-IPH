@@ -358,7 +358,7 @@ Public Class EVEAPI
     End Function
 
     ' Function will get all Industry jobs for the character and type sent (corp or personal) and return an array of the jobs
-    Public Function GetIndustryJobs(ByVal SentKey As APIKeyData, ByVal ScanType As ScanType, ByRef CachedUntilDate As Date, ByVal UpdateJobType As IndustryJobType) As List(Of IndustryJob)
+    Public Function GetIndustryJobs(ByVal SentKey As APIKeyData, ByVal ScanType As ScanType, ByRef CachedUntilDate As Date) As List(Of IndustryJob)
         ' XML Variables
         Dim m_xmld As XmlDocument
         Dim m_nodelist As XmlNodeList
@@ -375,88 +375,91 @@ Public Class EVEAPI
 
         ' Status field
         '101 = delivered, anything else is not
-
         If SentKey.Access Then
-            ' Set up query string 
-            If ScanType = ScanType.Personal Then
-                If UpdateJobType = IndustryJobType.JobsCurrent Then
-                    EVEAPIQuery = APIURL & CharIndustryLog & "?keyID=" & CStr(SentKey.KeyID) & "&vCode=" & SentKey.APIKey & "&characterID=" & CStr(SentKey.ID)
-                Else
-                    EVEAPIQuery = APIURL & CharIndustryLogHistory & "?keyID=" & CStr(SentKey.KeyID) & "&vCode=" & SentKey.APIKey & "&characterID=" & CStr(SentKey.ID)
+            ' Run each query for current and history and process
+            For k = 0 To 1
+
+                ' Set up query string 
+                If ScanType = ScanType.Personal Then
+                    If k = 0 Then
+                        EVEAPIQuery = APIURL & CharIndustryLog & "?keyID=" & CStr(SentKey.KeyID) & "&vCode=" & SentKey.APIKey & "&characterID=" & CStr(SentKey.ID)
+                    Else
+                        EVEAPIQuery = APIURL & CharIndustryLogHistory & "?keyID=" & CStr(SentKey.KeyID) & "&vCode=" & SentKey.APIKey & "&characterID=" & CStr(SentKey.ID)
+                    End If
+                Else ' Corp (no charid required)
+                    If k = 0 Then
+                        EVEAPIQuery = APIURL & CorpIndustryLog & "?keyID=" & CStr(SentKey.KeyID) & "&vCode=" & SentKey.APIKey
+                    Else
+                        EVEAPIQuery = APIURL & CorpIndustryLogHistory & "?keyID=" & CStr(SentKey.KeyID) & "&vCode=" & SentKey.APIKey
+                    End If
                 End If
-            Else ' Corp (no charid required)
-                If UpdateJobType = IndustryJobType.JobsCurrent Then
-                    EVEAPIQuery = APIURL & CorpIndustryLog & "?keyID=" & CStr(SentKey.KeyID) & "&vCode=" & SentKey.APIKey
-                Else
-                    EVEAPIQuery = APIURL & CorpIndustryLogHistory & "?keyID=" & CStr(SentKey.KeyID) & "&vCode=" & SentKey.APIKey
+
+                'Create the XML Document
+                m_xmld = QueryEVEAPI(EVEAPIQuery)
+
+                ' Check data
+                If IsNothing(m_xmld) Then
+                    Return Nothing
                 End If
-            End If
 
-            'Create the XML Document
-            m_xmld = QueryEVEAPI(EVEAPIQuery)
+                ' Get the cache update
+                m_nodelist = m_xmld.SelectNodes("/eveapi/cachedUntil")
+                ' Should only be one time
+                CachedUntilDate = CDate(m_nodelist.Item(0).InnerText)
 
-            ' Check data
-            If IsNothing(m_xmld) Then
-                Return Nothing
-            End If
+                ' Get the list of nodes for characters
+                m_nodelist = m_xmld.SelectNodes("/eveapi/result/rowset/row")
 
-            ' Get the cache update
-            m_nodelist = m_xmld.SelectNodes("/eveapi/cachedUntil")
-            ' Should only be one time
-            CachedUntilDate = CDate(m_nodelist.Item(0).InnerText)
+                ' Loop through the nodes for three characters 
+                ' if we are just doing the one, then it will exit with the one
+                For Each m_node In m_nodelist
 
-            ' Get the list of nodes for characters
-            m_nodelist = m_xmld.SelectNodes("/eveapi/result/rowset/row")
-
-            ' Loop through the nodes for three characters 
-            ' if we are just doing the one, then it will exit with the one
-            For Each m_node In m_nodelist
-
-                With m_node.Attributes
-                    TempCharID = CLng(.GetNamedItem("installerID").Value)
-                End With
-
-                ' Only add if the character matches the name sent
-                If TempCharID = SentKey.ID Then
                     With m_node.Attributes
-                        TempJob.jobID = CLng(.GetNamedItem("jobID").Value)
-                        TempJob.installerID = CLng(.GetNamedItem("installerID").Value)
-                        TempJob.installerName = .GetNamedItem("installerName").Value
-                        TempJob.facilityID = CLng(.GetNamedItem("facilityID").Value)
-                        TempJob.solarSystemID = CLng(.GetNamedItem("solarSystemID").Value)
-                        TempJob.solarSystemName = .GetNamedItem("solarSystemName").Value
-                        TempJob.stationID = CLng(.GetNamedItem("stationID").Value)
-                        TempJob.activityID = CInt(.GetNamedItem("activityID").Value)
-                        TempJob.blueprintID = CDbl(.GetNamedItem("blueprintID").Value)
-                        TempJob.blueprintTypeID = CLng(.GetNamedItem("blueprintTypeID").Value)
-                        TempJob.blueprintTypeName = .GetNamedItem("blueprintTypeName").Value
-                        TempJob.blueprintLocationID = CLng(.GetNamedItem("blueprintLocationID").Value)
-                        TempJob.outputLocationID = CLng(.GetNamedItem("outputLocationID").Value)
-                        TempJob.runs = CLng(.GetNamedItem("runs").Value)
-                        TempJob.cost = CDbl(.GetNamedItem("cost").Value)
-                        TempJob.teamID = CLng(.GetNamedItem("teamID").Value)
-                        TempJob.licensedRuns = CLng(.GetNamedItem("licensedRuns").Value)
-                        TempJob.probability = CDbl(.GetNamedItem("probability").Value)
-                        TempJob.productTypeID = CLng(.GetNamedItem("productTypeID").Value)
-                        TempJob.productTypeName = .GetNamedItem("productTypeName").Value
-                        TempJob.status = CLng(.GetNamedItem("status").Value)
-                        TempJob.timeInSeconds = CLng(.GetNamedItem("timeInSeconds").Value)
-                        TempJob.successfulRuns = CLng(.GetNamedItem("successfulRuns").Value)
-
-                        TempJob.startDate = DateTime.ParseExact(.GetNamedItem("startDate").Value, SQLiteDateFormat, LocalCulture)
-                        TempJob.endDate = DateTime.ParseExact(.GetNamedItem("endDate").Value, SQLiteDateFormat, LocalCulture)
-                        TempJob.pauseDate = DateTime.ParseExact(.GetNamedItem("pauseDate").Value, SQLiteDateFormat, LocalCulture)
-                        TempJob.completedDate = DateTime.ParseExact(.GetNamedItem("completedDate").Value, SQLiteDateFormat, LocalCulture)
-
-                        TempJob.completedCharacterID = CLng(.GetNamedItem("completedCharacterID").Value)
-
-                        TempJob.JobType = ScanType
+                        TempCharID = CLng(.GetNamedItem("installerID").Value)
                     End With
 
-                    ReturnData.Add(TempJob)
+                    ' Only add if the character matches the name sent
+                    If TempCharID = SentKey.ID Then
+                        With m_node.Attributes
+                            TempJob.jobID = CLng(.GetNamedItem("jobID").Value)
+                            TempJob.installerID = CLng(.GetNamedItem("installerID").Value)
+                            TempJob.installerName = .GetNamedItem("installerName").Value
+                            TempJob.facilityID = CLng(.GetNamedItem("facilityID").Value)
+                            TempJob.solarSystemID = CLng(.GetNamedItem("solarSystemID").Value)
+                            TempJob.solarSystemName = .GetNamedItem("solarSystemName").Value
+                            TempJob.stationID = CLng(.GetNamedItem("stationID").Value)
+                            TempJob.activityID = CInt(.GetNamedItem("activityID").Value)
+                            TempJob.blueprintID = CDbl(.GetNamedItem("blueprintID").Value)
+                            TempJob.blueprintTypeID = CLng(.GetNamedItem("blueprintTypeID").Value)
+                            TempJob.blueprintTypeName = .GetNamedItem("blueprintTypeName").Value
+                            TempJob.blueprintLocationID = CLng(.GetNamedItem("blueprintLocationID").Value)
+                            TempJob.outputLocationID = CLng(.GetNamedItem("outputLocationID").Value)
+                            TempJob.runs = CLng(.GetNamedItem("runs").Value)
+                            TempJob.cost = CDbl(.GetNamedItem("cost").Value)
+                            TempJob.teamID = CLng(.GetNamedItem("teamID").Value)
+                            TempJob.licensedRuns = CLng(.GetNamedItem("licensedRuns").Value)
+                            TempJob.probability = CDbl(.GetNamedItem("probability").Value)
+                            TempJob.productTypeID = CLng(.GetNamedItem("productTypeID").Value)
+                            TempJob.productTypeName = .GetNamedItem("productTypeName").Value
+                            TempJob.status = CLng(.GetNamedItem("status").Value)
+                            TempJob.timeInSeconds = CLng(.GetNamedItem("timeInSeconds").Value)
+                            TempJob.successfulRuns = CLng(.GetNamedItem("successfulRuns").Value)
 
-                End If
+                            TempJob.startDate = DateTime.ParseExact(.GetNamedItem("startDate").Value, SQLiteDateFormat, LocalCulture)
+                            TempJob.endDate = DateTime.ParseExact(.GetNamedItem("endDate").Value, SQLiteDateFormat, LocalCulture)
+                            TempJob.pauseDate = DateTime.ParseExact(.GetNamedItem("pauseDate").Value, SQLiteDateFormat, LocalCulture)
+                            TempJob.completedDate = DateTime.ParseExact(.GetNamedItem("completedDate").Value, SQLiteDateFormat, LocalCulture)
 
+                            TempJob.completedCharacterID = CLng(.GetNamedItem("completedCharacterID").Value)
+
+                            TempJob.JobType = ScanType
+                        End With
+
+                        ReturnData.Add(TempJob)
+
+                    End If
+
+                Next
             Next
 
             Return ReturnData

@@ -34,116 +34,130 @@
                 chkLstBoxColumns.SetItemChecked(0, False)
             End If
 
-            If .TimeToComplete <> 0 Then
+            If .InstallerName <> 0 Then
                 chkLstBoxColumns.SetItemChecked(1, True)
-                SetMaxColumnNumber(.TimeToComplete)
+                SetMaxColumnNumber(.InstallerName)
             Else
                 chkLstBoxColumns.SetItemChecked(1, False)
             End If
 
-            If .Activity <> 0 Then
+            If .TimeToComplete <> 0 Then
                 chkLstBoxColumns.SetItemChecked(2, True)
-                SetMaxColumnNumber(.Activity)
+                SetMaxColumnNumber(.TimeToComplete)
             Else
                 chkLstBoxColumns.SetItemChecked(2, False)
             End If
 
-            If .Status <> 0 Then
+            If .Activity <> 0 Then
                 chkLstBoxColumns.SetItemChecked(3, True)
-                SetMaxColumnNumber(.Status)
+                SetMaxColumnNumber(.Activity)
             Else
                 chkLstBoxColumns.SetItemChecked(3, False)
             End If
 
-            If .StartTime <> 0 Then
+            If .Status <> 0 Then
                 chkLstBoxColumns.SetItemChecked(4, True)
-                SetMaxColumnNumber(.StartTime)
+                SetMaxColumnNumber(.Status)
             Else
                 chkLstBoxColumns.SetItemChecked(4, False)
             End If
 
-            If .EndTime <> 0 Then
+            If .StartTime <> 0 Then
                 chkLstBoxColumns.SetItemChecked(5, True)
-                SetMaxColumnNumber(.EndTime)
+                SetMaxColumnNumber(.StartTime)
             Else
                 chkLstBoxColumns.SetItemChecked(5, False)
             End If
 
-            If .CompletionTime <> 0 Then
+            If .EndTime <> 0 Then
                 chkLstBoxColumns.SetItemChecked(6, True)
-                SetMaxColumnNumber(.CompletionTime)
+                SetMaxColumnNumber(.EndTime)
             Else
                 chkLstBoxColumns.SetItemChecked(6, False)
             End If
 
-            If .Blueprint <> 0 Then
+            If .CompletionTime <> 0 Then
                 chkLstBoxColumns.SetItemChecked(7, True)
-                SetMaxColumnNumber(.Blueprint)
+                SetMaxColumnNumber(.CompletionTime)
             Else
                 chkLstBoxColumns.SetItemChecked(7, False)
             End If
 
-            If .OutputItem <> 0 Then
+            If .Blueprint <> 0 Then
                 chkLstBoxColumns.SetItemChecked(8, True)
-                SetMaxColumnNumber(.OutputItem)
+                SetMaxColumnNumber(.Blueprint)
             Else
                 chkLstBoxColumns.SetItemChecked(8, False)
             End If
 
-            If .OutputItemType <> 0 Then
+            If .OutputItem <> 0 Then
                 chkLstBoxColumns.SetItemChecked(9, True)
-                SetMaxColumnNumber(.OutputItemType)
+                SetMaxColumnNumber(.OutputItem)
             Else
                 chkLstBoxColumns.SetItemChecked(9, False)
             End If
 
-            If .InstallSystem <> 0 Then
+            If .OutputItemType <> 0 Then
                 chkLstBoxColumns.SetItemChecked(10, True)
-                SetMaxColumnNumber(.InstallSystem)
+                SetMaxColumnNumber(.OutputItemType)
             Else
                 chkLstBoxColumns.SetItemChecked(10, False)
             End If
 
-            If .InstallRegion <> 0 Then
+            If .InstallSystem <> 0 Then
                 chkLstBoxColumns.SetItemChecked(11, True)
-                SetMaxColumnNumber(.InstallRegion)
+                SetMaxColumnNumber(.InstallSystem)
             Else
                 chkLstBoxColumns.SetItemChecked(11, False)
             End If
 
-            If .LicensedRuns <> 0 Then
+            If .InstallRegion <> 0 Then
                 chkLstBoxColumns.SetItemChecked(12, True)
-                SetMaxColumnNumber(.LicensedRuns)
+                SetMaxColumnNumber(.InstallRegion)
             Else
                 chkLstBoxColumns.SetItemChecked(12, False)
             End If
 
-            If .Runs <> 0 Then
+            If .LicensedRuns <> 0 Then
                 chkLstBoxColumns.SetItemChecked(13, True)
-                SetMaxColumnNumber(.Runs)
+                SetMaxColumnNumber(.LicensedRuns)
             Else
                 chkLstBoxColumns.SetItemChecked(13, False)
             End If
 
-            If .SuccessfulRuns <> 0 Then
+            If .Runs <> 0 Then
                 chkLstBoxColumns.SetItemChecked(14, True)
-                SetMaxColumnNumber(.SuccessfulRuns)
+                SetMaxColumnNumber(.Runs)
             Else
                 chkLstBoxColumns.SetItemChecked(14, False)
             End If
 
-            If .BlueprintLocation <> 0 Then
+            If .SuccessfulRuns <> 0 Then
                 chkLstBoxColumns.SetItemChecked(15, True)
-                SetMaxColumnNumber(.BlueprintLocation)
+                SetMaxColumnNumber(.SuccessfulRuns)
             Else
                 chkLstBoxColumns.SetItemChecked(15, False)
             End If
 
-            If .OutputLocation <> 0 Then
+            If .BlueprintLocation <> 0 Then
                 chkLstBoxColumns.SetItemChecked(16, True)
-                SetMaxColumnNumber(.OutputLocation)
+                SetMaxColumnNumber(.BlueprintLocation)
             Else
                 chkLstBoxColumns.SetItemChecked(16, False)
+            End If
+
+            If .OutputLocation <> 0 Then
+                chkLstBoxColumns.SetItemChecked(17, True)
+                SetMaxColumnNumber(.OutputLocation)
+            Else
+                chkLstBoxColumns.SetItemChecked(17, False)
+            End If
+
+            If .JobType <> 0 Then
+                chkLstBoxColumns.SetItemChecked(18, True)
+                SetMaxColumnNumber(.JobType)
+            Else
+                chkLstBoxColumns.SetItemChecked(18, False)
             End If
 
             chkLstBoxColumns.Update()
@@ -176,8 +190,8 @@
     ' Save the items as viewed or not and order them from the last column
     Public Sub SaveLocalColumnSettings()
         Dim chkstate As CheckState
-        Dim ColumnPositions(17) As String
-        Dim TempColumns(17) As String
+        Dim ColumnPositions(20) As String
+        Dim TempColumns(20) As String
         Dim ColumnCount As Integer = 0
         Dim i As Integer = 1
         Dim j As Integer = 1
@@ -195,6 +209,15 @@
 
             chkstate = chkLstBoxColumns.GetItemCheckState(1)
             ' Change to max column order + 1 if checked and not already set
+            If .InstallerName = 0 And chkstate = CheckState.Checked Then
+                .InstallerName = MaxColumnNumber + 1
+                MaxColumnNumber += 1
+            ElseIf chkstate = CheckState.Unchecked Then
+                .InstallerName = 0
+            End If
+
+            chkstate = chkLstBoxColumns.GetItemCheckState(2)
+            ' Change to max column order + 1 if checked and not already set
             If .TimeToComplete = 0 And chkstate = CheckState.Checked Then
                 .TimeToComplete = MaxColumnNumber + 1
                 MaxColumnNumber += 1
@@ -202,7 +225,7 @@
                 .TimeToComplete = 0
             End If
 
-            chkstate = chkLstBoxColumns.GetItemCheckState(2)
+            chkstate = chkLstBoxColumns.GetItemCheckState(3)
             ' Change to max column order + 1 if checked and not already set
             If .Activity = 0 And chkstate = CheckState.Checked Then
                 .Activity = MaxColumnNumber + 1
@@ -211,7 +234,7 @@
                 .Activity = 0
             End If
 
-            chkstate = chkLstBoxColumns.GetItemCheckState(3)
+            chkstate = chkLstBoxColumns.GetItemCheckState(4)
             ' Change to max column order + 1 if checked and not already set
             If .Status = 0 And chkstate = CheckState.Checked Then
                 .Status = MaxColumnNumber + 1
@@ -220,7 +243,7 @@
                 .Status = 0
             End If
 
-            chkstate = chkLstBoxColumns.GetItemCheckState(4)
+            chkstate = chkLstBoxColumns.GetItemCheckState(5)
             ' Change to max column order + 1 if checked and not already set
             If .StartTime = 0 And chkstate = CheckState.Checked Then
                 .StartTime = MaxColumnNumber + 1
@@ -229,7 +252,7 @@
                 .StartTime = 0
             End If
 
-            chkstate = chkLstBoxColumns.GetItemCheckState(5)
+            chkstate = chkLstBoxColumns.GetItemCheckState(6)
             ' Change to max column order + 1 if checked and not already set
             If .EndTime = 0 And chkstate = CheckState.Checked Then
                 .EndTime = MaxColumnNumber + 1
@@ -238,7 +261,7 @@
                 .EndTime = 0
             End If
 
-            chkstate = chkLstBoxColumns.GetItemCheckState(6)
+            chkstate = chkLstBoxColumns.GetItemCheckState(7)
             ' Change to max column order + 1 if checked and not already set
             If .CompletionTime = 0 And chkstate = CheckState.Checked Then
                 .CompletionTime = MaxColumnNumber + 1
@@ -247,7 +270,7 @@
                 .CompletionTime = 0
             End If
 
-            chkstate = chkLstBoxColumns.GetItemCheckState(7)
+            chkstate = chkLstBoxColumns.GetItemCheckState(8)
             ' Change to max column order + 1 if checked and not already set
             If .Blueprint = 0 And chkstate = CheckState.Checked Then
                 .Blueprint = MaxColumnNumber + 1
@@ -256,7 +279,7 @@
                 .Blueprint = 0
             End If
 
-            chkstate = chkLstBoxColumns.GetItemCheckState(8)
+            chkstate = chkLstBoxColumns.GetItemCheckState(9)
             ' Change to max column order + 1 if checked and not already set
             If .OutputItem = 0 And chkstate = CheckState.Checked Then
                 .OutputItem = MaxColumnNumber + 1
@@ -265,7 +288,7 @@
                 .OutputItem = 0
             End If
 
-            chkstate = chkLstBoxColumns.GetItemCheckState(9)
+            chkstate = chkLstBoxColumns.GetItemCheckState(10)
             ' Change to max column order + 1 if checked and not already set
             If .OutputItemType = 0 And chkstate = CheckState.Checked Then
                 .OutputItemType = MaxColumnNumber + 1
@@ -274,7 +297,7 @@
                 .OutputItemType = 0
             End If
 
-            chkstate = chkLstBoxColumns.GetItemCheckState(10)
+            chkstate = chkLstBoxColumns.GetItemCheckState(11)
             ' Change to max column order + 1 if checked and not already set
             If .InstallSystem = 0 And chkstate = CheckState.Checked Then
                 .InstallSystem = MaxColumnNumber + 1
@@ -283,7 +306,7 @@
                 .InstallSystem = 0
             End If
 
-            chkstate = chkLstBoxColumns.GetItemCheckState(11)
+            chkstate = chkLstBoxColumns.GetItemCheckState(12)
             ' Change to max column order + 1 if checked and not already set
             If .InstallRegion = 0 And chkstate = CheckState.Checked Then
                 .InstallRegion = MaxColumnNumber + 1
@@ -292,7 +315,7 @@
                 .InstallRegion = 0
             End If
 
-            chkstate = chkLstBoxColumns.GetItemCheckState(12)
+            chkstate = chkLstBoxColumns.GetItemCheckState(13)
             ' Change to max column order + 1 if checked and not already set
             If .LicensedRuns = 0 And chkstate = CheckState.Checked Then
                 .LicensedRuns = MaxColumnNumber + 1
@@ -301,7 +324,7 @@
                 .LicensedRuns = 0
             End If
 
-            chkstate = chkLstBoxColumns.GetItemCheckState(13)
+            chkstate = chkLstBoxColumns.GetItemCheckState(14)
             ' Change to max column order + 1 if checked and not already set
             If .Runs = 0 And chkstate = CheckState.Checked Then
                 .Runs = MaxColumnNumber + 1
@@ -310,7 +333,7 @@
                 .Runs = 0
             End If
 
-            chkstate = chkLstBoxColumns.GetItemCheckState(14)
+            chkstate = chkLstBoxColumns.GetItemCheckState(15)
             ' Change to max column order + 1 if checked and not already set
             If .SuccessfulRuns = 0 And chkstate = CheckState.Checked Then
                 .SuccessfulRuns = MaxColumnNumber + 1
@@ -319,7 +342,7 @@
                 .SuccessfulRuns = 0
             End If
 
-            chkstate = chkLstBoxColumns.GetItemCheckState(15)
+            chkstate = chkLstBoxColumns.GetItemCheckState(16)
             ' Change to max column order + 1 if checked and not already set
             If .BlueprintLocation = 0 And chkstate = CheckState.Checked Then
                 .BlueprintLocation = MaxColumnNumber + 1
@@ -328,7 +351,7 @@
                 .BlueprintLocation = 0
             End If
 
-            chkstate = chkLstBoxColumns.GetItemCheckState(16)
+            chkstate = chkLstBoxColumns.GetItemCheckState(17)
             ' Change to max column order + 1 if checked and not already set
             If .OutputLocation = 0 And chkstate = CheckState.Checked Then
                 .OutputLocation = MaxColumnNumber + 1
@@ -337,101 +360,114 @@
                 .OutputLocation = 0
             End If
 
+            chkstate = chkLstBoxColumns.GetItemCheckState(18)
+            ' Change to max column order + 1 if checked and not already set
+            If .JobType = 0 And chkstate = CheckState.Checked Then
+                .JobType = MaxColumnNumber + 1
+                MaxColumnNumber += 1
+            ElseIf chkstate = CheckState.Unchecked Then
+                .JobType = 0
+            End If
+
             ' Now in case something was removed, we want to update the indicies
+            For i = 0 To ColumnPositions.Count - 1
+                ColumnPositions(i) = ""
+            Next
+
             With UserIndustryJobsColumnSettings
-                For i = 0 To ColumnPositions.Count - 1
-                    ColumnPositions(i) = ""
-                Next
+                ColumnPositions(.JobState) = ProgramSettings.JobStateColumn
+                ColumnPositions(.InstallerName) = ProgramSettings.InstallerNameColumn
+                ColumnPositions(.TimeToComplete) = ProgramSettings.TimetoCompleteColumn
+                ColumnPositions(.Activity) = ProgramSettings.ActivityColumn
+                ColumnPositions(.Status) = ProgramSettings.StatusColumn
+                ColumnPositions(.StartTime) = ProgramSettings.StartTimeColumn
+                ColumnPositions(.EndTime) = ProgramSettings.EndTimeColumn
+                ColumnPositions(.CompletionTime) = ProgramSettings.CompletionTimeColumn
+                ColumnPositions(.Blueprint) = ProgramSettings.BlueprintColumn
+                ColumnPositions(.OutputItem) = ProgramSettings.OutputItemColumn
+                ColumnPositions(.OutputItemType) = ProgramSettings.OutputItemTypeColumn
+                ColumnPositions(.InstallSystem) = ProgramSettings.InstallSolarSystemColumn
+                ColumnPositions(.InstallRegion) = ProgramSettings.InstallRegionColumn
+                ColumnPositions(.LicensedRuns) = ProgramSettings.LicensedRunsColumn
+                ColumnPositions(.Runs) = ProgramSettings.RunsColumn
+                ColumnPositions(.SuccessfulRuns) = ProgramSettings.SuccessfulRunsColumn
+                ColumnPositions(.BlueprintLocation) = ProgramSettings.BlueprintLocationColumn
+                ColumnPositions(.OutputLocation) = ProgramSettings.OutputLocationColumn
+                ColumnPositions(.JobType) = ProgramSettings.JobTypeColumn
+            End With
 
-                With UserIndustryJobsColumnSettings
-                    ColumnPositions(.JobState) = ProgramSettings.JobStateColumn
-                    ColumnPositions(.TimeToComplete) = ProgramSettings.TimetoCompleteColumn
-                    ColumnPositions(.Activity) = ProgramSettings.ActivityColumn
-                    ColumnPositions(.Status) = ProgramSettings.StatusColumn
-                    ColumnPositions(.StartTime) = ProgramSettings.StartTimeColumn
-                    ColumnPositions(.EndTime) = ProgramSettings.EndTimeColumn
-                    ColumnPositions(.CompletionTime) = ProgramSettings.CompletionTimeColumn
-                    ColumnPositions(.Blueprint) = ProgramSettings.BlueprintColumn
-                    ColumnPositions(.OutputItem) = ProgramSettings.OutputItemColumn
-                    ColumnPositions(.OutputItemType) = ProgramSettings.OutputItemTypeColumn
-                    ColumnPositions(.InstallSystem) = ProgramSettings.InstallSolarSystemColumn
-                    ColumnPositions(.InstallRegion) = ProgramSettings.InstallRegionColumn
-                    ColumnPositions(.LicensedRuns) = ProgramSettings.LicensedRunsColumn
-                    ColumnPositions(.Runs) = ProgramSettings.RunsColumn
-                    ColumnPositions(.SuccessfulRuns) = ProgramSettings.SuccessfulRunsColumn
-                    ColumnPositions(.BlueprintLocation) = ProgramSettings.BlueprintLocationColumn
-                    ColumnPositions(.OutputLocation) = ProgramSettings.OutputLocationColumn
-                End With
+            ' Reset the first one with nothing since the first column is empty
+            ColumnPositions(0) = ""
 
-                ' Reset the first one with nothing since the first column is empty
-                ColumnPositions(0) = ""
+            ' Now get the total number of columns in the list we want to see
+            For i = 1 To ColumnPositions.Count - 1
+                If ColumnPositions(i) <> "" Then
+                    ColumnCount += 1
+                End If
+            Next
 
-                ' Now get the total number of columns in the list we want to see
-                For i = 1 To ColumnPositions.Count - 1
-                    If ColumnPositions(i) <> "" Then
-                        ColumnCount += 1
+            ' Init temp
+            For i = 0 To TempColumns.Count - 1
+                TempColumns(i) = ""
+            Next
+
+            ' Now loop through the columns and update the positions
+            For i = 1 To ColumnPositions.Count - 1
+                If ColumnPositions(i) <> "" Then
+                    TempColumns(j) = ColumnPositions(i)
+                    j += 1
+                Else
+                    If i = UserIndustryJobsColumnSettings.OrderByColumn Then
+                        ' They removed the column they sorted, so default to the first column since you must have 1
+                        UserIndustryJobsColumnSettings.OrderByColumn = 1
                     End If
-                Next
+                End If
+            Next
 
-                ' Init temp
-                For i = 0 To TempColumns.Count - 1
-                    TempColumns(i) = ""
-                Next
+            ColumnPositions = TempColumns
 
-                ' Now loop through the columns and update the positions
+            ' Finally save the columns based on the current order
+            With UserIndustryJobsColumnSettings
                 For i = 1 To ColumnPositions.Count - 1
-                    If ColumnPositions(i) <> "" Then
-                        TempColumns(j) = ColumnPositions(i)
-                        j += 1
-                    Else
-                        If i = UserIndustryJobsColumnSettings.OrderByColumn Then
-                            ' They removed the column they sorted, so default to the first column since you must have 1
-                            UserIndustryJobsColumnSettings.OrderByColumn = 1
-                        End If
-                    End If
+                    Select Case ColumnPositions(i)
+                        Case ProgramSettings.JobStateColumn
+                            .JobState = i
+                        Case ProgramSettings.InstallerNameColumn
+                            .InstallerName = i
+                        Case ProgramSettings.TimetoCompleteColumn
+                            .TimeToComplete = i
+                        Case ProgramSettings.ActivityColumn
+                            .Activity = i
+                        Case ProgramSettings.StartTimeColumn
+                            .StartTime = i
+                        Case ProgramSettings.EndTimeColumn
+                            .EndTime = i
+                        Case ProgramSettings.CompletionTimeColumn
+                            .CompletionTime = i
+                        Case ProgramSettings.BlueprintColumn
+                            .Blueprint = i
+                        Case ProgramSettings.OutputItemColumn
+                            .OutputItem = i
+                        Case ProgramSettings.OutputItemTypeColumn
+                            .OutputItemType = i
+                        Case ProgramSettings.InstallSolarSystemColumn
+                            .InstallSystem = i
+                        Case ProgramSettings.InstallRegionColumn
+                            .InstallRegion = i
+                        Case ProgramSettings.LicensedRunsColumn
+                            .LicensedRuns = i
+                        Case ProgramSettings.RunsColumn
+                            .Runs = i
+                        Case ProgramSettings.SuccessfulRunsColumn
+                            .SuccessfulRuns = i
+                        Case ProgramSettings.BlueprintLocationColumn
+                            .BlueprintLocation = i
+                        Case ProgramSettings.OutputLocationColumn
+                            .OutputLocation = i
+                        Case ProgramSettings.JobTypeColumn
+                            .JobType = i
+                    End Select
                 Next
-
-                ColumnPositions = TempColumns
-
-                ' Finally save the columns based on the current order
-                With UserIndustryJobsColumnSettings
-                    For i = 1 To ColumnPositions.Count - 1
-                        Select Case ColumnPositions(i)
-                            Case ProgramSettings.JobStateColumn
-                                .JobState = i
-                            Case ProgramSettings.TimetoCompleteColumn
-                                .TimeToComplete = i
-                            Case ProgramSettings.ActivityColumn
-                                .Activity = i
-                            Case ProgramSettings.StartTimeColumn
-                                .StartTime = i
-                            Case ProgramSettings.EndTimeColumn
-                                .EndTime = i
-                            Case ProgramSettings.CompletionTimeColumn
-                                .CompletionTime = i
-                            Case ProgramSettings.BlueprintColumn
-                                .Blueprint = i
-                            Case ProgramSettings.OutputItemColumn
-                                .OutputItem = i
-                            Case ProgramSettings.OutputItemTypeColumn
-                                .OutputItemType = i
-                            Case ProgramSettings.InstallSolarSystemColumn
-                                .InstallSystem = i
-                            Case ProgramSettings.InstallRegionColumn
-                                .InstallRegion = i
-                            Case ProgramSettings.LicensedRunsColumn
-                                .LicensedRuns = i
-                            Case ProgramSettings.RunsColumn
-                                .Runs = i
-                            Case ProgramSettings.SuccessfulRunsColumn
-                                .SuccessfulRuns = i
-                            Case ProgramSettings.BlueprintLocationColumn
-                                .BlueprintLocation = i
-                            Case ProgramSettings.OutputLocationColumn
-                                .OutputLocation = i
-                        End Select
-                    Next
-                End With
             End With
         End With
 

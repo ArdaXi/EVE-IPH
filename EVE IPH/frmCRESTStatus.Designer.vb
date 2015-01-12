@@ -34,7 +34,7 @@ Partial Class frmCRESTStatus
         Me.pgCREST.TabIndex = 3
         Me.pgCREST.Visible = False
         '
-        'frmCRESTStatus
+        'lblCRESTStatus
         '
         Me.lblCRESTStatus.Location = New System.Drawing.Point(13, 10)
         Me.lblCRESTStatus.Name = "lblCRESTStatus"
@@ -43,7 +43,7 @@ Partial Class frmCRESTStatus
         Me.lblCRESTStatus.Text = "Status"
         Me.lblCRESTStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         '
-        'CRESTSplash
+        'frmCRESTStatus
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
@@ -54,7 +54,7 @@ Partial Class frmCRESTStatus
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.MaximizeBox = False
         Me.MinimizeBox = False
-        Me.Name = "CRESTSplash"
+        Me.Name = "frmCRESTStatus"
         Me.ShowInTaskbar = False
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.ResumeLayout(False)

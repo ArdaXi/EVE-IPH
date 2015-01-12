@@ -390,30 +390,34 @@ Public Class ProgramSettings
 
     ' Industry Jobs column settings
     Public DefaultJobState As Integer = 1
-    Public DefaultTimeToComplete As Integer = 3
-    Public DefaultActivity As Integer = 2
+    Public DefaultInstallerName As Integer = 2
+    Public DefaultTimeToComplete As Integer = 4
+    Public DefaultActivity As Integer = 3
     Public DefaultStatus As Integer = 0
     Public DefaultStartTime As Integer = 0
     Public DefaultEndTime As Integer = 0
     Public DefaultCompletionTime As Integer = 0
-    Public DefaultBlueprint As Integer = 4
-    Public DefaultOutputItem As Integer = 5
+    Public DefaultBlueprint As Integer = 5
+    Public DefaultOutputItem As Integer = 6
     Public DefaultOutputItemType As Integer = 0
-    Public DefaultInstallSolarSystem As Integer = 6
-    Public DefaultInstallRegion As Integer = 7
+    Public DefaultInstallSolarSystem As Integer = 7
+    Public DefaultInstallRegion As Integer = 8
     Public DefaultLicensedRuns As Integer = 0
     Public DefaultRuns As Integer = 0
     Public DefaultSuccessfulRuns As Integer = 0
-    Public DefaultBlueprintLocation As Integer = 8
-    Public DefaultOutputLocation As Integer = 9
+    Public DefaultBlueprintLocation As Integer = 9
+    Public DefaultOutputLocation As Integer = 10
+    Public DefaultJobType As Integer = 11
     Public DefaultOrderType As String = "Ascending"
     Public DefaultViewJobType As String = "Personal"
     Public DefaultJobTimes As String = "Current Jobs"
+    Public DefaultSelectedCharacterIDs As String = ""
     Public DefaultIndustryColumnWidth As Integer = 100
     Public DefaultOrderByColumn As Integer = 3
 
     ' Column Names for industry jobs viewer
     Public Const JobStateColumn As String = "Job State"
+    Public Const InstallerNameColumn As String = "Installer"
     Public Const TimetoCompleteColumn As String = "Time to Complete"
     Public Const ActivityColumn As String = "Activity"
     Public Const StatusColumn As String = "Status"
@@ -430,6 +434,7 @@ Public Class ProgramSettings
     Public Const SuccessfulRunsColumn As String = "Successful Runs"
     Public Const BlueprintLocationColumn As String = "Blueprint Location"
     Public Const OutputLocationColumn As String = "Output Location"
+    Public Const JobTypeColumn As String = "Job Type"
 
     ' Manufacturing Tab column settings
     Public DefaultMTItemCategory As Integer = 1
@@ -2324,6 +2329,7 @@ Public Class ProgramSettings
                 'Get the settings
                 With TempSettings
                     .JobState = CInt(GetSettingValue(IndustryJobsColumnSettingsFileName, SettingTypes.TypeInteger, "IndustryJobsColumnSettings", "JobState", DefaultJobState))
+                    .InstallerName = CInt(GetSettingValue(IndustryJobsColumnSettingsFileName, SettingTypes.TypeInteger, "IndustryJobsColumnSettings", "InstallerName", DefaultInstallerName))
                     .TimeToComplete = CInt(GetSettingValue(IndustryJobsColumnSettingsFileName, SettingTypes.TypeInteger, "IndustryJobsColumnSettings", "TimeToComplete", DefaultTimeToComplete))
                     .Activity = CInt(GetSettingValue(IndustryJobsColumnSettingsFileName, SettingTypes.TypeInteger, "IndustryJobsColumnSettings", "Activity", DefaultActivity))
                     .Status = CInt(GetSettingValue(IndustryJobsColumnSettingsFileName, SettingTypes.TypeInteger, "IndustryJobsColumnSettings", "Status", DefaultStatus))
@@ -2340,8 +2346,10 @@ Public Class ProgramSettings
                     .SuccessfulRuns = CInt(GetSettingValue(IndustryJobsColumnSettingsFileName, SettingTypes.TypeInteger, "IndustryJobsColumnSettings", "SuccessfulRuns", DefaultSuccessfulRuns))
                     .BlueprintLocation = CInt(GetSettingValue(IndustryJobsColumnSettingsFileName, SettingTypes.TypeInteger, "IndustryJobsColumnSettings", "BlueprintLocation", DefaultBlueprintLocation))
                     .OutputLocation = CInt(GetSettingValue(IndustryJobsColumnSettingsFileName, SettingTypes.TypeInteger, "IndustryJobsColumnSettings", "OutputLocation", DefaultOutputLocation))
+                    .JobType = CInt(GetSettingValue(IndustryJobsColumnSettingsFileName, SettingTypes.TypeInteger, "IndustryJobsColumnSettings", "JobType", DefaultJobType))
 
                     .JobStateWidth = CInt(GetSettingValue(IndustryJobsColumnSettingsFileName, SettingTypes.TypeInteger, "IndustryJobsColumnSettings", "JobStateWidth", DefaultIndustryColumnWidth))
+                    .InstallerNameWidth = CInt(GetSettingValue(IndustryJobsColumnSettingsFileName, SettingTypes.TypeInteger, "IndustryJobsColumnSettings", "InstallerNameWidth", DefaultIndustryColumnWidth))
                     .TimeToCompleteWidth = CInt(GetSettingValue(IndustryJobsColumnSettingsFileName, SettingTypes.TypeInteger, "IndustryJobsColumnSettings", "TimeToCompleteWidth", DefaultIndustryColumnWidth))
                     .ActivityWidth = CInt(GetSettingValue(IndustryJobsColumnSettingsFileName, SettingTypes.TypeInteger, "IndustryJobsColumnSettings", "ActivityWidth", DefaultIndustryColumnWidth))
                     .StatusWidth = CInt(GetSettingValue(IndustryJobsColumnSettingsFileName, SettingTypes.TypeInteger, "IndustryJobsColumnSettings", "StatusWidth", DefaultIndustryColumnWidth))
@@ -2358,11 +2366,13 @@ Public Class ProgramSettings
                     .SuccessfulRunsWidth = CInt(GetSettingValue(IndustryJobsColumnSettingsFileName, SettingTypes.TypeInteger, "IndustryJobsColumnSettings", "SuccessfulRunsWidth", DefaultIndustryColumnWidth))
                     .BlueprintLocationWidth = CInt(GetSettingValue(IndustryJobsColumnSettingsFileName, SettingTypes.TypeInteger, "IndustryJobsColumnSettings", "BlueprintLocationWidth", DefaultIndustryColumnWidth))
                     .OutputLocationWidth = CInt(GetSettingValue(IndustryJobsColumnSettingsFileName, SettingTypes.TypeInteger, "IndustryJobsColumnSettings", "OutputLocationWidth", DefaultIndustryColumnWidth))
+                    .JobTypeWidth = CInt(GetSettingValue(IndustryJobsColumnSettingsFileName, SettingTypes.TypeInteger, "IndustryJobsColumnSettings", "JobTypeWidth", DefaultIndustryColumnWidth))
 
                     .OrderByColumn = CInt(GetSettingValue(IndustryJobsColumnSettingsFileName, SettingTypes.TypeInteger, "IndustryJobsColumnSettings", "OrderByColumn", DefaultOrderByColumn))
                     .ViewJobType = CStr(GetSettingValue(IndustryJobsColumnSettingsFileName, SettingTypes.TypeString, "IndustryJobsColumnSettings", "ViewJobType", DefaultViewJobType))
                     .OrderType = CStr(GetSettingValue(IndustryJobsColumnSettingsFileName, SettingTypes.TypeString, "IndustryJobsColumnSettings", "OrderType", DefaultOrderType))
                     .JobTimes = CStr(GetSettingValue(IndustryJobsColumnSettingsFileName, SettingTypes.TypeString, "IndustryJobsColumnSettings", "JobTimes", DefaultJobTimes))
+                    .SelectedCharacterIDs = CStr(GetSettingValue(IndustryJobsColumnSettingsFileName, SettingTypes.TypeString, "IndustryJobsColumnSettings", "SelectedCharacterIDs", DefaultSelectedCharacterIDs))
 
                 End With
 
@@ -2390,6 +2400,7 @@ Public Class ProgramSettings
 
         With LocalSettings
             .JobState = DefaultJobState
+            .InstallerName = DefaultInstallerName
             .TimeToComplete = DefaultTimeToComplete
             .Activity = DefaultActivity
             .Status = DefaultStatus
@@ -2406,8 +2417,10 @@ Public Class ProgramSettings
             .BlueprintLocation = DefaultBlueprintLocation
             .SuccessfulRuns = DefaultSuccessfulRuns
             .OutputLocation = DefaultOutputLocation
+            .JobType = DefaultJobType
 
             .JobStateWidth = DefaultIndustryColumnWidth
+            .InstallerNameWidth = DefaultIndustryColumnWidth
             .TimeToCompleteWidth = DefaultIndustryColumnWidth
             .ActivityWidth = DefaultIndustryColumnWidth
             .StatusWidth = DefaultIndustryColumnWidth
@@ -2424,11 +2437,15 @@ Public Class ProgramSettings
             .SuccessfulRunsWidth = DefaultIndustryColumnWidth
             .BlueprintLocationWidth = DefaultIndustryColumnWidth
             .OutputLocationWidth = DefaultIndustryColumnWidth
+            .JobTypeWidth = DefaultIndustryColumnWidth
 
             .OrderByColumn = DefaultOrderByColumn
             .OrderType = DefaultOrderType
             .ViewJobType = DefaultViewJobType
             .JobTimes = DefaultJobTimes
+
+            .SelectedCharacterIDs = DefaultSelectedCharacterIDs
+
         End With
 
 
@@ -2440,7 +2457,7 @@ Public Class ProgramSettings
 
     ' Saves the tab settings to XML
     Public Sub SaveIndustryJobsColumnSettings(SentSettings As IndustryJobsColumnSettings)
-        Dim IndustryJobsColumnSettingsList(37) As Setting
+        Dim IndustryJobsColumnSettingsList(42) As Setting
 
         Try
             IndustryJobsColumnSettingsList(0) = New Setting("JobState", CStr(SentSettings.JobState))
@@ -2483,6 +2500,13 @@ Public Class ProgramSettings
             IndustryJobsColumnSettingsList(35) = New Setting("ViewJobType", CStr(SentSettings.ViewJobType))
             IndustryJobsColumnSettingsList(36) = New Setting("OrderType", CStr(SentSettings.OrderType))
             IndustryJobsColumnSettingsList(37) = New Setting("JobTimes", CStr(SentSettings.JobTimes))
+            IndustryJobsColumnSettingsList(38) = New Setting("SelectedCharacterIDs", CStr(SentSettings.SelectedCharacterIDs))
+
+            IndustryJobsColumnSettingsList(39) = New Setting("InstallerName", CStr(SentSettings.InstallerName))
+            IndustryJobsColumnSettingsList(40) = New Setting("InstallerNameWidth", CStr(SentSettings.InstallerNameWidth))
+
+            IndustryJobsColumnSettingsList(41) = New Setting("JobType", CStr(SentSettings.JobType))
+            IndustryJobsColumnSettingsList(42) = New Setting("JobTypeWidth", CStr(SentSettings.JobTypeWidth))
 
             Call WriteSettingsToFile(IndustryJobsColumnSettingsFileName, IndustryJobsColumnSettingsList, "IndustryJobsColumnSettings")
 
@@ -4887,6 +4911,7 @@ Public Structure IndustryJobsColumnSettings
 
     ' These are the column orders and shown/not shown. 0 is not shown, else the order number
     Dim JobState As Integer
+    Dim InstallerName As Integer
     Dim TimeToComplete As Integer
     Dim Activity As Integer
     Dim Status As Integer
@@ -4903,8 +4928,10 @@ Public Structure IndustryJobsColumnSettings
     Dim SuccessfulRuns As Integer
     Dim BlueprintLocation As Integer
     Dim OutputLocation As Integer
+    Dim JobType As Integer ' Personal or Corp
 
     Dim JobStateWidth As Integer
+    Dim InstallerNameWidth As Integer
     Dim TimeToCompleteWidth As Integer
     Dim ActivityWidth As Integer
     Dim StatusWidth As Integer
@@ -4921,6 +4948,7 @@ Public Structure IndustryJobsColumnSettings
     Dim SuccessfulRunsWidth As Integer
     Dim BlueprintLocationWidth As Integer
     Dim OutputLocationWidth As Integer
+    Dim JobTypeWidth As Integer ' Personal or Corp
 
     Dim OrderByColumn As Integer ' What column index the jobs are sorted
     Dim OrderType As String ' Ascending or Descending
@@ -4928,6 +4956,9 @@ Public Structure IndustryJobsColumnSettings
     Dim ViewJobType As String ' Personal, Corp, or Both
 
     Dim JobTimes As String ' Current or History
+
+    ' List of selected characters, comma separated - default is going to be empty but will automatically choose the selected character
+    Dim SelectedCharacterIDs As String
 
 End Structure
 

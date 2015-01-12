@@ -199,6 +199,8 @@ Public Module Public_Variables
 
     Public Const None As String = "None" ' For decryptors, facilities and teams
 
+    Public APIAdded As Boolean ' To flag if a new api was added, then we can use to reload apis if needed in other areas (eg industry jobs)
+
     Public Enum StationType
         Station = 0
         Outpost = 1
@@ -260,11 +262,6 @@ Public Module Public_Variables
         T1 = 1
         T2 = 2
         T3 = 3
-    End Enum
-
-    Public Enum IndustryJobType
-        JobsCurrent = 1
-        JobsHistory = 2
     End Enum
 
     ' BP Types: -1 is original, -2 is copy

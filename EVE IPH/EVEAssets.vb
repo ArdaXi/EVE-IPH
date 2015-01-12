@@ -89,7 +89,7 @@ Public Class EVEAssets
                 ' See if it's a station
                 If CStr(TempAsset.LocationID).Substring(0, 1) = "6" Then
 
-                    SQL = "SELECT FACILITY_NAME FROM STATIONS WHERE FACILITY_ID = " & CStr(TempAsset.LocationID)
+                    SQL = "SELECT STATION_NAME FROM STATIONS WHERE STATION_ID = " & CStr(TempAsset.LocationID)
                     DBCommand = New SQLiteCommand(SQL, DB)
                     readerData = DBCommand.ExecuteReader
 

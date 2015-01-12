@@ -28,7 +28,7 @@ Public Class EVEIndustryJobs
     End Sub
 
     ' Loads all the Industry Assets for the character from the DB
-    Public Sub LoadIndustryJobs(JobType As ScanType, UpdatefromAPI As Boolean)
+    Public Sub LoadIndustryJobs(ByVal JobType As ScanType, ByRef UpdatefromAPI As Boolean)
         Dim SQL As String
         Dim readerJobs As SQLiteDataReader
         Dim TempJob As IndustryJob
@@ -97,7 +97,7 @@ Public Class EVEIndustryJobs
     End Sub
 
     ' Updates the Industry Jobs from API for the character/corp and inserts them into the Database for later queries
-    Private Sub UpdateIndustryJobs(JobType As ScanType, UpdateAPI As Boolean)
+    Private Sub UpdateIndustryJobs(ByVal JobType As ScanType, ByRef UpdateAPI As Boolean)
         Dim readerJobs As SQLiteDataReader
         Dim SQL As String
         Dim RefreshDate As Date ' To check the update of the API.
@@ -139,7 +139,7 @@ Public Class EVEIndustryJobs
         ' See if we refresh the data 
         If RefreshDate <= DateTime.UtcNow Then
 
-            IndyJobs = API.GetIndustryJobs(KeyData, JobType, CacheDate, IndustryJobType.JobsHistory)
+            IndyJobs = API.GetIndustryJobs(KeyData, JobType, CacheDate)
 
             If Not NoAPIError(API.GetErrorText, "Character") Then
                 ' Errored, exit
@@ -162,7 +162,7 @@ Public Class EVEIndustryJobs
 
             Call ExecuteNonQuerySQL(SQL)
 
-            ' Clear out all the industry jobs for the user - 90 days should be enough
+            ' Clear out all the industry jobs for the user - 90 days from the API should be enough
             SQL = "DELETE FROM INDUSTRY_JOBS WHERE installerID = " & KeyData.ID
             SQL = SQL & " AND JobType = " & CStr(JobType)
 
