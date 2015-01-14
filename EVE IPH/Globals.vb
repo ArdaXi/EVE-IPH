@@ -8,7 +8,7 @@ Imports System.Xml
 ' Place to store all public variables and functions
 Public Module Public_Variables
     ' DB name and version
-    Public Const DataDumpVersion As String = "Rhea_1.0_109013"
+    Public Const DataDumpVersion As String = "Proteus_1.0_109795"
     Public Const VersionNumber As String = "3.1.*"
 
     Public TestingVersion As Boolean ' This flag will test the test downloads from the server for an update
@@ -172,8 +172,10 @@ Public Module Public_Variables
     Public Const BoosterGroupID As Integer = 303
     Public Const StrategicCruiserGroupID As Integer = 963
     Public Const TacticalDestroyerGroupID As Integer = 1305
+    Public Const SubsystemCategoryID As Integer = 32
 
     Public Const StrategicCrusierBlueprintID As Integer = 996
+    Public Const TacticalDestroyerBlueprintID As Integer = 1309
     Public Const SubsystemBlueprintID As Integer = 973
     Public Const BlueprintCategoryID As Integer = 9
 
@@ -186,7 +188,6 @@ Public Module Public_Variables
     Public Const DecryptorGroup As Long = 1304
 
     ' Categories (has multiple groups)
-    Public Const SubsystemCategoryID As Integer = 32
     Public Const StationEggGroupID As Integer = 307 ' This is for loading No POS build items
     Public Const SovStructureCategoryID As Integer = 40
     Public Const StationPartsGroupID As Integer = 536

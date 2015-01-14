@@ -1748,10 +1748,18 @@ NoBonus:
         Select Case FacilityActivity
             ' Load up None for Invention/RE, Copy - they could buy the BP or T2 BPO
             Case ActivityCopying, ActivityInvention
-                FacilityTypeCombo.Items.Add(None)
-                FacilityTypeCombo.Items.Add(StationFacility)
-                FacilityTypeCombo.Items.Add(OutpostFacility)
-                FacilityTypeCombo.Items.Add(POSFacility)
+                Select Case ProductionType
+                    Case IndustryType.T3Invention
+                        ' Can be invented in outposts and POS
+                        FacilityTypeCombo.Items.Add(OutpostFacility)
+                        FacilityTypeCombo.Items.Add(POSFacility)
+                        FacilityTypeCombo.Items.Add(None)
+                    Case Else
+                        FacilityTypeCombo.Items.Add(StationFacility)
+                        FacilityTypeCombo.Items.Add(OutpostFacility)
+                        FacilityTypeCombo.Items.Add(POSFacility)
+                        FacilityTypeCombo.Items.Add(None)
+                End Select
             Case ActivityManufacturing
                 Select Case ProductionType
                     Case IndustryType.SuperManufacturing
@@ -1866,6 +1874,17 @@ NoBonus:
                         SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Copying & " "
                     Case ActivityInvention
                         SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Invention & " "
+                        ' For T3 stuff, need to make sure we only show facilities that can do T3 invention (Caldari Outposts)
+                        ' T3 stuff doesn't have a group ID in stations table
+                        If ItemGroupID = StrategicCruiserGroupID Then
+                            SQL = SQL & " AND GROUP_ID = " & CStr(StrategicCrusierBlueprintID) & " "
+                        ElseIf ItemGroupID = TacticalDestroyerGroupID Then
+                            SQL = SQL & " AND GROUP_ID = " & CStr(TacticalDestroyerBlueprintID) & " "
+                        ElseIf ItemCategoryID = SubsystemCategoryID Then
+                            SQL = SQL & " AND GROUP_ID = " & CStr(SubsystemBlueprintID) & " "
+                        Else
+                            SQL = SQL & " AND GROUP_ID = 0  AND CATEGORY_ID = " & CStr(BlueprintCategoryID) & " "
+                        End If
                 End Select
 
             Case POSFacility
@@ -1975,6 +1994,17 @@ NoBonus:
                         SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Copying & " "
                     Case ActivityInvention
                         SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Invention & " "
+                        ' For T3 stuff, need to make sure we only show facilities that can do T3 invention (Caldari Outposts)
+                        ' T3 stuff doesn't have a group ID in stations table
+                        If ItemGroupID = StrategicCruiserGroupID Then
+                            SQL = SQL & " AND GROUP_ID = " & CStr(StrategicCrusierBlueprintID) & " "
+                        ElseIf ItemGroupID = TacticalDestroyerGroupID Then
+                            SQL = SQL & " AND GROUP_ID = " & CStr(TacticalDestroyerBlueprintID) & " "
+                        ElseIf ItemCategoryID = SubsystemCategoryID Then
+                            SQL = SQL & " AND GROUP_ID = " & CStr(SubsystemBlueprintID) & " "
+                        Else
+                            SQL = SQL & " AND GROUP_ID = 0  AND CATEGORY_ID = " & CStr(BlueprintCategoryID) & " "
+                        End If
                 End Select
 
                 SQL = SQL & "AND REGION_NAME = '" & FormatDBString(FacilityRegionCombo.Text) & "'"
@@ -2089,6 +2119,17 @@ NoBonus:
                         SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Copying & " "
                     Case ActivityInvention
                         SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Invention & " "
+                        ' For T3 stuff, need to make sure we only show facilities that can do T3 invention (Caldari Outposts)
+                        ' T3 stuff doesn't have a group ID in stations table
+                        If ItemGroupID = StrategicCruiserGroupID Then
+                            SQL = SQL & " AND GROUP_ID = " & CStr(StrategicCrusierBlueprintID) & " "
+                        ElseIf ItemGroupID = TacticalDestroyerGroupID Then
+                            SQL = SQL & " AND GROUP_ID = " & CStr(TacticalDestroyerBlueprintID) & " "
+                        ElseIf ItemCategoryID = SubsystemCategoryID Then
+                            SQL = SQL & " AND GROUP_ID = " & CStr(SubsystemBlueprintID) & " "
+                        Else
+                            SQL = SQL & " AND GROUP_ID = 0  AND CATEGORY_ID = " & CStr(BlueprintCategoryID) & " "
+                        End If
                 End Select
 
                 SQL = SQL & "AND REGION_NAME = '" & FormatDBString(FacilityRegionCombo.Text) & "' "
@@ -2119,12 +2160,11 @@ NoBonus:
                     Case ActivityCopying
                         SQL = SQL & CStr(IndustryActivities.Copying) & " "
                     Case ActivityInvention
-                        If ItemCategoryID = SubsystemCategoryID Then
-                            SQL = SQL & CStr(IndustryActivities.Invention) & " AND CATEGORY_ID = " & CStr(SubsystemBlueprintID)
-                        ElseIf ItemGroupID = StrategicCruiserGroupID Or ItemGroupID = TacticalDestroyerGroupID Then
-                            SQL = SQL & CStr(IndustryActivities.Invention) & " AND GROUP_ID = " & CStr(StrategicCrusierBlueprintID)
+                        ' POS invention you can only do T3 in certain arrays
+                        If ItemGroupID = StrategicCruiserGroupID Or ItemGroupID = TacticalDestroyerGroupID Or ItemGroupID = SubsystemBlueprintID Then
+                            SQL = SQL & CStr(IndustryActivities.Invention) & " AND GROUP_ID = " & CStr(ItemGroupID)
                         Else
-                            SQL = SQL & CStr(IndustryActivities.Invention) & " AND GROUP_ID IS NULL "
+                            SQL = SQL & CStr(IndustryActivities.Invention) & " AND GROUP_ID = 0 "
                         End If
                         SQL = SQL & " AND CATEGORY_ID = " & CStr(BlueprintCategoryID)
                 End Select

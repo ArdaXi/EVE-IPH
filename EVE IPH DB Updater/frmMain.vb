@@ -10,7 +10,7 @@ Imports ComponentAce.Compression.Archiver
 Public Class frmMain
     Inherits System.Windows.Forms.Form
 
-    Public Const DatabaseName As String = "Rhea_1.0_109013" ' also folder name to update YAML and Universe DB stuff
+    Public Const DatabaseName As String = "Proteus_1.0_109795" ' also folder name to update YAML and Universe DB stuff
 
     ' DB
     Public Const DatabasePath As String = "C:\Users\Brian\EVE Stuff\EVE IPH Project\DataDump Working\"
@@ -681,6 +681,10 @@ Public Class frmMain
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
         SQL = "CREATE INDEX IDX_AA_AN_AID_CID_GID ON ASSEMBLY_ARRAYS (ARRAY_NAME, ACTIVITY_ID, CATEGORY_ID, GROUP_ID)"
+        Call Execute_SQLiteSQL(SQL, SQLiteDB)
+
+        ' Finally, need to do some cleanup - For invention, CCP adds data for ships and modules for invention and such, but you can only invent blueprints (category 9)
+        SQL = "DELETE FROM ASSEMBLY_ARRAYS WHERE ACTIVITY_ID = 8 AND CATEGORY_ID <> 9"
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
     End Sub
@@ -1383,7 +1387,7 @@ Public Class frmMain
 
         Application.DoEvents()
 
-        pgMain.Maximum = 101000
+        pgMain.Maximum = 110000
         pgMain.Value = 0
         i = 0
         pgMain.Visible = True
@@ -5965,11 +5969,25 @@ Public Class frmMain
 
         ' Random updates
 
-        ' Rename the gallente and amarr data cores to reflect the name change for the skills and research types
-        msSQL = "UPDATE invTypes SET typeName = 'Datacore - Gallente Starship Engineering' WHERE typeid = 20410"
+        ' Chinese named ships in invtypes for some reason
+        msSQL = "DELETE FROM invTypes where typeID IN (34480,34478,34476,34474,34472,34470,34468,34466,34464,34462,34460,34458)"
         Call Execute_msSQL(msSQL)
 
-        msSQL = "UPDATE invTypes SET typeName = 'Datacore - Amarr Starship Engineering' WHERE typeid = 20421"
+        ' The SDE keeps missing categoryID 9 in this table.
+        msSQL = "INSERT INTO [Proteus_1.0_109795].dbo.ramAssemblyLineTypeDetailPerCategory SELECT * FROM [Oceanus_1.0_105658].dbo.ramAssemblyLineTypeDetailPerCategory WHERE categoryID = 9"
+        Call Execute_msSQL(msSQL)
+
+        ' Also, update the category table for stations to only invent from a BP when given
+        msSQL = "UPDATE ramAssemblyLineTypeDetailPerCategory SET categoryID = 9 WHERE assemblyLineTypeID IN (36,38) and categoryID = 6"
+        Call Execute_msSQL(msSQL)
+        msSQL = "DELETE FROM ramAssemblyLineTypeDetailPerCategory WHERE assemblyLineTypeID IN (36,38) and categoryID <> 9"
+        Call Execute_msSQL(msSQL)
+
+        ' Rename the gallente and amarr data cores to reflect the name change for the skills and research types
+        msSQL = "UPDATE invTypes SET typeName = 'Datacore - Gallente Starship Engineering' WHERE typeID = 20410"
+        Call Execute_msSQL(msSQL)
+
+        msSQL = "UPDATE invTypes SET typeName = 'Datacore - Amarr Starship Engineering' WHERE typeID = 20421"
         Call Execute_msSQL(msSQL)
 
         mySQLReader.Close()
