@@ -124,7 +124,7 @@ Public Class Blueprint
 
     Private InventionT3BPCTypeID As Long ' BP used to invent the BP we are building
 
-    Private AdvManufacturingSkillLevels As Double ' The total TE reduction from skills required to invent and build this item (T2/T3)
+    Private AdvManufacturingSkillLevelBonus As Double ' The total TE reduction from skills required to invent and build this item (T2/T3)
 
     ' Price Variables
     Private ItemMarketCost As Double ' Market cost of item 
@@ -648,7 +648,7 @@ Public Class Blueprint
         End If
 
         ' Set the Advanced Skill levels to build this item for later application of Production Time
-        AdvManufacturingSkillLevels = SetAdvManufacturingSkillLevels(ReqBuildSkills)
+        AdvManufacturingSkillLevelBonus = SetAdvManufacturingSkillLevels(ReqBuildSkills)
 
         ' Set the invention data if this is a T2
         If (TechLevel = BlueprintTechLevel.T2 Or TechLevel = BlueprintTechLevel.T3) _
@@ -890,7 +890,7 @@ Public Class Blueprint
         Dim JobsPerBatch As Long = 0
 
         ' For 1 run of this item add in the modifier plus skill level modifiers
-        BPProductionTime = BaseProductionTime * SetBPTimeModifier() * (1 - (IndustrySkill * 0.04)) * (1 - (AdvancedIndustrySkill * 0.03)) * (1 - AdvManufacturingSkillLevels * 0.01)
+        BPProductionTime = BaseProductionTime * SetBPTimeModifier() * AdvManufacturingSkillLevelBonus
 
         ' Figure out how many jobs per batch we need to run, find the smallest of the two
         If NumberofBPs > NumberofProductionLines Then
@@ -1011,11 +1011,14 @@ Public Class Blueprint
 
     ' Calculates the total time muliplier for the blueprint based on the bp, facility, implants and team bonuses
     Private Function SetBPTimeModifier() As Double
+        Dim Modifier As Double
 
         Dim TeamBonus As Double = GetTeamBonus(ManufacturingTeam, "TE")
 
-        ' Time modifier is the BP ME, Facility, and team bonus - Facility is saved as a straight multiplier, the others need to be set
-        Return TeamBonus * (1 - (iTE / 100)) * ManufacturingFacility.TimeMultiplier * AIImplantValue
+        ' Time modifier is the BP ME, Facility, and team bonus - Facility is saved as a straight multiplier, the others need to be set, then do the skills
+        Modifier = TeamBonus * (1 - (iTE / 100)) * ManufacturingFacility.TimeMultiplier * AIImplantValue * (1 - (IndustrySkill * 0.04)) * (1 - (AdvancedIndustrySkill * 0.03))
+
+        Return Modifier
 
     End Function
 
@@ -1080,8 +1083,8 @@ Public Class Blueprint
     End Sub
 
     ' Totals up all the skill levels for advanced manufacturing skills for TE reduction bonus
-    Private Function SetAdvManufacturingSkillLevels(BuildSkills As EVESkillList) As Integer
-        Dim LevelSum As Integer = 0
+    Private Function SetAdvManufacturingSkillLevels(BuildSkills As EVESkillList) As Double
+        Dim BonusSum As Double = 1
 
         'These skills for T2 now reduce TE by 1% per level for the manufacturing job with Pheobe
         '3398	Advanced Large Ship Construction
@@ -1107,11 +1110,12 @@ Public Class Blueprint
         For i = 0 To BuildSkills.NumSkills - 1
             Select Case BuildSkills.GetSkillList(i).TypeID
                 Case 3398, 3397, 3395, 11444, 11454, 11448, 11453, 11450, 11446, 11433, 11443, 11447, 11452, 11445, 11529, 11451, 11441, 11455, 11449
-                    LevelSum += BPCharacter.Skills.GetSkillLevel(BuildSkills.GetSkillList(i).TypeID)
+                    ' each skill is mulitplied by 1 then normalized percentage, then mulitiplied to any others to get the bonus
+                    BonusSum = BonusSum * (1 - 0.01 * BPCharacter.Skills.GetSkillLevel(BuildSkills.GetSkillList(i).TypeID))
             End Select
         Next
 
-        Return LevelSum
+        Return BonusSum
 
     End Function
 

@@ -36,7 +36,7 @@ Public Class frmMain
     Private TypeIDToFind As Long ' For searching a price list
 
     ' Manufacturing Column stuff
-    Private ColumnPositions(numManufacturingTabColumns) As String ' For saving the column order
+    Private ColumnPositions(NumManufacturingTabColumns) As String ' For saving the column order
     Private AddingColumns As Boolean
     Private MovedColumn As Integer
 
@@ -10372,8 +10372,8 @@ ExitSub:
                         SQL = SQL & "buyVolume, buyAvg, buyMax, buyMin, buyStdDev, buyMedian, buyPercentile, "
                         SQL = SQL & "sellVolume, sellAvg, sellMax, sellMin, sellStdDev, sellMedian, sellPercentile, RegionList, UpdateDate) VALUES "
                         SQL = SQL & "(" & CStr(.TypeID) & "," & CStr(.AllVolume) & "," & CStr(.AllAvgPrice) & "," & CStr(.AllMaxPrice) & "," & CStr(.AllMinPrice) & "," & CStr(.AllStdDev) & "," & CStr(.AllMedian) & "," & CStr(.AllPercentile) & ","
-                        SQL = SQL & CStr(.BuyVolume) & "," & CStr(.BuyAvgPrice) & "," & CStr(.BuyMaxPrice) & "," & CStr(.BuyMinPrice) & "," & CStr(.BuyStdDev) & "," & CStr(.BuyMedian) & "," & CStr(.AllPercentile) & ","
-                        SQL = SQL & CStr(.SellVolume) & "," & CStr(.SellAvgPrice) & "," & CStr(.SellMaxPrice) & "," & CStr(.SellMinPrice) & "," & CStr(.SellStdDev) & "," & CStr(.SellMedian) & "," & CStr(.AllPercentile) & ","
+                        SQL = SQL & CStr(.BuyVolume) & "," & CStr(.BuyAvgPrice) & "," & CStr(.BuyMaxPrice) & "," & CStr(.BuyMinPrice) & "," & CStr(.BuyStdDev) & "," & CStr(.BuyMedian) & "," & CStr(.BuyPercentile) & ","
+                        SQL = SQL & CStr(.SellVolume) & "," & CStr(.SellAvgPrice) & "," & CStr(.SellMaxPrice) & "," & CStr(.SellMinPrice) & "," & CStr(.SellStdDev) & "," & CStr(.SellMedian) & "," & CStr(.SellPercentile) & ","
                         SQL = SQL & "'" & .RegionList & "','" & Format(Now, SQLiteDateFormat) & "')"
                     Else
                         ' We probably didn't get any good prices back, so only update the date and wait for the next update
@@ -15329,7 +15329,7 @@ CheckTechs:
         Next
 
         ' First index is ""
-        TempArray(0) = "BPTypeID"
+        TempArray(0) = "JobID"
 
         If e.OldDisplayIndex > e.NewDisplayIndex Then
             ' For all indices larger than the new index, need to move it to the next array

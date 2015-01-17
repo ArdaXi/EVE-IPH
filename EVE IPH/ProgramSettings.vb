@@ -436,7 +436,7 @@ Public Class ProgramSettings
     Public Const OutputLocationColumn As String = "Output Location"
     Public Const JobTypeColumn As String = "Job Type"
 
-    ' Manufacturing Tab column settings
+    ' Manufacturing Tab column settings - index 0 is for hidden id column
     Public DefaultMTItemCategory As Integer = 1
     Public DefaultMTItemGroup As Integer = 2
     Public DefaultMTItemName As Integer = 3

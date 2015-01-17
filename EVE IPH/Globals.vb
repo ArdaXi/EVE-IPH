@@ -121,6 +121,7 @@ Public Module Public_Variables
     Public Const DataCoreRedeemCost As Double = 10000.0
 
     Public Const NumManufacturingTabColumns As Integer = 75
+    Public Const NumIndustryJobColumns As Integer = 20
 
     Public Const NoDate As Date = #1/1/1900#
     Public Const NoExpiry As Date = #1/1/2200#

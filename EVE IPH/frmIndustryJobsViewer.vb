@@ -3,7 +3,7 @@ Imports System.Data.SQLite
 
 Public Class frmIndustryJobsViewer
 
-    Private ColumnPositions(20) As String ' For saving the column order
+    Private ColumnPositions(numIndustryJobColumns) As String ' For saving the column order
     Private ColumnSorter As ListViewColumnSorter
     Private ColumnSorter2 As ListViewColumnSorter
     Private FirstLoad As Boolean
@@ -669,7 +669,7 @@ Public Class frmIndustryJobsViewer
 
     ' Updates the column order when changed
     Private Sub lstIndustryJobs_ColumnReordered(sender As Object, e As System.Windows.Forms.ColumnReorderedEventArgs) Handles lstIndustryJobs.ColumnReordered
-        Dim TempArray(20) As String
+        Dim TempArray(numIndustryJobColumns) As String
         Dim Minus1 As Boolean = False
 
         e.Cancel = True ' Cancel the event so we can manually update the grid columns
