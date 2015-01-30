@@ -840,7 +840,7 @@ Public Class frmMain
     Private Delegate Sub ProgressSetter(ByVal progress As String)
 
     Private Sub SetProgress(ByVal progress As String)
-        'Get a reference to the application's spalsh screen.
+        'Get a reference to the application's splash screen.
         Dim splash As SplashScreen = DirectCast(My.Application.SplashScreen, SplashScreen)
 
         'Invoke the spalsh screen's SetProgress method on the thread that owns it.

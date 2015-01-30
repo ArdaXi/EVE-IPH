@@ -1,5 +1,6 @@
 ﻿
 Imports System.Data.SQLite
+Imports System.Threading
 
 Public Class frmIndustryJobsViewer
 
@@ -13,6 +14,7 @@ Public Class frmIndustryJobsViewer
     Private CurrentDateTime As Date
     Private LoadedCharacters As List(Of IndyCharacter) ' The list of characters to show in the industry jobs list
     Private UserIDToFind As Long
+    Private myTimer As Timer
 
     Private Structure IndyCharacter
         Dim API As APIKeyData
@@ -43,8 +45,8 @@ Public Class frmIndustryJobsViewer
 
         CurrentDateTime = DateTime.UtcNow
 
-        Timer1.Enabled = False
-        Timer1.Interval = 1000 ' 1 second
+        Dim myCallback As New System.Threading.TimerCallback(AddressOf UpdateTimes)
+        myTimer = New System.Threading.Timer(myCallback, lstIndustryJobs, 1000, 1000)
 
         ' Width 510, 21 for scrollbar, 25 for check (464)
         lstCharacters.Columns.Add("", -2, HorizontalAlignment.Left)
@@ -326,8 +328,8 @@ Public Class frmIndustryJobsViewer
         ' Perform the sort with these new sort options.
         lstIndustryJobs.Sort()
 
-        ' Enable the timer
-        Timer1.Enabled = True
+        '' Enable the timer
+        'Timer1.Enabled = True
 
         Application.UseWaitCursor = False
         Me.Enabled = True
@@ -853,15 +855,6 @@ Public Class frmIndustryJobsViewer
 
     End Sub
 
-    Private Function GetTimeToComplete(EndJobDate As Date, CompareDate As Date) As String
-        Dim SecondsDiff As Long
-
-        SecondsDiff = DateDiff(DateInterval.Second, CompareDate, EndJobDate)
-
-        Return FormatTimeToComplete(SecondsDiff)
-
-    End Function
-
     Private Sub btnSelectColumns_Click(sender As System.Object, e As System.EventArgs) Handles btnSelectColumns.Click
         Dim f1 As New frmSelectIndustryJobColumns
         f1.ShowDialog()
@@ -885,7 +878,7 @@ Public Class frmIndustryJobsViewer
     End Sub
 
     Private Sub btnClose_Click(sender As System.Object, e As System.EventArgs) Handles btnClose.Click
-        Timer1.Enabled = False
+        'Timer1.Enabled = False
         Me.Hide()
     End Sub
 
@@ -941,35 +934,63 @@ Public Class frmIndustryJobsViewer
         End If
     End Sub
 
-    Private Sub Timer1_Tick(sender As System.Object, e As System.EventArgs) Handles Timer1.Tick
+    Private Sub Timer1_Tick(sender As System.Object, e As System.EventArgs)
+
+
+
+
+
+    End Sub
+
+    Private Delegate Sub ListDelegate(ByVal myJobList As ListView)
+
+    Private Sub UpdateTimes(ByVal sentJobList As Object)
         Dim TimeToComplete As String
         Dim EndDate As Date
+
+        Dim myJobList As New ListView
+        myJobList = DirectCast(sentJobList, ListView)
+
+        If myJobList.InvokeRequired Then
+            myJobList.Invoke(New ListDelegate(AddressOf UpdateTimes), myJobList)
+            Exit Sub
+        End If
 
         ' On each tick just update the time column manually
         With UserIndustryJobsColumnSettings
             If .TimeToComplete <> 0 Then ' only if the time to complete column is visible
                 CurrentDateTime = DateAdd(DateInterval.Second, 1, CurrentDateTime)
                 Application.DoEvents()
-                For i = 0 To lstIndustryJobs.Items.Count - 1
+
+                For i = 0 To myJobList.Items.Count - 1
                     ' Only update records with a time
 
-                    If lstIndustryJobs.Items(i).SubItems(.JobState).Text <> "Complete" And lstIndustryJobs.Items(i).SubItems(.JobState).Text <> "Completed" Then
 
-                        TimeToComplete = lstIndustryJobs.Items(i).SubItems(.TimeToComplete).Text
-                        EndDate = CDate(lstIndustryJobs.Items(i).SubItems(0).Text)
+                    If myJobList.Items(i).SubItems(.JobState).Text <> "Complete" And myJobList.Items(i).SubItems(.JobState).Text <> "Completed" Then
 
-                        lstIndustryJobs.Items(i).SubItems(.TimeToComplete).Text = GetTimeToComplete(EndDate, CurrentDateTime)
-                        lstIndustryJobs.Update()
+                        TimeToComplete = myJobList.Items(i).SubItems(.TimeToComplete).Text
+                        EndDate = CDate(myJobList.Items(i).SubItems(0).Text)
+
+                        myJobList.Items(i).SubItems(.TimeToComplete).Text = GetTimeToComplete(EndDate, CurrentDateTime)
+                        myJobList.Update()
                         Application.DoEvents()
                     End If
                 Next
             End If
-
         End With
 
         Application.DoEvents()
 
     End Sub
+
+    Private Function GetTimeToComplete(EndJobDate As Date, CompareDate As Date) As String
+        Dim SecondsDiff As Long
+
+        SecondsDiff = DateDiff(DateInterval.Second, CompareDate, EndJobDate)
+
+        Return FormatTimeToComplete(SecondsDiff)
+
+    End Function
 
     Private Sub rbtnCurrentJobs_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles rbtnCurrentJobs.CheckedChanged
         If Not FirstLoad And rbtnCurrentJobs.Checked Then
@@ -984,8 +1005,8 @@ Public Class frmIndustryJobsViewer
     End Sub
 
     Protected Overrides Sub Finalize()
+        myTimer.Dispose()
         MyBase.Finalize()
-        Timer1.Enabled = False
     End Sub
 
     Private Sub lstCharacters_ItemChecked(sender As System.Object, e As System.Windows.Forms.ItemCheckedEventArgs) Handles lstCharacters.ItemChecked
