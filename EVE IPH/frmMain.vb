@@ -2161,9 +2161,10 @@ NoBonus:
                         SQL = SQL & CStr(IndustryActivities.Copying) & " "
                     Case ActivityInvention
                         ' POS invention you can only do T3 in certain arrays
-                        If ItemGroupID = StrategicCruiserGroupID Or ItemGroupID = TacticalDestroyerGroupID Or ItemGroupID = SubsystemBlueprintID Then
+                        If ItemGroupID = StrategicCrusierBlueprintID Or ItemGroupID = TacticalDestroyerBlueprintID Or ItemGroupID = SubsystemBlueprintID Then
                             SQL = SQL & CStr(IndustryActivities.Invention) & " AND GROUP_ID = " & CStr(ItemGroupID)
                         Else
+                            ' T2 has no group ID
                             SQL = SQL & CStr(IndustryActivities.Invention) & " AND GROUP_ID = 0 "
                         End If
                         SQL = SQL & " AND CATEGORY_ID = " & CStr(BlueprintCategoryID)
@@ -7510,13 +7511,14 @@ Tabs:
         ' Now load the materials into the lists
         ' Clear Lists
         lstBPComponentMats.Items.Clear()
-        lstBPComponentMats.Hide()
+        lstBPComponentMats.Enabled = False
         lstBPRawMats.Items.Clear()
-        lstBPRawMats.Hide()
+        lstBPRawMats.Enabled = False
         lblBPCanMakeBP.Visible = False
         lblBPCanMakeBPAll.Visible = False
         txtListEdit.Visible = False
         Me.Cursor = Cursors.WaitCursor
+        Application.DoEvents()
 
         BPME = CInt(txtBPME.Text)
         BPTE = CInt(txtBPTE.Text)
@@ -7693,7 +7695,7 @@ Tabs:
                 lblBPInventionChance.Text = FormatPercent(SelectedBlueprint.GetInventionChance(), 2)
 
                 ' Update the decryptor stats box ME: -4, TE: -3, Runs: +9
-                lblBPDecryptorStats.Text = "ME: " & CStr(SelectedDecryptor.MEMod) & ", TE: " & CStr(SelectedDecryptor.TEMod) & ", End Runs: " & CStr(SelectedBlueprint.GetInventedRuns)
+                lblBPDecryptorStats.Text = "ME: " & CStr(SelectedDecryptor.MEMod) & ", TE: " & CStr(SelectedDecryptor.TEMod) & vbCrLf & "BP Runs: " & CStr(SelectedBlueprint.GetInventedRuns)
 
                 ' Show the copy time if they want it
                 lblBPCopyTime.Text = FormatIPHTime(SelectedBlueprint.GetBPCCopyTime)
@@ -7872,8 +7874,8 @@ Tabs:
 ExitForm:
 
         ' Done
-        lstBPComponentMats.Show()
-        lstBPRawMats.Show()
+        lstBPComponentMats.Enabled = True
+        lstBPRawMats.Enabled = True
         lblBPCanMakeBP.Visible = True
         lblBPCanMakeBPAll.Visible = True
 
@@ -8385,7 +8387,7 @@ ExitForm:
                         End If
                     End If
 
-                    MaxProductionRuns = CInt(Math.Min(Math.Ceiling((MaxProductionRuns) + SelectedDecryptor.RunMod), MaxProductionRuns))
+                    MaxProductionRuns = MaxProductionRuns + SelectedDecryptor.RunMod
                     ' Set the num bps off of the calculated amount
                     txtBPNumBPs.Text = CStr(Math.Ceiling(CLng(txtBPRuns.Text) / MaxProductionRuns))
                 End If
@@ -11838,7 +11840,7 @@ ExitSub:
         If Not LoadingFacilitySystems And Not FirstLoad And PreviousFacilitySystem <> cmbCalcT3InventionFacilitySystem.Text Then
 
             ' Load the facility
-            Call LoadFacilities(StrategicCruiserGroupID, SubsystemCategoryID, False, _
+            Call LoadFacilities(StrategicCrusierBlueprintID, SubsystemBlueprintID, False, _
                                 ActivityInvention, cmbCalcT3InventionFacilityType, cmbCalcT3InventionFacilityRegion, cmbCalcT3InventionFacilitySystem, cmbCalcT3InventionFacilityorArray, _
                                 lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityDefault, lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
                                 lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualTE, btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityTaxRate, CalcTab, _
