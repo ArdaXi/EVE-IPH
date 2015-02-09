@@ -293,6 +293,7 @@ Public Class ProgramSettings
     Public DefaultCalcProductionLines As Integer = 1
     Public DefaultCalcLaboratoryLines As Integer = 1
     Public DefaultCalcRuns As Integer = 1
+    Public DefaultCalcBPRuns As Integer = 1
     Public DefaultCalcSizeChecks As Boolean = False
     Public DefaultCheckT3Destroyers As Boolean = False
     Public DefaultCheckCapComponents As Boolean = False
@@ -1603,6 +1604,7 @@ Public Class ProgramSettings
                     .ProductionLines = CInt(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeInteger, "ManufacturingSettings", "ProductionLines", DefaultCalcProductionLines))
                     .LaboratoryLines = CInt(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeInteger, "ManufacturingSettings", "LaboratoryLines", DefaultCalcLaboratoryLines))
                     .Runs = CInt(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeInteger, "ManufacturingSettings", "Runs", DefaultCalcRuns))
+                    .BPRuns = CInt(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeInteger, "ManufacturingSettings", "BPRuns", DefaultCalcBPRuns))
                     .CheckSmall = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "CheckSmall", DefaultCalcSizeChecks))
                     .CheckMedium = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "CheckMedium", DefaultCalcSizeChecks))
                     .CheckLarge = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "CheckLarge", DefaultCalcSizeChecks))
@@ -1694,6 +1696,7 @@ Public Class ProgramSettings
             .ProductionLines = DefaultCalcProductionLines
             .LaboratoryLines = DefaultCalcLaboratoryLines
             .Runs = DefaultCalcRuns
+            .BPRuns = DefaultCalcBPRuns
             .CheckSmall = DefaultCalcSizeChecks
             .CheckMedium = DefaultCalcSizeChecks
             .CheckLarge = DefaultCalcSizeChecks
@@ -1710,7 +1713,7 @@ Public Class ProgramSettings
 
     ' Saves the tab settings to XML
     Public Sub SaveManufacturingSettings(SentSettings As ManufacturingTabSettings)
-        Dim ManufacturingSettingsList(65) As Setting
+        Dim ManufacturingSettingsList(66) As Setting
 
         Try
             ManufacturingSettingsList(0) = New Setting("BlueprintType", CStr(SentSettings.BlueprintType))
@@ -1779,6 +1782,7 @@ Public Class ProgramSettings
             ManufacturingSettingsList(63) = New Setting("CheckDecryptorUseforT3", CStr(SentSettings.CheckDecryptorUseforT3))
             ManufacturingSettingsList(64) = New Setting("CheckCapitalComponentsFacility", CStr(SentSettings.CheckCapitalComponentsFacility))
             ManufacturingSettingsList(65) = New Setting("CheckT3DestroyerFacility", CStr(SentSettings.CheckT3DestroyerFacility))
+            ManufacturingSettingsList(66) = New Setting("BPRuns", CStr(SentSettings.BPRuns))
 
             Call WriteSettingsToFile(ManufacturingSettingsFileName, ManufacturingSettingsList, "ManufacturingSettings")
 
@@ -4743,6 +4747,7 @@ Public Structure ManufacturingTabSettings
     Dim ProductionLines As Integer
     Dim LaboratoryLines As Integer
     Dim Runs As Integer
+    Dim BPRuns As Integer
 
     Dim CheckSmall As Boolean
     Dim CheckMedium As Boolean

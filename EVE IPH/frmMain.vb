@@ -8339,64 +8339,73 @@ ExitForm:
 
     ' Check if the runs they entered can be made with the number of blueprints, this only applies to BPC's (T2 and T3)
     Private Sub UpdateBPLinesandBPs()
-        Dim readerOwned As SQLiteDataReader
-        Dim SQL As String
-        Dim ItemType As Integer
-        Dim MaxProductionRuns As Long
 
         If Not IsNothing(SelectedBlueprint) Then
-            ItemType = SelectedBlueprint.GetItemType
-            If ItemType = 2 Or ItemType = 14 Then ' (T2 or T3 items have BP's that can be created)
-                ' See if it's a T2 BPO, if so then don't update the lines, etc
-                If ItemType = 2 Then
-                    SQL = "SELECT 'X' FROM OWNED_BLUEPRINTS WHERE OWNED = 1 AND USER_ID = " & SelectedCharacter.ID
-                    SQL = SQL & " AND BLUEPRINT_ID = " & SelectedBlueprint.GetBPTypeID
-
-                    DBCommand = New SQLiteCommand(SQL, DB)
-                    readerOwned = DBCommand.ExecuteReader
-
-                    If readerOwned.Read Then
-                        Exit Sub
-                    End If
-                    readerOwned.Close()
-                End If
-
-                ' Set the number of bps
-                If Trim(txtBPRuns.Text) <> "" Then
-                    If ItemType = 2 Then
-                        SQL = "SELECT MAX_PRODUCTION_LIMIT FROM ALL_BLUEPRINTS WHERE BLUEPRINT_ID =" & SelectedBlueprint.GetBPTypeID
-
-                        DBCommand = New SQLiteCommand(SQL, DB)
-                        readerOwned = DBCommand.ExecuteReader()
-                        readerOwned.Read()
-
-                        MaxProductionRuns = readerOwned.GetInt32(0)
-
-                        readerOwned.Close()
-                    Else ' base T3 runs off of the relic
-                        ' Base it off of the relic type - need to look it up based on the TypeID
-                        ' TO DO - use industry products to get the quantity for the runs on t3 - make new function
-                        If cmbBPRelic.Text.Contains(IntactRelic) Then
-                            MaxProductionRuns = 20
-                        ElseIf cmbBPRelic.Text.Contains(MalfunctioningRelic) Then
-                            MaxProductionRuns = 10
-                        ElseIf cmbBPRelic.Text.Contains(WreckedRelic) Then
-                            MaxProductionRuns = 3
-                        Else
-                            MaxProductionRuns = 3
-                        End If
-                    End If
-
-                    MaxProductionRuns = MaxProductionRuns + SelectedDecryptor.RunMod
-                    ' Set the num bps off of the calculated amount
-                    txtBPNumBPs.Text = CStr(Math.Ceiling(CLng(txtBPRuns.Text) / MaxProductionRuns))
-                End If
+            If Trim(txtBPRuns.Text) <> "" Then
+                txtBPNumBPs.Text = CStr(GetNumBPs(SelectedBlueprint.GetBPTypeID, SelectedBlueprint.GetTechLevel, CInt(txtBPRuns.Text), SelectedDecryptor.RunMod))
             End If
         End If
 
     End Sub
 
-    ' Adds item to shopping list
+    ' Returns the number of BPs to use for item type and runs sent
+    Private Function GetNumBPs(ByVal BlueprintTypeID As Long, ByVal SentTechLevel As Integer, ByVal SentRuns As Integer, ByVal DecryptorMod As Integer) As Integer
+        Dim readerOwned As SQLiteDataReader
+        Dim SQL As String
+        Dim MaxProductionRuns As Long
+
+        If SentTechLevel = 2 Or SentTechLevel = 3 Then ' (T2 or T3 items have BP's that can be created)
+            '' See if it's a T2 BPO, if so then don't update the lines, etc
+            'If SentItemType = 2 Then
+            '    SQL = "SELECT 'X' FROM OWNED_BLUEPRINTS WHERE OWNED = 1 AND USER_ID = " & SelectedCharacter.ID
+            '    SQL = SQL & " AND BLUEPRINT_ID = " & SelectedBlueprint.GetBPTypeID
+
+            '    DBCommand = New SQLiteCommand(SQL, DB)
+            '    readerOwned = DBCommand.ExecuteReader
+
+            '    If readerOwned.Read Then
+            '        Return SentRuns
+            '    End If
+            '    readerOwned.Close()
+            'End If
+
+            ' Set the number of bps
+
+            If SentTechLevel = 2 Then
+                SQL = "SELECT MAX_PRODUCTION_LIMIT FROM ALL_BLUEPRINTS WHERE BLUEPRINT_ID =" & CStr(BlueprintTypeID)
+
+                DBCommand = New SQLiteCommand(SQL, DB)
+                readerOwned = DBCommand.ExecuteReader()
+                readerOwned.Read()
+
+                MaxProductionRuns = readerOwned.GetInt32(0)
+
+                readerOwned.Close()
+            Else ' base T3 runs off of the relic
+                ' Base it off of the relic type - need to look it up based on the TypeID
+                ' TO DO - use industry products to get the quantity for the runs on t3 - make new function
+                If cmbBPRelic.Text.Contains(IntactRelic) Then
+                    MaxProductionRuns = 20
+                ElseIf cmbBPRelic.Text.Contains(MalfunctioningRelic) Then
+                    MaxProductionRuns = 10
+                ElseIf cmbBPRelic.Text.Contains(WreckedRelic) Then
+                    MaxProductionRuns = 3
+                Else
+                    MaxProductionRuns = 3
+                End If
+            End If
+
+            MaxProductionRuns = MaxProductionRuns + DecryptorMod
+            ' Set the num bps off of the calculated amount
+            Return CInt(Math.Ceiling(SentRuns / MaxProductionRuns))
+        Else
+            Return 1 ' Assume just one bp for T1 if sent
+        End If
+
+    End Function
+
+
+        ' Adds item to shopping list
     Private Sub btnAddBPMatstoShoppingList_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnBPAddBPMatstoShoppingList.Click
 
         ' Just add it to shopping list with options
@@ -14156,6 +14165,22 @@ CheckTechs:
         Call ResetRefresh()
     End Sub
 
+    Private Sub txtCalcBPs_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcNumBPs.KeyPress
+        ' Only allow numbers or backspace
+        If e.KeyChar <> ControlChars.Back Then
+            If allowedRunschars.IndexOf(e.KeyChar) = -1 Then
+                ' Invalid Character
+                e.Handled = True
+            Else
+                Call ResetRefresh()
+            End If
+        End If
+    End Sub
+
+    Private Sub txtCalcBPs_TextChanged(sender As System.Object, e As System.EventArgs) Handles txtCalcNumBPs.TextChanged
+        Call ResetRefresh()
+    End Sub
+
     Private Sub txtCalcRuns_TextChanged(sender As System.Object, e As System.EventArgs) Handles txtCalcRuns.TextChanged
         Call ResetRefresh()
     End Sub
@@ -16005,6 +16030,7 @@ CheckTechs:
             txtCalcProdLines.Text = CStr(.ProductionLines)
             txtCalcLabLines.Text = CStr(.LaboratoryLines)
             txtCalcRuns.Text = CStr(.Runs)
+            txtCalcNumBPs.Text = CStr(.BPRuns)
 
             RecordIDIterator = 0
 
@@ -16178,6 +16204,7 @@ CheckTechs:
             .ProductionLines = CInt(txtCalcProdLines.Text)
             .LaboratoryLines = CInt(txtCalcLabLines.Text)
             .Runs = CInt(txtCalcRuns.Text)
+            .BPRuns = CInt(txtCalcNumBPs.Text)
 
         End With
 
@@ -16260,6 +16287,9 @@ CheckTechs:
         Dim SVRThresholdValue As Double
         Dim TypeIDCheck As String = ""
 
+        ' Number of blueprints used
+        Dim NumberofBlueprints As Integer
+
         ' If they entered an ME/TE value make sure it's ok
         If Not CorrectMETE(txtCalcTempME.Text, txtCalcTempTE.Text, txtCalcTempME, txtCalcTempTE) Then
             Exit Sub
@@ -16297,6 +16327,22 @@ CheckTechs:
             MsgBox("You must select a non-zero production lines value.", vbExclamation, Application.ProductName)
             txtCalcProdLines.Focus()
             txtCalcProdLines.SelectAll()
+            Exit Sub
+        End If
+
+        If Trim(txtCalcNumBPs.Text) <> "" Then
+            If Not IsNumeric(txtCalcNumBPs.Text) Then
+                MsgBox("Invalid Num BPs value", vbExclamation, Application.ProductName)
+                txtCalcNumBPs.Focus()
+                txtCalcNumBPs.SelectAll()
+                Exit Sub
+            End If
+        End If
+
+        If Val(txtCalcNumBPs.Text) = 0 Then
+            MsgBox("You must select a non-zero Num BPs value.", vbExclamation, Application.ProductName)
+            txtCalcNumBPs.Focus()
+            txtCalcNumBPs.SelectAll()
             Exit Sub
         End If
 
@@ -16972,6 +17018,17 @@ CheckTechs:
                         GoTo ExitCalc
                     End If
 
+                    ' Set the number of BPs
+                    With InsertItem
+                        If .TechLevel = "T1" Or (.TechLevel = "T2" And chkCalcAutoCalcT2NumBPs.Checked = False) Then
+                            ' Just use the number of bps 
+                            NumberofBlueprints = CInt(txtCalcNumBPs.Text)
+                        ElseIf .TechLevel = "T3" Or (.TechLevel = "T2" And chkCalcAutoCalcT2NumBPs.Checked = True) Then
+                            ' For T3 or if they have calc checked, we will never have a BPO so determine the number of BPs
+                            NumberofBlueprints = GetNumBPs(.BPID, CInt(.TechLevel.Substring(1, 1)), .Runs, .Decryptor.RunMod)
+                        End If
+                    End With
+
                     ' Set the T2 and T3 inputs if necessary
                     If InsertItem.TechLevel = "T2" Or InsertItem.TechLevel = "T3" Then
 
@@ -16990,7 +17047,7 @@ CheckTechs:
 
                         ' Construct the T2/T3 BP
                         ManufacturingBlueprint = New Blueprint(InsertItem.BPID, CInt(txtCalcRuns.Text), InsertItem.BPME, InsertItem.BPTE, _
-                                                               CInt(txtCalcProdLines.Text), CInt(txtCalcProdLines.Text), CInt(txtCalcLabLines.Text), SelectedCharacter, _
+                                                               NumberofBlueprints, CInt(txtCalcProdLines.Text), CInt(txtCalcLabLines.Text), SelectedCharacter, _
                                                                UserApplicationSettings, 0, InsertItem.ManufacturingTeam, InsertItem.ManufacturingFacility, _
                                                                InsertItem.ComponentTeam, InsertItem.ComponentManufacturingFacility, InsertItem.CapComponentManufacturingFacility, _
                                                                rbtnCalcCompareBuildBuy.Checked, SelectedDecryptor, _
@@ -17001,7 +17058,7 @@ CheckTechs:
 
                         ' Construct the T1 BP
                         ManufacturingBlueprint = New Blueprint(InsertItem.BPID, CInt(txtCalcRuns.Text), InsertItem.BPME, InsertItem.BPTE, _
-                                       CInt(txtCalcProdLines.Text), CInt(txtCalcProdLines.Text), SelectedCharacter, _
+                                       NumberofBlueprints, CInt(txtCalcProdLines.Text), SelectedCharacter, _
                                        UserApplicationSettings, rbtnCalcCompareBuildBuy.Checked, 0, InsertItem.ManufacturingTeam, InsertItem.ManufacturingFacility, _
                                        InsertItem.ComponentTeam, InsertItem.ComponentManufacturingFacility, InsertItem.CapComponentManufacturingFacility)
                     End If
@@ -17112,7 +17169,7 @@ CheckTechs:
 
                                 ' Construct the T1 BP
                                 ManufacturingBlueprint = New Blueprint(InsertItem.BPID, CInt(txtCalcRuns.Text), InsertItem.BPME, InsertItem.BPTE, _
-                                               CInt(txtCalcProdLines.Text), CInt(txtCalcProdLines.Text), SelectedCharacter, _
+                                               NumberofBlueprints, CInt(txtCalcProdLines.Text), SelectedCharacter, _
                                                UserApplicationSettings, True, 0, InsertItem.ManufacturingTeam, _
                                                InsertItem.ManufacturingFacility, InsertItem.ComponentTeam, _
                                                InsertItem.ComponentManufacturingFacility, InsertItem.CapComponentManufacturingFacility)
@@ -17121,7 +17178,7 @@ CheckTechs:
 
                                 ' Construct the T2/T3 BP
                                 ManufacturingBlueprint = New Blueprint(InsertItem.BPID, CInt(txtCalcRuns.Text), InsertItem.BPME, InsertItem.BPTE, _
-                                                                       CInt(txtCalcProdLines.Text), CInt(txtCalcProdLines.Text), CInt(txtCalcLabLines.Text), SelectedCharacter, _
+                                                                       NumberofBlueprints, CInt(txtCalcProdLines.Text), CInt(txtCalcLabLines.Text), SelectedCharacter, _
                                                                        UserApplicationSettings, 0, InsertItem.ManufacturingTeam, InsertItem.ManufacturingFacility, _
                                                                        InsertItem.ComponentTeam, InsertItem.ComponentManufacturingFacility, InsertItem.CapComponentManufacturingFacility, _
                                                                        True, SelectedDecryptor, _
