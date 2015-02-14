@@ -22,6 +22,8 @@ Public Class Blueprint
     Private BlueprintRace As Integer
     Private ItemVolume As Double ' Volume of produced item (1 item only)
 
+    Private NumberofBlueprints As Integer
+
     ' If we compare the components for building or buying
     Private BuildBuy As Boolean
     Private HasBuildableComponents As Boolean = False
@@ -384,7 +386,7 @@ Public Class Blueprint
             ' Assumptions - They want the most effcient way to build. Ie, 96 runs, 9 bps, then do 6 batches of 11, and 3 of 10. 
             ' So max the number of runs per BP to equally distribute batches
 
-            Dim BatchRuns As Integer = NumberofBPs ' Number of bps is the number of batches unless greater than user runs
+            Dim BPBatches As Integer = NumberofBPs ' Number of bps is the number of batches unless greater than user runs
             Dim ExtraRuns As Integer
             Dim RunsperBP As Integer
             Dim AdjRunsperBP As Integer
@@ -396,8 +398,10 @@ Public Class Blueprint
                 RunsperBP = CInt(Math.Floor(UserRuns / NumberofBPs))
                 ExtraRuns = CInt(UserRuns - (RunsperBP * NumberofBPs))
             Else
-                ' batches = number of runs
-                BatchRuns = CInt(UserRuns)
+                ' bp batches = number of runs
+                BPBatches = CInt(UserRuns)
+                ' Reset num bps for this
+                NumberofBPs = CInt(UserRuns)
                 RunsperBP = 1
                 ExtraRuns = 0
             End If
@@ -405,7 +409,7 @@ Public Class Blueprint
             ' Fill a list of runs per bp
             Dim BatchList As New List(Of Integer)
 
-            For i = 0 To BatchRuns - 1
+            For i = 0 To BPBatches - 1
                 ' As we add the runs, adjust with extra runs proportionally until they are gone
                 If ExtraRuns <> 0 Then
                     ' Since it's a fraction of a total batch run, this will always just be one until gone
@@ -2032,6 +2036,11 @@ Public Class Blueprint
     ' Returns the blueprint name
     Public Function GetBPName() As String
         Return BlueprintName
+    End Function
+
+    ' Returns the number of blueprints used
+    Public Function GetNumBPs() As Integer
+        Return NumberofBPs
     End Function
 
     ' Gets the market price of the produced item from this blueprint

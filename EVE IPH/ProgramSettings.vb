@@ -294,6 +294,7 @@ Public Class ProgramSettings
     Public DefaultCalcLaboratoryLines As Integer = 1
     Public DefaultCalcRuns As Integer = 1
     Public DefaultCalcBPRuns As Integer = 1
+    Public DefaultCheckAutoCalcNumBPs As Boolean = True
     Public DefaultCalcSizeChecks As Boolean = False
     Public DefaultCheckT3Destroyers As Boolean = False
     Public DefaultCheckCapComponents As Boolean = False
@@ -1611,6 +1612,7 @@ Public Class ProgramSettings
                     .CheckXL = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "CheckXL", DefaultCalcSizeChecks))
                     .CheckCapitalComponentsFacility = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "CheckCapitalComponentsFacility", DefaultCheckT3Destroyers))
                     .CheckT3DestroyerFacility = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "CheckT3DestroyerFacility", DefaultCheckCapComponents))
+                    .CheckAutoCalcNumBPs = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "CheckAutoCalcNumBPs", DefaultCheckAutoCalcNumBPs))
                 End With
 
             Else
@@ -1703,6 +1705,7 @@ Public Class ProgramSettings
             .CheckXL = DefaultCalcSizeChecks
             .CheckT3DestroyerFacility = DefaultCheckT3Destroyers
             .CheckCapitalComponentsFacility = DefaultCheckCapComponents
+            .CheckAutoCalcNumBPs = DefaultCheckAutoCalcNumBPs
         End With
 
         ' Save locally
@@ -1713,7 +1716,7 @@ Public Class ProgramSettings
 
     ' Saves the tab settings to XML
     Public Sub SaveManufacturingSettings(SentSettings As ManufacturingTabSettings)
-        Dim ManufacturingSettingsList(66) As Setting
+        Dim ManufacturingSettingsList(67) As Setting
 
         Try
             ManufacturingSettingsList(0) = New Setting("BlueprintType", CStr(SentSettings.BlueprintType))
@@ -1783,6 +1786,7 @@ Public Class ProgramSettings
             ManufacturingSettingsList(64) = New Setting("CheckCapitalComponentsFacility", CStr(SentSettings.CheckCapitalComponentsFacility))
             ManufacturingSettingsList(65) = New Setting("CheckT3DestroyerFacility", CStr(SentSettings.CheckT3DestroyerFacility))
             ManufacturingSettingsList(66) = New Setting("BPRuns", CStr(SentSettings.BPRuns))
+            ManufacturingSettingsList(67) = New Setting("CheckAutoCalcNumBPs", CStr(SentSettings.CheckAutoCalcNumBPs))
 
             Call WriteSettingsToFile(ManufacturingSettingsFileName, ManufacturingSettingsList, "ManufacturingSettings")
 
@@ -4695,6 +4699,8 @@ Public Structure ManufacturingTabSettings
 
     Dim CheckCapitalComponentsFacility As Boolean
     Dim CheckT3DestroyerFacility As Boolean
+
+    Dim CheckAutoCalcNumBPs As Boolean
 
     Dim AveragePriceDuration As String
 

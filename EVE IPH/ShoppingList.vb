@@ -1146,6 +1146,9 @@ Public Class ShoppingList
         If Item1.DecryptorRelic <> Item2.DecryptorRelic Then
             Return False
         End If
+        If Item1.NumBPs <> Item2.NumBPs Then
+            Return False
+        End If
 
         Return True
 
@@ -1231,6 +1234,7 @@ Public Class ShoppingListItem
     Public ItemME As Double ' The ME of the Shopping item * Key Value
     Public TechLevel As Integer ' T1, T2, or T3
     Public BuildVolume As Double ' Volume of the built item
+    Public NumBPs As Integer ' Number of BPs used to build item
 
     Public DecryptorRelic As String ' If it's invented or RE'd, then store the Relic or Decryptor name here * Key value
 

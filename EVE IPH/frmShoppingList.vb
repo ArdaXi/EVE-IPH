@@ -100,8 +100,9 @@ Public Class frmShoppingList
         lstItems.Columns.Add("Item", 237, HorizontalAlignment.Left) ' 
         lstItems.Columns.Add("Quantity", 67, HorizontalAlignment.Right) ' 51 min text
         lstItems.Columns.Add("ME", 30, HorizontalAlignment.Right) ' 30 min text
+        lstItems.Columns.Add("Num BPs", 60, HorizontalAlignment.Left) ' 60 min text
         lstItems.Columns.Add("Build Type", 71, HorizontalAlignment.Left) ' 71 min text
-        lstItems.Columns.Add("Decryptor / Relic", 170, HorizontalAlignment.Left) '170 min text
+        lstItems.Columns.Add("Decryptor / Relic", 105, HorizontalAlignment.Left) '105 min text
 
         If UserApplicationSettings.ShowToolTips Then
             ttMain.SetToolTip(btnShowAssets, "Show Assets")
@@ -415,6 +416,7 @@ Public Class frmShoppingList
                 lstItem.SubItems.Add(ItemList(i).Name)
                 lstItem.SubItems.Add(CStr(FormatNumber(ItemList(i).Quantity, 0)))
                 lstItem.SubItems.Add(CStr(ItemList(i).ItemME))
+                lstItem.SubItems.Add(CStr(ItemList(i).NumBPs))
                 lstItem.SubItems.Add(ItemList(i).BuildType)
                 lstItem.SubItems.Add(ItemList(i).DecryptorRelic)
             End With

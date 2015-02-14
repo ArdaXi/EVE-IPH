@@ -775,6 +775,8 @@ Public Module Public_Variables
                         .BuildType = "Raw Mats"
                     End If
 
+                    .NumBPs = SelectedBlueprint.GetNumBPs
+
                     If Not CopyInventionMatsOnly Then
                         ShoppingBuyList = CType(SentBlueprint.GetRawMaterials.Clone, Materials) ' Need a deep copy because we might insert later
                         ShoppingBuildList = CType(SentBlueprint.GetBPComponentsList.Clone, BuiltItemList)
@@ -794,6 +796,8 @@ Public Module Public_Variables
                     .ItemME = SentBlueprint.GetME
                     .TotalMarketCost = SentBlueprint.GetItemMarketPrice
                     .TotalBuildTime = SentBlueprint.GetProductionTime
+
+                    .NumBPs = SelectedBlueprint.GetNumBPs
 
                     .BuildType = "Components"
 
@@ -846,7 +850,6 @@ Public Module Public_Variables
             ShoppingItem.BPMaterialList = CType(SentBlueprint.GetComponentMaterials.Clone, Materials)
 
         End With
-
 
         ' Add the final item and mark as items in list
         TotalShoppingList.InsertShoppingItem(ShoppingItem, ShoppingBuildList, ShoppingBuyList)

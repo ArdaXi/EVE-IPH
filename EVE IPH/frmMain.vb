@@ -3502,7 +3502,8 @@ NoBonus:
                                      IncludeTaxes As Boolean, IncludeFees As Boolean, _
                                      IncludeUsage As Boolean, MEValue As String, SentRuns As String)
         Dim BPTech As Integer
-        Dim BPDecryptor As String = None
+        Dim BPDecryptor As Decryptor = NoDecryptor
+        Dim DecryptorName As String = ""
 
         Dim readerBP As SQLiteDataReader
         Dim readerRelic As SQLiteDataReader
@@ -3529,17 +3530,18 @@ NoBonus:
             If Inputs <> None Then
                 If Not CBool(InStr(Inputs, "No Decryptor")) Then
                     If BPTech = 2 Then
-                        BPDecryptor = Inputs
+                        DecryptorName = Inputs
                     Else
-                        BPDecryptor = Inputs.Substring(0, InStr(Inputs, "-") - 2)
+                        DecryptorName = Inputs.Substring(0, InStr(Inputs, "-") - 2)
                     End If
                 End If
             End If
 
+            BPDecryptor = SelectDecryptor(DecryptorName, BPTech)
+
             If BPTech = 3 Then
                 LoadingT3Decryptors = True
-                cmbBPT3Decryptor.Text = BPDecryptor
-                Call SelectDecryptor(BPDecryptor, BPTech)
+                cmbBPT3Decryptor.Text = BPDecryptor.Name
                 LoadingT3Decryptors = False
                 ' Also load the relic
                 LoadingRelics = True
@@ -3556,8 +3558,7 @@ NoBonus:
                 RelicsLoaded = False ' Allow reload on drop down
             Else
                 LoadingInventionDecryptors = True
-                cmbBPInventionDecryptor.Text = BPDecryptor
-                Call SelectDecryptor(BPDecryptor, BPTech)
+                cmbBPInventionDecryptor.Text = BPDecryptor.Name
                 LoadingInventionDecryptors = False
             End If
 
@@ -3575,9 +3576,14 @@ NoBonus:
             chkBPBrokerFees.Checked = chkCalcFees.Checked
 
             txtBPAddlCosts.Text = "0.00"
-            txtBPRuns.Text = txtCalcRuns.Text
+            txtBPRuns.Text = SentRuns
             txtBPLines.Text = txtCalcProdLines.Text
-            txtBPNumBPs.Text = txtCalcProdLines.Text
+            ' Need to calculate the number of bps based on the bp
+            If chkCalcAutoCalcT2NumBPs.Checked Then
+                txtBPNumBPs.Text = CStr(GetNumBPs(BPID, BPTech, CInt(SentRuns), BPDecryptor.RunMod))
+            Else
+                txtBPNumBPs.Text = txtCalcNumBPs.Text
+            End If
 
             txtBPInventionLines.Text = txtCalcLabLines.Text
             txtBPRelicLines.Text = txtCalcLabLines.Text
@@ -6212,6 +6218,12 @@ Tabs:
         End If
     End Sub
 
+    Private Sub txtBPNumBPs_DoubleClick(sender As Object, e As System.EventArgs) Handles txtBPNumBPs.DoubleClick
+        If Not IsNothing(SelectedBlueprint) Then
+            txtBPNumBPs.Text = CStr(GetNumBPs(SelectedBlueprint.GetBPTypeID, SelectedBlueprint.GetTechLevel, CInt(txtBPRuns.Text), SelectedDecryptor.RunMod))
+        End If
+    End Sub
+
     Private Sub txtBPNumBPs_KeyDown(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyEventArgs) Handles txtBPNumBPs.KeyDown
         Call ProcessCutCopyPasteSelect(txtBPNumBPs, e)
         Call EnterKeyRunBP(e)
@@ -7907,7 +7919,7 @@ ExitForm:
     End Sub
 
     ' Selects and sets the decryptor
-    Private Sub SelectDecryptor(ByVal DecryptorText As String, Tech As Integer)
+    Private Function SelectDecryptor(ByVal DecryptorText As String, Tech As Integer) As Decryptor
 
         If DecryptorText = None Or DecryptorText = "" Then
             SelectedDecryptor = NoDecryptor
@@ -7925,7 +7937,9 @@ ExitForm:
             txtBPTE.Text = CStr(SelectedDecryptor.TEMod + BaseT2T3TE)
         End If
 
-    End Sub
+        Return SelectedDecryptor
+
+    End Function
 
     ' Builds the query for the select combo
     Private Function BuildBPSelectQuery() As String
@@ -8355,22 +8369,21 @@ ExitForm:
         Dim MaxProductionRuns As Long
 
         If SentTechLevel = 2 Or SentTechLevel = 3 Then ' (T2 or T3 items have BP's that can be created)
-            '' See if it's a T2 BPO, if so then don't update the lines, etc
-            'If SentItemType = 2 Then
-            '    SQL = "SELECT 'X' FROM OWNED_BLUEPRINTS WHERE OWNED = 1 AND USER_ID = " & SelectedCharacter.ID
-            '    SQL = SQL & " AND BLUEPRINT_ID = " & SelectedBlueprint.GetBPTypeID
+            ' See if it's a T2 BPO, if so then don't update the lines, etc
+            If SentTechLevel = 2 Then
+                SQL = "SELECT 'X' FROM OWNED_BLUEPRINTS WHERE OWNED = 1 AND USER_ID = " & SelectedCharacter.ID
+                SQL = SQL & " AND BLUEPRINT_ID = " & BlueprintTypeID
 
-            '    DBCommand = New SQLiteCommand(SQL, DB)
-            '    readerOwned = DBCommand.ExecuteReader
+                DBCommand = New SQLiteCommand(SQL, DB)
+                readerOwned = DBCommand.ExecuteReader
 
-            '    If readerOwned.Read Then
-            '        Return SentRuns
-            '    End If
-            '    readerOwned.Close()
-            'End If
+                If readerOwned.Read Then
+                    Return SentRuns
+                End If
+                readerOwned.Close()
+            End If
 
             ' Set the number of bps
-
             If SentTechLevel = 2 Then
                 SQL = "SELECT MAX_PRODUCTION_LIMIT FROM ALL_BLUEPRINTS WHERE BLUEPRINT_ID =" & CStr(BlueprintTypeID)
 
@@ -8404,8 +8417,7 @@ ExitForm:
 
     End Function
 
-
-        ' Adds item to shopping list
+    ' Adds item to shopping list
     Private Sub btnAddBPMatstoShoppingList_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnBPAddBPMatstoShoppingList.Click
 
         ' Just add it to shopping list with options
@@ -12574,7 +12586,7 @@ ExitSub:
         If PreviousCalcSuperFacilityType <> cmbCalcSuperFacilityType.Text Then
 
             If Not LoadingFacilityTypes And Not FirstLoad Then
-                Call LoadFacilityRegions(SuperCarrierGroupID, -1, True, _
+                Call LoadFacilityRegions(SupercarrierGroupID, -1, True, _
                                          ActivityManufacturing, cmbCalcSuperFacilityType, cmbCalcSuperFacilityRegion, cmbCalcSuperFacilitySystem, cmbCalcSuperFacilityorArray, _
                                          lblCalcSuperFacilityBonus, lblCalcSuperFacilityDefault, lblCalcSuperFacilityManualME, txtCalcSuperFacilityManualME, _
                                          lblCalcSuperFacilityManualTE, txtCalcSuperFacilityManualTE, btnCalcSuperFacilitySave, lblCalcSuperFacilityTaxRate, CalcTab, chkCalcSuperFacilityIncludeUsage)
@@ -12592,7 +12604,7 @@ ExitSub:
         If Not FirstLoad And Not CalcSuperFacilityRegionsLoaded Then
             ' Save the current
             PreviousCalcSuperFacilityRegion = cmbCalcSuperFacilityRegion.Text
-            Call LoadFacilityRegions(SuperCarrierGroupID, -1, False, _
+            Call LoadFacilityRegions(SupercarrierGroupID, -1, False, _
                                      ActivityManufacturing, cmbCalcSuperFacilityType, cmbCalcSuperFacilityRegion, cmbCalcSuperFacilitySystem, cmbCalcSuperFacilityorArray, _
                                      lblCalcSuperFacilityBonus, lblCalcSuperFacilityDefault, lblCalcSuperFacilityManualME, txtCalcSuperFacilityManualME, _
                                      lblCalcSuperFacilityManualTE, txtCalcSuperFacilityManualTE, btnCalcSuperFacilitySave, lblCalcSuperFacilityTaxRate, CalcTab, chkCalcSuperFacilityIncludeUsage)
@@ -12605,7 +12617,7 @@ ExitSub:
 
     Private Sub cmbCalcSuperFacilityRegion_SelectedIndexChanged(sender As System.Object, e As System.EventArgs) Handles cmbCalcSuperFacilityRegion.SelectedIndexChanged
         If Not LoadingFacilityRegions And Not FirstLoad And PreviousCalcSuperFacilityRegion <> cmbCalcSuperFacilityRegion.Text Then
-            Call LoadFacilitySystems(SuperCarrierGroupID, -1, True, _
+            Call LoadFacilitySystems(SupercarrierGroupID, -1, True, _
                                      ActivityManufacturing, cmbCalcSuperFacilityType, cmbCalcSuperFacilityRegion, cmbCalcSuperFacilitySystem, cmbCalcSuperFacilityorArray, _
                                      lblCalcSuperFacilityBonus, lblCalcSuperFacilityTaxRate, lblCalcSuperFacilityManualME, txtCalcSuperFacilityManualME, _
                                      lblCalcSuperFacilityManualTE, txtCalcSuperFacilityManualTE, lblCalcSuperFacilityDefault, btnCalcSuperFacilitySave, CalcTab, chkCalcSuperFacilityIncludeUsage)
@@ -12618,7 +12630,7 @@ ExitSub:
     Private Sub cmbCalcSuperFacilitySystem_DropDown(sender As Object, e As System.EventArgs) Handles cmbCalcSuperFacilitySystem.DropDown
         If Not CalcSuperFacilitySystemsLoaded And Not FirstLoad Then
             PreviousCalcSuperFacilitySystem = cmbCalcSuperFacilitySystem.Text
-            Call LoadFacilitySystems(SuperCarrierGroupID, -1, False, _
+            Call LoadFacilitySystems(SupercarrierGroupID, -1, False, _
                                      ActivityManufacturing, cmbCalcSuperFacilityType, cmbCalcSuperFacilityRegion, cmbCalcSuperFacilitySystem, cmbCalcSuperFacilityorArray, _
                                      lblCalcSuperFacilityBonus, lblCalcSuperFacilityTaxRate, lblCalcSuperFacilityManualME, txtCalcSuperFacilityManualME, _
                                      lblCalcSuperFacilityManualTE, txtCalcSuperFacilityManualTE, lblCalcSuperFacilityDefault, btnCalcSuperFacilitySave, CalcTab, chkCalcSuperFacilityIncludeUsage)
@@ -12788,7 +12800,7 @@ ExitSub:
 
     Private Sub chkCalcSuperFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcSuperFacilityIncludeUsage.CheckedChanged
         If Not FirstLoad Then
-            Call SetDefaultFacilitybyCheck(GetProductionType(ActivityManufacturing, SuperCarrierGroupID, -1, cmbCalcSuperFacilityType.Text), _
+            Call SetDefaultFacilitybyCheck(GetProductionType(ActivityManufacturing, SupercarrierGroupID, -1, cmbCalcSuperFacilityType.Text), _
                                chkCalcSuperFacilityIncludeUsage, CalcTab, cmbCalcSuperFacilityType.Text, cmbCalcSuperFacilityorArray, _
                                lblCalcSuperFacilityDefault, btnCalcSuperFacilitySave)
             Call ResetRefresh()
@@ -14902,6 +14914,10 @@ CheckTechs:
         Call VerifyMETEEntry(txtCalcTempTE, "TE")
     End Sub
 
+    Private Sub chkCalcAutoCalcT2NumBPs_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcAutoCalcT2NumBPs.CheckedChanged
+        Call ResetRefresh()
+    End Sub
+
 #End Region
 
 #Region "Column Select Functions"
@@ -15782,6 +15798,8 @@ CheckTechs:
             cmbCalcBPTypeFilter.Text = .ItemTypeFilter
             txtCalcItemFilter.Text = .TextItemFilter
 
+            chkCalcAutoCalcT2NumBPs.Checked = .CheckAutoCalcNumBPs
+
             FirstManufacturingGridLoad = False ' Change this now so it will load the grids for all on reset
 
             chkCalcTaxes.Checked = .CheckIncludeTaxes
@@ -15963,7 +15981,7 @@ CheckTechs:
                               ActivityManufacturing, cmbCalcSuperFacilityType, cmbCalcSuperFacilityRegion, cmbCalcSuperFacilitySystem, cmbCalcSuperFacilityorArray, _
                               lblCalcSuperFacilityBonus, lblCalcSuperFacilityDefault, lblCalcSuperFacilityManualME, txtCalcSuperFacilityManualME, _
                               lblCalcSuperFacilityManualTE, txtCalcSuperFacilityManualTE, btnCalcSuperFacilitySave, lblCalcSuperFacilityTaxRate, _
-                              CalcTab, chkCalcSuperFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcSuperFacilityLoaded, Nothing, 1, SuperCarrierGroupID, -1, False)
+                              CalcTab, chkCalcSuperFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcSuperFacilityLoaded, Nothing, 1, SupercarrierGroupID, -1, False)
             LoadingFacilityActivities = False
 
             LoadingFacilityActivities = True
@@ -16122,6 +16140,8 @@ CheckTechs:
 
             .CheckCapitalComponentsFacility = chkCalcCapComponentsFacility.Checked
             .CheckT3DestroyerFacility = chkCalcT3DestroyersFacility.Checked
+
+            .CheckAutoCalcNumBPs = chkCalcAutoCalcT2NumBPs.Checked
 
             ' Blueprint load types
             If rbtnCalcAllBPs.Checked Then
@@ -22430,26 +22450,26 @@ Leave:
                         MaxStrip = "Miner II"
                     End If
 
-                    cmbMineMiningLaser.Items.Add("Cu Vapor Particle Bore Stream I")
-                    cmbMineMiningLaser.Items.Add("Dual Diode Mining Laser I")
-                    cmbMineMiningLaser.Items.Add("EP-S Gaussian Excavation Pulse")
-                    cmbMineMiningLaser.Items.Add("XeCl Drilling Beam I")
-                    cmbMineMiningLaser.Items.Add("Ore Miner")
+                    cmbMineMiningLaser.Items.Add("Civilian Miner")
+                    cmbMineMiningLaser.Items.Add("EP-S Gaussian Scoped Mining Laser")
+                    cmbMineMiningLaser.Items.Add("Particle Bore Compact Mining Laser")
                     cmbMineMiningLaser.Items.Add("Gallente Mining Laser")
+                    cmbMineMiningLaser.Items.Add("ORE Miner")
+                    cmbMineMiningLaser.Items.Add("Single Diode Basic Mining Laser")
 
                     Select Case UserMiningTabSettings.OreStrip
-                        Case "Cu Vapor Particle Bore Stream I"
-                            MaxStrip = "Cu Vapor Particle Bore Stream I"
-                        Case "Dual Diode Mining Laser I"
-                            MaxStrip = "Dual Diode Mining Laser I"
-                        Case "EP-S Gaussian Excavation Pulse"
-                            MaxStrip = "EP-S Gaussian Excavation Pulse"
-                        Case "XeCl Drilling Beam I"
-                            MaxStrip = "XeCl Drilling Beam I"
-                        Case "Ore Miner"
-                            MaxStrip = "Ore Miner"
+                        Case "Civilian Miner"
+                            MaxStrip = "Civilian Miner"
+                        Case "EP-S Gaussian Scoped Mining Laser"
+                            MaxStrip = "EP-S Gaussian Scoped Mining Laser"
+                        Case "Particle Bore Compact Mining Laser"
+                            MaxStrip = "Particle Bore Compact Mining Laser"
                         Case "Gallente Mining Laser"
                             MaxStrip = "Gallente Mining Laser"
+                        Case "ORE Miner"
+                            MaxStrip = "ORE Miner"
+                        Case "Single Diode Basic Mining Laserr"
+                            MaxStrip = "Single Diode Basic Mining Laser"
                         Case Else
                             MaxStrip = "Miner I"
                     End Select
@@ -22457,7 +22477,7 @@ Leave:
                     ' Deep core (Mercoxit)
                     If CInt(cmbMineDeepCore.Text) >= 1 And cmbMineDeepCore.Enabled = True Then
                         cmbMineMiningLaser.Items.Add("Deep Core Mining Laser I")
-                        cmbMineMiningLaser.Items.Add("Ore Deep Core Mining Laser")
+                        cmbMineMiningLaser.Items.Add("ORE Deep Core Mining Laser")
                     End If
 
                     If CInt(cmbMineDeepCore.Text) >= 2 And cmbMineDeepCore.Enabled = True Then
