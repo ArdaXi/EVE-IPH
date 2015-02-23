@@ -94,7 +94,7 @@
         End If
 
         ' Paste to clipboard
-        Call CopyTextToClipboard(MaterialList.GetClipboardList(TempExportType, True))
+        Call CopyTextToClipboard(MaterialList.GetClipboardList(TempExportType, True, False, False))
     End Sub
 
 End Class

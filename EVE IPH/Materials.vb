@@ -291,8 +291,9 @@ Public Class Materials
         End If
     End Sub
 
-    ' Returns the list in a clipboard format with CSV as an option
-    Public Function GetClipboardList(ByVal ExportTextFormat As String, ByVal IgnorePriceVolume As Boolean, Optional IgnoreME As Boolean = False) As String
+    ' Returns the list in a clipboard format with CSV as an option - Include ME will include both the ME and the num Bps
+    Public Function GetClipboardList(ByVal ExportTextFormat As String, ByVal IgnorePriceVolume As Boolean, _
+                                     ByVal IncludeME As Boolean, ByVal IncludeDecryptorRelic As Boolean) As String
         Dim i As Integer
         Dim OutputString As String
         Dim MatName As String
@@ -301,16 +302,35 @@ Public Class Materials
         Dim DataInterfaceCost As Double
         Dim DataInterfaceVolume As Double
         Dim RelicDecryptorText As String = ""
+        Dim NumBps As String = ""
         Dim Separator As String = ""
+
+        Dim BuildMaterialFieldsCSV = "ME, NumBPs, Decryptor/Relic, "
+        Dim BuildMaterialFieldsSSV = "ME, NumBPs, Decryptor/Relic, "
 
         If Not IsNothing(MaterialList) Then
 
             If ExportTextFormat = CSVDataExport Then
-                OutputString = "Material, Quantity, ME, Decryptor/Relic, Cost Per Item, Total Cost" & vbCrLf
                 Separator = ", "
+                OutputString = "Material, Quantity, "
+                If IncludeME Then
+                    OutputString = OutputString & "ME, NumBPs, "
+                End If
+                If IncludeDecryptorRelic Then
+                    OutputString = OutputString & "Decryptor/Relic, "
+                End If
+                OutputString = OutputString & "Cost Per Item, Total Cost" & vbCrLf
+
             ElseIf ExportTextFormat = SSVDataExport Then
-                OutputString = "Material; Quantity; ME; Decryptor/Relic; Cost Per Item; Total Cost" & vbCrLf
                 Separator = "; "
+                OutputString = "Material; Quantity; "
+                If IncludeME Then
+                    OutputString = OutputString & "ME; NumBPs; "
+                End If
+                If IncludeDecryptorRelic Then
+                    OutputString = OutputString & "Decryptor/Relic; "
+                End If
+                OutputString = OutputString & "Cost Per Item; Total Cost" & vbCrLf
             Else ' Default
                 OutputString = "Material - Quantity" & vbCrLf
             End If
@@ -338,54 +358,77 @@ Public Class Materials
 
                 If MaterialList(i).GetMaterialGroup.Contains("|") Then
                     ' We have a material from the shopping list, with three values in the material group
-                    '.BuildType & "|" & .DecryptorRelic
+                    '.BuildType & "|" & .DecryptorRelic & "|" & .NumBPs
                     ' Parse the fields
                     Dim ItemColumns As String() = MaterialList(i).GetMaterialGroup.Split(New [Char]() {"|"c})
 
                     If ItemColumns(1) <> None And ItemColumns(1) <> "" Then
                         RelicDecryptorText = ItemColumns(1)
                     Else
-                        RelicDecryptorText = ""
+                        RelicDecryptorText = None
                     End If
+
+                    NumBps = ItemColumns(2)
+                Else
+                    RelicDecryptorText = None
+                    NumBps = "-"
+                End If
+
+                If IncludeME Then
+                    OutputME = MaterialList(i).GetItemME
+                    ' If we are including an ME, then we are building something
+                    ' If no numbp sent then set to 1 for now - TODO will affect multiple bps
+                    If NumBps = "-" Then
+                        NumBps = "1"
+                    End If
+                Else
+                    OutputME = "-"
                 End If
 
                 If ExportTextFormat = CSVDataExport Or ExportTextFormat = SSVDataExport Then
                     ' Format output for no commas in prices or quantity
-                    If IgnoreME Then
-                        OutputME = "-"
-                    Else
-                        OutputME = MaterialList(i).GetItemME
+                    OutputString = OutputString & MatName & Separator & CStr(MaterialList(i).GetQuantity) & Separator
+
+                    If IncludeME Then
+                        OutputString = OutputString & OutputME & Separator & CStr(NumBps) & Separator
                     End If
 
-                    OutputString = OutputString & MatName & Separator & CStr(MaterialList(i).GetQuantity) & Separator & OutputME & Separator & RelicDecryptorText _
-                        & Separator & CStr(MaterialList(i).GetCostPerItem) & Separator & CStr(MaterialList(i).GetTotalCost) & vbCrLf
+                    If IncludeDecryptorRelic Then
+                        OutputString = OutputString & RelicDecryptorText & Separator
+                    End If
+
+                    OutputString = OutputString & CStr(MaterialList(i).GetCostPerItem) & Separator & CStr(MaterialList(i).GetTotalCost) & vbCrLf
 
                 Else
                     OutputString = OutputString & MatName
 
-                    If Not IgnoreME Then
-                        If MaterialList(i).GetItemME <> "-" Then
-                            OutputString = OutputString & " (ME: " & MaterialList(i).GetItemME
+                    If IncludeME Or IncludeDecryptorRelic Then
+                        OutputString = OutputString & " (" ' Adding something so start the paren
 
-                            If RelicDecryptorText <> "" Then
-                                If RelicDecryptorText.Contains(IntactRelic) Or RelicDecryptorText.Contains(MalfunctioningRelic) Or RelicDecryptorText.Contains(WreckedRelic) Then
-                                    OutputString = OutputString & ", Relic: " & RelicDecryptorText
-                                Else
-                                    ' Decryptor
-                                    OutputString = OutputString & ", Decryptor: " & RelicDecryptorText
-                                End If
-                            End If
-
-                            OutputString = OutputString & ")"
+                        If OutputME <> "-" Then
+                            OutputString = OutputString & "ME: " & OutputME
+                            OutputString = OutputString & ", NumBPs: " & CStr(NumBps)
                         End If
-                    End If
 
+                        If RelicDecryptorText <> "" And RelicDecryptorText <> None And IncludeDecryptorRelic Then
+                            If RelicDecryptorText.Contains(IntactRelic) Or RelicDecryptorText.Contains(MalfunctioningRelic) Or RelicDecryptorText.Contains(WreckedRelic) Then
+                                OutputString = OutputString & ", Relic: " & RelicDecryptorText
+                            Else
+                                ' Decryptor
+                                OutputString = OutputString & ", Decryptor: " & RelicDecryptorText
+                            End If
+                        End If
+
+                        OutputString = OutputString & ")"
+
+                    End If
 
                     If Not MatName.Contains("Data Interface") Then
                         OutputString = OutputString & " - " & FormatNumber(MaterialList(i).GetQuantity, 0) & vbCrLf
                     Else
                         OutputString = OutputString & vbCrLf
                     End If
+
                 End If
 SkipFormat:
             Next

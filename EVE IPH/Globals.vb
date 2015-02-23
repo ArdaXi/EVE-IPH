@@ -686,65 +686,6 @@ Public Module Public_Variables
 
         Return CopyPasteMaterials
 
-        ' SAVE for BPs
-        '    Private Function ImportCopyPasteTextBlueprints(SentText As String) As list(of CopyPasteBlueprint)
-        'ElseIf SentWindowType = CopyPasteWindowType.Blueprints Then
-        '' Reset
-        'CopyPasteBPList = New List(Of CopyPasteBlueprint)
-
-        ''Format of imported text for items will always be: Name, Quantity, Group, Category, Copy, ML, PL, Runs
-        'Dim ItemLines As String() = SentText.Split(New [Char]() {CChar(vbLf)}) ' Get all the item lines
-
-        '' Loop through the lines
-        'For i = 0 To ItemLines.Count - 1
-        '    ' First split out all the columns
-        '    ItemLines(i) = ItemLines(i).Replace(vbCr, "")
-        '    Dim ItemColumns As String() = ItemLines(i).Split(New [Char]() {CChar(vbTab)})
-
-        '    ' Make sure this is a blueprint
-        '    SQL = "SELECT BLUEPRINT_ID FROM ALL_BLUEPRINTS WHERE BLUEPRINT_NAME = '" & FormatDBString(ItemColumns(0)) & "'"
-
-        '    DBCommand = New SQLiteCommand(SQL, DB)
-        '    readerItem = DBCommand.ExecuteReader
-        '    readerItem.Read()
-
-        '    If readerItem.HasRows Then
-        '        ' Found the BP, set the values
-        '        TempBP.Name = ItemColumns(0)
-
-        '        If ItemColumns(1) <> "" Then
-        '            TempBP.Quantity = CInt(ItemColumns(1))
-        '        Else
-        '            TempBP.Quantity = 0
-        '        End If
-
-        '        TempBP.Group = ItemColumns(2)
-        '        TempBP.Category = ItemColumns(3)
-
-        '        If ItemColumns(4) = "Yes" Then
-        '            TempBP.Copy = True
-        '        Else
-        '            TempBP.Copy = False
-        '        End If
-
-        '        TempBP.ML = CInt(ItemColumns(5))
-        '        TempBP.PL = CInt(ItemColumns(6))
-
-        '        If ItemColumns(7) <> "" Then
-        '            TempBP.Runs = CInt(ItemColumns(7))
-        '        Else
-        '            TempBP.Runs = 0
-        '        End If
-
-        '        Call CopyPasteBPList.Add(TempBP)
-
-        '    End If
-
-        '    readerItem = Nothing
-        'Next
-        'End If
-        ' End function
-
     End Function
 
     ' Imports sent blueprint to shopping list
@@ -812,7 +753,7 @@ Public Module Public_Variables
             If SentBlueprint.GetTechLevel = BlueprintTechLevel.T2 Or SentBlueprint.GetTechLevel = BlueprintTechLevel.T3 Then
                 If UserApplicationSettings.ShopListIncludeInventMats = True Then
                     ' Save the list of invention materials
-                    .InventionMaterials = SentBlueprint.GetInventionMaterials
+                    .InventionMaterials = CType(SentBlueprint.GetInventionMaterials.Clone, Materials)
 
                     ' Now insert into main buy List 
                     ShoppingBuyList.InsertMaterialList(.InventionMaterials.GetMaterialList)
@@ -827,7 +768,8 @@ Public Module Public_Variables
                 .InventionJobs = SentBlueprint.GetInventionJobs
 
                 ' Decryptor if used
-                .DecryptorRelic = SentBlueprint.GetDecryptor.Name
+                .Decryptor = SentBlueprint.GetDecryptor.Name
+                .Relic = SentBlueprint.GetRelic
 
                 ' Add the cost
                 .InventionCost = SentBlueprint.GetBPInventionCost
@@ -887,7 +829,7 @@ Public Module Public_Variables
         Select Case Size
             Case ItemSize.Small
                 ' Drones are light, missiles are rockets and light
-                SizesClause = SizesClause & "((ITEM_NAME LIKE '% S' OR ITEM_NAME Like '%Small%' OR (ITEM_NAME Like '%Micro%' AND ITEM_GROUP <> 'Propulsion Module') OR ITEM_NAME Like '%Defender%' OR ITEM_NAME IN ('Cap Booster 25 Item','Cap Booster 50 Item')) "
+                SizesClause = SizesClause & "((ITEM_NAME LIKE '% S' OR ITEM_NAME Like '%Small%' OR (ITEM_NAME Like '%Micro%' AND ITEM_GROUP <> 'Propulsion Module' AND ITEM_NAME NOT LIKE 'Microwave%') OR ITEM_NAME Like '%Defender%' OR ITEM_NAME IN ('Cap Booster 25 Item','Cap Booster 50 Item')) "
                 SizesClause = SizesClause & "OR (ITEM_CATEGORY = 'Drone' AND volume = 5 ) "
                 SizesClause = SizesClause & "OR (ITEM_GROUP = 'Propulsion Module' AND ITEM_NAME Like '1MN%') "
                 SizesClause = SizesClause & "OR (ITEM_CATEGORY = 'Module' AND marketGroupID IN (561,564,567,570,574,577,1671,1672)) "

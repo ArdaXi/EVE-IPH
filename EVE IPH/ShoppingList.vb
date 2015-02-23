@@ -134,117 +134,119 @@ Public Class ShoppingList
 
         ' Remove or update quantity for materials, built items, RE and invention mats
         ' Check the component list of the BP first, if we are building it, then update the number for built items, else we are buying it and update that
-        If Not IsNothing(FoundItem.BPMaterialList.GetMaterialList) Then
-            With FoundItem.BPMaterialList
-                For i = 0 To .GetMaterialList.Count - 1
-                    ' Are we Building or Buying?
-                    If .GetMaterialList(i).GetBuildItem = True Then ' Building
-                        ' Make sure the item exists (might have been deleted already in the main list) before updating
-
-                        ' Find the built item in the build list for this item - only need name and ME to look up
-                        TempBuiltItem.ItemTypeID = .GetMaterialList(i).GetMaterialTypeID
-                        TempBuiltItem.ItemName = .GetMaterialList(i).GetMaterialName
-                        TempBuiltItem.BuildME = CLng(.GetMaterialList(i).GetItemME)
-
-                        Call TotalBuildList.SetItemToFind(TempBuiltItem)
-                        FoundBuildItem = TotalBuildList.GetBuiltItemList.Find(AddressOf TotalBuildList.FindBuiltItem)
-
-                        If FoundBuildItem IsNot Nothing Then
-                            ' Copy current built item info
-                            With FoundBuildItem
-                                TempBuiltItem = New BuiltItem
-                                TempBuiltItem.ItemTypeID = .ItemTypeID
-                                TempBuiltItem.ItemName = .ItemName
-                                TempBuiltItem.ItemQuantity = .ItemQuantity
-                                TempBuiltItem.ItemVolume = .ItemVolume
-                                TempBuiltItem.BuildME = .BuildME
-                                ' If we are building a component, then we are buying all the mats for it so only use the buy list for mats to update
-                                TempBuiltItem.BuildMaterials.InsertMaterialList(.BuildMaterials.GetMaterialList)
-                            End With
-
-                            UpdatedQuantity = GetUpdatedQuantity("Build", UpdateItemQuantity, .GetMaterialList(i), FoundItem)
-                            ' Need to update to the quantity sent in the Build List
-                            Call UpdateShoppingBuiltItemQuantity(TempBuiltItem, UpdatedQuantity)
-                        End If
-                    Else ' Buying
-                        ' Make sure the item exists (might have been deleted already in the main list) before updating
-                        If Not IsNothing(TotalBuyList.SearchListbyName(.GetMaterialList(i).GetMaterialName)) Then
-                            UpdatedQuantity = GetUpdatedQuantity("Buy", UpdateItemQuantity, .GetMaterialList(i), FoundItem)
-                            ' Need to update to the quantity sent in the Buy list
-                            Call UpdateShoppingBuyQuantity(.GetMaterialList(i).GetMaterialName, UpdatedQuantity)
-                        End If
-                    End If
-
-                    ' Update the quantity of the material in the total list too, but needs to be for each individual material
-                    Call .GetMaterialList(i).SetQuantity(CLng(.GetMaterialList(i).GetQuantity / FoundItem.Quantity) * UpdateItemQuantity)
-
-                Next
-            End With
-        End If
-
-        ' Update Buy List with Materials, Invention Mats, and RE mats (if they exist)
-        If Not IsNothing(FoundItem.InventionMaterials) Then
-            If Not IsNothing(FoundItem.InventionMaterials.GetMaterialList) Then
-                With FoundItem.InventionMaterials ' Update all base materials for this item first
+        If FoundItem IsNot Nothing Then
+            If Not IsNothing(FoundItem.BPMaterialList.GetMaterialList) Then
+                With FoundItem.BPMaterialList
                     For i = 0 To .GetMaterialList.Count - 1
-                        ' Make sure the material exists (might have been deleted already in the main list) before updating
-                        If Not IsNothing(TotalBuyList.SearchListbyName(.GetMaterialList(i).GetMaterialName)) Then
-                            ' Need to update to the quantity sent in the Buy List
-                            If FoundItem.TechLevel = 2 Then
-                                UpdatedQuantity = GetUpdatedQuantity("Invention", UpdateItemQuantity, .GetMaterialList(i), FoundItem)
-                            ElseIf FoundItem.TechLevel = 3 Then
-                                UpdatedQuantity = GetUpdatedQuantity("RE", UpdateItemQuantity, .GetMaterialList(i), FoundItem)
-                            End If
+                        ' Are we Building or Buying?
+                        If .GetMaterialList(i).GetBuildItem = True Then ' Building
+                            ' Make sure the item exists (might have been deleted already in the main list) before updating
 
-                            Call UpdateShoppingBuyQuantity(.GetMaterialList(i).GetMaterialName, UpdatedQuantity)
-                            ' Update this material in the item's invention list for copy/paste function
-                            If UpdatedQuantity <= 0 Then
-                                Call TotalInventionMats.RemoveMaterial(.GetMaterialList(i))
-                            Else
-                                ' Need to copy, remove, update, then add to update the volumes and prices of the material lists
-                                Dim TempMat As Material
-                                TempMat = CType(TotalInventionMats.SearchListbyName(.GetMaterialList(i).GetMaterialName).Clone, Material)
-                                TempMat.SetQuantity(UpdatedQuantity)
-                                Call TotalInventionMats.RemoveMaterial(.GetMaterialList(i))
-                                Call TotalInventionMats.InsertMaterial(TempMat)
+                            ' Find the built item in the build list for this item - only need name and ME to look up
+                            TempBuiltItem.ItemTypeID = .GetMaterialList(i).GetMaterialTypeID
+                            TempBuiltItem.ItemName = .GetMaterialList(i).GetMaterialName
+                            TempBuiltItem.BuildME = CLng(.GetMaterialList(i).GetItemME)
+
+                            Call TotalBuildList.SetItemToFind(TempBuiltItem)
+                            FoundBuildItem = TotalBuildList.GetBuiltItemList.Find(AddressOf TotalBuildList.FindBuiltItem)
+
+                            If FoundBuildItem IsNot Nothing Then
+                                ' Copy current built item info
+                                With FoundBuildItem
+                                    TempBuiltItem = New BuiltItem
+                                    TempBuiltItem.ItemTypeID = .ItemTypeID
+                                    TempBuiltItem.ItemName = .ItemName
+                                    TempBuiltItem.ItemQuantity = .ItemQuantity
+                                    TempBuiltItem.ItemVolume = .ItemVolume
+                                    TempBuiltItem.BuildME = .BuildME
+                                    ' If we are building a component, then we are buying all the mats for it so only use the buy list for mats to update
+                                    TempBuiltItem.BuildMaterials.InsertMaterialList(.BuildMaterials.GetMaterialList)
+                                End With
+
+                                UpdatedQuantity = GetUpdatedQuantity("Build", UpdateItemQuantity, .GetMaterialList(i), FoundItem)
+                                ' Need to update to the quantity sent in the Build List
+                                Call UpdateShoppingBuiltItemQuantity(TempBuiltItem, UpdatedQuantity)
+                            End If
+                        Else ' Buying
+                            ' Make sure the item exists (might have been deleted already in the main list) before updating
+                            If Not IsNothing(TotalBuyList.SearchListbyName(.GetMaterialList(i).GetMaterialName)) Then
+                                UpdatedQuantity = GetUpdatedQuantity("Buy", UpdateItemQuantity, .GetMaterialList(i), FoundItem)
+                                ' Need to update to the quantity sent in the Buy list
+                                Call UpdateShoppingBuyQuantity(.GetMaterialList(i).GetMaterialName, UpdatedQuantity)
                             End If
                         End If
+
+                        ' Update the quantity of the material in the total list too, but needs to be for each individual material
+                        Call .GetMaterialList(i).SetQuantity(CLng(.GetMaterialList(i).GetQuantity / FoundItem.Quantity) * UpdateItemQuantity)
+
                     Next
                 End With
             End If
-        End If
 
-        ' Remove the item if zero or update
-        If UpdateItemQuantity = 0 Then
-            ' Find the item and remove it from the list
-            Dim ProfitItem As New ItemProfitIPH
-            ProfitItemtoFind = SentItem.Name
-            ProfitItem = ItemProfitIPHList.Find(AddressOf FindItemProfitRecord)
-            If ProfitItem IsNot Nothing Then
-                ItemProfitIPHList.Remove(ProfitItem)
+            ' Update Buy List with Materials, Invention Mats, and RE mats (if they exist)
+            If Not IsNothing(FoundItem.InventionMaterials) Then
+                If Not IsNothing(FoundItem.InventionMaterials.GetMaterialList) Then
+                    With FoundItem.InventionMaterials ' Update all base materials for this item first
+                        For i = 0 To .GetMaterialList.Count - 1
+                            ' Make sure the material exists (might have been deleted already in the main list) before updating
+                            If Not IsNothing(TotalBuyList.SearchListbyName(.GetMaterialList(i).GetMaterialName)) Then
+                                ' Need to update to the quantity sent in the Buy List
+                                If FoundItem.TechLevel = 2 Then
+                                    UpdatedQuantity = GetUpdatedQuantity("Invention", UpdateItemQuantity, .GetMaterialList(i), FoundItem)
+                                ElseIf FoundItem.TechLevel = 3 Then
+                                    UpdatedQuantity = GetUpdatedQuantity("RE", UpdateItemQuantity, .GetMaterialList(i), FoundItem)
+                                End If
+
+                                Call UpdateShoppingBuyQuantity(.GetMaterialList(i).GetMaterialName, UpdatedQuantity)
+                                ' Update this material in the item's invention list for copy/paste function
+                                If UpdatedQuantity <= 0 Then
+                                    Call TotalInventionMats.RemoveMaterial(.GetMaterialList(i))
+                                Else
+                                    ' Need to copy, remove, update, then add to update the volumes and prices of the material lists
+                                    Dim TempMat As Material
+                                    TempMat = CType(TotalInventionMats.SearchListbyName(.GetMaterialList(i).GetMaterialName).Clone, Material)
+                                    TempMat.SetQuantity(UpdatedQuantity)
+                                    Call TotalInventionMats.RemoveMaterial(.GetMaterialList(i))
+                                    Call TotalInventionMats.InsertMaterial(TempMat)
+                                End If
+                            End If
+                        Next
+                    End With
+                End If
             End If
-        Else
-            ' Update the build times and total sell prices for this item
-            For i = 0 To ItemProfitIPHList.Count - 1
-                With ItemProfitIPHList(i)
-                    If .SavedItemName = FoundItem.Name Then
-                        ' Normalize the price and time, then multiply by the new update quantity
-                        Dim Denominator As Double = .SavedItemQuantity
-                        .TotalItemsSellPrice = .TotalItemsSellPrice / Denominator * UpdateItemQuantity
-                        .TotalTimetoBuild = .TotalTimetoBuild / Denominator * UpdateItemQuantity
-                        .Usage = .Usage / Denominator * UpdateItemQuantity
-                        .SavedItemQuantity = UpdateItemQuantity
-                    End If
-                End With
-            Next
-        End If
 
-        ' Need to increment or decrement the new item quantity and volume, the rest of the mats and components will be updated above
-        If UpdateItemQuantity = 0 Then
-            Call TotalItemList.Remove(FoundItem)
-        Else
-            FoundItem.BuildVolume = FoundItem.BuildVolume / FoundItem.Quantity * UpdateItemQuantity
-            FoundItem.Quantity = UpdateItemQuantity
+            ' Remove the item if zero or update
+            If UpdateItemQuantity = 0 Then
+                ' Find the item and remove it from the list
+                Dim ProfitItem As New ItemProfitIPH
+                ProfitItemtoFind = SentItem.Name
+                ProfitItem = ItemProfitIPHList.Find(AddressOf FindItemProfitRecord)
+                If ProfitItem IsNot Nothing Then
+                    ItemProfitIPHList.Remove(ProfitItem)
+                End If
+            Else
+                ' Update the build times and total sell prices for this item
+                For i = 0 To ItemProfitIPHList.Count - 1
+                    With ItemProfitIPHList(i)
+                        If .SavedItemName = FoundItem.Name Then
+                            ' Normalize the price and time, then multiply by the new update quantity
+                            Dim Denominator As Double = .SavedItemQuantity
+                            .TotalItemsSellPrice = .TotalItemsSellPrice / Denominator * UpdateItemQuantity
+                            .TotalTimetoBuild = .TotalTimetoBuild / Denominator * UpdateItemQuantity
+                            .Usage = .Usage / Denominator * UpdateItemQuantity
+                            .SavedItemQuantity = UpdateItemQuantity
+                        End If
+                    End With
+                Next
+            End If
+
+            ' Need to increment or decrement the new item quantity and volume, the rest of the mats and components will be updated above
+            If UpdateItemQuantity = 0 Then
+                Call TotalItemList.Remove(FoundItem)
+            Else
+                FoundItem.BuildVolume = FoundItem.BuildVolume / FoundItem.Quantity * UpdateItemQuantity
+                FoundItem.Quantity = UpdateItemQuantity
+            End If
         End If
 
     End Sub
@@ -376,7 +378,8 @@ Public Class ShoppingList
 
     ' Calculates the updated quantity for updating lists
     Private Function GetUpdatedQuantity(ByVal QuantityType As String, ByVal UpdateItemQuantity As Long, _
-                                        ByVal UpdateMaterial As Material, ByVal FoundItem As ShoppingListItem, Optional ListQuantity As Long = 0) As Long
+                                        ByVal UpdateMaterial As Material, ByVal FoundItem As ShoppingListItem, _
+                                        Optional ListQuantity As Long = 0) As Long
         Dim UpdatedQuantity As Long
         Dim SingleBuildMatQuantity As Long
         Dim OnHandMats As Long
@@ -386,14 +389,26 @@ Public Class ShoppingList
         SingleBuildMatQuantity = CLng(UpdateMaterial.GetQuantity / FoundItem.Quantity)
 
         If QuantityType = "Invention" Or QuantityType = "RE" Then
-            ' For invention materials, find out how many mats we need by calcuating the new value
-            Dim MatsPerJob As Long = CLng(Math.Ceiling(FoundItem.AvgInvRunsforSuccess))
-            If UpdateItemQuantity <> 0 Then
-                ' Need number of jobs times mats per job
-                UpdatedQuantity = MatsPerJob * CLng(Math.Ceiling(FoundItem.AvgInvRunsforSuccess * Math.Ceiling(UpdateItemQuantity / FoundItem.InventedRuns)))
+
+            BuyMatQuantity = TotalBuyList.SearchListbyName(UpdateMaterial.GetMaterialName).GetQuantity
+
+            ' For invention materials, find out how many mats we need by calcuating the new value from the item runs and invention jobs per item
+            If UpdateItemQuantity <= 0 Then
+                ' Easy case, just remove the update material quantity
+                UpdatedQuantity = BuyMatQuantity - UpdateMaterial.GetQuantity
             Else
-                UpdatedQuantity = MatsPerJob * CLng(Math.Ceiling(FoundItem.AvgInvRunsforSuccess * Math.Ceiling(FoundItem.Quantity / FoundItem.InventedRuns)))
+                ' Here, we need to figure out how many items per run to remove (3 inv mats per job, and remove 2 items, then remove 6 invention mats)
+                Dim NumInventionJobs As Integer = 0
+                Dim MatsperItem As Integer = CInt(UpdateMaterial.GetQuantity / FoundItem.InventionJobs)
+                Dim RunsPerBP As Integer = CInt(UpdateItemQuantity / FoundItem.NumBPs)
+                ' for each blueprint, we need to calculate the mats to make it
+                For i = 0 To FoundItem.NumBPs - 1
+                    NumInventionJobs += CInt(Math.Ceiling(FoundItem.AvgInvRunsforSuccess * Math.Ceiling(RunsPerBP / FoundItem.InventedRuns)))
+                Next
+
+                UpdatedQuantity = NumInventionJobs * MatsperItem
             End If
+
         ElseIf QuantityType = "Buy" Then
 
             BuyMatQuantity = TotalBuyList.SearchListbyName(UpdateMaterial.GetMaterialName).GetQuantity
@@ -420,12 +435,6 @@ Public Class ShoppingList
             ' Calculate the number of materials to update the main list with
             If UpdateItemQuantity = 0 Then
                 ' If this is 0, then we want to remove all built items equal to the number for the item list quantity
-                Dim TempBuiltItem As New BuiltItem
-                TempBuiltItem.ItemTypeID = UpdateMaterial.GetMaterialTypeID
-                TempBuiltItem.ItemName = UpdateMaterial.GetMaterialName
-                TempBuiltItem.BuildME = CInt(UpdateMaterial.GetItemME)
-
-                Call TotalBuildList.SetItemToFind(TempBuiltItem)
                 UpdatedQuantity = BuildMatQuantity - (SingleBuildMatQuantity * FoundItem.Quantity)
             Else
                 If FoundItem.Quantity > UpdateItemQuantity Then
@@ -653,14 +662,14 @@ Public Class ShoppingList
 
         ' Full output lists
         FullBuildList = GetFullBuildList()
-        FullBuyList = TotalBuyList
+        FullBuyList = CType(TotalBuyList.Clone, Materials)
         FullItemList = GetFullItemList()
 
         ' Add the Invention mats to buy
         InventionMatList = GetFullInventionList()
         If Not IsNothing(InventionMatList.GetMaterialList) Then
             IncludeInventionMats = True
-            ' Remove the invention materials from the buy list
+            ' Remove the invention materials from the buy list so we can separate them in the output
             Call FullBuyList.RemoveMaterialList(InventionMatList.GetMaterialList)
             ' Update the total though as if the materials were in the full list for price purposes
             FullBuyList.AddTotalValue(InventionMatList.GetTotalMaterialsCost)
@@ -671,7 +680,7 @@ Public Class ShoppingList
         REMatList = GetFullREList()
         If Not IsNothing(REMatList.GetMaterialList) Then
             IncludeREMats = True
-            ' Remove the RE materials from the buy list
+            ' Remove the RE materials from the buy list so we can separate them in the output
             Call FullBuyList.RemoveMaterialList(REMatList.GetMaterialList)
             ' Update the total though as if the materials were in the full list for price purposes
             FullBuyList.AddTotalValue(REMatList.GetTotalMaterialsCost)
@@ -679,20 +688,21 @@ Public Class ShoppingList
         End If
 
         ' Sort the Item List by order sent (this is based on how they sorted in the grid)
-        ' Item sort order Name, Quantity, ME, Build Type, Decryptor/Relic (can't get from material list though)
+        ' Item sort order Name, Quantity, ME, Num BPs, Build Type, Decryptor, and Relic
         For i = 0 To ItemNamesSortOrder.Count - 1
             ' Parse the sort order fields
             Dim ItemColumns As String() = ItemNamesSortOrder(i).Split(New [Char]() {"|"c})
 
             ' For each item, find it in the current buy list and replace
-            ' Item sort order - Name, Quantity, ME, Build, Decryptor/Relic
+            ' Item sort order Name, Quantity, ME, Num BPs, Build Type, Decryptor/Relic
             For j = 0 To FullItemList.GetMaterialList.Count - 1
-                With FullItemList.GetMaterialList(j) ' GroupName stores the build type | Relic/Decryptor and meta is in item type
-                    ' Split out the Build Type, Relic/Decryptor name
+                With FullItemList.GetMaterialList(j) ' GroupName stores the build type Decryptor/Relic in item type
+                    ' Split out the Build Type, Decryptor, NumBps, and Relic
                     Dim GroupNameItems As String() = .GetMaterialGroup.Split(New [Char]() {"|"c})
 
                     If ItemColumns(0) = .GetMaterialName And CLng(ItemColumns(1)) = .GetQuantity And ItemColumns(2) = .GetItemME _
-                     And ItemColumns(3) = GroupNameItems(0) And ItemColumns(4) = GroupNameItems(1) Then
+                     And ItemColumns(3) = GroupNameItems(2) And ItemColumns(4) = GroupNameItems(0) And ItemColumns(5) = GroupNameItems(1) _
+                     And ItemColumns(6) = GroupNameItems(4) Then
                         ' Found it, so insert into temp list
                         TempMatList.InsertMaterial(FullItemList.GetMaterialList(j))
                         Exit For
@@ -707,7 +717,7 @@ Public Class ShoppingList
 
         ' Get the Shopping list for items
         If Not IsNothing(FullItemList) Then
-            TempListText = FullItemList.GetClipboardList(ExportFormat, IgnorePriceVolume)
+            TempListText = FullItemList.GetClipboardList(ExportFormat, IgnorePriceVolume, True, True)
             If TempListText <> "No items in List" Then
                 OutputText = "Shopping List for: " & vbCrLf
                 OutputText = OutputText & TempListText
@@ -719,7 +729,7 @@ Public Class ShoppingList
         ' Invention materials (If they exist)
         If IncludeInventionMats Then
             ' Add Invention mats if there are any
-            TempListText = InventionMatList.GetClipboardList(ExportFormat, False)
+            TempListText = InventionMatList.GetClipboardList(ExportFormat, False, False, False)
             If TempListText <> "No items in List" Then
                 OutputText = OutputText & "Estimated Invention Materials: " & vbCrLf
                 OutputText = OutputText & TempListText
@@ -731,7 +741,7 @@ Public Class ShoppingList
         ' RE Materials (If they exist)
         If IncludeREMats Then
             ' Add RE mats if there are any
-            TempListText = REMatList.GetClipboardList(ExportFormat, False)
+            TempListText = REMatList.GetClipboardList(ExportFormat, False, False, False)
             If TempListText <> "No items in List" Then
                 OutputText = OutputText & "Estimated RE Materials: " & vbCrLf
                 OutputText = OutputText & TempListText
@@ -761,9 +771,9 @@ Public Class ShoppingList
         FullBuildList = CType(TempMatList.Clone, Materials)
         TempMatList = New Materials
 
-        ' Output the Build List - list the ME for each
+        ' Output the Build List - list the ME for each - assume no decryptor or relic
         If Not IsNothing(FullBuildList) Then
-            TempListText = FullBuildList.GetClipboardList(ExportFormat, True)
+            TempListText = FullBuildList.GetClipboardList(ExportFormat, True, True, False)
             If TempListText <> "No items in List" Then
                 OutputText = OutputText & "Build Items List: " & vbCrLf
                 OutputText = OutputText & TempListText
@@ -772,7 +782,7 @@ Public Class ShoppingList
             End If
         End If
 
-        ' Now sort the buy materiall list by the order sent in the grid
+        ' Now sort the buy material list by the order sent in the grid
         ' Material sort order - Just Name
         For i = 0 To MaterialNamesSortOrder.Count - 1
             ' For each item, find it in the current buy list and replace
@@ -790,7 +800,7 @@ Public Class ShoppingList
 
         ' Output the Buy list, add the price and volume to it - in Buy lists don't list ME
         If Not IsNothing(FullBuyList) Then
-            TempListText = FullBuyList.GetClipboardList(ExportFormat, False, True)
+            TempListText = FullBuyList.GetClipboardList(ExportFormat, False, False, False)
             If TempListText <> "No materials in List" Then
                 OutputText = OutputText & "Buy Materials List: " & vbCrLf
                 OutputText = OutputText & TempListText
@@ -893,7 +903,8 @@ Public Class ShoppingList
 
         For i = 0 To TotalItemList.Count - 1
             With TotalItemList(i)
-                TempMat = New Material(.TypeID, .Name, .BuildType & "|" & .DecryptorRelic, .Quantity, .BuildVolume, 0, CStr(.ItemME))
+                ' Item sort order Name, Quantity, ME, Build Type, Decryptor, NumBps, and Relic
+                TempMat = New Material(.TypeID, .Name, .BuildType & "|" & .Decryptor & "|" & CStr(.NumBPs) & "|" & CStr(.Relic), .Quantity, .BuildVolume, 0, CStr(.ItemME))
             End With
             ReturnMaterials.InsertMaterial(TempMat)
         Next
@@ -1143,7 +1154,10 @@ Public Class ShoppingList
         If Item1.BuildType <> Item2.BuildType Then
             Return False
         End If
-        If Item1.DecryptorRelic <> Item2.DecryptorRelic Then
+        If Item1.Decryptor <> Item2.Decryptor Then
+            Return False
+        End If
+        If Item1.Relic <> Item2.Relic Then
             Return False
         End If
         If Item1.NumBPs <> Item2.NumBPs Then
@@ -1236,7 +1250,8 @@ Public Class ShoppingListItem
     Public BuildVolume As Double ' Volume of the built item
     Public NumBPs As Integer ' Number of BPs used to build item
 
-    Public DecryptorRelic As String ' If it's invented or RE'd, then store the Relic or Decryptor name here * Key value
+    Public Decryptor As String ' If it's invented or RE'd, then store the Relic or Decryptor name here * Key value
+    Public Relic As String ' Relic used for T3
 
     Public InventionMaterials As New Materials ' The List of Invention materials needed to build the T2 item
     Public AvgInvRunsforSuccess As Double ' How many Invention/RE runs we need for success - used to calculate correct changes in list for mats
@@ -1265,7 +1280,8 @@ Public Class ShoppingListItem
         TechLevel = 0
         BuildVolume = 0
 
-        DecryptorRelic = ""
+        Decryptor = ""
+        Relic = ""
 
         InventionMaterials = Nothing
         AvgInvRunsforSuccess = 0

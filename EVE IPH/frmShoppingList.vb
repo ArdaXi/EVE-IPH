@@ -62,12 +62,13 @@ Public Class frmShoppingList
     End Function
 
     Private Structure BPItem
-        'Item List Format: Item, Quantity, ME, Build Type, Decryptor / Relic 
+        'Item List Format: Item, Quantity, ME, NumBPs Build Type, Decryptor
         Dim ItemName As String
         Dim ItemQuantity As Long
         Dim ItemME As Integer
+        Dim NumBPs As Integer
         Dim BuildType As String
-        Dim DecryptorRelic As String
+        Dim Decryptor As String
     End Structure
 
     Public Sub New()
@@ -102,7 +103,7 @@ Public Class frmShoppingList
         lstItems.Columns.Add("ME", 30, HorizontalAlignment.Right) ' 30 min text
         lstItems.Columns.Add("Num BPs", 60, HorizontalAlignment.Left) ' 60 min text
         lstItems.Columns.Add("Build Type", 71, HorizontalAlignment.Left) ' 71 min text
-        lstItems.Columns.Add("Decryptor / Relic", 105, HorizontalAlignment.Left) '105 min text
+        lstItems.Columns.Add("Decryptor", 105, HorizontalAlignment.Left) '105 min text
 
         If UserApplicationSettings.ShowToolTips Then
             ttMain.SetToolTip(btnShowAssets, "Show Assets")
@@ -413,12 +414,16 @@ Public Class frmShoppingList
         For i = 0 To ItemList.Count - 1
             With ItemList(i)
                 lstItem = lstItems.Items.Add(CStr(.TypeID)) ' Hidden
-                lstItem.SubItems.Add(ItemList(i).Name)
+                If .TechLevel <> 3 Then
+                    lstItem.SubItems.Add(ItemList(i).Name)
+                Else
+                    lstItem.SubItems.Add(ItemList(i).Name & " (" & ItemList(i).Relic & ")") ' Add relic name after the item
+                End If
                 lstItem.SubItems.Add(CStr(FormatNumber(ItemList(i).Quantity, 0)))
                 lstItem.SubItems.Add(CStr(ItemList(i).ItemME))
                 lstItem.SubItems.Add(CStr(ItemList(i).NumBPs))
                 lstItem.SubItems.Add(ItemList(i).BuildType)
-                lstItem.SubItems.Add(ItemList(i).DecryptorRelic)
+                lstItem.SubItems.Add(ItemList(i).Decryptor)
             End With
         Next
 
@@ -1094,7 +1099,7 @@ Public Class frmShoppingList
                                         End If
                                         Call BuildList.Add(TempItem)
                                     Case ItemsListLabel
-                                        ' Item List Format: Item, Quantity, ME, Build Type, Decryptor / Relic 
+                                        ' Item List Format: Item, Quantity, ME, NumBPs, Build Type, Decryptor
                                         ' Save all the fields
                                         TempBPItem.ItemName = Record(0)
                                         If Trim(Record(1)) = "" Then
@@ -1103,8 +1108,9 @@ Public Class frmShoppingList
                                             TempBPItem.ItemQuantity = CLng(Record(1))
                                         End If
                                         TempBPItem.ItemME = CInt(Record(2))
-                                        TempBPItem.BuildType = Record(3)
-                                        TempBPItem.DecryptorRelic = Record(4)
+                                        TempBPItem.NumBPs = CInt(Record(3))
+                                        TempBPItem.BuildType = Record(4)
+                                        TempBPItem.Decryptor = Record(5)
                                         Call ItemList.Add(TempBPItem)
                                 End Select
                             End If
@@ -1128,7 +1134,7 @@ Public Class frmShoppingList
                         Dim TempDecryptor As Decryptor
                         Dim BuildBuy As Boolean
                         Dim InventionDecryptors As New DecryptorList()
-                        TempDecryptor = InventionDecryptors.GetDecryptor(ItemList(i).DecryptorRelic)
+                        TempDecryptor = InventionDecryptors.GetDecryptor(ItemList(i).Decryptor)
 
                         If ItemList(i).BuildType = "Build/Buy" Then
                             BuildBuy = True
@@ -1274,9 +1280,9 @@ Public Class frmShoppingList
         Next
 
         i = 0
-        ' Item sort order Name, Quantity, ME, Build, Decryptor/Relic
+        ' List Item sort order Name, Quantity, ME, Num BPs, Build Type, Decryptor
         For Each item As ListViewItem In lstItems.Items
-            ItemList(i) = item.SubItems(1).Text & "|" & item.SubItems(2).Text & "|" & item.SubItems(3).Text & "|" & item.SubItems(4).Text & "|" & item.SubItems(5).Text
+            ItemList(i) = item.SubItems(1).Text & "|" & item.SubItems(2).Text & "|" & item.SubItems(3).Text & "|" & item.SubItems(4).Text & "|" & item.SubItems(5).Text & "|" & item.SubItems(6).Text
             i += 1
         Next
 
@@ -1608,11 +1614,18 @@ Public Class frmShoppingList
 
                 If SelectedItem <> "" Then
                     ' Get the name, build type, and ME, and meta of the item selected
-                    ShopListItem.Name = SelectedItem
+                    If SelectedItem.Contains("(") Then
+                        ShopListItem.Name = SelectedItem
+                        ShopListItem.Relic = SelectedItem.Substring(InStr(SelectedItem, "("), InStr(SelectedItem, ")"))
+                    Else
+                        ShopListItem.Name = SelectedItem
+                        ShopListItem.Relic = ""
+                    End If
                     ShopListItem.Quantity = CLng(lstItems.SelectedItems(i).SubItems(2).Text)
                     ShopListItem.ItemME = CInt(lstItems.SelectedItems(i).SubItems(3).Text)
-                    ShopListItem.BuildType = lstItems.SelectedItems(i).SubItems(4).Text
-                    ShopListItem.DecryptorRelic = lstItems.SelectedItems(i).SubItems(5).Text
+                    ShopListItem.NumBPs = CInt(lstItems.SelectedItems(i).SubItems(4).Text)
+                    ShopListItem.BuildType = lstItems.SelectedItems(i).SubItems(5).Text
+                    ShopListItem.Decryptor = lstItems.SelectedItems(i).SubItems(6).Text
 
                     ' Remove it from shopping listxc 
                     TotalShoppingList.UpdateShoppingItemQuantity(ShopListItem, 0)
@@ -1931,11 +1944,19 @@ Public Class frmShoppingList
                     End If
 
                     Dim ShopListItem As New ShoppingListItem
+                    Dim TempName As String = CurrentRow.SubItems(1).Text
+                    If TempName.Contains("(") Then
+                        ShopListItem.Name = TempName
+                        ShopListItem.Relic = TempName.Substring(InStr(TempName, "("), InStr(TempName, ")"))
+                    Else
+                        ShopListItem.Name = TempName
+                        ShopListItem.Relic = ""
+                    End If
                     ShopListItem.Quantity = CLng(CurrentRow.SubItems(2).Text)
                     ShopListItem.ItemME = CInt(CurrentRow.SubItems(3).Text)
-                    ShopListItem.Name = CurrentRow.SubItems(1).Text
-                    ShopListItem.BuildType = CurrentRow.SubItems(4).Text
-                    ShopListItem.DecryptorRelic = CurrentRow.SubItems(5).Text
+                    ShopListItem.NumBPs = CInt(CurrentRow.SubItems(4).Text)
+                    ShopListItem.BuildType = CurrentRow.SubItems(5).Text
+                    ShopListItem.Decryptor = CurrentRow.SubItems(6).Text
 
                     ' Update the full shopping list
                     Call TotalShoppingList.UpdateShoppingItemQuantity(ShopListItem, QuantityValue)

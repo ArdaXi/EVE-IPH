@@ -332,6 +332,7 @@ Public Class frmMain
     Private MEUpdate As Boolean
     Private PriceUpdate As Boolean
     Private DataEntered As Boolean
+    Private EnterKeyPressed As Boolean
     Private SelectedGrid As ListView
 
     Private IgnoreFocus As Boolean
@@ -6108,7 +6109,11 @@ Tabs:
     End Sub
 
     Private Sub txtBPRuns_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtBPRuns.KeyUp
-        Call UpdateBPLinesandBPs()
+        If Not EnterKeyPressed Then
+            Call UpdateBPLinesandBPs()
+        Else
+            EnterKeyPressed = False
+        End If
     End Sub
 
     Private Sub txtBPAddlCosts_KeyDown(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtBPAddlCosts.KeyDown
@@ -6425,16 +6430,16 @@ Tabs:
 
         If rbtnBPRawmatCopy.Checked Or chkBPBuildBuy.Checked Then
             OutputText = "Raw Material List for " & txtBPRuns.Text & " Units of '" & cmbBPBlueprintSelection.Text & "' (ME: " & CStr(txtBPME.Text) & AddlText
-            OutputText = OutputText & SelectedBlueprint.GetRawMaterials.GetClipboardList(UserApplicationSettings.DataExportFormat, False, True)
+            OutputText = OutputText & SelectedBlueprint.GetRawMaterials.GetClipboardList(UserApplicationSettings.DataExportFormat, False, False, False)
         Else
             OutputText = "Component Material List for " & txtBPRuns.Text & " Units of '" & cmbBPBlueprintSelection.Text & "' (ME: " & CStr(txtBPME.Text) & AddlText
-            OutputText = OutputText & SelectedBlueprint.GetComponentMaterials.GetClipboardList(UserApplicationSettings.DataExportFormat, False, True)
+            OutputText = OutputText & SelectedBlueprint.GetComponentMaterials.GetClipboardList(UserApplicationSettings.DataExportFormat, False, False, False)
         End If
 
         If UserApplicationSettings.ShopListIncludeInventMats Then
             If Not IsNothing(SelectedBlueprint.GetInventionMaterials.GetMaterialList) Then
                 OutputText = OutputText & Environment.NewLine & Environment.NewLine & "Invention Materials" & Environment.NewLine & Environment.NewLine
-                OutputText = OutputText & SelectedBlueprint.GetInventionMaterials.GetClipboardList(UserApplicationSettings.DataExportFormat, False, True)
+                OutputText = OutputText & SelectedBlueprint.GetInventionMaterials.GetClipboardList(UserApplicationSettings.DataExportFormat, False, False, False)
             End If
         End If
 
@@ -6675,6 +6680,7 @@ Tabs:
     Private Sub EnterKeyRunBP(ByVal e As System.Windows.Forms.KeyEventArgs)
         If CorrectMETE(txtBPME.Text, txtBPTE.Text, txtBPME, txtBPTE) Then
             If e.KeyCode = Keys.Enter Then
+                EnterKeyPressed = True
                 If SelectedBlueprint.GetTechLevel = 2 And cmbBPInventionDecryptor.Text <> None Then
                     ' They have a decryptor, so use original
                     Call UpdateBPGrids(SelectedBlueprint.GetBPTypeID, SelectedBlueprint.GetTechLevel, False, SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID)
@@ -6918,6 +6924,7 @@ Tabs:
         lstBPRawMats.Items.Clear()
 
         ResetBPTab = True
+        EnterKeyPressed = False
 
         ' Load the combo
         Call LoadBlueprintCombo()

@@ -102,6 +102,7 @@ Public Class Blueprint
     Private CopyMaterials As Materials ' Some copies require items
     Private InventionChance As Double
     Private InventionDecryptor As Decryptor
+    Private Relic As String ' Name of relic
     Private TotalInventedRuns As Integer ' Number of runs an invention job will produce
     Private SingleInventedREdBPCRuns As Integer ' The runs on one bp invented
     Private NumInventionJobs As Integer ' Number of invention jobs we will do
@@ -293,6 +294,7 @@ Public Class Blueprint
         ComponentTeamFee = 0
 
         InventionDecryptor = NoDecryptor
+        Relic = ""
         TotalInventedRuns = 0
 
         NumInventionJobs = 0
@@ -497,6 +499,7 @@ Public Class Blueprint
 
                     InventionChance = .GetInventionChance
                     InventionDecryptor = .GetDecryptor
+                    Relic = .GetRelic()
                     SingleInventedREdBPCRuns = .GetInventedRuns
                     NumInventionJobs += .GetInventionJobs
 
@@ -1387,6 +1390,8 @@ Public Class Blueprint
             ' Base it off of the relic type - need to look it up based on the TypeID
             ' TO DO - use industry products to get the quantity for the runs on t3 - make new function
             If readerBP.Read Then
+                ' Set the name
+                Relic = readerBP.GetString(0)
                 If readerBP.GetString(0).Contains(IntactRelic) Then
                     MaxProductionLimit = 20
                 ElseIf readerBP.GetString(0).Contains(MalfunctioningRelic) Then
@@ -1398,6 +1403,7 @@ Public Class Blueprint
                 End If
             Else
                 MaxProductionLimit = 3
+                Relic = WreckedRelic
             End If
 
             ' Set the final runs for one bp
@@ -1752,6 +1758,11 @@ Public Class Blueprint
     ' Returns the decryptor used in this BP
     Public Function GetDecryptor() As Decryptor
         Return InventionDecryptor
+    End Function
+
+    ' Returns the Relic name used in this BP
+    Public Function GetRelic() As String
+        Return Relic
     End Function
 
     ' Gets the Invention Chance this blueprint is invented if it can be
