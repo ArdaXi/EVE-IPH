@@ -69,6 +69,7 @@ Public Class frmShoppingList
         Dim NumBPs As Integer
         Dim BuildType As String
         Dim Decryptor As String
+        Dim Relic As String
     End Structure
 
     Public Sub New()
@@ -934,25 +935,35 @@ Public Class frmShoppingList
 
                     MyStream.Write("" & Environment.NewLine)
 
-                    ' Output the build list
+                    ' Output the item list
                     Items = lstItems.Items
 
                     If Items.Count > 0 Then
                         Me.Cursor = Cursors.WaitCursor
 
                         Application.DoEvents()
+                        Dim TempName As String = ""
+                        Dim TempRelic As String = ""
 
                         OutputText = ItemsListLabel
                         MyStream.Write(OutputText & Environment.NewLine)
-                        OutputText = "Item" & Separator & "Quantity" & Separator & "ME" & Separator & "Build Type" & Separator
-                        OutputText = OutputText & "Decryptor / Relic"
+                        OutputText = "Item" & Separator & "Quantity" & Separator & "ME" & Separator & "NumBps" & Separator
+                        OutputText = OutputText & "Build Type" & Separator & "Decryptor" & Separator & "Relic"
                         MyStream.Write(OutputText & Environment.NewLine)
 
                         For Each ListItem In Items
                             Application.DoEvents()
 
+                            If ListItem.SubItems(1).Text.Contains("(") Then
+                                TempName = ListItem.SubItems(1).Text.Substring(0, InStr(ListItem.SubItems(1).Text, "(") - 2)
+                                TempRelic = ListItem.SubItems(1).Text.Substring(InStr(ListItem.SubItems(1).Text, "("), InStr(ListItem.SubItems(1).Text, ")") - InStr(ListItem.SubItems(1).Text, "(") - 1)
+                            Else
+                                TempName = ListItem.SubItems(1).Text
+                                TempRelic = ""
+                            End If
+                            
                             ' Build the output text for checked items
-                            OutputText = ListItem.SubItems(1).Text & Separator
+                            OutputText = TempName & Separator
                             If ExportTypeString = SSVDataExport Then
                                 OutputText = OutputText & ConvertUStoEUDecimal(ListItem.SubItems(2).Text) & Separator
                             Else
@@ -960,7 +971,9 @@ Public Class frmShoppingList
                             End If
                             OutputText = OutputText & ListItem.SubItems(3).Text & Separator
                             OutputText = OutputText & ListItem.SubItems(4).Text & Separator
-                            OutputText = OutputText & ListItem.SubItems(5).Text 
+                            OutputText = OutputText & ListItem.SubItems(5).Text & Separator
+                            OutputText = OutputText & ListItem.SubItems(6).Text & Separator
+                            OutputText = OutputText & TempRelic
                             MyStream.Write(OutputText & Environment.NewLine)
                         Next
 
@@ -1058,7 +1071,7 @@ Public Class frmShoppingList
 
                         Dim BuyListHeader As String = "Material" & Separator & "Quantity" & Separator & "Cost Per Item" & Separator & "Buy Type" & Separator & "Total m3" & Separator & "Isk/m3" & Separator & "TotalCost"
                         Dim BuildListHeader As String = "Build Item" & Separator & "Quantity" & Separator & "ME"
-                        Dim ItemsListHeader As String = "Item" & Separator & "Quantity" & Separator & "ME" & Separator & "Build Type" & Separator & "Decryptor / Relic"
+                        Dim ItemsListHeader As String = "Item" & Separator & "Quantity" & Separator & "ME" & Separator & "NumBps" & Separator & "Build Type" & Separator & "Decryptor" & Separator & "Relic"
 
                         ' If the line has records, import it into the correct lists
                         If Line.Contains(Separator) And Not (Line.Contains(BuyListHeader) Or Line.Contains(BuildListHeader) Or Line.Contains(ItemsListHeader)) Then
@@ -1111,6 +1124,7 @@ Public Class frmShoppingList
                                         TempBPItem.NumBPs = CInt(Record(3))
                                         TempBPItem.BuildType = Record(4)
                                         TempBPItem.Decryptor = Record(5)
+                                        TempBPItem.Relic = Record(6)
                                         Call ItemList.Add(TempBPItem)
                                 End Select
                             End If
@@ -1144,15 +1158,15 @@ Public Class frmShoppingList
 
                         ' Build the BP - use settings from BP tab
                         If readerBP.GetInt32(1) = 1 Then
-                            TempBP = New Blueprint(CLng(readerBP.GetValue(0)), ItemList(i).ItemQuantity, ItemList(i).ItemME, 0, 1, 1, _
+                            TempBP = New Blueprint(CLng(readerBP.GetValue(0)), ItemList(i).ItemQuantity, ItemList(i).ItemME, 0, ItemList(i).NumBPs, 1, _
                                                    SelectedCharacter, UserApplicationSettings, False, 0, NoTeam, SelectedBPManufacturingFacility, _
                                                    NoTeam, SelectedBPComponentManufacturingFacility, SelectedBPCapitalComponentManufacturingFacility)
                         ElseIf readerBP.GetInt32(1) = 2 Or readerBP.GetInt32(1) = 3 Then
-                            TempBP = New Blueprint(CLng(readerBP.GetValue(0)), ItemList(i).ItemQuantity, ItemList(i).ItemME, 0, 1, 1, 1, _
+                            TempBP = New Blueprint(CLng(readerBP.GetValue(0)), ItemList(i).ItemQuantity, ItemList(i).ItemME, 0, ItemList(i).NumBPs, 1, 1, _
                                                    SelectedCharacter, UserApplicationSettings, 0, NoTeam, SelectedBPManufacturingFacility, _
                                                    NoTeam, SelectedBPComponentManufacturingFacility, SelectedBPCapitalComponentManufacturingFacility, BuildBuy, TempDecryptor, _
                                                    SelectedBPInventionFacility, SelectedBPInventionTeam, _
-                                                   SelectedBPCopyFacility, SelectedBPCopyTeam, GetInventItemTypeID(CLng(readerBP.GetValue(0)), "")) ' TO DO - Fix this to split out Decryptors and Relics from the import/export
+                                                   SelectedBPCopyFacility, SelectedBPCopyTeam, GetInventItemTypeID(CLng(readerBP.GetValue(0)), ItemList(i).Relic))
                         End If
 
                         ' Build the item and get the list of materials
@@ -1615,8 +1629,9 @@ Public Class frmShoppingList
                 If SelectedItem <> "" Then
                     ' Get the name, build type, and ME, and meta of the item selected
                     If SelectedItem.Contains("(") Then
-                        ShopListItem.Name = SelectedItem
-                        ShopListItem.Relic = SelectedItem.Substring(InStr(SelectedItem, "("), InStr(SelectedItem, ")"))
+                        ' Strip off the relic from the name
+                        ShopListItem.Name = SelectedItem.Substring(0, InStr(SelectedItem, "(") - 2)
+                        ShopListItem.Relic = SelectedItem.Substring(InStr(SelectedItem, "("), InStr(SelectedItem, ")") - InStr(SelectedItem, "(") - 1)
                     Else
                         ShopListItem.Name = SelectedItem
                         ShopListItem.Relic = ""
@@ -1724,9 +1739,9 @@ Public Class frmShoppingList
                     UpdatePrice = False
             End Select
 
-        Else ' Just Quantity updates in the other two grids
+        Else ' Just Quantity updates in the other two grids - Temp disable till we can fix the num bps issue in the items box
             ' Set the columns that can be edited, just Price
-            If iSubIndex = 2 Then
+            If iSubIndex = 2 And ListRef.Name = lstBuild.Name Then
                 UpdateQuantity = True
                 UpdatePrice = False
                 Call ShowUpdateTextBox(ListRef)
@@ -1946,8 +1961,8 @@ Public Class frmShoppingList
                     Dim ShopListItem As New ShoppingListItem
                     Dim TempName As String = CurrentRow.SubItems(1).Text
                     If TempName.Contains("(") Then
-                        ShopListItem.Name = TempName
-                        ShopListItem.Relic = TempName.Substring(InStr(TempName, "("), InStr(TempName, ")"))
+                        ShopListItem.Name = TempName.Substring(0, InStr(TempName, "(") - 2)
+                        ShopListItem.Relic = TempName.Substring(InStr(TempName, "("), InStr(TempName, ")") - InStr(TempName, "(") - 1)
                     Else
                         ShopListItem.Name = TempName
                         ShopListItem.Relic = ""

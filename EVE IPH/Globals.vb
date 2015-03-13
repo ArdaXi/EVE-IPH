@@ -1476,6 +1476,8 @@ InvalidDate:
             Response = CType(Request.GetResponse, HttpWebResponse)
         Catch ex As Exception
             ' Show error and exit
+            'Close the streams
+            writeStream.Close()
             MsgBox("An error occurred while downloading update file.", vbCritical, Application.ProductName)
             Return ""
         End Try

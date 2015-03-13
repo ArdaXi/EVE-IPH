@@ -34,12 +34,12 @@ Public Class Materials
                 TempMat = CType(MaterialList(i).Clone(), Material)
                 CopyOfMe.InsertMaterial(TempMat)
             Next
-
-            CopyOfMe.TotalMaterialsCost = Me.TotalMaterialsCost
-            CopyOfMe.TotalMaterialsVolume = Me.TotalMaterialsVolume
         Else
-            CopyOfMe = Nothing
+            CopyOfMe.MaterialList = Nothing
         End If
+
+        CopyOfMe.TotalMaterialsCost = Me.TotalMaterialsCost
+        CopyOfMe.TotalMaterialsVolume = Me.TotalMaterialsVolume
 
         Return CopyOfMe
 

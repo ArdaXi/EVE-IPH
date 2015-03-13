@@ -340,6 +340,7 @@ Public Class ShoppingList
 
             ' Update the quantity of the build list item
             Call TotalBuildList.RemoveBuiltItem(FoundItem) ' Remove the old one
+
             If UpdateItemQuantity <> 0 Then
                 Call TotalBuildList.AddBuiltItem(UpdateItem) ' Add the updated one
             End If
@@ -699,10 +700,19 @@ Public Class ShoppingList
                 With FullItemList.GetMaterialList(j) ' GroupName stores the build type Decryptor/Relic in item type
                     ' Split out the Build Type, Decryptor, NumBps, and Relic
                     Dim GroupNameItems As String() = .GetMaterialGroup.Split(New [Char]() {"|"c})
+                    Dim ItemName As String = ""
+                    Dim RelicName As String = ""
 
-                    If ItemColumns(0) = .GetMaterialName And CLng(ItemColumns(1)) = .GetQuantity And ItemColumns(2) = .GetItemME _
-                     And ItemColumns(3) = GroupNameItems(2) And ItemColumns(4) = GroupNameItems(0) And ItemColumns(5) = GroupNameItems(1) _
-                     And ItemColumns(6) = GroupNameItems(4) Then
+                    If ItemColumns(0).Contains("(") Then
+                        ItemName = ItemColumns(0).Substring(0, InStr(ItemColumns(0), "(") - 2)
+                        RelicName = ItemColumns(0).Substring(InStr(ItemColumns(0), "("), InStr(ItemColumns(0), ")") - InStr(ItemColumns(0), "(") - 1)
+                    Else
+                        ItemName = .GetMaterialName
+                    End If
+
+                    If ItemName = .GetMaterialName And CLng(ItemColumns(1)) = .GetQuantity And ItemColumns(2) = .GetItemME _
+                     And ItemColumns(4) = GroupNameItems(0) And ItemColumns(5) = GroupNameItems(1) _
+                     And ItemColumns(3) = GroupNameItems(2) And RelicName = GroupNameItems(3) Then
                         ' Found it, so insert into temp list
                         TempMatList.InsertMaterial(FullItemList.GetMaterialList(j))
                         Exit For
@@ -903,7 +913,7 @@ Public Class ShoppingList
 
         For i = 0 To TotalItemList.Count - 1
             With TotalItemList(i)
-                ' Item sort order Name, Quantity, ME, Build Type, Decryptor, NumBps, and Relic
+                ' Item sort order is Build Type, Decryptor, NumBps, and Relic for the group name
                 TempMat = New Material(.TypeID, .Name, .BuildType & "|" & .Decryptor & "|" & CStr(.NumBPs) & "|" & CStr(.Relic), .Quantity, .BuildVolume, 0, CStr(.ItemME))
             End With
             ReturnMaterials.InsertMaterial(TempMat)

@@ -1511,7 +1511,10 @@ Public Class Blueprint
             Dim MaxRuns As Integer = 0
             Dim BPCGroup = GetT1BPCType(BlueprintID, MaxRuns, BPCName) ' Returned by reference
 
-            InventionMaterials.InsertMaterial(New Material(InventionT3BPCTypeID, BPCName & " (" & CStr(1) & " Runs)", BPCGroup, NumInventionJobs, 0, 0, ""))
+            If TechLevel = BlueprintTechLevel.T2 Then
+                ' Add the BPC's for T2
+                InventionMaterials.InsertMaterial(New Material(InventionT3BPCTypeID, BPCName & " (" & CStr(1) & " Runs)", BPCGroup, NumInventionJobs, 0, 0, ""))
+            End If
 
             InventionCosts = InventionMaterials.GetTotalMaterialsCost
 
