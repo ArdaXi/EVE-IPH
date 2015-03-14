@@ -15463,6 +15463,8 @@ CheckTechs:
                         .BPProductionTime = i
                     Case ProgramSettings.TotalProductionTimeColumnName
                         .TotalProductionTime = i
+                    Case ProgramSettings.ItemMarketPriceColumnName
+                        .ItemMarketPrice = i
                     Case ProgramSettings.ProfitColumnName
                         .Profit = i
                     Case ProgramSettings.ProfitPercentageColumnName
@@ -16411,6 +16413,9 @@ CheckTechs:
             SVRThresholdValue = CDbl(txtCalcSVRThreshold.Text)
         End If
 
+        ' Save the refresh value since everytime we load the facility it will change it
+        Dim SavedRefreshValue As Boolean = RefreshCalcData
+
         ' Make sure they have a facility loaded - if not, load the default for the type
         ' Base
         If Not CalcBaseFacilityLoaded Then
@@ -16546,7 +16551,7 @@ CheckTechs:
                               chkCalcBoosterFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcBoosterFacilityLoaded)
         End If
 
-        If Not RefreshCalcData Then
+        If Not SavedRefreshValue Then
             Application.UseWaitCursor = True
             Me.Cursor = Cursors.WaitCursor
             Application.DoEvents()
@@ -17334,11 +17339,11 @@ DisplayResults:
         Dim NumManufacturingItems As Integer
 
         ' If no records first, then don't let them try and refresh nothing
-        If IsNothing(FinalManufacturingItemList) And RefreshCalcData Then
+        If IsNothing(FinalManufacturingItemList) And SavedRefreshValue Then
             Exit Sub
         End If
 
-        If Not RefreshCalcData Then
+        If Not SavedRefreshValue Then
             ' Calc or new display data
             NumManufacturingItems = ManufacturingList.Count
 
