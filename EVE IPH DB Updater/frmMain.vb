@@ -5954,6 +5954,7 @@ Public Class frmMain
         Dim msSQL As String
 
         Call Build_PACKAGED_SHIP_VOLUMES() ' Build this first
+        Call Build_PACKAGED_CONTAINER_VOLUMES()
 
         ' Production volumes for ships need to be changed in inventory types before starting
         ' So, update the volumes for ships to their packaged values in Inventory types and all blueprint materials
@@ -5967,15 +5968,39 @@ Public Class frmMain
             Call Execute_msSQL(msSQL)
         End While
 
+        mySQLReader.Close()
+
+        ' Do the same for containers
+        msSQL = "SELECT * FROM PACKAGED_CONTAINER_VOLUMES"
+        mySQLQuery = New SqlCommand(msSQL, SQLExpressConnection)
+        mySQLReader = mySQLQuery.ExecuteReader()
+
+        While mySQLReader.Read
+            Application.DoEvents()
+            msSQL = "UPDATE invTypes SET volume = " & mySQLReader.GetValue(1) & " WHERE typeID = " & mySQLReader.GetValue(0)
+            Call Execute_msSQL(msSQL)
+        End While
+
+        mySQLReader.Close()
+
         ' Random updates
 
         ' Chinese named ships in invtypes for some reason
         msSQL = "DELETE FROM invTypes where typeID IN (34480,34478,34476,34474,34472,34470,34468,34466,34464,34462,34460,34458)"
         Call Execute_msSQL(msSQL)
 
-        ' The SDE keeps missing categoryID 9 in this table.
-        msSQL = "INSERT INTO [Proteus_1.0_109795].dbo.ramAssemblyLineTypeDetailPerCategory SELECT * FROM [Oceanus_1.0_105658].dbo.ramAssemblyLineTypeDetailPerCategory WHERE categoryID = 9"
-        Call Execute_msSQL(msSQL)
+        ' See if they fixed category 9 (blueprints) yet
+        msSQL = "SELECT * FROM ramAssemblyLineTypeDetailPerCategory WHERE categoryID = 9"
+        mySQLQuery = New SqlCommand(msSQL, SQLExpressConnection)
+        mySQLReader = mySQLQuery.ExecuteReader()
+
+        If Not mySQLReader.Read Then
+            ' The SDE keeps missing categoryID 9 in this table.
+            msSQL = "INSERT INTO [" & DatabaseName & "].dbo.ramAssemblyLineTypeDetailPerCategory SELECT * FROM [Oceanus_1.0_105658].dbo.ramAssemblyLineTypeDetailPerCategory WHERE categoryID = 9"
+            Call Execute_msSQL(msSQL)
+        End If
+
+        mySQLReader.Close()
 
         ' Also, update the category table for stations to only invent from a BP when given
         msSQL = "UPDATE ramAssemblyLineTypeDetailPerCategory SET categoryID = 9 WHERE assemblyLineTypeID IN (36,38) and categoryID = 6"
@@ -5991,6 +6016,64 @@ Public Class frmMain
         Call Execute_msSQL(msSQL)
 
         mySQLReader.Close()
+
+    End Sub
+
+    ' PACKAGED_CONTAINER_VOLUMES
+    Private Sub Build_PACKAGED_CONTAINER_VOLUMES()
+        Dim SQL As String
+
+        ' MS SQL variables
+        Dim mySQLQuery As New SqlCommand
+        Dim mySQLReader As SqlDataReader
+        Dim msSQL As String
+
+        ' See if the table exists and drop if it does
+        msSQL = "SELECT COUNT(*) FROM sys.tables WHERE name = 'PACKAGED_CONTAINER_VOLUMES'"
+        mySQLQuery = New SqlCommand(msSQL, SQLExpressConnection)
+        mySQLReader = mySQLQuery.ExecuteReader()
+        mySQLReader.Read()
+
+        If CInt(mySQLReader.GetValue(0)) = 1 Then
+            SQL = "DROP TABLE PACKAGED_CONTAINER_VOLUMES"
+            mySQLReader.Close()
+            Execute_msSQL(SQL)
+        Else
+            mySQLReader.Close()
+        End If
+
+        ' Build the table in msSQL and use it later
+        SQL = "CREATE TABLE PACKAGED_CONTAINER_VOLUMES ("
+        SQL = SQL & "TYPE_ID INTEGER NOT NULL,"
+        SQL = SQL & "PACKAGED_M3 INTEGER NOT NULL"
+        SQL = SQL & ")"
+
+        Call Execute_msSQL(SQL)
+
+        ' Since this is all data from reddit post, just do inserts here
+        Execute_msSQL("INSERT INTO PACKAGED_CONTAINER_VOLUMES VALUES (33003,2500)")
+        Execute_msSQL("INSERT INTO PACKAGED_CONTAINER_VOLUMES VALUES (24445,1200)")
+        Execute_msSQL("INSERT INTO PACKAGED_CONTAINER_VOLUMES VALUES (11489,300)")
+        Execute_msSQL("INSERT INTO PACKAGED_CONTAINER_VOLUMES VALUES (33005,5000)")
+        Execute_msSQL("INSERT INTO PACKAGED_CONTAINER_VOLUMES VALUES (11488,150)")
+        Execute_msSQL("INSERT INTO PACKAGED_CONTAINER_VOLUMES VALUES (17365,65)")
+        Execute_msSQL("INSERT INTO PACKAGED_CONTAINER_VOLUMES VALUES (33007,1000)")
+        Execute_msSQL("INSERT INTO PACKAGED_CONTAINER_VOLUMES VALUES (3465,65)")
+        Execute_msSQL("INSERT INTO PACKAGED_CONTAINER_VOLUMES VALUES (3296,65)")
+        Execute_msSQL("INSERT INTO PACKAGED_CONTAINER_VOLUMES VALUES (17364,33)")
+        Execute_msSQL("INSERT INTO PACKAGED_CONTAINER_VOLUMES VALUES (33009,500)")
+        Execute_msSQL("INSERT INTO PACKAGED_CONTAINER_VOLUMES VALUES (3466,33)")
+        Execute_msSQL("INSERT INTO PACKAGED_CONTAINER_VOLUMES VALUES (3293,33)")
+        Execute_msSQL("INSERT INTO PACKAGED_CONTAINER_VOLUMES VALUES (17363,10)")
+        Execute_msSQL("INSERT INTO PACKAGED_CONTAINER_VOLUMES VALUES (33011,100)")
+        Execute_msSQL("INSERT INTO PACKAGED_CONTAINER_VOLUMES VALUES (3467,10)")
+        Execute_msSQL("INSERT INTO PACKAGED_CONTAINER_VOLUMES VALUES (3297,10)")
+        Execute_msSQL("INSERT INTO PACKAGED_CONTAINER_VOLUMES VALUES (17366,10000)")
+        Execute_msSQL("INSERT INTO PACKAGED_CONTAINER_VOLUMES VALUES (17367,50000)")
+        Execute_msSQL("INSERT INTO PACKAGED_CONTAINER_VOLUMES VALUES (17368,100000)")
+
+        pgMain.Visible = False
+        Application.DoEvents()
 
     End Sub
 
@@ -6025,44 +6108,48 @@ Public Class frmMain
 
         Call Execute_msSQL(SQL)
 
-        ' Since this is all data I created, just do inserts here
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (25,2500)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (26,10000)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (27,50000)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (28,20000)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (30,10000000)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (31,500)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (237,2500)")
+        ' Since this is all data from reddit post, just do inserts here
         Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (324,2500)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (358,10000)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (380,20000)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (419,15000)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (420,5000)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (463,3750)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (485,1000000)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (513,1000000)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (540,15000)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (541,5000)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (543,3750)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (547,1000000)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (659,1000000)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (830,2500)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (831,2500)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (832,10000)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (833,10000)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (834,2500)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (883,1000000)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (893,2500)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (894,10000)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (898,50000)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (900,50000)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (902,1000000)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (906,10000)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (941,500000)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (963,5000)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (1022,500)")
         Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (1201,15000)")
-        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (1202,15000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (419,15000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (27,50000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (898,50000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (1202,20000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (883,1300000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (29,500)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (547,1300000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (906,10000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (540,15000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (830,2500)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (26,10000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (420,5000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (485,1300000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (893,2500)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (381,50000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (543,3750)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (1283,2500)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (833,10000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (513,1300000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (25,2500)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (358,10000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (894,10000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (28,20000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (941,500000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (831,2500)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (541,5000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (902,1300000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (832,10000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (900,50000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (463,3750)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (1022,500)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (237,2500)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (31,500)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (834,2500)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (963,5000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (659,1300000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (1305,5000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (30,10000000)")
+        Execute_msSQL("INSERT INTO PACKAGED_SHIP_VOLUMES VALUES (380,20000)")
 
         pgMain.Visible = False
         Application.DoEvents()
