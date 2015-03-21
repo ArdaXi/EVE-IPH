@@ -47,6 +47,7 @@ Partial Class frmSettings
         Me.chkBrokerFactionStanding = New System.Windows.Forms.CheckBox()
         Me.btnReset = New System.Windows.Forms.Button()
         Me.gbBuildBuySettings = New System.Windows.Forms.GroupBox()
+        Me.chkSaveBPRelicsDecryptors = New System.Windows.Forms.CheckBox()
         Me.chkBuildBuyDefault = New System.Windows.Forms.CheckBox()
         Me.chkSuggestBuildwhenBPnotOwned = New System.Windows.Forms.CheckBox()
         Me.chkBeanCounterCopy = New System.Windows.Forms.CheckBox()
@@ -77,7 +78,6 @@ Partial Class frmSettings
         Me.rbtnExportSSV = New System.Windows.Forms.RadioButton()
         Me.rbtnExportCSV = New System.Windows.Forms.RadioButton()
         Me.rbtnExportDefault = New System.Windows.Forms.RadioButton()
-        Me.chkSaveBPRelicsDecryptors = New System.Windows.Forms.CheckBox()
         Me.gbGeneral.SuspendLayout()
         Me.gbStationStandings.SuspendLayout()
         Me.gbBuildBuySettings.SuspendLayout()
@@ -102,7 +102,7 @@ Partial Class frmSettings
         '
         'btnSave
         '
-        Me.btnSave.Location = New System.Drawing.Point(137, 315)
+        Me.btnSave.Location = New System.Drawing.Point(144, 315)
         Me.btnSave.Name = "btnSave"
         Me.btnSave.Size = New System.Drawing.Size(117, 30)
         Me.btnSave.TabIndex = 29
@@ -111,7 +111,7 @@ Partial Class frmSettings
         '
         'btnCancel
         '
-        Me.btnCancel.Location = New System.Drawing.Point(399, 315)
+        Me.btnCancel.Location = New System.Drawing.Point(406, 315)
         Me.btnCancel.Name = "btnCancel"
         Me.btnCancel.Size = New System.Drawing.Size(117, 30)
         Me.btnCancel.TabIndex = 31
@@ -208,7 +208,7 @@ Partial Class frmSettings
         Me.cmbBeanCounterRefining.Items.AddRange(New Object() {"Zainou 'Beancounter' Reprocessing RX-801", "Zainou 'Beancounter' Reprocessing RX-802", "Zainou 'Beancounter' Reprocessing RX-804"})
         Me.cmbBeanCounterRefining.Location = New System.Drawing.Point(9, 83)
         Me.cmbBeanCounterRefining.Name = "cmbBeanCounterRefining"
-        Me.cmbBeanCounterRefining.Size = New System.Drawing.Size(216, 21)
+        Me.cmbBeanCounterRefining.Size = New System.Drawing.Size(235, 21)
         Me.cmbBeanCounterRefining.TabIndex = 5
         '
         'cmbBeanCounterManufacturing
@@ -216,15 +216,15 @@ Partial Class frmSettings
         Me.cmbBeanCounterManufacturing.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cmbBeanCounterManufacturing.FormattingEnabled = True
         Me.cmbBeanCounterManufacturing.Items.AddRange(New Object() {"Zainou 'Beancounter' Industry BX-801", "Zainou 'Beancounter' Industry BX-802", "Zainou 'Beancounter' Industry BX-804"})
-        Me.cmbBeanCounterManufacturing.Location = New System.Drawing.Point(12, 38)
+        Me.cmbBeanCounterManufacturing.Location = New System.Drawing.Point(9, 38)
         Me.cmbBeanCounterManufacturing.Name = "cmbBeanCounterManufacturing"
-        Me.cmbBeanCounterManufacturing.Size = New System.Drawing.Size(213, 21)
+        Me.cmbBeanCounterManufacturing.Size = New System.Drawing.Size(235, 21)
         Me.cmbBeanCounterManufacturing.TabIndex = 4
         '
         'chkBeanCounterRefining
         '
         Me.chkBeanCounterRefining.AutoSize = True
-        Me.chkBeanCounterRefining.Location = New System.Drawing.Point(8, 64)
+        Me.chkBeanCounterRefining.Location = New System.Drawing.Point(9, 64)
         Me.chkBeanCounterRefining.Name = "chkBeanCounterRefining"
         Me.chkBeanCounterRefining.Size = New System.Drawing.Size(166, 17)
         Me.chkBeanCounterRefining.TabIndex = 5
@@ -302,7 +302,7 @@ Partial Class frmSettings
         '
         'btnReset
         '
-        Me.btnReset.Location = New System.Drawing.Point(268, 315)
+        Me.btnReset.Location = New System.Drawing.Point(275, 315)
         Me.btnReset.Name = "btnReset"
         Me.btnReset.Size = New System.Drawing.Size(117, 30)
         Me.btnReset.TabIndex = 30
@@ -316,10 +316,20 @@ Partial Class frmSettings
         Me.gbBuildBuySettings.Controls.Add(Me.chkSuggestBuildwhenBPnotOwned)
         Me.gbBuildBuySettings.Location = New System.Drawing.Point(411, 231)
         Me.gbBuildBuySettings.Name = "gbBuildBuySettings"
-        Me.gbBuildBuySettings.Size = New System.Drawing.Size(237, 73)
+        Me.gbBuildBuySettings.Size = New System.Drawing.Size(250, 73)
         Me.gbBuildBuySettings.TabIndex = 9
         Me.gbBuildBuySettings.TabStop = False
         Me.gbBuildBuySettings.Text = "Build Settings:"
+        '
+        'chkSaveBPRelicsDecryptors
+        '
+        Me.chkSaveBPRelicsDecryptors.AutoSize = True
+        Me.chkSaveBPRelicsDecryptors.Location = New System.Drawing.Point(9, 51)
+        Me.chkSaveBPRelicsDecryptors.Name = "chkSaveBPRelicsDecryptors"
+        Me.chkSaveBPRelicsDecryptors.Size = New System.Drawing.Size(212, 17)
+        Me.chkSaveBPRelicsDecryptors.TabIndex = 38
+        Me.chkSaveBPRelicsDecryptors.Text = "Save Relics and Decryptors on BP Tab"
+        Me.chkSaveBPRelicsDecryptors.UseVisualStyleBackColor = True
         '
         'chkBuildBuyDefault
         '
@@ -344,7 +354,7 @@ Partial Class frmSettings
         'chkBeanCounterCopy
         '
         Me.chkBeanCounterCopy.AutoSize = True
-        Me.chkBeanCounterCopy.Location = New System.Drawing.Point(8, 109)
+        Me.chkBeanCounterCopy.Location = New System.Drawing.Point(9, 109)
         Me.chkBeanCounterCopy.Name = "chkBeanCounterCopy"
         Me.chkBeanCounterCopy.Size = New System.Drawing.Size(151, 17)
         Me.chkBeanCounterCopy.TabIndex = 35
@@ -359,7 +369,7 @@ Partial Class frmSettings
         Me.cmbBeanCounterCopy.Items.AddRange(New Object() {"Zainou 'Beancounter' Science SC-801", "Zainou 'Beancounter' Science SC-803", "Zainou 'Beancounter' Science SC-805"})
         Me.cmbBeanCounterCopy.Location = New System.Drawing.Point(9, 126)
         Me.cmbBeanCounterCopy.Name = "cmbBeanCounterCopy"
-        Me.cmbBeanCounterCopy.Size = New System.Drawing.Size(216, 21)
+        Me.cmbBeanCounterCopy.Size = New System.Drawing.Size(235, 21)
         Me.cmbBeanCounterCopy.TabIndex = 36
         '
         'gbDefaultMEPE
@@ -417,7 +427,7 @@ Partial Class frmSettings
         Me.gbRefining.Controls.Add(Me.cmbRefiningEfficiency)
         Me.gbRefining.Location = New System.Drawing.Point(411, 169)
         Me.gbRefining.Name = "gbRefining"
-        Me.gbRefining.Size = New System.Drawing.Size(237, 63)
+        Me.gbRefining.Size = New System.Drawing.Size(250, 63)
         Me.gbRefining.TabIndex = 36
         Me.gbRefining.TabStop = False
         Me.gbRefining.Text = "Refining:"
@@ -426,7 +436,7 @@ Partial Class frmSettings
         '
         Me.cmbRefineTax.FormattingEnabled = True
         Me.cmbRefineTax.Items.AddRange(New Object() {"0%", "1%", "2%", "3%", "4%", "5%", "6%", "7%", "8%", "9%", "10%"})
-        Me.cmbRefineTax.Location = New System.Drawing.Point(169, 12)
+        Me.cmbRefineTax.Location = New System.Drawing.Point(188, 12)
         Me.cmbRefineTax.Name = "cmbRefineTax"
         Me.cmbRefineTax.Size = New System.Drawing.Size(56, 21)
         Me.cmbRefineTax.TabIndex = 44
@@ -455,7 +465,7 @@ Partial Class frmSettings
         Me.cmbRefiningEfficiency.FormattingEnabled = True
         Me.cmbRefiningEfficiency.ItemHeight = 13
         Me.cmbRefiningEfficiency.Items.AddRange(New Object() {"50%", "52%", "53%", "54%", "57%", "60%"})
-        Me.cmbRefiningEfficiency.Location = New System.Drawing.Point(169, 35)
+        Me.cmbRefiningEfficiency.Location = New System.Drawing.Point(188, 36)
         Me.cmbRefiningEfficiency.Name = "cmbRefiningEfficiency"
         Me.cmbRefiningEfficiency.Size = New System.Drawing.Size(56, 21)
         Me.cmbRefiningEfficiency.TabIndex = 35
@@ -530,7 +540,7 @@ Partial Class frmSettings
         Me.gbImplants.Controls.Add(Me.cmbBeanCounterRefining)
         Me.gbImplants.Location = New System.Drawing.Point(411, 12)
         Me.gbImplants.Name = "gbImplants"
-        Me.gbImplants.Size = New System.Drawing.Size(237, 157)
+        Me.gbImplants.Size = New System.Drawing.Size(250, 157)
         Me.gbImplants.TabIndex = 36
         Me.gbImplants.TabStop = False
         Me.gbImplants.Text = "Implants:"
@@ -626,21 +636,11 @@ Partial Class frmSettings
         Me.rbtnExportDefault.Text = "Default"
         Me.rbtnExportDefault.UseVisualStyleBackColor = True
         '
-        'chkSaveBPRelicsDecryptors
-        '
-        Me.chkSaveBPRelicsDecryptors.AutoSize = True
-        Me.chkSaveBPRelicsDecryptors.Location = New System.Drawing.Point(9, 51)
-        Me.chkSaveBPRelicsDecryptors.Name = "chkSaveBPRelicsDecryptors"
-        Me.chkSaveBPRelicsDecryptors.Size = New System.Drawing.Size(212, 17)
-        Me.chkSaveBPRelicsDecryptors.TabIndex = 38
-        Me.chkSaveBPRelicsDecryptors.Text = "Save Relics and Decryptors on BP Tab"
-        Me.chkSaveBPRelicsDecryptors.UseVisualStyleBackColor = True
-        '
         'frmSettings
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(653, 357)
+        Me.ClientSize = New System.Drawing.Size(667, 357)
         Me.Controls.Add(Me.gbExportOptions)
         Me.Controls.Add(Me.gbStartupOptions)
         Me.Controls.Add(Me.gbImplants)

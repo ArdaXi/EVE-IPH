@@ -107,7 +107,7 @@ Public Class Blueprint
     Private SingleInventedREdBPCRuns As Integer ' The runs on one bp invented
     Private NumInventionJobs As Integer ' Number of invention jobs we will do
 
-    Private CopyCost As Double ' Total Cost of the BPCs for the T2 item - for now set this to 0. TO DO add copy materials for things like data sheets, etc
+    Private CopyCost As Double ' Total Cost of the BPCs for the T2 item - for copy materials for things like data sheets, etc when needed
     Private CopyTime As Double ' Total time in seconds to copy the BPCs needed for the T2 item
     Private CopyUsage As Double ' Total Cost to make a copy
 
@@ -646,8 +646,9 @@ Public Class Blueprint
                         TempComponentFacility = ComponentManufacturingFacility
                     End If
 
+                    ' For now only assume 1 bp and 1 line to build it - Later this section will have to be updated to use the remaining lines or maybe lines = numbps
                     ComponentBlueprint = New Blueprint(readerME.GetInt64(0), CLng(CurrentMaterial.GetQuantity), TempME, TempTE, _
-                              1, NumberofProductionLines, BPCharacter, UserSettings, BuildBuy, _
+                              1, 1, BPCharacter, UserSettings, BuildBuy, _
                               0, ComponentManufacturingTeam, TempComponentFacility, _
                               ComponentManufacturingTeam, ComponentManufacturingFacility, CapitalComponentManufacturingFacility)
 
@@ -1041,9 +1042,7 @@ Public Class Blueprint
         ' Figure out how many jobs per batch we need to run, find the smallest of the two
         If NumberofBPs > NumberofProductionLines Then
             JobsPerBatch = NumberofProductionLines
-        ElseIf NumberofBPs < NumberofProductionLines Then
-            JobsPerBatch = NumberofBPs
-        Else ' equal
+        ElseIf NumberofBPs <= NumberofProductionLines Then
             JobsPerBatch = NumberofBPs
         End If
 

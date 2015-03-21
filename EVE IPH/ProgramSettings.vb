@@ -386,8 +386,10 @@ Public Class ProgramSettings
     Public DefaultMiningRefineCorpTax As Double = 0.05
     Public DefaultMiningRorqDeployed As Boolean = True
     Public DefaultMiningDroneM3perHour As Double = 0.0
-    Public DefaultMiningRefineOre As Boolean = True
-    Public DefaultIndustrialReconfig As Integer = 0
+    Public DefaultMiningRefinedOre As Boolean = True
+    Public DefaultMiningCompressedOre As Boolean = False
+    Public DefaultMiningUnrefinedOre As Boolean = False
+    Public DefaultMiningIndustrialReconfig As Integer = 0
     Public DefaultMiningRig As Boolean = False
 
     ' Industry Jobs column settings
@@ -2137,8 +2139,10 @@ Public Class ProgramSettings
                     .CheckMiningForemanMindLink = CBool(GetSettingValue(MiningSettingsFileName, SettingTypes.TypeBoolean, "MiningSettings", "CheckMiningForemanMindLink", DefaultMiningCheckMiningForemanMindLink))
                     .CheckRorqDeployed = CBool(GetSettingValue(MiningSettingsFileName, SettingTypes.TypeBoolean, "MiningSettings", "CheckRorqDeployed", DefaultMiningRorqDeployed))
                     .MiningDroneM3perHour = CDbl(GetSettingValue(MiningSettingsFileName, SettingTypes.TypeDouble, "MiningSettings", "MiningDroneM3perHour", DefaultMiningDroneM3perHour))
-                    .RefineOre = CBool(GetSettingValue(MiningSettingsFileName, SettingTypes.TypeBoolean, "MiningSettings", "RefineOre", DefaultMiningRefineOre))
-                    .IndustrialReconfig = CInt(GetSettingValue(MiningSettingsFileName, SettingTypes.TypeInteger, "MiningSettings", "IndustrialReconfig", DefaultIndustrialReconfig))
+                    .RefinedOre = CBool(GetSettingValue(MiningSettingsFileName, SettingTypes.TypeBoolean, "MiningSettings", "RefinedOre", DefaultMiningRefinedOre))
+                    .UnrefinedOre = CBool(GetSettingValue(MiningSettingsFileName, SettingTypes.TypeBoolean, "MiningSettings", "UnrefinedOre", DefaultMiningUnrefinedOre))
+                    .CompressedOre = CBool(GetSettingValue(MiningSettingsFileName, SettingTypes.TypeBoolean, "MiningSettings", "CompressedOre", DefaultMiningCompressedOre))
+                    .IndustrialReconfig = CInt(GetSettingValue(MiningSettingsFileName, SettingTypes.TypeInteger, "MiningSettings", "IndustrialReconfig", DefaultMiningIndustrialReconfig))
                     .MercoxitMiningRig = CBool(GetSettingValue(MiningSettingsFileName, SettingTypes.TypeBoolean, "MiningSettings", "MercoxitMiningRig", DefaultMiningRig))
                     .IceMiningRig = CBool(GetSettingValue(MiningSettingsFileName, SettingTypes.TypeBoolean, "MiningSettings", "IceMiningRig", DefaultMiningRig))
                     .CheckSovWormhole = CBool(GetSettingValue(MiningSettingsFileName, SettingTypes.TypeBoolean, "MiningSettings", "CheckSovWormhole", DefaultMiningCheckSovWormhole))
@@ -2231,8 +2235,10 @@ Public Class ProgramSettings
             .CheckMiningForemanMindLink = DefaultMiningCheckMiningForemanMindLink
             .CheckRorqDeployed = DefaultMiningRorqDeployed
             .MiningDroneM3perHour = DefaultMiningDroneM3perHour
-            .RefineOre = DefaultMiningRefineOre
-            .IndustrialReconfig = DefaultIndustrialReconfig
+            .RefinedOre = DefaultMiningRefinedOre
+            .UnrefinedOre = DefaultMiningUnrefinedOre
+            .CompressedOre = DefaultMiningCompressedOre
+            .IndustrialReconfig = DefaultMiningIndustrialReconfig
             .MercoxitMiningRig = DefaultMiningRig
             .IceMiningRig = DefaultMiningRig
         End With
@@ -2245,7 +2251,7 @@ Public Class ProgramSettings
 
     ' Saves the tab settings to XML
     Public Sub SaveMiningSettings(SentSettings As MiningTabSettings)
-        Dim MiningSettingsList(61) As Setting
+        Dim MiningSettingsList(63) As Setting
 
         Try
             MiningSettingsList(0) = New Setting("OreType", CStr(SentSettings.OreType))
@@ -2292,7 +2298,7 @@ Public Class ProgramSettings
             MiningSettingsList(41) = New Setting("CheckMiningForemanMindLink", CStr(SentSettings.CheckMiningForemanMindLink))
             MiningSettingsList(42) = New Setting("CheckRorqDeployed", CStr(SentSettings.CheckRorqDeployed))
             MiningSettingsList(43) = New Setting("MiningDroneM3perHour", CStr(SentSettings.MiningDroneM3perHour))
-            MiningSettingsList(44) = New Setting("RefineOre", CStr(SentSettings.RefineOre))
+            MiningSettingsList(44) = New Setting("RefinedOre", CStr(SentSettings.RefinedOre))
             MiningSettingsList(45) = New Setting("IndustrialReconfig", CStr(SentSettings.IndustrialReconfig))
             MiningSettingsList(46) = New Setting("MercoxitMiningRig", CStr(SentSettings.MercoxitMiningRig))
             MiningSettingsList(47) = New Setting("IceMiningRig", CStr(SentSettings.IceMiningRig))
@@ -2310,6 +2316,8 @@ Public Class ProgramSettings
             MiningSettingsList(59) = New Setting("CheckSovC4", CStr(SentSettings.CheckSovC4))
             MiningSettingsList(60) = New Setting("CheckSovC5", CStr(SentSettings.CheckSovC5))
             MiningSettingsList(61) = New Setting("CheckSovC6", CStr(SentSettings.CheckSovC6))
+            MiningSettingsList(62) = New Setting("CompressedOre", CStr(SentSettings.CompressedOre))
+            MiningSettingsList(63) = New Setting("UnrefinedOre", CStr(SentSettings.UnrefinedOre))
 
             Call WriteSettingsToFile(MiningSettingsFileName, MiningSettingsList, "MiningSettings")
 
@@ -3126,7 +3134,7 @@ Public Class ProgramSettings
             IndustryFlipBeltSettingsList(0) = New Setting("CycleTime", CStr(SentSettings.CycleTime))
             IndustryFlipBeltSettingsList(1) = New Setting("m3perCycle", CStr(SentSettings.m3perCycle))
             IndustryFlipBeltSettingsList(2) = New Setting("NumMiners", CStr(SentSettings.NumMiners))
-            IndustryFlipBeltSettingsList(3) = New Setting("CompressOre", CStr(SentSettings.CompressOre))
+            IndustryFlipBeltSettingsList(3) = New Setting("CompressedOre", CStr(SentSettings.CompressOre))
             IndustryFlipBeltSettingsList(4) = New Setting("IPHperMiner", CStr(SentSettings.IPHperMiner))
             IndustryFlipBeltSettingsList(5) = New Setting("IncludeBrokerFees", CStr(SentSettings.IncludeBrokerFees))
             IndustryFlipBeltSettingsList(6) = New Setting("IncludeTaxes", CStr(SentSettings.IncludeTaxes))
@@ -4884,7 +4892,10 @@ Public Structure MiningTabSettings
     Dim IndustrialReconfig As Integer
 
     Dim MiningDroneM3perHour As Double
-    Dim RefineOre As Boolean
+
+    Dim RefinedOre As Boolean
+    Dim UnrefinedOre As Boolean
+    Dim CompressedOre As Boolean
 
     Dim MercoxitMiningRig As Boolean
     Dim IceMiningRig As Boolean

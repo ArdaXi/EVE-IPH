@@ -175,6 +175,29 @@ Public Class Materials
 
     End Sub
 
+    ' Multiplies the quantity of each material in the list by the sent multiple
+    Public Sub MultiplyMaterials(ByVal SentMultiple As Integer)
+
+        If SentMultiple <= 1 Then
+            Exit Sub
+        End If
+
+        ' See if the material is in the list
+        If Not IsNothing(MaterialList) Then
+            ' Reset the totals
+            TotalMaterialsCost = 0
+            TotalMaterialsVolume = 0
+            For i = 0 To MaterialList.Count - 1
+                ' Loop through and multiply everything
+                MaterialList(i).AddQuantity(MaterialList(i).GetQuantity * SentMultiple)
+                ' Update the totals
+                TotalMaterialsCost = TotalMaterialsCost + MaterialList(i).GetTotalCost
+                TotalMaterialsVolume = TotalMaterialsVolume + MaterialList(i).GetTotalVolume
+            Next
+        End If
+
+    End Sub
+
     ' Removes a Single material from the list
     Public Sub RemoveMaterial(ByVal SentMaterial As Material)
         Dim i As Integer

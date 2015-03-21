@@ -339,10 +339,10 @@ Public Class frmMain
 
     Private NoPOSCategoryIDs As List(Of Long)
 
-    ' Column width consts - may change depending on Ore, Ice or Gas
-    Private Const MineOreNameColumnWidth As Integer = 116
-    Private Const MineRefineYieldColumnWidth As Integer = 69
-    Private Const MineCrystalColumnWidth As Integer = 43
+    ' Column width consts - may change depending on Ore, Ice or Gas so change the widths of the columns based on these and use them to add and move
+    Private Const MineOreNameColumnWidth As Integer = 120
+    Private Const MineRefineYieldColumnWidth As Integer = 70
+    Private Const MineCrystalColumnWidth As Integer = 45
 
 #Region "Initialization Code"
 
@@ -376,6 +376,7 @@ Public Class frmMain
         End If
 
         Call SetProgress("Initializing...")
+
 
         ' This call is required by the designer.
         InitializeComponent()
@@ -786,12 +787,13 @@ Public Class frmMain
         '**** Mining Tab Initializations ********
         '****************************************
         lstMineGrid.Columns.Add("Ore Name", MineOreNameColumnWidth, HorizontalAlignment.Left)
-        lstMineGrid.Columns.Add("Unit Price", 66, HorizontalAlignment.Right)
+        lstMineGrid.Columns.Add("Refine Type", 70, HorizontalAlignment.Left)
+        lstMineGrid.Columns.Add("Unit Price", 100, HorizontalAlignment.Right)
         lstMineGrid.Columns.Add("Refine Yield", MineRefineYieldColumnWidth, HorizontalAlignment.Center)
         lstMineGrid.Columns.Add("Crystal", MineCrystalColumnWidth, HorizontalAlignment.Left)
-        lstMineGrid.Columns.Add("m3 per Cycle", 73, HorizontalAlignment.Right)
-        lstMineGrid.Columns.Add("Units per Hour", 80, HorizontalAlignment.Right)
-        lstMineGrid.Columns.Add("Isk per Hour", 100, HorizontalAlignment.Right)
+        lstMineGrid.Columns.Add("m3 per Cycle", 75, HorizontalAlignment.Right)
+        lstMineGrid.Columns.Add("Units per Hour", 94, HorizontalAlignment.Right)
+        lstMineGrid.Columns.Add("Isk per Hour", 105, HorizontalAlignment.Right)
 
         MineProcessingCheckBoxes = DirectCast(ControlArrayUtils.getControlArray(Me, Me.MyControls, "chkOreProcessing"), CheckBox())
         MineProcessingLabels = DirectCast(ControlArrayUtils.getControlArray(Me, Me.MyControls, "lblOreProcessing"), Label())
@@ -3504,7 +3506,7 @@ NoBonus:
                                      IncludeUsage As Boolean, MEValue As String, SentRuns As String)
         Dim BPTech As Integer
         Dim BPDecryptor As Decryptor = NoDecryptor
-        Dim DecryptorName As String = ""
+        Dim DecryptorName As String = None
 
         Dim readerBP As SQLiteDataReader
         Dim readerRelic As SQLiteDataReader
@@ -3532,8 +3534,8 @@ NoBonus:
                 If Not CBool(InStr(Inputs, "No Decryptor")) Then
                     If BPTech = 2 Then
                         DecryptorName = Inputs
-                    Else
-                        DecryptorName = Inputs.Substring(0, InStr(Inputs, "-") - 2)
+                    Else ' For T3
+                        DecryptorName = Inputs.Substring(0, InStr(Inputs, "|") - 1)
                     End If
                 End If
             End If
@@ -3546,7 +3548,7 @@ NoBonus:
                 LoadingT3Decryptors = False
                 ' Also load the relic
                 LoadingRelics = True
-                Dim TempRelic As String = Inputs.Substring(InStr(Inputs, "-") + 1)
+                Dim TempRelic As String = Inputs.Substring(InStr(Inputs, "|"))
                 SQL = "SELECT typeName FROM INVENTORY_TYPES, INDUSTRY_ACTIVITY_PRODUCTS WHERE productTypeID =" & BPID & " "
                 SQL = SQL & "and typeID = blueprintTypeID AND typeName LIKE '" & TempRelic & "%'"
 
@@ -17052,12 +17054,14 @@ CheckTechs:
 
                     ' Set the number of BPs
                     With InsertItem
-                        If .TechLevel = "T1" Or (.TechLevel = "T2" And chkCalcAutoCalcT2NumBPs.Checked = False) Then
+                        If .TechLevel = "T2" And chkCalcAutoCalcT2NumBPs.Checked = False Then
                             ' Just use the number of bps 
                             NumberofBlueprints = CInt(txtCalcNumBPs.Text)
                         ElseIf .TechLevel = "T3" Or (.TechLevel = "T2" And chkCalcAutoCalcT2NumBPs.Checked = True) Then
                             ' For T3 or if they have calc checked, we will never have a BPO so determine the number of BPs
                             NumberofBlueprints = GetNumBPs(.BPID, CInt(.TechLevel.Substring(1, 1)), .Runs, .Decryptor.RunMod)
+                        Else
+                            NumberofBlueprints = CInt(txtCalcNumBPs.Text)
                         End If
                     End With
 
@@ -21048,7 +21052,9 @@ Leave:
 
         If cmbMineOreType.Text = "Ice" Then
             chkMineIncludeHighYieldOre.Enabled = False
-            chkMineRefineOre.Enabled = True
+            chkMineRefinedOre.Enabled = True
+            chkMineUnrefinedOre.Enabled = True
+            chkMineCompressedOre.Enabled = True
             chkMineIncludeHighYieldOre.Text = "High Yield Ice"
             chkMineIncludeHighSec.Text = "High Sec Ice"
             chkMineIncludeLowSec.Text = "Low Sec Ice"
@@ -21072,7 +21078,7 @@ Leave:
             chkMineC5.Enabled = False
             chkMineC6.Enabled = False
 
-            If chkMineRefineOre.Checked Then
+            If chkMineRefinedOre.Checked Then
                 gbMineBaseRefineSkills.Enabled = True
                 gbMineStationYield.Enabled = True
             End If
@@ -21081,7 +21087,9 @@ Leave:
 
         ElseIf cmbMineOreType.Text = "Ore" Then
             chkMineIncludeHighYieldOre.Enabled = True
-            chkMineRefineOre.Enabled = True
+            chkMineRefinedOre.Enabled = True
+            chkMineUnrefinedOre.Enabled = True
+            chkMineCompressedOre.Enabled = True
             chkMineIncludeHighYieldOre.Text = "High Yield Ores"
             chkMineIncludeHighSec.Text = "High Sec Ore"
             chkMineIncludeLowSec.Text = "Low Sec Ore"
@@ -21104,7 +21112,7 @@ Leave:
             chkMineC5.Enabled = True
             chkMineC6.Enabled = True
 
-            If chkMineRefineOre.Checked Then
+            If chkMineRefinedOre.Checked Then
                 gbMineBaseRefineSkills.Enabled = True
                 gbMineStationYield.Enabled = True
             End If
@@ -21113,7 +21121,9 @@ Leave:
 
         ElseIf cmbMineOreType.Text = "Gas" Then
             chkMineIncludeHighYieldOre.Enabled = False
-            chkMineRefineOre.Enabled = False
+            chkMineRefinedOre.Enabled = False
+            chkMineUnrefinedOre.Enabled = False
+            chkMineCompressedOre.Enabled = False
             chkMineIncludeHighYieldOre.Text = "High Yield Gas"
             chkMineIncludeHighSec.Text = "High Sec Gas"
             chkMineIncludeLowSec.Text = "Low Sec Gas"
@@ -21306,7 +21316,7 @@ Leave:
             lblMineTotalJumpM3.Enabled = True
             txtMineTotalJumpM3.Enabled = True
             rbtnMineJumpCompress.Enabled = True
-            If chkMineRefineOre.Checked Then
+            If chkMineRefinedOre.Checked And chkMineRefinedOre.Enabled Then
                 rbtnMineJumpMinerals.Enabled = True
             Else
                 rbtnMineJumpMinerals.Enabled = False
@@ -21374,25 +21384,24 @@ Leave:
         End If
     End Sub
 
-    Private Sub chkMineRefineOre_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkMineRefineOre.CheckedChanged
+    'Private Sub chkMineRefineOre_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkMineRefinedOre.CheckedChanged
 
-        If chkMineRefineOre.Checked And cmbMineOreType.Text <> "Gas" Then
-            gbMineBaseRefineSkills.Enabled = True
-            gbMineStationYield.Enabled = True
-            'gbMineRefining.Enabled = True
-            If chkMineIncludeJumpCosts.Checked Then
-                rbtnMineJumpMinerals.Enabled = True
-            End If
-            Call UpdateProcessingSkills()
-        Else
-            gbMineBaseRefineSkills.Enabled = False
-            gbMineStationYield.Enabled = False
-            'gbMineRefining.Enabled = False
-            rbtnMineJumpMinerals.Enabled = False
-            rbtnMineJumpCompress.Checked = True
-        End If
+    '    If cmbMineOreType.Text <> "Gas" Then
+    '        gbMineBaseRefineSkills.Enabled = True
+    '        gbMineStationYield.Enabled = True
+    '        If chkMineIncludeJumpCosts.Checked Then
+    '            rbtnMineJumpMinerals.Enabled = True
+    '        End If
+    '        Call UpdateProcessingSkills()
+    '    Else
+    '        gbMineBaseRefineSkills.Enabled = False
+    '        gbMineStationYield.Enabled = False
 
-    End Sub
+    '        rbtnMineJumpMinerals.Enabled = False
+    '        rbtnMineJumpCompress.Checked = True
+    '    End If
+
+    'End Sub
 
     Private Sub chkMineForemanLaserRangeBoost_Click(sender As Object, e As System.EventArgs) Handles chkMineForemanLaserRangeBoost.Click
         Call UpdateMiningBoosterObjects()
@@ -21634,9 +21643,12 @@ Leave:
             Call UpdateBoosterSkills()
 
             ' Refining
-            chkMineRefineOre.Checked = .RefineOre
+            chkMineRefinedOre.Checked = .RefinedOre
+            chkMineUnrefinedOre.Checked = .UnrefinedOre
+            chkMineCompressedOre.Checked = .CompressedOre
+
             If .OreType <> "Gas" Then
-                If chkMineRefineOre.Checked Then
+                If chkMineRefinedOre.Checked Then
                     gbMineBaseRefineSkills.Enabled = True
                     gbMineStationYield.Enabled = True
                 Else
@@ -21650,7 +21662,9 @@ Leave:
                 gbMineRefining.Enabled = False
                 If .OreType = "Gas" Then
                     ' Can't refine gas
-                    chkMineRefineOre.Checked = False
+                    chkMineRefinedOre.Checked = False
+                    chkMineUnrefinedOre.Checked = False
+                    chkMineCompressedOre.Checked = False
                 End If
             End If
 
@@ -21855,7 +21869,9 @@ Leave:
             .CheckHighYieldOres = chkMineIncludeHighYieldOre.Checked
 
             .MiningDroneM3perHour = CDbl(txtMineMiningDroneM3.Text)
-            .RefineOre = chkMineRefineOre.Checked
+            .RefinedOre = chkMineRefinedOre.Checked
+            .UnrefinedOre = chkMineUnrefinedOre.Checked
+            .CompressedOre = chkMineCompressedOre.Checked
 
             ' Upgrades and miner types - different for Ice, Ore, or Gas
             If .OreType = "Ore" Then
@@ -22875,7 +22891,6 @@ Leave:
         Dim CrystalType As String = "" ' For reference out of getting crystals
 
         Dim Orem3PerSecond As Double
-        Dim OrePerHour As Double
         Dim OrePerSecond As Double
 
         ' Ice stuff
@@ -23042,8 +23057,11 @@ Leave:
 
         lblMineCycleTime.Text = FormatNumber(BaseCycleTime, 1) & " s"
 
+        Me.Cursor = Cursors.WaitCursor
+
         ' Loop through all the ores and determine ore amount, refine, 
         While readerMine.Read
+            Application.DoEvents()
             ' DB Data
             TempOre.OreID = readerMine.GetInt64(0)
             TempOre.OreName = readerMine.GetString(1)
@@ -23072,7 +23090,7 @@ Leave:
                 CrystalMiningYield = ShipMiningYield * GetMiningCrystalBonus(TempOre.OreName, CrystalType)
                 ' Save the crystal type
                 TempOre.CrystalType = CrystalType
-                TempOre.OrePerCycle = CrystalMiningYield
+                TempOre.OreUnitsPerCycle = CrystalMiningYield
 
                 ' Calculate the m3 per second for this ore including mining drone input
                 Orem3PerSecond = (CrystalMiningYield / BaseCycleTime) + (CDbl(txtMineMiningDroneM3.Text) / 3600)
@@ -23087,13 +23105,13 @@ Leave:
                 ' Total ice blocks per hour
                 IceBlocksPerHour = CInt(IceCylesPerHour * ShipMiningYield)
                 ' Total ice blocks per cycle
-                TempOre.OrePerCycle = ShipMiningYield * 1000 ' Ice is 1000 m3
+                TempOre.OreUnitsPerCycle = ShipMiningYield * 1000 ' Ice is 1000 m3
 
             ElseIf GasMining Then
                 ' Save the crystal type
                 TempOre.CrystalType = None
 
-                TempOre.OrePerCycle = ShipMiningYield
+                TempOre.OreUnitsPerCycle = ShipMiningYield
                 Orem3PerSecond = ShipMiningYield / BaseCycleTime
 
                 ' This is the m3 per second, but need to get this ORE per second based on it's volume
@@ -23140,32 +23158,63 @@ Leave:
             End If
 
             If IceMining Then
-                OrePerHour = IceBlocksPerHour
+                TempOre.UnitsPerHour = IceBlocksPerHour
             Else
-                OrePerHour = OrePerSecond * 3600
+                TempOre.UnitsPerHour = OrePerSecond * 3600
             End If
 
             ' Only refine ore or ice
-            If chkMineRefineOre.Checked And Not GasMining Then
+            If chkMineRefinedOre.Checked And Not GasMining Then
                 ' Refine total Ore we mined for an hour and save the total isk/hour
-                RefinedMaterials = RefiningStation.RefineOre(TempOre.OreID, GetOreProcessingSkill(TempOre.OreName), OrePerHour, _
+                RefinedMaterials = RefiningStation.RefineOre(TempOre.OreID, GetOreProcessingSkill(TempOre.OreName), TempOre.UnitsPerHour, _
                                                              chkMineIncludeTaxes.Checked, chkMineIncludeBrokerFees.Checked, RefineryYield, cmbMineOreType.Text)
 
                 TempOre.RefineYield = RefineryYield
 
-                TempOre.IPH = RefinedMaterials.GetTotalMaterialsCost - GetJumpCosts(RefinedMaterials, TempOre, OrePerHour)
+                TempOre.IPH = RefinedMaterials.GetTotalMaterialsCost - GetJumpCosts(RefinedMaterials, TempOre, TempOre.UnitsPerHour)
                 If chkMineRorqDeployedMode.Checked And CInt(cmbMineIndustReconfig.Text) <> 0 Then
                     ' Add (subtract from total isk) the heavy water cost
                     TempOre.IPH = TempOre.IPH - HeavyWaterCost
                 End If
-                TempOre.UnitsPerHour = OrePerHour
 
                 ' Calculate the unit price by refining one batch
                 RefinedMaterials = RefiningStation.RefineOre(TempOre.OreID, GetOreProcessingSkill(TempOre.OreName), TempOre.UnitsToRefine, _
                                                              chkMineIncludeTaxes.Checked, chkMineIncludeBrokerFees.Checked, RefineryYield, cmbMineOreType.Text)
                 TempOre.OreUnitPrice = RefinedMaterials.GetTotalMaterialsCost / TempOre.UnitsToRefine
+                TempOre.RefineType = "Refined"
+                OreList.Add(TempOre)
 
-            Else ' Just use the Ore prices since we are selling it straight
+            End If
+
+            If chkMineCompressedOre.Checked And Not GasMining Then
+                ' First, get the unit price and volume for the compressed ore
+                SQL = "SELECT PRICE FROM ITEM_PRICES WHERE ITEM_NAME LIKE 'Compressed " & TempOre.OreName & "'"
+                DBCommand = New SQLiteCommand(SQL, DB)
+                readerOre = DBCommand.ExecuteReader
+
+                If readerOre.Read() Then
+                    TempOre.OreUnitPrice = readerOre.GetDouble(0)
+                    ' Reset the units mined
+                    Dim SavedUnits As Double = TempOre.UnitsPerHour
+                    If Not IceMining Then
+                        ' All ores are 100 to 1 compressed block, ice is 1 to 1
+                        TempOre.UnitsPerHour = TempOre.UnitsPerHour / 100
+                    End If
+
+                    ' Units we mined, times unit price is IPH (minus Jump fuel costs)
+                    TempOre.IPH = (TempOre.UnitsPerHour * TempOre.OreUnitPrice) - GetJumpCosts(Nothing, TempOre, SavedUnits) ' Treat the compression for jump costs individually, so use original value
+                    TempOre.RefineYield = 0
+                    TempOre.RefineType = "Compressed"
+                    OreList.Add(TempOre)
+                    ' Reset the units if we do unrefined
+                    TempOre.UnitsPerHour = SavedUnits
+                End If
+
+                readerOre.Close()
+
+            End If
+
+            If chkMineUnrefinedOre.Checked Or GasMining Then ' Just use the Ore prices since we are selling it straight
                 ' First, get the unit price for the ore
                 SQL = "SELECT PRICE FROM ITEM_PRICES WHERE ITEM_NAME = '" & TempOre.OreName & "'"
                 DBCommand = New SQLiteCommand(SQL, DB)
@@ -23174,19 +23223,16 @@ Leave:
                 If readerOre.Read() Then
                     TempOre.OreUnitPrice = readerOre.GetDouble(0)
                     ' Units we mined, times unit price is IPH (minus Jump fuel costs)
-                    TempOre.IPH = (OrePerHour * TempOre.OreUnitPrice) - GetJumpCosts(Nothing, TempOre, OrePerHour)
-                Else
-                    TempOre.OreUnitPrice = 0
-                    TempOre.IPH = 0
+                    TempOre.IPH = (TempOre.UnitsPerHour * TempOre.OreUnitPrice) - GetJumpCosts(Nothing, TempOre, TempOre.UnitsPerHour)
+
+                    TempOre.RefineYield = 0
+                    TempOre.RefineType = "Unrefined"
+                    OreList.Add(TempOre)
                 End If
 
-                TempOre.RefineYield = 0
-                TempOre.UnitsPerHour = OrePerHour
-
                 readerOre.Close()
-            End If
 
-            OreList.Add(TempOre)
+            End If
 
         End While
 
@@ -23199,16 +23245,16 @@ Leave:
         Select Case cmbMineOreType.Text
             Case "Ore"
                 lstMineGrid.Columns(0).Width = MineOreNameColumnWidth
-                lstMineGrid.Columns(2).Width = MineRefineYieldColumnWidth
-                lstMineGrid.Columns(3).Width = MineCrystalColumnWidth
+                lstMineGrid.Columns(3).Width = MineRefineYieldColumnWidth
+                lstMineGrid.Columns(4).Width = MineCrystalColumnWidth
             Case "Ice"
                 lstMineGrid.Columns(0).Width = MineOreNameColumnWidth + MineCrystalColumnWidth
-                lstMineGrid.Columns(2).Width = MineRefineYieldColumnWidth
-                lstMineGrid.Columns(3).Width = 0 ' Hide
+                lstMineGrid.Columns(3).Width = MineRefineYieldColumnWidth
+                lstMineGrid.Columns(4).Width = 0 ' Hide
             Case "Gas"
                 lstMineGrid.Columns(0).Width = MineOreNameColumnWidth + MineCrystalColumnWidth + MineRefineYieldColumnWidth
-                lstMineGrid.Columns(2).Width = 0
-                lstMineGrid.Columns(3).Width = 0 ' Hide
+                lstMineGrid.Columns(3).Width = 0
+                lstMineGrid.Columns(4).Width = 0 ' Hide
         End Select
 
         ' Finally load the list
@@ -23218,10 +23264,15 @@ Leave:
             If Not OreList(i).OreName.Contains("Mercoxit") Or (OreList(i).OreName.Contains("Mercoxit") And cmbMineMiningLaser.Text.Contains("Deep Core")) Then
                 lstOreRow = lstMineGrid.Items.Add(OreList(i).OreName)
                 'The remaining columns are subitems  
+                lstOreRow.SubItems.Add(OreList(i).RefineType)
                 lstOreRow.SubItems.Add(FormatNumber(OreList(i).OreUnitPrice, 2))
-                lstOreRow.SubItems.Add(FormatPercent(OreList(i).RefineYield, 3))
+                If OreList(i).RefineYield = 0 Then
+                    lstOreRow.SubItems.Add("-")
+                Else
+                    lstOreRow.SubItems.Add(FormatPercent(OreList(i).RefineYield, 3))
+                End If
                 lstOreRow.SubItems.Add(OreList(i).CrystalType)
-                lstOreRow.SubItems.Add(FormatNumber(OreList(i).OrePerCycle, 2))
+                lstOreRow.SubItems.Add(FormatNumber(OreList(i).OreUnitsPerCycle, 2))
                 lstOreRow.SubItems.Add(FormatNumber(Math.Round(OreList(i).UnitsPerHour), 0))
                 lstOreRow.SubItems.Add(FormatNumber(OreList(i).IPH, 2))
             End If
@@ -23233,6 +23284,7 @@ Leave:
         lblMineRange.Text = FormatNumber(CalculateMiningRange(GetAttribute("Optimal Range", cmbMineMiningLaser.Text)) / 1000, 2) & " km"
 
         i = 0
+        Me.Cursor = Cursors.Default
 
     End Sub
 
@@ -23322,6 +23374,13 @@ Leave:
         If CStr(cmbMineMiningLaser.Text) = "" Then
             MsgBox("No mining laser selected. Check ship type and skills selected.", vbExclamation, Application.ProductName)
             cmbMineMiningLaser.Focus()
+            Return False
+        End If
+
+        ' Make sure they have one of the three types checked
+        If Not cmbMineOreType.Text <> "Gas" And chkMineRefinedOre.Checked = False And chkMineUnrefinedOre.Checked = False And chkMineCompressedOre.Checked = False Then
+            MsgBox("You must select a type of Ore Processing to calculate.", vbExclamation, Application.ProductName)
+            gbMineOreProcessingType.Focus()
             Return False
         End If
 
@@ -23933,8 +23992,9 @@ Leave:
         Dim OreVolume As Double
         Dim IPH As Double
         Dim UnitsPerHour As Double
-        Dim OrePerCycle As Double
+        Dim OreUnitsPerCycle As Double
         Dim UnitsToRefine As Integer
+        Dim RefineType As String
     End Structure
 
     ' For sorting a list of Mining Ore

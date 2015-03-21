@@ -1456,7 +1456,16 @@ Public Class frmShoppingList
 
     ' Double Click build and load the blueprint for the component they clicked
     Private Sub lstBuild_DoubleClick(sender As Object, e As System.EventArgs) Handles lstBuild.DoubleClick
-        Call frmMain.LoadBPfromDoubleClick(CLng(lstBuild.SelectedItems(0).SubItems(0).Text), "Raw", None, "Shopping List", _
+        Dim rsBPLookup As SQLiteDataReader
+        Dim SQL As String
+
+        SQL = "SELECT BLUEPRINT_ID FROM ALL_BLUEPRINTS WHERE ITEM_ID = " & lstBuild.SelectedItems(0).SubItems(0).Text
+
+        DBCommand = New SQLiteCommand(Sql, DB)
+        rsBPLookup = DBCommand.ExecuteReader
+        rsBPLookup.Read()
+
+        Call frmMain.LoadBPfromDoubleClick(rsBPLookup.GetInt64(0), "Raw", None, "Shopping List", _
                                            Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, _
                                            chkTotalItemTax.Checked, chkTotalItemFees.Checked, chkUsage.Checked, _
                                            lstBuild.SelectedItems(0).SubItems(3).Text, lstBuild.SelectedItems(0).SubItems(2).Text)
@@ -1472,19 +1481,33 @@ Public Class frmShoppingList
 
     ' Double Click build and load the blueprint for the item they clicked
     Private Sub lstItems_DoubleClick(sender As Object, e As System.EventArgs) Handles lstItems.DoubleClick
-        Dim InputDecryptorRelic As String = ""
+        Dim InputDecryptor As String = ""
+        Dim InputRelic As String = ""
         Dim Inputs As String = None
         Dim TempMaterial As Material = Nothing
         Dim rsBPLookup As SQLiteDataReader
         Dim SQL As String
 
-        ' Check Decryptor or relic
+        ' Check Decryptor
         If lstItems.SelectedItems(0).SubItems(5).Text <> "" Then
-            InputDecryptorRelic = lstItems.SelectedItems(0).SubItems(5).Text
+            InputDecryptor = lstItems.SelectedItems(0).SubItems(6).Text
         End If
 
-        If InputDecryptorRelic <> "" Then
-            Inputs = InputDecryptorRelic
+        ' Check for relic
+        If lstItems.SelectedItems(0).SubItems(1).Text.Contains("(") Then
+            With lstItems.SelectedItems(0).SubItems(1)
+                InputRelic = .Text.Substring(InStr(.Text, "("), InStr(.Text, ")") - InStr(.Text, "(") - 1)
+            End With
+        End If
+
+        If InputDecryptor <> "" And InputRelic <> "" Then
+            Inputs = InputDecryptor & "|" & InputRelic
+        ElseIf InputRelic <> "" Then
+            Inputs = InputRelic
+        ElseIf InputDecryptor <> "" Then
+            Inputs = InputDecryptor
+        Else
+            Inputs = ""
         End If
 
         SQL = "SELECT BLUEPRINT_ID FROM ALL_BLUEPRINTS WHERE ITEM_ID = " & lstItems.SelectedItems(0).SubItems(0).Text
@@ -1494,7 +1517,7 @@ Public Class frmShoppingList
         rsBPLookup.Read()
 
         ' Get the decryptor or relic used from the item
-        Call frmMain.LoadBPfromDoubleClick(CLng(rsBPLookup.GetValue(0)), lstItems.SelectedItems(0).SubItems(4).Text, Inputs, "Shopping List", _
+        Call frmMain.LoadBPfromDoubleClick(CLng(rsBPLookup.GetValue(0)), lstItems.SelectedItems(0).SubItems(5).Text, Inputs, "Shopping List", _
                                            Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, _
                                            chkTotalItemTax.Checked, chkTotalItemFees.Checked, chkUsage.Checked, _
                                            lstItems.SelectedItems(0).SubItems(3).Text, lstItems.SelectedItems(0).SubItems(2).Text)
