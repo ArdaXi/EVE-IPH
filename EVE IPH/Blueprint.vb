@@ -104,7 +104,7 @@ Public Class Blueprint
     Private InventionDecryptor As Decryptor
     Private Relic As String ' Name of relic
     Private TotalInventedRuns As Integer ' Number of runs an invention job will produce
-    Private SingleInventedREdBPCRuns As Integer ' The runs on one bp invented
+    Private SingleInventedBPCRuns As Integer ' The runs on one bp invented
     Private NumInventionJobs As Integer ' Number of invention jobs we will do
 
     Private CopyCost As Double ' Total Cost of the BPCs for the T2 item - for copy materials for things like data sheets, etc when needed
@@ -155,6 +155,10 @@ Public Class Blueprint
     Private CapitalComponentManufacturingFacility As IndustryFacility ' For all capital parts
     Private CopyFacility As IndustryFacility
     Private InventionFacility As IndustryFacility
+
+    ' BP numbers
+    Private RunsPerBP As Integer
+    Private NumBPs As Integer
 
     ' T1 Constructor
     Public Sub New(ByVal BlueprintID As Long, ByVal BPRuns As Long, ByVal BPME As Double, ByVal BPTE As Double,
@@ -487,20 +491,20 @@ Public Class Blueprint
                     ReqCopySkills = .ReqCopySkills
                     ReqInventionSkills = .ReqInventionSkills
 
-                    CopyCost += GetBPCCopyCost()
-                    CopyTime += GetBPCCopyTime()
-                    CopyUsage += GetBPCCopyUsage()
+                    CopyCost += .GetBPCCopyCost()
+                    CopyTime += .GetBPCCopyTime()
+                    CopyUsage += .GetBPCCopyUsage()
 
                     InventionUsage += .GetBPInventionUsage()
-                    InventionCosts += GetBPInventionCost()
-                    InventionTime += .GetInventionTime()
+                    InventionCosts += .GetBPInventionCost()
+                    InventionTime += .GetBPInventionTime()
 
                     TotalInventionCost += .GetBPTotalInventionCosts
 
                     InventionChance = .GetInventionChance
                     InventionDecryptor = .GetDecryptor
                     Relic = .GetRelic()
-                    SingleInventedREdBPCRuns = .GetInventedRuns
+                    SingleInventedBPCRuns = .GetInventedRuns
                     NumInventionJobs += .GetInventionJobs
 
                     Taxes += .GetBPTaxes
@@ -1379,7 +1383,7 @@ Public Class Blueprint
 
         ' Use the max runs for the T2 item and this should be the invented runs for one bpc - TO DO check industry_products for this value as quantity
         If TechLevel = BlueprintTechLevel.T2 Then
-            SingleInventedREdBPCRuns = MaxProductionLimit + InventionDecryptor.RunMod
+            SingleInventedBPCRuns = MaxProductionLimit + InventionDecryptor.RunMod
         Else
             SQL = "SELECT typeName FROM INVENTORY_TYPES WHERE typeID = " & CStr(InventionT3BPCTypeID)
 
@@ -1406,17 +1410,17 @@ Public Class Blueprint
             End If
 
             ' Set the final runs for one bp
-            SingleInventedREdBPCRuns = MaxProductionLimit + InventionDecryptor.RunMod
+            SingleInventedBPCRuns = MaxProductionLimit + InventionDecryptor.RunMod
         End If
 
         ' Averages and final cost per run
         AvgRunsforSuccess = 1 / InventionChance
 
         ' Set how many total invention runs we will need to do - take the number of bpc's we'll need and multiply by how many runs for a success - round up
-        NumInventionJobs = CInt(Math.Ceiling(AvgRunsforSuccess * Math.Ceiling(UserRuns / SingleInventedREdBPCRuns)))
+        NumInventionJobs = CInt(Math.Ceiling(AvgRunsforSuccess * Math.Ceiling(UserRuns / SingleInventedBPCRuns)))
 
         ' Now set the total runs we will get from all jobs
-        TotalInventedRuns = CInt(Math.Ceiling(UserRuns / SingleInventedREdBPCRuns) * SingleInventedREdBPCRuns)
+        TotalInventedRuns = CInt(Math.Ceiling(UserRuns / SingleInventedBPCRuns) * SingleInventedBPCRuns)
 
         ' Find the number of invention sessions we'll need to invent the number of runs for this item. This will be used in the copy and invention times
         ' Basically, the number avg number of runs for success times the total runs wanted is the total invention runs needed for single runs. Divide this
@@ -1774,7 +1778,7 @@ Public Class Blueprint
 
     ' Gets the total invented runs for each BPC
     Public Function GetInventedRuns() As Integer
-        Return SingleInventedREdBPCRuns
+        Return SingleInventedBPCRuns
     End Function
 
     ' Returns the number of jobs we'll have to do
@@ -1997,7 +2001,7 @@ Public Class Blueprint
     End Function
 
     ' Gets the total volume of the items built
-    Public Function GetTotalBuiltItemVolume() As Double
+    Public Function GetTotalItemVolume() As Double
         Return ItemVolume * UserRuns
     End Function
 

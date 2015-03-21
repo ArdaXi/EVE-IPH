@@ -120,7 +120,8 @@ Public Module Public_Variables
 
     Public Const DataCoreRedeemCost As Double = 10000.0
 
-    Public Const NumManufacturingTabColumns As Integer = 75
+    ' Column processing
+    Public Const NumManufacturingTabColumns As Integer = 68
     Public Const NumIndustryJobColumns As Integer = 20
 
     Public Const NoDate As Date = #1/1/1900#
@@ -783,7 +784,7 @@ Public Module Public_Variables
             .ItemUsage = SentBlueprint.GetManufacturingFacilityUsage
 
             ' Volume of the item(s)
-            .BuildVolume = SentBlueprint.GetTotalBuiltItemVolume
+            .BuildVolume = SentBlueprint.GetTotalItemVolume
 
             ' Finally set techlevel
             .TechLevel = SentBlueprint.GetTechLevel
@@ -1339,6 +1340,21 @@ InvalidDate:
         End If
 
         Return InventItemTypeID
+
+    End Function
+
+    ' Returns the text race for the ID sent
+    Public Function GetRace(ByVal RaceID As Integer) As String
+        Dim rsLookup As SQLite.SQLiteDataReader
+
+        DBCommand = New SQLiteCommand("SELECT RACE FROM RACE_IDS WHERE ID = " & CStr(RaceID), DB)
+        rsLookup = DBCommand.ExecuteReader
+
+        If rsLookup.Read Then
+            Return rsLookup.GetString(0)
+        Else
+            Return ""
+        End If
 
     End Function
 

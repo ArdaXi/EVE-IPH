@@ -3534,8 +3534,10 @@ NoBonus:
                 If Not CBool(InStr(Inputs, "No Decryptor")) Then
                     If BPTech = 2 Then
                         DecryptorName = Inputs
-                    Else ' For T3
+                    ElseIf InStr(Inputs, "|") <> 0 Then ' For T3
                         DecryptorName = Inputs.Substring(0, InStr(Inputs, "|") - 1)
+                    ElseIf InStr(Inputs, " - ") <> 0 Then
+                        DecryptorName = Inputs.Substring(0, InStr(Inputs, "-") - 2)
                     End If
                 End If
             End If
@@ -3548,7 +3550,12 @@ NoBonus:
                 LoadingT3Decryptors = False
                 ' Also load the relic
                 LoadingRelics = True
-                Dim TempRelic As String = Inputs.Substring(InStr(Inputs, "|"))
+                Dim TempRelic As String = ""
+                If InStr(Inputs, "|") <> 0 Then ' For T3
+                    TempRelic = Inputs.Substring(InStr(Inputs, "|") - 1)
+                ElseIf InStr(Inputs, " - ") <> 0 Then
+                    TempRelic = Inputs.Substring(InStr(Inputs, "-") + 1)
+                End If
                 SQL = "SELECT typeName FROM INVENTORY_TYPES, INDUSTRY_ACTIVITY_PRODUCTS WHERE productTypeID =" & BPID & " "
                 SQL = SQL & "and typeID = blueprintTypeID AND typeName LIKE '" & TempRelic & "%'"
 
@@ -14938,14 +14945,17 @@ CheckTechs:
         Call lstManufacturing.Clear()
         AddingColumns = True
 
+        lstManufacturing.ColumnFormatStyle.
+
         ' Add the first hidden column
-        lstManufacturing.Columns.Add("BPTypeID")
+        lstManufacturing.Columns.Add("Order Number")
         lstManufacturing.Columns(0).Width = 0
 
         ' Now load all the columns in order of the settings
         For i = 1 To ColumnPositions.Count - 1
             If ColumnPositions(i) <> "" Then
                 lstManufacturing.Columns.Add(ColumnPositions(i), GetColumnWidth(ColumnPositions(i)), GetColumnAlignment(ColumnPositions(i)))
+
             End If
         Next
 
@@ -14973,17 +14983,19 @@ CheckTechs:
             ColumnPositions(.BPTE) = ProgramSettings.BPTEColumnName
             ColumnPositions(.Inputs) = ProgramSettings.InputsColumnName
             ColumnPositions(.Compared) = ProgramSettings.ComparedColumnName
-            ColumnPositions(.Runs) = ProgramSettings.RunsColumnName
+            ColumnPositions(.TotalRuns) = ProgramSettings.TotalRunsColumnName
+            ColumnPositions(.SingleInventedBPCRuns) = ProgramSettings.SingleInventedBPCRunsColumnName
             ColumnPositions(.ProductionLines) = ProgramSettings.ProductionLinesColumnName
             ColumnPositions(.LaboratoryLines) = ProgramSettings.LaboratoryLinesColumnName
-            ColumnPositions(.InventionCost) = ProgramSettings.InventionCostColumnName
-            ColumnPositions(.CopyCost) = ProgramSettings.CopyCostColumnName
-            ColumnPositions(.ManufacturingFacilityUsage) = ProgramSettings.TotalManufacturingCostColumnName
+            ColumnPositions(.TotalInventionCost) = ProgramSettings.TotalInventionCostColumnName
+            ColumnPositions(.TotalCopyCost) = ProgramSettings.TotalCopyCostColumnName
+            ColumnPositions(.TotalManufacturingCost) = ProgramSettings.TotalManufacturingCostColumnName
             ColumnPositions(.Taxes) = ProgramSettings.TaxesColumnName
             ColumnPositions(.BrokerFees) = ProgramSettings.BrokerFeesColumnName
-            ColumnPositions(.ItemMarketPrice) = ProgramSettings.ItemMarketPriceColumnName
             ColumnPositions(.BPProductionTime) = ProgramSettings.BPProductionTimeColumnName
             ColumnPositions(.TotalProductionTime) = ProgramSettings.TotalProductionTimeColumnName
+            ColumnPositions(.CopyTime) = ProgramSettings.CopyTimeColumnName
+            ColumnPositions(.InventionTime) = ProgramSettings.InventionTimeColumnName
             ColumnPositions(.ItemMarketPrice) = ProgramSettings.ItemMarketPriceColumnName
             ColumnPositions(.Profit) = ProgramSettings.ProfitColumnName
             ColumnPositions(.ProfitPercentage) = ProgramSettings.ProfitPercentageColumnName
@@ -14991,55 +15003,45 @@ CheckTechs:
             ColumnPositions(.SVR) = ProgramSettings.SVRColumnName
             ColumnPositions(.TotalCost) = ProgramSettings.TotalCostColumnName
             ColumnPositions(.BaseJobCost) = ProgramSettings.BaseJobCostColumnName
+            ColumnPositions(.NumBPs) = ProgramSettings.NumBPsColumnName
+            ColumnPositions(.InventionChance) = ProgramSettings.InventionChanceColumnName
+            ColumnPositions(.BPOType) = ProgramSettings.BPOTypeColumnName
+            ColumnPositions(.Race) = ProgramSettings.RaceColumnName
+            ColumnPositions(.VolumeperItem) = ProgramSettings.VolumeperItemColumnName
+            ColumnPositions(.TotalVolume) = ProgramSettings.TotalVolumeColumnName
             ColumnPositions(.ManufacturingJobFee) = ProgramSettings.ManufacturingJobFeeColumnName
             ColumnPositions(.ManufacturingFacilityName) = ProgramSettings.ManufacturingFacilityNameColumnName
             ColumnPositions(.ManufacturingFacilitySystem) = ProgramSettings.ManufacturingFacilitySystemColumnName
+            ColumnPositions(.ManufacturingFacilityRegion) = ProgramSettings.ManufacturingFacilityRegionColumnName
             ColumnPositions(.ManufacturingFacilitySystemIndex) = ProgramSettings.ManufacturingFacilitySystemIndexColumnName
             ColumnPositions(.ManufacturingFacilityTax) = ProgramSettings.ManufacturingFacilityTaxColumnName
-            ColumnPositions(.ManufacturingFacilityRegion) = ProgramSettings.ManufacturingFacilityRegionColumnName
             ColumnPositions(.ManufacturingFacilityMEBonus) = ProgramSettings.ManufacturingFacilityMEBonusColumnName
             ColumnPositions(.ManufacturingFacilityTEBonus) = ProgramSettings.ManufacturingFacilityTEBonusColumnName
             ColumnPositions(.ManufacturingFacilityUsage) = ProgramSettings.ManufacturingFacilityUsageColumnName
             ColumnPositions(.ComponentFacilityName) = ProgramSettings.ComponentFacilityNameColumnName
             ColumnPositions(.ComponentFacilitySystem) = ProgramSettings.ComponentFacilitySystemColumnName
+            ColumnPositions(.ComponentFacilityRegion) = ProgramSettings.ComponentFacilityRegionColumnName
             ColumnPositions(.ComponentFacilitySystemIndex) = ProgramSettings.ComponentFacilitySystemIndexColumnName
             ColumnPositions(.ComponentFacilityTax) = ProgramSettings.ComponentFacilityTaxColumnName
-            ColumnPositions(.ComponentFacilityRegion) = ProgramSettings.ComponentFacilityRegionColumnName
             ColumnPositions(.ComponentFacilityMEBonus) = ProgramSettings.ComponentFacilityMEBonusColumnName
             ColumnPositions(.ComponentFacilityTEBonus) = ProgramSettings.ComponentFacilityTEBonusColumnName
             ColumnPositions(.ComponentFacilityUsage) = ProgramSettings.ComponentFacilityUsageColumnName
             ColumnPositions(.CopyingFacilityName) = ProgramSettings.CopyingFacilityNameColumnName
             ColumnPositions(.CopyingFacilitySystem) = ProgramSettings.CopyingFacilitySystemColumnName
+            ColumnPositions(.CopyingFacilityRegion) = ProgramSettings.CopyingFacilityRegionColumnName
             ColumnPositions(.CopyingFacilitySystemIndex) = ProgramSettings.CopyingFacilitySystemIndexColumnName
             ColumnPositions(.CopyingFacilityTax) = ProgramSettings.CopyingFacilityTaxColumnName
-            ColumnPositions(.CopyingFacilityRegion) = ProgramSettings.CopyingFacilityRegionColumnName
             ColumnPositions(.CopyingFacilityMEBonus) = ProgramSettings.CopyingFacilityMEBonusColumnName
             ColumnPositions(.CopyingFacilityTEBonus) = ProgramSettings.CopyingFacilityTEBonusColumnName
             ColumnPositions(.CopyingFacilityUsage) = ProgramSettings.CopyingFacilityUsageColumnName
             ColumnPositions(.InventionFacilityName) = ProgramSettings.InventionFacilityNameColumnName
             ColumnPositions(.InventionFacilitySystem) = ProgramSettings.InventionFacilitySystemColumnName
+            ColumnPositions(.InventionFacilityRegion) = ProgramSettings.InventionFacilityRegionColumnName
             ColumnPositions(.InventionFacilitySystemIndex) = ProgramSettings.InventionFacilitySystemIndexColumnName
             ColumnPositions(.InventionFacilityTax) = ProgramSettings.InventionFacilityTaxColumnName
-            ColumnPositions(.InventionFacilityRegion) = ProgramSettings.InventionFacilityRegionColumnName
             ColumnPositions(.InventionFacilityMEBonus) = ProgramSettings.InventionFacilityMEBonusColumnName
             ColumnPositions(.InventionFacilityTEBonus) = ProgramSettings.InventionFacilityTEBonusColumnName
             ColumnPositions(.InventionFacilityUsage) = ProgramSettings.InventionFacilityUsageColumnName
-            ColumnPositions(.ManufacturingTeamName) = ProgramSettings.ManufacturingTeamNameColumnName
-            ColumnPositions(.ManufacturingTeamBonuses) = ProgramSettings.ManufacturingTeamBonusesColumnName
-            ColumnPositions(.ManufacturingTeamUsage) = ProgramSettings.ManufacturingTeamUsageColumnName
-            ColumnPositions(.ManufacturingTeamCostModifier) = ProgramSettings.ManufacturingTeamCostModifierColumnName
-            ColumnPositions(.ComponentTeamName) = ProgramSettings.ComponentTeamNameColumnName
-            ColumnPositions(.ComponentTeamBonuses) = ProgramSettings.ComponentTeamBonusesColumnName
-            ColumnPositions(.ComponentTeamUsage) = ProgramSettings.ComponentTeamUsageColumnName
-            ColumnPositions(.ComponentTeamCostModifier) = ProgramSettings.ComponentTeamCostModifierColumnName
-            ColumnPositions(.CopyingTeamName) = ProgramSettings.CopyingTeamNameColumnName
-            ColumnPositions(.CopyingTeamBonuses) = ProgramSettings.CopyingTeamBonusesColumnName
-            ColumnPositions(.CopyingTeamUsage) = ProgramSettings.CopyingTeamUsageColumnName
-            ColumnPositions(.CopyingTeamCostModifier) = ProgramSettings.CopyingTeamCostModifierColumnName
-            ColumnPositions(.InventionTeamName) = ProgramSettings.InventionTeamNameColumnName
-            ColumnPositions(.InventionTeamBonuses) = ProgramSettings.InventionTeamBonusesColumnName
-            ColumnPositions(.InventionTeamUsage) = ProgramSettings.InventionTeamUsageColumnName
-            ColumnPositions(.InventionTeamCostModifier) = ProgramSettings.InventionTeamCostModifierColumnName
         End With
 
         ' First column is always the bptypeid
@@ -15052,7 +15054,7 @@ CheckTechs:
 
         With UserManufacturingTabColumnSettings
             Select Case ColumnName
-                Case ProgramSettings.ItemCategoryColumnName
+Case ProgramSettings.ItemCategoryColumnName
                     Return .ItemCategoryWidth
                 Case ProgramSettings.ItemGroupColumnName
                     Return .ItemGroupWidth
@@ -15070,16 +15072,18 @@ CheckTechs:
                     Return .InputsWidth
                 Case ProgramSettings.ComparedColumnName
                     Return .ComparedWidth
-                Case ProgramSettings.RunsColumnName
-                    Return .RunsWidth
+                Case ProgramSettings.TotalRunsColumnName
+                    Return .TotalRunsWidth
+                Case ProgramSettings.SingleInventedBPCRunsColumnName
+                    Return .SingleInventedBPCRunsWidth
                 Case ProgramSettings.ProductionLinesColumnName
                     Return .ProductionLinesWidth
                 Case ProgramSettings.LaboratoryLinesColumnName
                     Return .LaboratoryLinesWidth
-                Case ProgramSettings.InventionCostColumnName
-                    Return .InventionCostWidth
-                Case ProgramSettings.CopyCostColumnName
-                    Return .CopyCostWidth
+                Case ProgramSettings.TotalInventionCostColumnName
+                    Return .TotalInventionCostWidth
+                Case ProgramSettings.TotalCopyCostColumnName
+                    Return .TotalCopyCostWidth
                 Case ProgramSettings.TotalManufacturingCostColumnName
                     Return .TotalManufacturingCostWidth
                 Case ProgramSettings.TaxesColumnName
@@ -15090,6 +15094,10 @@ CheckTechs:
                     Return .BPProductionTimeWidth
                 Case ProgramSettings.TotalProductionTimeColumnName
                     Return .TotalProductionTimeWidth
+                Case ProgramSettings.CopyTimeColumnName
+                    Return .CopyTimeWidth
+                Case ProgramSettings.InventionTimeColumnName
+                    Return .InventionTimeWidth
                 Case ProgramSettings.ItemMarketPriceColumnName
                     Return .ItemMarketPriceWidth
                 Case ProgramSettings.ProfitColumnName
@@ -15104,18 +15112,30 @@ CheckTechs:
                     Return .TotalCostWidth
                 Case ProgramSettings.BaseJobCostColumnName
                     Return .BaseJobCostWidth
+                Case ProgramSettings.NumBPsColumnName
+                    Return .NumBPsWidth
+                Case ProgramSettings.InventionChanceColumnName
+                    Return .InventionChanceWidth
+                Case ProgramSettings.BPOTypeColumnName
+                    Return .BPOTypeWidth
+                Case ProgramSettings.RaceColumnName
+                    Return .RaceWidth
+                Case ProgramSettings.VolumeperItemColumnName
+                    Return .VolumeperItemWidth
+                Case ProgramSettings.TotalVolumeColumnName
+                    Return .TotalVolumeWidth
                 Case ProgramSettings.ManufacturingJobFeeColumnName
                     Return .ManufacturingJobFeeWidth
                 Case ProgramSettings.ManufacturingFacilityNameColumnName
                     Return .ManufacturingFacilityNameWidth
                 Case ProgramSettings.ManufacturingFacilitySystemColumnName
                     Return .ManufacturingFacilitySystemWidth
+                Case ProgramSettings.ManufacturingFacilityRegionColumnName
+                    Return .ManufacturingFacilityRegionWidth
                 Case ProgramSettings.ManufacturingFacilitySystemIndexColumnName
                     Return .ManufacturingFacilitySystemIndexWidth
                 Case ProgramSettings.ManufacturingFacilityTaxColumnName
                     Return .ManufacturingFacilityTaxWidth
-                Case ProgramSettings.ManufacturingFacilityRegionColumnName
-                    Return .ManufacturingFacilityRegionWidth
                 Case ProgramSettings.ManufacturingFacilityMEBonusColumnName
                     Return .ManufacturingFacilityMEBonusWidth
                 Case ProgramSettings.ManufacturingFacilityTEBonusColumnName
@@ -15126,12 +15146,12 @@ CheckTechs:
                     Return .ComponentFacilityNameWidth
                 Case ProgramSettings.ComponentFacilitySystemColumnName
                     Return .ComponentFacilitySystemWidth
+                Case ProgramSettings.ComponentFacilityRegionColumnName
+                    Return .ComponentFacilityRegionWidth
                 Case ProgramSettings.ComponentFacilitySystemIndexColumnName
                     Return .ComponentFacilitySystemIndexWidth
                 Case ProgramSettings.ComponentFacilityTaxColumnName
                     Return .ComponentFacilityTaxWidth
-                Case ProgramSettings.ComponentFacilityRegionColumnName
-                    Return .ComponentFacilityRegionWidth
                 Case ProgramSettings.ComponentFacilityMEBonusColumnName
                     Return .ComponentFacilityMEBonusWidth
                 Case ProgramSettings.ComponentFacilityTEBonusColumnName
@@ -15142,12 +15162,12 @@ CheckTechs:
                     Return .CopyingFacilityNameWidth
                 Case ProgramSettings.CopyingFacilitySystemColumnName
                     Return .CopyingFacilitySystemWidth
+                Case ProgramSettings.CopyingFacilityRegionColumnName
+                    Return .CopyingFacilityRegionWidth
                 Case ProgramSettings.CopyingFacilitySystemIndexColumnName
                     Return .CopyingFacilitySystemIndexWidth
                 Case ProgramSettings.CopyingFacilityTaxColumnName
                     Return .CopyingFacilityTaxWidth
-                Case ProgramSettings.CopyingFacilityRegionColumnName
-                    Return .CopyingFacilityRegionWidth
                 Case ProgramSettings.CopyingFacilityMEBonusColumnName
                     Return .CopyingFacilityMEBonusWidth
                 Case ProgramSettings.CopyingFacilityTEBonusColumnName
@@ -15158,50 +15178,18 @@ CheckTechs:
                     Return .InventionFacilityNameWidth
                 Case ProgramSettings.InventionFacilitySystemColumnName
                     Return .InventionFacilitySystemWidth
+                Case ProgramSettings.InventionFacilityRegionColumnName
+                    Return .InventionFacilityRegionWidth
                 Case ProgramSettings.InventionFacilitySystemIndexColumnName
                     Return .InventionFacilitySystemIndexWidth
                 Case ProgramSettings.InventionFacilityTaxColumnName
                     Return .InventionFacilityTaxWidth
-                Case ProgramSettings.InventionFacilityRegionColumnName
-                    Return .InventionFacilityRegionWidth
                 Case ProgramSettings.InventionFacilityMEBonusColumnName
                     Return .InventionFacilityMEBonusWidth
                 Case ProgramSettings.InventionFacilityTEBonusColumnName
                     Return .InventionFacilityTEBonusWidth
                 Case ProgramSettings.InventionFacilityUsageColumnName
                     Return .InventionFacilityUsageWidth
-                Case ProgramSettings.ManufacturingTeamNameColumnName
-                    Return .ManufacturingTeamNameWidth
-                Case ProgramSettings.ManufacturingTeamBonusesColumnName
-                    Return .ManufacturingTeamBonusesWidth
-                Case ProgramSettings.ManufacturingTeamUsageColumnName
-                    Return .ManufacturingTeamUsageWidth
-                Case ProgramSettings.ManufacturingTeamCostModifierColumnName
-                    Return .ManufacturingTeamCostModifierWidth
-                Case ProgramSettings.ComponentTeamNameColumnName
-                    Return .ComponentTeamNameWidth
-                Case ProgramSettings.ComponentTeamBonusesColumnName
-                    Return .ComponentTeamBonusesWidth
-                Case ProgramSettings.ComponentTeamUsageColumnName
-                    Return .ComponentTeamUsageWidth
-                Case ProgramSettings.ComponentTeamCostModifierColumnName
-                    Return .ComponentTeamCostModifierWidth
-                Case ProgramSettings.CopyingTeamNameColumnName
-                    Return .CopyingTeamNameWidth
-                Case ProgramSettings.CopyingTeamBonusesColumnName
-                    Return .CopyingTeamBonusesWidth
-                Case ProgramSettings.CopyingTeamUsageColumnName
-                    Return .CopyingTeamUsageWidth
-                Case ProgramSettings.CopyingTeamCostModifierColumnName
-                    Return .CopyingTeamCostModifierWidth
-                Case ProgramSettings.InventionTeamNameColumnName
-                    Return .InventionTeamNameWidth
-                Case ProgramSettings.InventionTeamBonusesColumnName
-                    Return .InventionTeamBonusesWidth
-                Case ProgramSettings.InventionTeamUsageColumnName
-                    Return .InventionTeamUsageWidth
-                Case ProgramSettings.InventionTeamCostModifierColumnName
-                    Return .InventionTeamCostModifierWidth
                 Case Else
                     Return 0
             End Select
@@ -15224,22 +15212,24 @@ CheckTechs:
             Case ProgramSettings.TechColumnName
                 Return HorizontalAlignment.Left
             Case ProgramSettings.BPMEColumnName
-                Return HorizontalAlignment.Center
+                Return HorizontalAlignment.Right
             Case ProgramSettings.BPTEColumnName
-                Return HorizontalAlignment.Center
+                Return HorizontalAlignment.Right
             Case ProgramSettings.InputsColumnName
                 Return HorizontalAlignment.Left
             Case ProgramSettings.ComparedColumnName
-                Return HorizontalAlignment.Center
-            Case ProgramSettings.RunsColumnName
+                Return HorizontalAlignment.Left
+            Case ProgramSettings.TotalRunsColumnName
+                Return HorizontalAlignment.Right
+            Case ProgramSettings.SingleInventedBPCRunsColumnName
                 Return HorizontalAlignment.Right
             Case ProgramSettings.ProductionLinesColumnName
                 Return HorizontalAlignment.Right
             Case ProgramSettings.LaboratoryLinesColumnName
                 Return HorizontalAlignment.Right
-            Case ProgramSettings.InventionCostColumnName
+            Case ProgramSettings.TotalInventionCostColumnName
                 Return HorizontalAlignment.Right
-            Case ProgramSettings.CopyCostColumnName
+            Case ProgramSettings.TotalCopyCostColumnName
                 Return HorizontalAlignment.Right
             Case ProgramSettings.TotalManufacturingCostColumnName
                 Return HorizontalAlignment.Right
@@ -15248,9 +15238,13 @@ CheckTechs:
             Case ProgramSettings.BrokerFeesColumnName
                 Return HorizontalAlignment.Right
             Case ProgramSettings.BPProductionTimeColumnName
-                Return HorizontalAlignment.Center
+                Return HorizontalAlignment.Right
             Case ProgramSettings.TotalProductionTimeColumnName
-                Return HorizontalAlignment.Center
+                Return HorizontalAlignment.Right
+            Case ProgramSettings.CopyTimeColumnName
+                Return HorizontalAlignment.Right
+            Case ProgramSettings.InventionTimeColumnName
+                Return HorizontalAlignment.Right
             Case ProgramSettings.ItemMarketPriceColumnName
                 Return HorizontalAlignment.Right
             Case ProgramSettings.ProfitColumnName
@@ -15265,18 +15259,30 @@ CheckTechs:
                 Return HorizontalAlignment.Right
             Case ProgramSettings.BaseJobCostColumnName
                 Return HorizontalAlignment.Right
+            Case ProgramSettings.NumBPsColumnName
+                Return HorizontalAlignment.Right
+            Case ProgramSettings.InventionChanceColumnName
+                Return HorizontalAlignment.Right
+            Case ProgramSettings.BPOTypeColumnName
+                Return HorizontalAlignment.Center
+            Case ProgramSettings.RaceColumnName
+                Return HorizontalAlignment.Left
+            Case ProgramSettings.VolumeperItemColumnName
+                Return HorizontalAlignment.Right
+            Case ProgramSettings.TotalVolumeColumnName
+                Return HorizontalAlignment.Right
             Case ProgramSettings.ManufacturingJobFeeColumnName
                 Return HorizontalAlignment.Right
             Case ProgramSettings.ManufacturingFacilityNameColumnName
                 Return HorizontalAlignment.Left
             Case ProgramSettings.ManufacturingFacilitySystemColumnName
                 Return HorizontalAlignment.Left
+            Case ProgramSettings.ManufacturingFacilityRegionColumnName
+                Return HorizontalAlignment.Left
             Case ProgramSettings.ManufacturingFacilitySystemIndexColumnName
                 Return HorizontalAlignment.Right
             Case ProgramSettings.ManufacturingFacilityTaxColumnName
                 Return HorizontalAlignment.Right
-            Case ProgramSettings.ManufacturingFacilityRegionColumnName
-                Return HorizontalAlignment.Left
             Case ProgramSettings.ManufacturingFacilityMEBonusColumnName
                 Return HorizontalAlignment.Right
             Case ProgramSettings.ManufacturingFacilityTEBonusColumnName
@@ -15287,12 +15293,12 @@ CheckTechs:
                 Return HorizontalAlignment.Left
             Case ProgramSettings.ComponentFacilitySystemColumnName
                 Return HorizontalAlignment.Left
+            Case ProgramSettings.ComponentFacilityRegionColumnName
+                Return HorizontalAlignment.Left
             Case ProgramSettings.ComponentFacilitySystemIndexColumnName
                 Return HorizontalAlignment.Right
             Case ProgramSettings.ComponentFacilityTaxColumnName
                 Return HorizontalAlignment.Right
-            Case ProgramSettings.ComponentFacilityRegionColumnName
-                Return HorizontalAlignment.Left
             Case ProgramSettings.ComponentFacilityMEBonusColumnName
                 Return HorizontalAlignment.Right
             Case ProgramSettings.ComponentFacilityTEBonusColumnName
@@ -15303,12 +15309,12 @@ CheckTechs:
                 Return HorizontalAlignment.Left
             Case ProgramSettings.CopyingFacilitySystemColumnName
                 Return HorizontalAlignment.Left
+            Case ProgramSettings.CopyingFacilityRegionColumnName
+                Return HorizontalAlignment.Left
             Case ProgramSettings.CopyingFacilitySystemIndexColumnName
                 Return HorizontalAlignment.Right
             Case ProgramSettings.CopyingFacilityTaxColumnName
                 Return HorizontalAlignment.Right
-            Case ProgramSettings.CopyingFacilityRegionColumnName
-                Return HorizontalAlignment.Left
             Case ProgramSettings.CopyingFacilityMEBonusColumnName
                 Return HorizontalAlignment.Right
             Case ProgramSettings.CopyingFacilityTEBonusColumnName
@@ -15319,49 +15325,17 @@ CheckTechs:
                 Return HorizontalAlignment.Left
             Case ProgramSettings.InventionFacilitySystemColumnName
                 Return HorizontalAlignment.Left
+            Case ProgramSettings.InventionFacilityRegionColumnName
+                Return HorizontalAlignment.Left
             Case ProgramSettings.InventionFacilitySystemIndexColumnName
                 Return HorizontalAlignment.Right
             Case ProgramSettings.InventionFacilityTaxColumnName
                 Return HorizontalAlignment.Right
-            Case ProgramSettings.InventionFacilityRegionColumnName
-                Return HorizontalAlignment.Left
             Case ProgramSettings.InventionFacilityMEBonusColumnName
                 Return HorizontalAlignment.Right
             Case ProgramSettings.InventionFacilityTEBonusColumnName
-                Return HorizontalAlignment.Left
+                Return HorizontalAlignment.Right
             Case ProgramSettings.InventionFacilityUsageColumnName
-                Return HorizontalAlignment.Right
-            Case ProgramSettings.ManufacturingTeamNameColumnName
-                Return HorizontalAlignment.Left
-            Case ProgramSettings.ManufacturingTeamBonusesColumnName
-                Return HorizontalAlignment.Left
-            Case ProgramSettings.ManufacturingTeamUsageColumnName
-                Return HorizontalAlignment.Right
-            Case ProgramSettings.ManufacturingTeamCostModifierColumnName
-                Return HorizontalAlignment.Right
-            Case ProgramSettings.ComponentTeamNameColumnName
-                Return HorizontalAlignment.Left
-            Case ProgramSettings.ComponentTeamBonusesColumnName
-                Return HorizontalAlignment.Left
-            Case ProgramSettings.ComponentTeamUsageColumnName
-                Return HorizontalAlignment.Right
-            Case ProgramSettings.ComponentTeamCostModifierColumnName
-                Return HorizontalAlignment.Right
-            Case ProgramSettings.CopyingTeamNameColumnName
-                Return HorizontalAlignment.Left
-            Case ProgramSettings.CopyingTeamBonusesColumnName
-                Return HorizontalAlignment.Left
-            Case ProgramSettings.CopyingTeamUsageColumnName
-                Return HorizontalAlignment.Right
-            Case ProgramSettings.CopyingTeamCostModifierColumnName
-                Return HorizontalAlignment.Right
-            Case ProgramSettings.InventionTeamNameColumnName
-                Return HorizontalAlignment.Left
-            Case ProgramSettings.InventionTeamBonusesColumnName
-                Return HorizontalAlignment.Left
-            Case ProgramSettings.InventionTeamUsageColumnName
-                Return HorizontalAlignment.Right
-            Case ProgramSettings.InventionTeamCostModifierColumnName
                 Return HorizontalAlignment.Right
             Case Else
                 Return 0
@@ -15427,7 +15401,7 @@ CheckTechs:
         With UserManufacturingTabColumnSettings
             For i = 1 To ColumnPositions.Count - 1
                 Select Case ColumnPositions(i)
-                    Case ProgramSettings.ItemCategoryColumnName
+Case ProgramSettings.ItemCategoryColumnName
                         .ItemCategory = i
                     Case ProgramSettings.ItemGroupColumnName
                         .ItemGroup = i
@@ -15445,18 +15419,20 @@ CheckTechs:
                         .Inputs = i
                     Case ProgramSettings.ComparedColumnName
                         .Compared = i
-                    Case ProgramSettings.RunsColumnName
-                        .Runs = i
+                    Case ProgramSettings.TotalRunsColumnName
+                        .TotalRuns = i
+                    Case ProgramSettings.SingleInventedBPCRunsColumnName
+                        .SingleInventedBPCRuns = i
                     Case ProgramSettings.ProductionLinesColumnName
                         .ProductionLines = i
                     Case ProgramSettings.LaboratoryLinesColumnName
                         .LaboratoryLines = i
-                    Case ProgramSettings.InventionCostColumnName
-                        .InventionCost = i
-                    Case ProgramSettings.CopyCostColumnName
-                        .CopyCost = i
+                    Case ProgramSettings.TotalInventionCostColumnName
+                        .TotalInventionCost = i
+                    Case ProgramSettings.TotalCopyCostColumnName
+                        .TotalCopyCost = i
                     Case ProgramSettings.TotalManufacturingCostColumnName
-                        .ManufacturingFacilityUsage = i
+                        .TotalManufacturingCost = i
                     Case ProgramSettings.TaxesColumnName
                         .Taxes = i
                     Case ProgramSettings.BrokerFeesColumnName
@@ -15465,6 +15441,10 @@ CheckTechs:
                         .BPProductionTime = i
                     Case ProgramSettings.TotalProductionTimeColumnName
                         .TotalProductionTime = i
+                    Case ProgramSettings.CopyTimeColumnName
+                        .CopyTime = i
+                    Case ProgramSettings.InventionTimeColumnName
+                        .InventionTime = i
                     Case ProgramSettings.ItemMarketPriceColumnName
                         .ItemMarketPrice = i
                     Case ProgramSettings.ProfitColumnName
@@ -15479,18 +15459,30 @@ CheckTechs:
                         .TotalCost = i
                     Case ProgramSettings.BaseJobCostColumnName
                         .BaseJobCost = i
+                    Case ProgramSettings.NumBPsColumnName
+                        .NumBPs = i
+                    Case ProgramSettings.InventionChanceColumnName
+                        .InventionChance = i
+                    Case ProgramSettings.BPOTypeColumnName
+                        .BPOType = i
+                    Case ProgramSettings.RaceColumnName
+                        .Race = i
+                    Case ProgramSettings.VolumeperItemColumnName
+                        .VolumeperItem = i
+                    Case ProgramSettings.TotalVolumeColumnName
+                        .TotalVolume = i
                     Case ProgramSettings.ManufacturingJobFeeColumnName
                         .ManufacturingJobFee = i
                     Case ProgramSettings.ManufacturingFacilityNameColumnName
                         .ManufacturingFacilityName = i
                     Case ProgramSettings.ManufacturingFacilitySystemColumnName
                         .ManufacturingFacilitySystem = i
+                    Case ProgramSettings.ManufacturingFacilityRegionColumnName
+                        .ManufacturingFacilityRegion = i
                     Case ProgramSettings.ManufacturingFacilitySystemIndexColumnName
                         .ManufacturingFacilitySystemIndex = i
                     Case ProgramSettings.ManufacturingFacilityTaxColumnName
                         .ManufacturingFacilityTax = i
-                    Case ProgramSettings.ManufacturingFacilityRegionColumnName
-                        .ManufacturingFacilityRegion = i
                     Case ProgramSettings.ManufacturingFacilityMEBonusColumnName
                         .ManufacturingFacilityMEBonus = i
                     Case ProgramSettings.ManufacturingFacilityTEBonusColumnName
@@ -15501,12 +15493,12 @@ CheckTechs:
                         .ComponentFacilityName = i
                     Case ProgramSettings.ComponentFacilitySystemColumnName
                         .ComponentFacilitySystem = i
+                    Case ProgramSettings.ComponentFacilityRegionColumnName
+                        .ComponentFacilityRegion = i
                     Case ProgramSettings.ComponentFacilitySystemIndexColumnName
                         .ComponentFacilitySystemIndex = i
                     Case ProgramSettings.ComponentFacilityTaxColumnName
                         .ComponentFacilityTax = i
-                    Case ProgramSettings.ComponentFacilityRegionColumnName
-                        .ComponentFacilityRegion = i
                     Case ProgramSettings.ComponentFacilityMEBonusColumnName
                         .ComponentFacilityMEBonus = i
                     Case ProgramSettings.ComponentFacilityTEBonusColumnName
@@ -15517,12 +15509,12 @@ CheckTechs:
                         .CopyingFacilityName = i
                     Case ProgramSettings.CopyingFacilitySystemColumnName
                         .CopyingFacilitySystem = i
+                    Case ProgramSettings.CopyingFacilityRegionColumnName
+                        .CopyingFacilityRegion = i
                     Case ProgramSettings.CopyingFacilitySystemIndexColumnName
                         .CopyingFacilitySystemIndex = i
                     Case ProgramSettings.CopyingFacilityTaxColumnName
                         .CopyingFacilityTax = i
-                    Case ProgramSettings.CopyingFacilityRegionColumnName
-                        .CopyingFacilityRegion = i
                     Case ProgramSettings.CopyingFacilityMEBonusColumnName
                         .CopyingFacilityMEBonus = i
                     Case ProgramSettings.CopyingFacilityTEBonusColumnName
@@ -15533,50 +15525,18 @@ CheckTechs:
                         .InventionFacilityName = i
                     Case ProgramSettings.InventionFacilitySystemColumnName
                         .InventionFacilitySystem = i
+                    Case ProgramSettings.InventionFacilityRegionColumnName
+                        .InventionFacilityRegion = i
                     Case ProgramSettings.InventionFacilitySystemIndexColumnName
                         .InventionFacilitySystemIndex = i
                     Case ProgramSettings.InventionFacilityTaxColumnName
                         .InventionFacilityTax = i
-                    Case ProgramSettings.InventionFacilityRegionColumnName
-                        .InventionFacilityRegion = i
                     Case ProgramSettings.InventionFacilityMEBonusColumnName
                         .InventionFacilityMEBonus = i
                     Case ProgramSettings.InventionFacilityTEBonusColumnName
                         .InventionFacilityTEBonus = i
                     Case ProgramSettings.InventionFacilityUsageColumnName
                         .InventionFacilityUsage = i
-                    Case ProgramSettings.ManufacturingTeamNameColumnName
-                        .ManufacturingTeamName = i
-                    Case ProgramSettings.ManufacturingTeamBonusesColumnName
-                        .ManufacturingTeamBonuses = i
-                    Case ProgramSettings.ManufacturingTeamUsageColumnName
-                        .ManufacturingTeamUsage = i
-                    Case ProgramSettings.ManufacturingTeamCostModifierColumnName
-                        .ManufacturingTeamCostModifier = i
-                    Case ProgramSettings.ComponentTeamNameColumnName
-                        .ComponentTeamName = i
-                    Case ProgramSettings.ComponentTeamBonusesColumnName
-                        .ComponentTeamBonuses = i
-                    Case ProgramSettings.ComponentTeamUsageColumnName
-                        .ComponentTeamUsage = i
-                    Case ProgramSettings.ComponentTeamCostModifierColumnName
-                        .ComponentTeamCostModifier = i
-                    Case ProgramSettings.CopyingTeamNameColumnName
-                        .CopyingTeamName = i
-                    Case ProgramSettings.CopyingTeamBonusesColumnName
-                        .CopyingTeamBonuses = i
-                    Case ProgramSettings.CopyingTeamUsageColumnName
-                        .CopyingTeamUsage = i
-                    Case ProgramSettings.CopyingTeamCostModifierColumnName
-                        .CopyingTeamCostModifier = i
-                    Case ProgramSettings.InventionTeamNameColumnName
-                        .InventionTeamName = i
-                    Case ProgramSettings.InventionTeamBonusesColumnName
-                        .InventionTeamBonuses = i
-                    Case ProgramSettings.InventionTeamUsageColumnName
-                        .InventionTeamUsage = i
-                    Case ProgramSettings.InventionTeamCostModifierColumnName
-                        .InventionTeamCostModifier = i
                 End Select
             Next
         End With
@@ -15598,7 +15558,7 @@ CheckTechs:
         If Not AddingColumns Then
             With UserManufacturingTabColumnSettings
                 Select Case ColumnPositions(e.ColumnIndex)
-                    Case ProgramSettings.ItemCategoryColumnName
+                   Case ProgramSettings.ItemCategoryColumnName
                         .ItemCategoryWidth = NewWidth
                     Case ProgramSettings.ItemGroupColumnName
                         .ItemGroupWidth = NewWidth
@@ -15616,16 +15576,18 @@ CheckTechs:
                         .InputsWidth = NewWidth
                     Case ProgramSettings.ComparedColumnName
                         .ComparedWidth = NewWidth
-                    Case ProgramSettings.RunsColumnName
-                        .RunsWidth = NewWidth
+                    Case ProgramSettings.TotalRunsColumnName
+                        .TotalRunsWidth = NewWidth
+                    Case ProgramSettings.SingleInventedBPCRunsColumnName
+                        .SingleInventedBPCRunsWidth = NewWidth
                     Case ProgramSettings.ProductionLinesColumnName
                         .ProductionLinesWidth = NewWidth
                     Case ProgramSettings.LaboratoryLinesColumnName
                         .LaboratoryLinesWidth = NewWidth
-                    Case ProgramSettings.InventionCostColumnName
-                        .InventionCostWidth = NewWidth
-                    Case ProgramSettings.CopyCostColumnName
-                        .CopyCostWidth = NewWidth
+                    Case ProgramSettings.TotalInventionCostColumnName
+                        .TotalInventionCostWidth = NewWidth
+                    Case ProgramSettings.TotalCopyCostColumnName
+                        .TotalCopyCostWidth = NewWidth
                     Case ProgramSettings.TotalManufacturingCostColumnName
                         .TotalManufacturingCostWidth = NewWidth
                     Case ProgramSettings.TaxesColumnName
@@ -15636,6 +15598,10 @@ CheckTechs:
                         .BPProductionTimeWidth = NewWidth
                     Case ProgramSettings.TotalProductionTimeColumnName
                         .TotalProductionTimeWidth = NewWidth
+                    Case ProgramSettings.CopyTimeColumnName
+                        .CopyTimeWidth = NewWidth
+                    Case ProgramSettings.InventionTimeColumnName
+                        .InventionTimeWidth = NewWidth
                     Case ProgramSettings.ItemMarketPriceColumnName
                         .ItemMarketPriceWidth = NewWidth
                     Case ProgramSettings.ProfitColumnName
@@ -15650,18 +15616,30 @@ CheckTechs:
                         .TotalCostWidth = NewWidth
                     Case ProgramSettings.BaseJobCostColumnName
                         .BaseJobCostWidth = NewWidth
+                    Case ProgramSettings.NumBPsColumnName
+                        .NumBPsWidth = NewWidth
+                    Case ProgramSettings.InventionChanceColumnName
+                        .InventionChanceWidth = NewWidth
+                    Case ProgramSettings.BPOTypeColumnName
+                        .BPOTypeWidth = NewWidth
+                    Case ProgramSettings.RaceColumnName
+                        .RaceWidth = NewWidth
+                    Case ProgramSettings.VolumeperItemColumnName
+                        .VolumeperItemWidth = NewWidth
+                    Case ProgramSettings.TotalVolumeColumnName
+                        .TotalVolumeWidth = NewWidth
                     Case ProgramSettings.ManufacturingJobFeeColumnName
                         .ManufacturingJobFeeWidth = NewWidth
                     Case ProgramSettings.ManufacturingFacilityNameColumnName
                         .ManufacturingFacilityNameWidth = NewWidth
                     Case ProgramSettings.ManufacturingFacilitySystemColumnName
                         .ManufacturingFacilitySystemWidth = NewWidth
+                    Case ProgramSettings.ManufacturingFacilityRegionColumnName
+                        .ManufacturingFacilityRegionWidth = NewWidth
                     Case ProgramSettings.ManufacturingFacilitySystemIndexColumnName
                         .ManufacturingFacilitySystemIndexWidth = NewWidth
                     Case ProgramSettings.ManufacturingFacilityTaxColumnName
                         .ManufacturingFacilityTaxWidth = NewWidth
-                    Case ProgramSettings.ManufacturingFacilityRegionColumnName
-                        .ManufacturingFacilityRegionWidth = NewWidth
                     Case ProgramSettings.ManufacturingFacilityMEBonusColumnName
                         .ManufacturingFacilityMEBonusWidth = NewWidth
                     Case ProgramSettings.ManufacturingFacilityTEBonusColumnName
@@ -15672,12 +15650,12 @@ CheckTechs:
                         .ComponentFacilityNameWidth = NewWidth
                     Case ProgramSettings.ComponentFacilitySystemColumnName
                         .ComponentFacilitySystemWidth = NewWidth
+                    Case ProgramSettings.ComponentFacilityRegionColumnName
+                        .ComponentFacilityRegionWidth = NewWidth
                     Case ProgramSettings.ComponentFacilitySystemIndexColumnName
                         .ComponentFacilitySystemIndexWidth = NewWidth
                     Case ProgramSettings.ComponentFacilityTaxColumnName
                         .ComponentFacilityTaxWidth = NewWidth
-                    Case ProgramSettings.ComponentFacilityRegionColumnName
-                        .ComponentFacilityRegionWidth = NewWidth
                     Case ProgramSettings.ComponentFacilityMEBonusColumnName
                         .ComponentFacilityMEBonusWidth = NewWidth
                     Case ProgramSettings.ComponentFacilityTEBonusColumnName
@@ -15688,12 +15666,12 @@ CheckTechs:
                         .CopyingFacilityNameWidth = NewWidth
                     Case ProgramSettings.CopyingFacilitySystemColumnName
                         .CopyingFacilitySystemWidth = NewWidth
+                    Case ProgramSettings.CopyingFacilityRegionColumnName
+                        .CopyingFacilityRegionWidth = NewWidth
                     Case ProgramSettings.CopyingFacilitySystemIndexColumnName
                         .CopyingFacilitySystemIndexWidth = NewWidth
                     Case ProgramSettings.CopyingFacilityTaxColumnName
                         .CopyingFacilityTaxWidth = NewWidth
-                    Case ProgramSettings.CopyingFacilityRegionColumnName
-                        .CopyingFacilityRegionWidth = NewWidth
                     Case ProgramSettings.CopyingFacilityMEBonusColumnName
                         .CopyingFacilityMEBonusWidth = NewWidth
                     Case ProgramSettings.CopyingFacilityTEBonusColumnName
@@ -15704,50 +15682,18 @@ CheckTechs:
                         .InventionFacilityNameWidth = NewWidth
                     Case ProgramSettings.InventionFacilitySystemColumnName
                         .InventionFacilitySystemWidth = NewWidth
+                    Case ProgramSettings.InventionFacilityRegionColumnName
+                        .InventionFacilityRegionWidth = NewWidth
                     Case ProgramSettings.InventionFacilitySystemIndexColumnName
                         .InventionFacilitySystemIndexWidth = NewWidth
                     Case ProgramSettings.InventionFacilityTaxColumnName
                         .InventionFacilityTaxWidth = NewWidth
-                    Case ProgramSettings.InventionFacilityRegionColumnName
-                        .InventionFacilityRegionWidth = NewWidth
                     Case ProgramSettings.InventionFacilityMEBonusColumnName
                         .InventionFacilityMEBonusWidth = NewWidth
                     Case ProgramSettings.InventionFacilityTEBonusColumnName
                         .InventionFacilityTEBonusWidth = NewWidth
                     Case ProgramSettings.InventionFacilityUsageColumnName
                         .InventionFacilityUsageWidth = NewWidth
-                    Case ProgramSettings.ManufacturingTeamNameColumnName
-                        .ManufacturingTeamNameWidth = NewWidth
-                    Case ProgramSettings.ManufacturingTeamBonusesColumnName
-                        .ManufacturingTeamBonusesWidth = NewWidth
-                    Case ProgramSettings.ManufacturingTeamUsageColumnName
-                        .ManufacturingTeamUsageWidth = NewWidth
-                    Case ProgramSettings.ManufacturingTeamCostModifierColumnName
-                        .ManufacturingTeamCostModifierWidth = NewWidth
-                    Case ProgramSettings.ComponentTeamNameColumnName
-                        .ComponentTeamNameWidth = NewWidth
-                    Case ProgramSettings.ComponentTeamBonusesColumnName
-                        .ComponentTeamBonusesWidth = NewWidth
-                    Case ProgramSettings.ComponentTeamUsageColumnName
-                        .ComponentTeamUsageWidth = NewWidth
-                    Case ProgramSettings.ComponentTeamCostModifierColumnName
-                        .ComponentTeamCostModifierWidth = NewWidth
-                    Case ProgramSettings.CopyingTeamNameColumnName
-                        .CopyingTeamNameWidth = NewWidth
-                    Case ProgramSettings.CopyingTeamBonusesColumnName
-                        .CopyingTeamBonusesWidth = NewWidth
-                    Case ProgramSettings.CopyingTeamUsageColumnName
-                        .CopyingTeamUsageWidth = NewWidth
-                    Case ProgramSettings.CopyingTeamCostModifierColumnName
-                        .CopyingTeamCostModifierWidth = NewWidth
-                    Case ProgramSettings.InventionTeamNameColumnName
-                        .InventionTeamNameWidth = NewWidth
-                    Case ProgramSettings.InventionTeamBonusesColumnName
-                        .InventionTeamBonusesWidth = NewWidth
-                    Case ProgramSettings.InventionTeamUsageColumnName
-                        .InventionTeamUsageWidth = NewWidth
-                    Case ProgramSettings.InventionTeamCostModifierColumnName
-                        .InventionTeamCostModifierWidth = NewWidth
                 End Select
             End With
         End If
@@ -16662,9 +16608,9 @@ CheckTechs:
                 TempBPType = If(readerBPs.IsDBNull(14), -2, CInt(readerBPs.GetValue(16))) ' Default to bpc
 
                 If TempBPType = BPType.Copy Then
-                    InsertItem.BPCType = BPType.Copy
+                    InsertItem.BlueprintType = BPType.Copy
                 Else
-                    InsertItem.BPCType = BPType.Original
+                    InsertItem.BlueprintType = BPType.Original
                 End If
 
                 ' ME value, either what the entered or in the table
@@ -16830,7 +16776,7 @@ CheckTechs:
                             If CalcDecryptorCheckBoxes(j).Text <> None _
                                 And ((InsertItem.TechLevel = "T2" And chkCalcDecryptorforT2.Enabled And chkCalcDecryptorforT2.Checked) _
                                 Or (InsertItem.TechLevel = "T3" And chkCalcDecryptorforT3.Enabled And chkCalcDecryptorforT3.Checked)) _
-                                And (InsertItem.Owned = "No" Or (InsertItem.Owned = "Yes" And InsertItem.BPCType = BPType.Copy)) Then ' Only add decryptors to T2 or T3
+                                And (InsertItem.Owned = "No" Or (InsertItem.Owned = "Yes" And InsertItem.BlueprintType = BPType.Copy)) Then ' Only add decryptors to T2 or T3
 
                                 ' Select a decryptor
                                 DecryptorUsed = InventionDecryptors.GetDecryptor(CDbl(CalcDecryptorCheckBoxes(j).Text.Substring(0, 3)))
@@ -17141,13 +17087,24 @@ CheckTechs:
                                 InsertItem.CalcType = "Components"
                                 InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetProductionTime, ManufacturingBlueprint.GetTotalUnits)
                                 InsertItem.TotalCost = ManufacturingBlueprint.GetTotalComponentCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetManufacturingFacilityUsage
-
                                 InsertItem.Taxes = ManufacturingBlueprint.GetBPTaxes
                                 InsertItem.BrokerFees = ManufacturingBlueprint.GetBPBrokerFees
+
+                                InsertItem.SingleInventedBPCRunsperBPC = ManufacturingBlueprint.GetInventedRuns
+
                                 InsertItem.BPProductionTime = FormatIPHTime(ManufacturingBlueprint.GetProductionTime)
                                 InsertItem.TotalProductionTime = FormatIPHTime(ManufacturingBlueprint.GetTotalProductionTime)
+                                InsertItem.CopyTime = FormatIPHTime(ManufacturingBlueprint.GetBPCCopyTime)
+                                InsertItem.InventionTime = FormatIPHTime(ManufacturingBlueprint.GetBPInventionTime)
+
                                 InsertItem.BaseJobCost = ManufacturingBlueprint.GetBaseJobCost
                                 InsertItem.JobFee = ManufacturingBlueprint.GetJobFee
+
+                                InsertItem.NumBPs = ManufacturingBlueprint.GetNumBPs
+                                InsertItem.InventionChance = ManufacturingBlueprint.GetInventionChance
+                                InsertItem.Race = GetRace(ManufacturingBlueprint.GetRaceID)
+                                InsertItem.VolumeperItem = ManufacturingBlueprint.GetItemVolume
+                                InsertItem.TotalVolume = ManufacturingBlueprint.GetTotalItemVolume
 
                                 If ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T2 Or ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T3 Then
                                     InsertItem.InventionCost = ManufacturingBlueprint.GetBPInventionCost
@@ -17157,11 +17114,16 @@ CheckTechs:
 
                                 If ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T2 Then
                                     InsertItem.CopyCost = ManufacturingBlueprint.GetBPCCopyCost
-                                ElseIf ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T3 Then
-                                    InsertItem.CopyCost = ManufacturingBlueprint.GetBPCCopyCost
                                 Else
                                     InsertItem.CopyCost = 0
                                 End If
+
+                                ' Usage
+                                InsertItem.ManufacturingFacilityUsage = ManufacturingBlueprint.GetManufacturingFacilityUsage
+                                InsertItem.ComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetComponentFacilityUsage
+                                InsertItem.CapComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetCapComponentFacilityUsage
+                                InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetBPCCopyUsage
+                                InsertItem.InventionFacilityUsage = ManufacturingBlueprint.GetBPInventionUsage
 
                                 ' Insert Components Item
                                 Call InsertManufacturingItem(InsertItem, SVRThresholdValue, chkCalcSVRIncludeNull.Checked, ManufacturingList)
@@ -17175,13 +17137,24 @@ CheckTechs:
                             InsertItem.CalcType = "Raw Materials"
                             InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetTotalProductionTime, ManufacturingBlueprint.GetTotalUnits)
                             InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost
-                            InsertItem.ManufacturingFacilityUsage = ManufacturingBlueprint.GetManufacturingFacilityUsage
                             InsertItem.Taxes = ManufacturingBlueprint.GetBPTaxes
                             InsertItem.BrokerFees = ManufacturingBlueprint.GetBPBrokerFees
+
+                            InsertItem.SingleInventedBPCRunsperBPC = ManufacturingBlueprint.GetInventedRuns
+
                             InsertItem.BPProductionTime = FormatIPHTime(ManufacturingBlueprint.GetProductionTime)
                             InsertItem.TotalProductionTime = FormatIPHTime(ManufacturingBlueprint.GetTotalProductionTime)
+                            InsertItem.CopyTime = FormatIPHTime(ManufacturingBlueprint.GetBPCCopyTime)
+                            InsertItem.InventionTime = FormatIPHTime(ManufacturingBlueprint.GetBPInventionTime)
+
                             InsertItem.BaseJobCost = ManufacturingBlueprint.GetBaseJobCost
                             InsertItem.JobFee = ManufacturingBlueprint.GetJobFee
+
+                            InsertItem.NumBPs = ManufacturingBlueprint.GetNumBPs
+                            InsertItem.InventionChance = ManufacturingBlueprint.GetInventionChance
+                            InsertItem.Race = GetRace(ManufacturingBlueprint.GetRaceID)
+                            InsertItem.VolumeperItem = ManufacturingBlueprint.GetItemVolume
+                            InsertItem.TotalVolume = ManufacturingBlueprint.GetTotalItemVolume
 
                             If ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T2 Or ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T3 Then
                                 InsertItem.InventionCost = ManufacturingBlueprint.GetBPInventionCost
@@ -17191,11 +17164,17 @@ CheckTechs:
 
                             If ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T2 Then
                                 InsertItem.CopyCost = ManufacturingBlueprint.GetBPCCopyCost
-                            ElseIf ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T3 Then
-                                InsertItem.CopyCost = ManufacturingBlueprint.GetBPCCopyCost
                             Else
                                 InsertItem.CopyCost = 0
                             End If
+
+                            ' Usage
+                            InsertItem.ManufacturingFacilityUsage = ManufacturingBlueprint.GetManufacturingFacilityUsage
+                            InsertItem.ComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetComponentFacilityUsage
+                            InsertItem.CapComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetCapComponentFacilityUsage
+                            InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetBPCCopyUsage
+                            InsertItem.InventionFacilityUsage = ManufacturingBlueprint.GetBPInventionUsage
+
 
                             ' Insert Raw Mats item
                             Call InsertManufacturingItem(InsertItem, SVRThresholdValue, chkCalcSVRIncludeNull.Checked, ManufacturingList)
@@ -17235,13 +17214,24 @@ CheckTechs:
                                 InsertItem.CalcType = "Build/Buy"
                                 InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetTotalProductionTime, ManufacturingBlueprint.GetTotalUnits)
                                 InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetManufacturingFacilityUsage
-                                InsertItem.ManufacturingFacilityUsage = ManufacturingBlueprint.GetManufacturingFacilityUsage
                                 InsertItem.Taxes = ManufacturingBlueprint.GetBPTaxes
                                 InsertItem.BrokerFees = ManufacturingBlueprint.GetBPBrokerFees
+
+                                InsertItem.SingleInventedBPCRunsperBPC = ManufacturingBlueprint.GetInventedRuns
+
                                 InsertItem.BPProductionTime = FormatIPHTime(ManufacturingBlueprint.GetProductionTime)
                                 InsertItem.TotalProductionTime = FormatIPHTime(ManufacturingBlueprint.GetTotalProductionTime)
+                                InsertItem.CopyTime = FormatIPHTime(ManufacturingBlueprint.GetBPCCopyTime)
+                                InsertItem.InventionTime = FormatIPHTime(ManufacturingBlueprint.GetBPInventionTime)
+
                                 InsertItem.BaseJobCost = ManufacturingBlueprint.GetBaseJobCost
                                 InsertItem.JobFee = ManufacturingBlueprint.GetJobFee
+
+                                InsertItem.NumBPs = ManufacturingBlueprint.GetNumBPs
+                                InsertItem.InventionChance = ManufacturingBlueprint.GetInventionChance
+                                InsertItem.Race = GetRace(ManufacturingBlueprint.GetRaceID)
+                                InsertItem.VolumeperItem = ManufacturingBlueprint.GetItemVolume
+                                InsertItem.TotalVolume = ManufacturingBlueprint.GetTotalItemVolume
 
                                 If ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T2 Or ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T3 Then
                                     InsertItem.InventionCost = ManufacturingBlueprint.GetBPInventionCost
@@ -17251,14 +17241,21 @@ CheckTechs:
 
                                 If ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T2 Then
                                     InsertItem.CopyCost = ManufacturingBlueprint.GetBPCCopyCost
-                                ElseIf ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T3 Then
-                                    InsertItem.CopyCost = ManufacturingBlueprint.GetBPCCopyCost
                                 Else
                                     InsertItem.CopyCost = 0
                                 End If
 
+                                ' Usage
+                                InsertItem.ManufacturingFacilityUsage = ManufacturingBlueprint.GetManufacturingFacilityUsage
+                                InsertItem.ComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetComponentFacilityUsage
+                                InsertItem.CapComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetCapComponentFacilityUsage
+                                InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetBPCCopyUsage
+                                InsertItem.InventionFacilityUsage = ManufacturingBlueprint.GetBPInventionUsage
+
+
                                 ' Insert Build/Buy item
                                 Call InsertManufacturingItem(InsertItem, SVRThresholdValue, chkCalcSVRIncludeNull.Checked, ManufacturingList)
+
                             End If
                         Else
                             ' Just look at each one individually
@@ -17287,30 +17284,47 @@ CheckTechs:
                                 InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetTotalProductionTime, ManufacturingBlueprint.GetTotalUnits)
                                 InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetManufacturingFacilityUsage
                             End If
+
                             InsertItem.ItemMarketPrice = ManufacturingBlueprint.GetItemMarketPrice
                             InsertItem.ManufacturingFacilityUsage = ManufacturingBlueprint.GetManufacturingFacilityUsage
                             InsertItem.Taxes = ManufacturingBlueprint.GetBPTaxes
                             InsertItem.BrokerFees = ManufacturingBlueprint.GetBPBrokerFees
+
+                            InsertItem.SingleInventedBPCRunsperBPC = ManufacturingBlueprint.GetInventedRuns
+
                             InsertItem.BPProductionTime = FormatIPHTime(ManufacturingBlueprint.GetProductionTime)
                             InsertItem.TotalProductionTime = FormatIPHTime(ManufacturingBlueprint.GetTotalProductionTime)
+                            InsertItem.CopyTime = FormatIPHTime(ManufacturingBlueprint.GetBPCCopyTime)
+                            InsertItem.InventionTime = FormatIPHTime(ManufacturingBlueprint.GetBPInventionTime)
+
                             InsertItem.BaseJobCost = ManufacturingBlueprint.GetBaseJobCost
                             InsertItem.JobFee = ManufacturingBlueprint.GetJobFee
 
-                            InsertItem.ManufacturingFacilityUsage = ManufacturingBlueprint.GetManufacturingFacilityUsage
-                            InsertItem.ComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetComponentFacilityUsage
-                            InsertItem.InventionTeamUsage = ManufacturingBlueprint.GetBPInventionUsage
-
-                            InsertItem.ManufacturingTeamUsage = ManufacturingBlueprint.GetManufacturingTeamFee
-                            InsertItem.ComponentTeamUsage = ManufacturingBlueprint.GetComponentTeamFee
-
-                            InsertItem.CopyCost = ManufacturingBlueprint.GetBPCCopyCost
-                            InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetBPCCopyUsage
+                            InsertItem.NumBPs = ManufacturingBlueprint.GetNumBPs
+                            InsertItem.InventionChance = ManufacturingBlueprint.GetInventionChance
+                            InsertItem.Race = GetRace(ManufacturingBlueprint.GetRaceID)
+                            InsertItem.VolumeperItem = ManufacturingBlueprint.GetItemVolume
+                            InsertItem.TotalVolume = ManufacturingBlueprint.GetTotalItemVolume
 
                             If ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T2 Or ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T3 Then
                                 InsertItem.InventionCost = ManufacturingBlueprint.GetBPInventionCost
                             Else
                                 InsertItem.InventionCost = 0
                             End If
+
+                            If ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T2 Then
+                                InsertItem.CopyCost = ManufacturingBlueprint.GetBPCCopyCost
+                            Else
+                                InsertItem.CopyCost = 0
+                            End If
+
+                            ' Usage
+                            InsertItem.ManufacturingFacilityUsage = ManufacturingBlueprint.GetManufacturingFacilityUsage
+                            InsertItem.ComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetComponentFacilityUsage
+                            InsertItem.CapComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetCapComponentFacilityUsage
+                            InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetBPCCopyUsage
+                            InsertItem.InventionFacilityUsage = ManufacturingBlueprint.GetBPInventionUsage
+
 
                             ' Insert the chosen item
                             Call InsertManufacturingItem(InsertItem, SVRThresholdValue, chkCalcSVRIncludeNull.Checked, ManufacturingList)
@@ -17405,14 +17419,6 @@ DisplayResults:
             'The remaining columns are subitems - Add depending on position
             BPList = lstManufacturing.Items.Add(CStr(FinalItemList(i).RecordID)) ' Always the first item
 
-            'Total Invention / RE Cost
-            'Total Copy Cost
-            'Total Manufacturing Cost
-
-            'Base Job Cost
-            'Manufacturing Job Fee
-            'All Team and Facility Usage
-
             For j = 1 To ColumnPositions.Count - 1
                 Select Case ColumnPositions(j)
                     Case ProgramSettings.ItemCategoryColumnName
@@ -17433,15 +17439,17 @@ DisplayResults:
                         BPList.SubItems.Add(FinalItemList(i).Inputs)
                     Case ProgramSettings.ComparedColumnName
                         BPList.SubItems.Add(FinalItemList(i).CalcType)
-                    Case ProgramSettings.RunsColumnName
+                    Case ProgramSettings.TotalRunsColumnName
                         BPList.SubItems.Add(CStr(FinalItemList(i).Runs))
+                    Case ProgramSettings.SingleInventedBPCRunsColumnName
+                        BPList.SubItems.Add(CStr(FinalItemList(i).SingleInventedBPCRunsperBPC))
                     Case ProgramSettings.ProductionLinesColumnName
                         BPList.SubItems.Add(CStr(FinalItemList(i).ProductionLines))
                     Case ProgramSettings.LaboratoryLinesColumnName
                         BPList.SubItems.Add(CStr(FinalItemList(i).LaboratoryLines))
-                    Case ProgramSettings.InventionCostColumnName
+                    Case ProgramSettings.TotalInventionCostColumnName
                         BPList.SubItems.Add(FormatNumber(FinalItemList(i).InventionCost, 2))
-                    Case ProgramSettings.CopyCostColumnName
+                    Case ProgramSettings.TotalCopyCostColumnName
                         BPList.SubItems.Add(FormatNumber(FinalItemList(i).CopyCost, 2))
                     Case ProgramSettings.TotalManufacturingCostColumnName
                         BPList.SubItems.Add(FormatNumber(FinalItemList(i).ManufacturingFacilityUsage, 2))
@@ -17453,6 +17461,10 @@ DisplayResults:
                         BPList.SubItems.Add(FinalItemList(i).BPProductionTime)
                     Case ProgramSettings.TotalProductionTimeColumnName
                         BPList.SubItems.Add(FinalItemList(i).TotalProductionTime)
+                    Case ProgramSettings.CopyTimeColumnName
+                        BPList.SubItems.Add(FinalItemList(i).CopyTime)
+                    Case ProgramSettings.InventionTimeColumnName
+                        BPList.SubItems.Add(FinalItemList(i).InventionTime)
                     Case ProgramSettings.ItemMarketPriceColumnName
                         BPList.SubItems.Add(FormatNumber(FinalItemList(i).ItemMarketPrice, 2))
                     Case ProgramSettings.ProfitColumnName
@@ -17471,9 +17483,24 @@ DisplayResults:
                         BPList.SubItems.Add(FormatNumber(FinalItemList(i).TotalCost, 2))
                     Case ProgramSettings.BaseJobCostColumnName
                         BPList.SubItems.Add(FormatNumber(FinalItemList(i).BaseJobCost, 2))
+                    Case ProgramSettings.NumBPsColumnName
+                        BPList.SubItems.Add(CStr(FinalItemList(i).NumBPs))
+                    Case ProgramSettings.InventionChanceColumnName
+                        BPList.SubItems.Add(FormatPercent(FinalItemList(i).InventionChance, 2))
+                    Case ProgramSettings.BPOTypeColumnName
+                        If FinalItemList(i).BlueprintType = BPType.Copy Then
+                            BPList.SubItems.Add("Copy")
+                        Else
+                            BPList.SubItems.Add("BPO")
+                        End If
+                    Case ProgramSettings.RaceColumnName
+                        BPList.SubItems.Add(FinalItemList(i).Race)
+                    Case ProgramSettings.VolumeperItemColumnName
+                        BPList.SubItems.Add(FormatNumber(FinalItemList(i).VolumeperItem, 2))
+                    Case ProgramSettings.TotalVolumeColumnName
+                        BPList.SubItems.Add(FormatNumber(FinalItemList(i).TotalVolume, 2))
                     Case ProgramSettings.ManufacturingJobFeeColumnName
                         BPList.SubItems.Add(FormatNumber(FinalItemList(i).JobFee, 2))
-
                     Case ProgramSettings.ManufacturingFacilityNameColumnName
                         BPList.SubItems.Add(FinalItemList(i).ManufacturingFacility.FacilityName)
                     Case ProgramSettings.ManufacturingFacilitySystemColumnName
@@ -17541,42 +17568,6 @@ DisplayResults:
                         BPList.SubItems.Add(CStr(FinalItemList(i).InventionFacility.TimeMultiplier))
                     Case ProgramSettings.InventionFacilityUsageColumnName
                         BPList.SubItems.Add(FormatNumber(FinalItemList(i).InventionFacilityUsage, 2))
-
-                    Case ProgramSettings.ManufacturingTeamNameColumnName
-                        BPList.SubItems.Add(FinalItemList(i).ManufacturingTeam.TeamName)
-                    Case ProgramSettings.ManufacturingTeamBonusesColumnName
-                        BPList.SubItems.Add(GetTeamBonusDisplayString(FinalItemList(i).ManufacturingTeam.Bonuses))
-                    Case ProgramSettings.ManufacturingTeamUsageColumnName
-                        BPList.SubItems.Add(FormatNumber(FinalItemList(i).ManufacturingTeamUsage, 2))
-                    Case ProgramSettings.ManufacturingTeamCostModifierColumnName
-                        BPList.SubItems.Add(FormatPercent(FinalItemList(i).ManufacturingTeam.CostModifier, 1))
-
-                    Case ProgramSettings.ComponentTeamNameColumnName
-                        BPList.SubItems.Add(FinalItemList(i).ComponentTeam.TeamName)
-                    Case ProgramSettings.ComponentTeamBonusesColumnName
-                        BPList.SubItems.Add(GetTeamBonusDisplayString(FinalItemList(i).ComponentTeam.Bonuses))
-                    Case ProgramSettings.ComponentTeamUsageColumnName
-                        BPList.SubItems.Add(FormatNumber(FinalItemList(i).ComponentTeamUsage, 2))
-                    Case ProgramSettings.ComponentTeamCostModifierColumnName
-                        BPList.SubItems.Add(FormatPercent(FinalItemList(i).ComponentTeam.CostModifier, 1))
-
-                    Case ProgramSettings.CopyingTeamNameColumnName
-                        BPList.SubItems.Add(FinalItemList(i).CopyTeam.TeamName)
-                    Case ProgramSettings.CopyingTeamBonusesColumnName
-                        BPList.SubItems.Add(GetTeamBonusDisplayString(FinalItemList(i).CopyTeam.Bonuses))
-                    Case ProgramSettings.CopyingTeamUsageColumnName
-                        BPList.SubItems.Add(FormatNumber(FinalItemList(i).CopyTeamUsage, 2))
-                    Case ProgramSettings.CopyingTeamCostModifierColumnName
-                        BPList.SubItems.Add(FormatPercent(FinalItemList(i).CopyTeam.CostModifier, 1))
-
-                    Case ProgramSettings.InventionTeamNameColumnName
-                        BPList.SubItems.Add(FinalItemList(i).InventionTeam.TeamName)
-                    Case ProgramSettings.InventionTeamBonusesColumnName
-                        BPList.SubItems.Add(GetTeamBonusDisplayString(FinalItemList(i).InventionTeam.Bonuses))
-                    Case ProgramSettings.InventionTeamUsageColumnName
-                        BPList.SubItems.Add(FormatNumber(FinalItemList(i).InventionTeamUsage, 2))
-                    Case ProgramSettings.InventionTeamCostModifierColumnName
-                        BPList.SubItems.Add(FormatPercent(FinalItemList(i).InventionTeam.CostModifier, 1))
                 End Select
             Next
 
@@ -17916,9 +17907,15 @@ ExitCalc:
         Dim ExportData As String
 
         Select Case ColumnName
-            Case ProgramSettings.InventionCostColumnName
+            Case ProgramSettings.InventionChanceColumnName
                 ExportData = Format(DataText, "Fixed") & Separator
-            Case ProgramSettings.CopyCostColumnName
+            Case ProgramSettings.VolumeperItemColumnName
+                ExportData = Format(DataText, "Fixed") & Separator
+            Case ProgramSettings.TotalVolumeColumnName
+                ExportData = Format(DataText, "Fixed") & Separator
+            Case ProgramSettings.TotalInventionCostColumnName
+                ExportData = Format(DataText, "Fixed") & Separator
+            Case ProgramSettings.TotalCopyCostColumnName
                 ExportData = Format(DataText, "Fixed") & Separator
             Case ProgramSettings.TotalManufacturingCostColumnName
                 ExportData = Format(DataText, "Fixed") & Separator
@@ -17955,15 +17952,6 @@ ExitCalc:
             Case ProgramSettings.InventionFacilitySystemIndexColumnName
                 ExportData = FormatNumber(DataText, 5) & Separator
             Case ProgramSettings.InventionFacilityUsageColumnName
-                ExportData = Format(DataText, "Fixed") & Separator
-
-            Case ProgramSettings.ManufacturingTeamUsageColumnName
-                ExportData = Format(DataText, "Fixed") & Separator
-            Case ProgramSettings.ComponentTeamUsageColumnName
-                ExportData = Format(DataText, "Fixed") & Separator
-            Case ProgramSettings.CopyingTeamUsageColumnName
-                ExportData = Format(DataText, "Fixed") & Separator
-            Case ProgramSettings.InventionTeamUsageColumnName
                 ExportData = Format(DataText, "Fixed") & Separator
             Case Else
                 ExportData = DataText & Separator
@@ -18556,9 +18544,10 @@ ExitCalc:
         Public IPH As Double
         Public TotalCost As Double
         Public CalcType As String ' Type of calculation to get the profit - either Components, Raw Mats or Build/Buy
-        Public BPCType As BPType
+        Public BlueprintType As BPType
 
         Public Runs As Integer
+        Public SingleInventedBPCRunsperBPC As Integer
         Public ProductionLines As Integer
         Public LaboratoryLines As Integer
 
@@ -18590,6 +18579,8 @@ ExitCalc:
 
         Public BPProductionTime As String
         Public TotalProductionTime As String
+        Public CopyTime As String
+        Public InventionTime As String
 
         Public ItemMarketPrice As Double
 
@@ -18597,6 +18588,12 @@ ExitCalc:
         Public Taxes As Double
 
         Public BaseJobCost As Double
+        Public NumBPs As Integer
+        Public InventionChance As Double
+        Public Race As String
+        Public VolumeperItem As Double
+        Public TotalVolume As Double
+
         Public JobFee As Double
         Public TeamFee As Double
 
@@ -18631,11 +18628,15 @@ ExitCalc:
             CopyofMe.IPH = IPH
             CopyofMe.TotalCost = TotalCost
             CopyofMe.CalcType = CalcType
-            CopyofMe.BPCType = BPCType
+            CopyofMe.BlueprintType = BlueprintType
 
             CopyofMe.Runs = Runs
+            CopyofMe.SingleInventedBPCRunsperBPC = SingleInventedBPCRunsperBPC
             CopyofMe.ProductionLines = ProductionLines
             CopyofMe.LaboratoryLines = LaboratoryLines
+
+            CopyofMe.CopyTime = CopyTime
+            CopyofMe.InventionTime = InventionTime
 
             CopyofMe.Inputs = Inputs
             CopyofMe.Decryptor = Decryptor
@@ -18671,6 +18672,14 @@ ExitCalc:
             CopyofMe.Taxes = Taxes
 
             CopyofMe.BaseJobCost = BaseJobCost
+
+            CopyofMe.NumBPs = NumBPs
+            CopyofMe.InventionChance = InventionChance
+            CopyofMe.BlueprintType = BlueprintType
+            CopyofMe.Race = Race
+            CopyofMe.VolumeperItem = VolumeperItem
+            CopyofMe.TotalVolume = TotalVolume
+
             CopyofMe.JobFee = JobFee
             CopyofMe.TeamFee = TeamFee
 
