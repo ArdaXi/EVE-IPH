@@ -64,7 +64,8 @@ Public Module Public_Variables
                                             & "CASE WHEN ALL_BLUEPRINTS.RACE_ID IS NOT NULL THEN ALL_BLUEPRINTS.RACE_ID ELSE 0 END AS RACE_ID," _
                                             & "CASE WHEN OBP.OWNED IS NOT NULL THEN OBP.OWNED ELSE 0 END AS OWNED," _
                                             & "CASE WHEN OBP.SCANNED IS NOT NULL THEN OBP.SCANNED ELSE 0 END AS SCANNED," _
-                                            & "CASE WHEN OBP.BP_TYPE IS NOT NULL THEN OBP.BP_TYPE ELSE -1 END AS BP_TYPE, " _
+                                            & "CASE WHEN OBP.BP_TYPE IS NOT NULL THEN OBP.BP_TYPE ELSE " _
+                                            & "CASE WHEN ALL_BLUEPRINTS.TECH_LEVEL IN (2,3) THEN -2 ELSE -1 END END AS BP_TYPE, " _
                                             & "CASE WHEN OBP.ITEM_ID IS NOT NULL THEN OBP.ITEM_ID ELSE 0 END AS UNIQUE_BP_ITEM_ID, " _
                                             & "CASE WHEN OBP.FAVORITE IS NOT NULL THEN OBP.FAVORITE ELSE 0 END AS FAVORITE, INVENTORY_TYPES.volume, INVENTORY_TYPES.marketGroupID, " _
                                             & "CASE WHEN OBP.ADDITIONAL_COSTS IS NOT NULL THEN OBP.ADDITIONAL_COSTS ELSE 0 END AS ADDITIONAL_COSTS, " _
@@ -86,7 +87,8 @@ Public Module Public_Variables
                                             & "CASE WHEN ALL_BLUEPRINTS.RACE_ID IS NOT NULL THEN ALL_BLUEPRINTS.RACE_ID ELSE 0 END AS RACE_ID," _
                                             & "CASE WHEN OBP.OWNED IS NOT NULL THEN OBP.OWNED ELSE 0 END AS OWNED," _
                                             & "CASE WHEN OBP.SCANNED IS NOT NULL THEN OBP.SCANNED ELSE 0 END AS SCANNED," _
-                                            & "CASE WHEN OBP.BP_TYPE IS NOT NULL THEN OBP.BP_TYPE ELSE -1 END AS BP_TYPE," _
+                                            & "CASE WHEN OBP.BP_TYPE IS NOT NULL THEN OBP.BP_TYPE ELSE " _
+                                            & "CASE WHEN ALL_BLUEPRINTS.TECH_LEVEL IN (2,3) THEN -2 ELSE -1 END END AS BP_TYPE, " _
                                             & "CASE WHEN OBP.ITEM_ID IS NOT NULL THEN OBP.ITEM_ID ELSE 0 END AS UNIQUE_BP_ITEM_ID, " _
                                             & "CASE WHEN OBP.FAVORITE IS NOT NULL THEN OBP.FAVORITE ELSE 0 END AS FAVORITE, INVENTORY_TYPES.volume, INVENTORY_TYPES.marketGroupID, " _
                                             & "CASE WHEN OBP.ADDITIONAL_COSTS IS NOT NULL THEN OBP.ADDITIONAL_COSTS ELSE 0 END AS ADDITIONAL_COSTS, " _
@@ -862,6 +864,7 @@ Public Module Public_Variables
                 SizesClause = SizesClause & "OR (ITEM_CATEGORY IN ('Charge','Module') AND ITEM_NAME Like '%Citadel%') "
                 SizesClause = SizesClause & "OR (ITEM_CATEGORY = 'Celestial' AND ITEM_NAME Like 'Station%') "
                 SizesClause = SizesClause & "OR (ITEM_GROUP = 'Super Weapon') "
+                SizesClause = SizesClause & "OR (ITEM_GROUP LIKE 'Bomb%') "
                 SizesClause = SizesClause & "OR (ITEM_CATEGORY = 'Ship' AND volume >= 500000)) OR "
         End Select
 

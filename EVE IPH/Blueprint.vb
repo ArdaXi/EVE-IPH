@@ -1478,6 +1478,7 @@ Public Class Blueprint
         If IncludeCopyUsage And TechLevel <> BlueprintTechLevel.T3 Then
             ' Set the copy cost based on the number of copies we'll need
             CopyUsage = GetCopyUsage(NumInventionJobs)
+            InventionMaterials.InsertMaterial(New Material(0, "Copy Usage", "Usage", 1, 0, CopyUsage, ""))
         Else
             CopyUsage = 0 ' No copies for T3
         End If
@@ -1493,6 +1494,8 @@ Public Class Blueprint
         If IncludeInventionUsage Then
             ' Set the usage for these invention jobs
             InventionUsage = GetInventionUsage(NumInventionJobs)
+            ' Add the usage
+            InventionMaterials.InsertMaterial(New Material(0, "Invention Usage", "Usage", 1, 0, InventionUsage, ""))
         Else
             InventionUsage = 0
         End If

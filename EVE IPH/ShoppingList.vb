@@ -651,7 +651,7 @@ Public Class ShoppingList
 
         Dim FullBuildList As New Materials
         Dim FullBuyList As New Materials
-        Dim FullItemList As Materials
+        Dim FullItemList As New Materials
 
         Dim TempMatList As New Materials
 
@@ -707,7 +707,7 @@ Public Class ShoppingList
                         ItemName = ItemColumns(0).Substring(0, InStr(ItemColumns(0), "(") - 2)
                         RelicName = ItemColumns(0).Substring(InStr(ItemColumns(0), "("), InStr(ItemColumns(0), ")") - InStr(ItemColumns(0), "(") - 1)
                     Else
-                        ItemName = .GetMaterialName
+                        ItemName = ItemColumns(0)
                     End If
 
                     If ItemName = .GetMaterialName And CLng(ItemColumns(1)) = .GetQuantity And ItemColumns(2) = .GetItemME _
@@ -718,7 +718,6 @@ Public Class ShoppingList
                         Exit For
                     End If
                 End With
-
             Next
         Next
 

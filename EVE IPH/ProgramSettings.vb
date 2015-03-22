@@ -442,73 +442,73 @@ Public Class ProgramSettings
 
     ' Manufacturing Tab column settings - index 0 is for hidden id column
     Dim DefaultMTItemCategory As Integer = 1
-    Dim DefaultMTItemGroup As Integer = 2
-    Dim DefaultMTItemName As Integer = 3
-    Dim DefaultMTOwned As Integer = 4
-    Dim DefaultMTTech As Integer = 5
-    Dim DefaultMTBPME As Integer = 6
-    Dim DefaultMTBPTE As Integer = 7
-    Dim DefaultMTInputs As Integer = 8
-    Dim DefaultMTCompared As Integer = 9
-    Dim DefaultMTTotalRuns As Integer = 10
-    Dim DefaultMTSingleInventedBPCRuns As Integer = 11
-    Dim DefaultMTProductionLines As Integer = 12
-    Dim DefaultMTLaboratoryLines As Integer = 13
-    Dim DefaultMTTotalInventionCost As Integer = 14
-    Dim DefaultMTTotalCopyCost As Integer = 15
-    Dim DefaultMTTotalManufacturingCost As Integer = 16
-    Dim DefaultMTTaxes As Integer = 17
-    Dim DefaultMTBrokerFees As Integer = 18
-    Dim DefaultMTBPProductionTime As Integer = 19
-    Dim DefaultMTTotalProductionTime As Integer = 20
-    Dim DefaultMTCopyTime As Integer = 21
-    Dim DefaultMTInventionTime As Integer = 22
-    Dim DefaultMTItemMarketPrice As Integer = 23
-    Dim DefaultMTProfit As Integer = 24
-    Dim DefaultMTProfitPercentage As Integer = 25
-    Dim DefaultMTIskperHour As Integer = 26
-    Dim DefaultMTSVR As Integer = 27
-    Dim DefaultMTTotalCost As Integer = 28
-    Dim DefaultMTBaseJobCost As Integer = 29
-    Dim DefaultMTNumBPs As Integer = 30
-    Dim DefaultMTInventionChance As Integer = 31
-    Dim DefaultMTBPOType As Integer = 32
-    Dim DefaultMTRace As Integer = 33
-    Dim DefaultMTVolumeperItem As Integer = 34
-    Dim DefaultMTTotalVolume As Integer = 35
-    Dim DefaultMTManufacturingJobFee As Integer = 36
-    Dim DefaultMTManufacturingFacilityName As Integer = 37
-    Dim DefaultMTManufacturingFacilitySystem As Integer = 38
-    Dim DefaultMTManufacturingFacilityRegion As Integer = 39
-    Dim DefaultMTManufacturingFacilitySystemIndex As Integer = 40
-    Dim DefaultMTManufacturingFacilityTax As Integer = 41
-    Dim DefaultMTManufacturingFacilityMEBonus As Integer = 42
-    Dim DefaultMTManufacturingFacilityTEBonus As Integer = 43
-    Dim DefaultMTManufacturingFacilityUsage As Integer = 44
-    Dim DefaultMTComponentFacilityName As Integer = 45
-    Dim DefaultMTComponentFacilitySystem As Integer = 46
-    Dim DefaultMTComponentFacilityRegion As Integer = 47
-    Dim DefaultMTComponentFacilitySystemIndex As Integer = 48
-    Dim DefaultMTComponentFacilityTax As Integer = 49
-    Dim DefaultMTComponentFacilityMEBonus As Integer = 50
-    Dim DefaultMTComponentFacilityTEBonus As Integer = 51
-    Dim DefaultMTComponentFacilityUsage As Integer = 52
-    Dim DefaultMTCopyingFacilityName As Integer = 53
-    Dim DefaultMTCopyingFacilitySystem As Integer = 54
-    Dim DefaultMTCopyingFacilityRegion As Integer = 55
-    Dim DefaultMTCopyingFacilitySystemIndex As Integer = 56
-    Dim DefaultMTCopyingFacilityTax As Integer = 57
-    Dim DefaultMTCopyingFacilityMEBonus As Integer = 58
-    Dim DefaultMTCopyingFacilityTEBonus As Integer = 59
-    Dim DefaultMTCopyingFacilityUsage As Integer = 60
-    Dim DefaultMTInventionFacilityName As Integer = 61
-    Dim DefaultMTInventionFacilitySystem As Integer = 62
-    Dim DefaultMTInventionFacilityRegion As Integer = 63
-    Dim DefaultMTInventionFacilitySystemIndex As Integer = 64
-    Dim DefaultMTInventionFacilityTax As Integer = 65
-    Dim DefaultMTInventionFacilityMEBonus As Integer = 66
-    Dim DefaultMTInventionFacilityTEBonus As Integer = 67
-    Dim DefaultMTInventionFacilityUsage As Integer = 68
+    Dim DefaultMTItemGroup As Integer = 0
+    Dim DefaultMTItemName As Integer = 2
+    Dim DefaultMTOwned As Integer = 3
+    Dim DefaultMTTech As Integer = 4
+    Dim DefaultMTBPME As Integer = 5
+    Dim DefaultMTBPTE As Integer = 6
+    Dim DefaultMTInputs As Integer = 7
+    Dim DefaultMTCompared As Integer = 8
+    Dim DefaultMTTotalRuns As Integer = 0
+    Dim DefaultMTSingleInventedBPCRuns As Integer = 0
+    Dim DefaultMTProductionLines As Integer = 0
+    Dim DefaultMTLaboratoryLines As Integer = 0
+    Dim DefaultMTTotalInventionCost As Integer = 0
+    Dim DefaultMTTotalCopyCost As Integer = 0
+    Dim DefaultMTTotalManufacturingCost As Integer = 0
+    Dim DefaultMTTaxes As Integer = 0
+    Dim DefaultMTBrokerFees As Integer = 0
+    Dim DefaultMTBPProductionTime As Integer = 0
+    Dim DefaultMTTotalProductionTime As Integer = 0
+    Dim DefaultMTCopyTime As Integer = 0
+    Dim DefaultMTInventionTime As Integer = 0
+    Dim DefaultMTItemMarketPrice As Integer = 0
+    Dim DefaultMTProfit As Integer = 9
+    Dim DefaultMTProfitPercentage As Integer = 0
+    Dim DefaultMTIskperHour As Integer = 10
+    Dim DefaultMTSVR As Integer = 11
+    Dim DefaultMTTotalCost As Integer = 12
+    Dim DefaultMTBaseJobCost As Integer = 0
+    Dim DefaultMTNumBPs As Integer = 0
+    Dim DefaultMTInventionChance As Integer = 0
+    Dim DefaultMTBPType As Integer = 0
+    Dim DefaultMTRace As Integer = 0
+    Dim DefaultMTVolumeperItem As Integer = 0
+    Dim DefaultMTTotalVolume As Integer = 0
+    Dim DefaultMTManufacturingJobFee As Integer = 0
+    Dim DefaultMTManufacturingFacilityName As Integer = 0
+    Dim DefaultMTManufacturingFacilitySystem As Integer = 0
+    Dim DefaultMTManufacturingFacilityRegion As Integer = 0
+    Dim DefaultMTManufacturingFacilitySystemIndex As Integer = 0
+    Dim DefaultMTManufacturingFacilityTax As Integer = 0
+    Dim DefaultMTManufacturingFacilityMEBonus As Integer = 0
+    Dim DefaultMTManufacturingFacilityTEBonus As Integer = 0
+    Dim DefaultMTManufacturingFacilityUsage As Integer = 0
+    Dim DefaultMTComponentFacilityName As Integer = 0
+    Dim DefaultMTComponentFacilitySystem As Integer = 0
+    Dim DefaultMTComponentFacilityRegion As Integer = 0
+    Dim DefaultMTComponentFacilitySystemIndex As Integer = 0
+    Dim DefaultMTComponentFacilityTax As Integer = 0
+    Dim DefaultMTComponentFacilityMEBonus As Integer = 0
+    Dim DefaultMTComponentFacilityTEBonus As Integer = 0
+    Dim DefaultMTComponentFacilityUsage As Integer = 0
+    Dim DefaultMTCopyingFacilityName As Integer = 0
+    Dim DefaultMTCopyingFacilitySystem As Integer = 0
+    Dim DefaultMTCopyingFacilityRegion As Integer = 0
+    Dim DefaultMTCopyingFacilitySystemIndex As Integer = 0
+    Dim DefaultMTCopyingFacilityTax As Integer = 0
+    Dim DefaultMTCopyingFacilityMEBonus As Integer = 0
+    Dim DefaultMTCopyingFacilityTEBonus As Integer = 0
+    Dim DefaultMTCopyingFacilityUsage As Integer = 0
+    Dim DefaultMTInventionFacilityName As Integer = 0
+    Dim DefaultMTInventionFacilitySystem As Integer = 0
+    Dim DefaultMTInventionFacilityRegion As Integer = 0
+    Dim DefaultMTInventionFacilitySystemIndex As Integer = 0
+    Dim DefaultMTInventionFacilityTax As Integer = 0
+    Dim DefaultMTInventionFacilityMEBonus As Integer = 0
+    Dim DefaultMTInventionFacilityTEBonus As Integer = 0
+    Dim DefaultMTInventionFacilityUsage As Integer = 0
 
     Dim DefaultMTItemCategoryWidth As Integer = 100
     Dim DefaultMTItemGroupWidth As Integer = 100
@@ -537,11 +537,11 @@ Public Class ProgramSettings
     Dim DefaultMTProfitPercentageWidth As Integer = 100
     Dim DefaultMTIskperHourWidth As Integer = 100
     Dim DefaultMTSVRWidth As Integer = 100
-    Dim DefaultMTTotalCostWidth As Integer = 100
+    Dim DefaultMTTotalCostWidth As Integer = 102
     Dim DefaultMTBaseJobCostWidth As Integer = 100
     Dim DefaultMTNumBPsWidth As Integer = 57
     Dim DefaultMTInventionChanceWidth As Integer = 100
-    Dim DefaultMTBPOTypeWidth As Integer = 54
+    Dim DefaultMTBPTypeWidth As Integer = 54
     Dim DefaultMTRaceWidth As Integer = 77
     Dim DefaultMTVolumeperItemWidth As Integer = 89
     Dim DefaultMTTotalVolumeWidth As Integer = 75
@@ -614,7 +614,7 @@ Public Class ProgramSettings
     Public Const BaseJobCostColumnName As String = "Base Job Cost"
     Public Const NumBPsColumnName As String = "Num BPs"
     Public Const InventionChanceColumnName As String = "Invention Chance"
-    Public Const BPOTypeColumnName As String = "BPO Type"
+    Public Const BPTypeColumnName As String = "BP Type"
     Public Const RaceColumnName As String = "Race"
     Public Const VolumeperItemColumnName As String = "Volume per Item"
     Public Const TotalVolumeColumnName As String = "Total Volume"
@@ -2603,7 +2603,7 @@ Public Class ProgramSettings
             If File.Exists(SettingsFolder & ManufacturingTabColumnSettingsFileName) Then
                 'Get the settings
                 With TempSettings
-.ItemCategory  = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings","ItemCategory",DefaultMTItemCategory))
+                    .ItemCategory = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "ItemCategory", DefaultMTItemCategory))
                     .ItemGroup = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "ItemGroup", DefaultMTItemGroup))
                     .ItemName = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "ItemName", DefaultMTItemName))
                     .Owned = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "Owned", DefaultMTOwned))
@@ -2634,7 +2634,7 @@ Public Class ProgramSettings
                     .BaseJobCost = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "BaseJobCost", DefaultMTBaseJobCost))
                     .NumBPs = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "NumBPs", DefaultMTNumBPs))
                     .InventionChance = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionChance", DefaultMTInventionChance))
-                    .BPOType = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "BPOType", DefaultMTBPOType))
+                    .BPType = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "BPType", DefaultMTBPType))
                     .Race = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "Race", DefaultMTRace))
                     .VolumeperItem = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "VolumeperItem", DefaultMTVolumeperItem))
                     .TotalVolume = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "TotalVolume", DefaultMTTotalVolume))
@@ -2703,7 +2703,7 @@ Public Class ProgramSettings
                     .BaseJobCostWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "BaseJobCostWidth", DefaultMTBaseJobCostWidth))
                     .NumBPsWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "NumBPsWidth", DefaultMTNumBPsWidth))
                     .InventionChanceWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "InventionChanceWidth", DefaultMTInventionChanceWidth))
-                    .BPOTypeWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "BPOTypeWidth", DefaultMTBPOTypeWidth))
+                    .BPTypeWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "BPTypeWidth", DefaultMTBPTypeWidth))
                     .RaceWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "RaceWidth", DefaultMTRaceWidth))
                     .VolumeperItemWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "VolumeperItemWidth", DefaultMTVolumeperItemWidth))
                     .TotalVolumeWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "TotalVolumeWidth", DefaultMTTotalVolumeWidth))
@@ -2800,7 +2800,7 @@ Public Class ProgramSettings
             .BaseJobCost = DefaultMTBaseJobCost
             .NumBPs = DefaultMTNumBPs
             .InventionChance = DefaultMTInventionChance
-            .BPOType = DefaultMTBPOType
+            .BPType = DefaultMTBPType
             .Race = DefaultMTRace
             .VolumeperItem = DefaultMTVolumeperItem
             .TotalVolume = DefaultMTTotalVolume
@@ -2869,7 +2869,7 @@ Public Class ProgramSettings
             .BaseJobCostWidth = DefaultMTBaseJobCostWidth
             .NumBPsWidth = DefaultMTNumBPsWidth
             .InventionChanceWidth = DefaultMTInventionChanceWidth
-            .BPOTypeWidth = DefaultMTBPOTypeWidth
+            .BPTypeWidth = DefaultMTBPTypeWidth
             .RaceWidth = DefaultMTRaceWidth
             .VolumeperItemWidth = DefaultMTVolumeperItemWidth
             .TotalVolumeWidth = DefaultMTTotalVolumeWidth
@@ -2954,7 +2954,7 @@ Public Class ProgramSettings
             ManufacturingTabColumnSettingsList(28) = New Setting("BaseJobCost", CStr(SentSettings.BaseJobCost))
             ManufacturingTabColumnSettingsList(29) = New Setting("NumBPs", CStr(SentSettings.NumBPs))
             ManufacturingTabColumnSettingsList(30) = New Setting("InventionChance", CStr(SentSettings.InventionChance))
-            ManufacturingTabColumnSettingsList(31) = New Setting("BPOType", CStr(SentSettings.BPOType))
+            ManufacturingTabColumnSettingsList(31) = New Setting("BPType", CStr(SentSettings.BPType))
             ManufacturingTabColumnSettingsList(32) = New Setting("Race", CStr(SentSettings.Race))
             ManufacturingTabColumnSettingsList(33) = New Setting("VolumeperItem", CStr(SentSettings.VolumeperItem))
             ManufacturingTabColumnSettingsList(34) = New Setting("TotalVolume", CStr(SentSettings.TotalVolume))
@@ -3023,7 +3023,7 @@ Public Class ProgramSettings
             ManufacturingTabColumnSettingsList(96) = New Setting("BaseJobCostWidth", CStr(SentSettings.BaseJobCostWidth))
             ManufacturingTabColumnSettingsList(97) = New Setting("NumBPsWidth", CStr(SentSettings.NumBPsWidth))
             ManufacturingTabColumnSettingsList(98) = New Setting("InventionChanceWidth", CStr(SentSettings.InventionChanceWidth))
-            ManufacturingTabColumnSettingsList(99) = New Setting("BPOTypeWidth", CStr(SentSettings.BPOTypeWidth))
+            ManufacturingTabColumnSettingsList(99) = New Setting("BPTypeWidth", CStr(SentSettings.BPTypeWidth))
             ManufacturingTabColumnSettingsList(100) = New Setting("RaceWidth", CStr(SentSettings.RaceWidth))
             ManufacturingTabColumnSettingsList(101) = New Setting("VolumeperItemWidth", CStr(SentSettings.VolumeperItemWidth))
             ManufacturingTabColumnSettingsList(102) = New Setting("TotalVolumeWidth", CStr(SentSettings.TotalVolumeWidth))
@@ -5031,7 +5031,7 @@ Public Structure ManufacturingTabColumnSettings
     Dim BaseJobCost As Integer
     Dim NumBPs As Integer
     Dim InventionChance As Integer
-    Dim BPOType As Integer
+    Dim BPType As Integer
     Dim Race As Integer
     Dim VolumeperItem As Integer
     Dim TotalVolume As Integer
@@ -5100,7 +5100,7 @@ Public Structure ManufacturingTabColumnSettings
     Dim BaseJobCostWidth As Integer
     Dim NumBPsWidth As Integer
     Dim InventionChanceWidth As Integer
-    Dim BPOTypeWidth As Integer
+    Dim BPTypeWidth As Integer
     Dim RaceWidth As Integer
     Dim VolumeperItemWidth As Integer
     Dim TotalVolumeWidth As Integer

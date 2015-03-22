@@ -608,8 +608,8 @@ Public Class frmMain
 
         ' Tool Tips
         If UserApplicationSettings.ShowToolTips Then
-            ttMain.SetToolTip(lblBPInventionCost, "Invention Cost for Runs entered = (Datacores + Decryptors) / Invented Runs * Runs" & vbCrLf & "Double-Click for material list needed for enough successful BPCs for runs entered")
-            ttMain.SetToolTip(lblBPRECost, "Invention Cost for Runs entered = (Datacores + Decryptors + Relics) / Invented Runs * Runs" & vbCrLf & "Double-Click for material list needed for enough successful BPCs for runs entered")
+            ttMain.SetToolTip(lblBPInventionCost, "Invention Cost for Runs entered = (Datacores + Decryptors + Usage) / Invented Runs * Runs" & vbCrLf & "Double-Click for material list needed for enough successful BPCs for runs entered")
+            ttMain.SetToolTip(lblBPRECost, "Invention Cost for Runs entered = (Datacores + Decryptors + Relics + Usage) / Invented Runs * Runs" & vbCrLf & "Double-Click for material list needed for enough successful BPCs for runs entered")
             ttMain.SetToolTip(lblBPCopyCosts, "Total Cost of materials to make enough BPCs for the number of invention jobs needed" & vbCrLf & "Double-Click for material list needed for enough successful BPCs for runs entered")
             ttMain.SetToolTip(lblBPFacilityUsage, "") ' Set when loaded with data
             ttMain.SetToolTip(lblBPRuns, "Total number of items to produce. I.e. If you have 5 blueprints with 4 runs each, then enter 20")
@@ -3748,6 +3748,8 @@ NoBonus:
     Private Sub lblBPInventionCost_DoubleClick(sender As System.Object, e As System.EventArgs) Handles lblBPInventionCost.DoubleClick
         Dim f1 As New frmInventionMats
 
+        Me.Cursor = Cursors.WaitCursor
+
         If Not IsNothing(SelectedBlueprint) Then
             If SelectedBlueprint.GetTechLevel = BlueprintTechLevel.T2 Then
                 f1.MatType = "T2 Invention Materials needed for enough successful BPCs for " & CStr(SelectedBlueprint.GetUserRuns)
@@ -3758,8 +3760,9 @@ NoBonus:
                 End If
                 f1.MaterialList = SelectedBlueprint.GetInventionMaterials
             End If
-                f1.Show()
-            End If
+            Me.Cursor = Cursors.Default
+            f1.Show()
+        End If
 
     End Sub
 
@@ -14945,8 +14948,6 @@ CheckTechs:
         Call lstManufacturing.Clear()
         AddingColumns = True
 
-        lstManufacturing.ColumnFormatStyle.
-
         ' Add the first hidden column
         lstManufacturing.Columns.Add("Order Number")
         lstManufacturing.Columns(0).Width = 0
@@ -14955,7 +14956,6 @@ CheckTechs:
         For i = 1 To ColumnPositions.Count - 1
             If ColumnPositions(i) <> "" Then
                 lstManufacturing.Columns.Add(ColumnPositions(i), GetColumnWidth(ColumnPositions(i)), GetColumnAlignment(ColumnPositions(i)))
-
             End If
         Next
 
@@ -15005,7 +15005,7 @@ CheckTechs:
             ColumnPositions(.BaseJobCost) = ProgramSettings.BaseJobCostColumnName
             ColumnPositions(.NumBPs) = ProgramSettings.NumBPsColumnName
             ColumnPositions(.InventionChance) = ProgramSettings.InventionChanceColumnName
-            ColumnPositions(.BPOType) = ProgramSettings.BPOTypeColumnName
+            ColumnPositions(.BPType) = ProgramSettings.BPTypeColumnName
             ColumnPositions(.Race) = ProgramSettings.RaceColumnName
             ColumnPositions(.VolumeperItem) = ProgramSettings.VolumeperItemColumnName
             ColumnPositions(.TotalVolume) = ProgramSettings.TotalVolumeColumnName
@@ -15054,7 +15054,7 @@ CheckTechs:
 
         With UserManufacturingTabColumnSettings
             Select Case ColumnName
-Case ProgramSettings.ItemCategoryColumnName
+                Case ProgramSettings.ItemCategoryColumnName
                     Return .ItemCategoryWidth
                 Case ProgramSettings.ItemGroupColumnName
                     Return .ItemGroupWidth
@@ -15116,8 +15116,8 @@ Case ProgramSettings.ItemCategoryColumnName
                     Return .NumBPsWidth
                 Case ProgramSettings.InventionChanceColumnName
                     Return .InventionChanceWidth
-                Case ProgramSettings.BPOTypeColumnName
-                    Return .BPOTypeWidth
+                Case ProgramSettings.BPTypeColumnName
+                    Return .BPTypeWidth
                 Case ProgramSettings.RaceColumnName
                     Return .RaceWidth
                 Case ProgramSettings.VolumeperItemColumnName
@@ -15263,7 +15263,7 @@ Case ProgramSettings.ItemCategoryColumnName
                 Return HorizontalAlignment.Right
             Case ProgramSettings.InventionChanceColumnName
                 Return HorizontalAlignment.Right
-            Case ProgramSettings.BPOTypeColumnName
+            Case ProgramSettings.BPTypeColumnName
                 Return HorizontalAlignment.Center
             Case ProgramSettings.RaceColumnName
                 Return HorizontalAlignment.Left
@@ -15401,7 +15401,7 @@ Case ProgramSettings.ItemCategoryColumnName
         With UserManufacturingTabColumnSettings
             For i = 1 To ColumnPositions.Count - 1
                 Select Case ColumnPositions(i)
-Case ProgramSettings.ItemCategoryColumnName
+                    Case ProgramSettings.ItemCategoryColumnName
                         .ItemCategory = i
                     Case ProgramSettings.ItemGroupColumnName
                         .ItemGroup = i
@@ -15463,8 +15463,8 @@ Case ProgramSettings.ItemCategoryColumnName
                         .NumBPs = i
                     Case ProgramSettings.InventionChanceColumnName
                         .InventionChance = i
-                    Case ProgramSettings.BPOTypeColumnName
-                        .BPOType = i
+                    Case ProgramSettings.BPTypeColumnName
+                        .BPType = i
                     Case ProgramSettings.RaceColumnName
                         .Race = i
                     Case ProgramSettings.VolumeperItemColumnName
@@ -15558,7 +15558,7 @@ Case ProgramSettings.ItemCategoryColumnName
         If Not AddingColumns Then
             With UserManufacturingTabColumnSettings
                 Select Case ColumnPositions(e.ColumnIndex)
-                   Case ProgramSettings.ItemCategoryColumnName
+                    Case ProgramSettings.ItemCategoryColumnName
                         .ItemCategoryWidth = NewWidth
                     Case ProgramSettings.ItemGroupColumnName
                         .ItemGroupWidth = NewWidth
@@ -15620,8 +15620,8 @@ Case ProgramSettings.ItemCategoryColumnName
                         .NumBPsWidth = NewWidth
                     Case ProgramSettings.InventionChanceColumnName
                         .InventionChanceWidth = NewWidth
-                    Case ProgramSettings.BPOTypeColumnName
-                        .BPOTypeWidth = NewWidth
+                    Case ProgramSettings.BPTypeColumnName
+                        .BPTypeWidth = NewWidth
                     Case ProgramSettings.RaceColumnName
                         .RaceWidth = NewWidth
                     Case ProgramSettings.VolumeperItemColumnName
@@ -17487,7 +17487,7 @@ DisplayResults:
                         BPList.SubItems.Add(CStr(FinalItemList(i).NumBPs))
                     Case ProgramSettings.InventionChanceColumnName
                         BPList.SubItems.Add(FormatPercent(FinalItemList(i).InventionChance, 2))
-                    Case ProgramSettings.BPOTypeColumnName
+                    Case ProgramSettings.BPTypeColumnName
                         If FinalItemList(i).BlueprintType = BPType.Copy Then
                             BPList.SubItems.Add("Copy")
                         Else

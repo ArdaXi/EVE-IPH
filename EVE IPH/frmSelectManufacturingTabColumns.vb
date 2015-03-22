@@ -36,7 +36,7 @@
 
     Private Sub ShowList()
         With UserManufacturingTabColumnSettings
-Call UpdateListCheck(.ItemCategory,0)
+            Call UpdateListCheck(.ItemCategory, 0)
             Call UpdateListCheck(.ItemGroup, 1)
             Call UpdateListCheck(.ItemName, 2)
             Call UpdateListCheck(.Owned, 3)
@@ -67,7 +67,7 @@ Call UpdateListCheck(.ItemCategory,0)
             Call UpdateListCheck(.BaseJobCost, 28)
             Call UpdateListCheck(.NumBPs, 29)
             Call UpdateListCheck(.InventionChance, 30)
-            Call UpdateListCheck(.BPOType, 31)
+            Call UpdateListCheck(.BPType, 31)
             Call UpdateListCheck(.Race, 32)
             Call UpdateListCheck(.VolumeperItem, 33)
             Call UpdateListCheck(.TotalVolume, 34)
@@ -162,7 +162,7 @@ Call UpdateListCheck(.ItemCategory,0)
 
         With UserManufacturingTabColumnSettings
             ' First add any new check boxes that weren't checked before
-.ItemCategory = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(0), .ItemCategory)
+            .ItemCategory = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(0), .ItemCategory)
             .ItemGroup = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(1), .ItemGroup)
             .ItemName = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(2), .ItemName)
             .Owned = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(3), .Owned)
@@ -193,7 +193,7 @@ Call UpdateListCheck(.ItemCategory,0)
             .BaseJobCost = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(28), .BaseJobCost)
             .NumBPs = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(29), .NumBPs)
             .InventionChance = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(30), .InventionChance)
-            .BPOType = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(31), .BPOType)
+            .BPType = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(31), .BPType)
             .Race = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(32), .Race)
             .VolumeperItem = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(33), .VolumeperItem)
             .TotalVolume = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(34), .TotalVolume)
@@ -238,7 +238,7 @@ Call UpdateListCheck(.ItemCategory,0)
                 Next
 
                 With UserManufacturingTabColumnSettings
-ColumnPositions(.ItemCategory) = ProgramSettings.ItemCategoryColumnName
+                    ColumnPositions(.ItemCategory) = ProgramSettings.ItemCategoryColumnName
                     ColumnPositions(.ItemGroup) = ProgramSettings.ItemGroupColumnName
                     ColumnPositions(.ItemName) = ProgramSettings.ItemNameColumnName
                     ColumnPositions(.Owned) = ProgramSettings.OwnedColumnName
@@ -269,7 +269,7 @@ ColumnPositions(.ItemCategory) = ProgramSettings.ItemCategoryColumnName
                     ColumnPositions(.BaseJobCost) = ProgramSettings.BaseJobCostColumnName
                     ColumnPositions(.NumBPs) = ProgramSettings.NumBPsColumnName
                     ColumnPositions(.InventionChance) = ProgramSettings.InventionChanceColumnName
-                    ColumnPositions(.BPOType) = ProgramSettings.BPOTypeColumnName
+                    ColumnPositions(.BPType) = ProgramSettings.BPTypeColumnName
                     ColumnPositions(.Race) = ProgramSettings.RaceColumnName
                     ColumnPositions(.VolumeperItem) = ProgramSettings.VolumeperItemColumnName
                     ColumnPositions(.TotalVolume) = ProgramSettings.TotalVolumeColumnName
@@ -342,7 +342,7 @@ ColumnPositions(.ItemCategory) = ProgramSettings.ItemCategoryColumnName
                 With UserManufacturingTabColumnSettings
                     For i = 1 To ColumnPositions.Count - 1
                         Select Case ColumnPositions(i)
-Case ProgramSettings.ItemCategoryColumnName
+                            Case ProgramSettings.ItemCategoryColumnName
                                 .ItemCategory = i
                             Case ProgramSettings.ItemGroupColumnName
                                 .ItemGroup = i
@@ -404,8 +404,8 @@ Case ProgramSettings.ItemCategoryColumnName
                                 .NumBPs = i
                             Case ProgramSettings.InventionChanceColumnName
                                 .InventionChance = i
-                            Case ProgramSettings.BPOTypeColumnName
-                                .BPOType = i
+                            Case ProgramSettings.BPTypeColumnName
+                                .BPType = i
                             Case ProgramSettings.RaceColumnName
                                 .Race = i
                             Case ProgramSettings.VolumeperItemColumnName
