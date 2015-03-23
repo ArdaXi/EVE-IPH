@@ -317,7 +317,13 @@ Public Class frmMain
         Call Build_ASSEMBLY_ARRAYS()
 
         lblTableName.Text = "Building: ITEM_PRICES"
-        Call Build_Item_Prices()
+        Call Build_ITEM_PRICES()
+
+        lblTableName.Text = "Building: MARKET_HISTORY"
+        Call Build_MARKET_HISTORY()
+
+        lblTableName.Text = "Building: MARKET_HISTORY_UPDATE_CACHE"
+        Call Build_MARKET_HISTORY_UPDATE_CACHE()
 
         lblTableName.Text = "Building: INVENTORY_TYPES"
         Call Build_Inventory_Types()
@@ -1537,6 +1543,8 @@ Public Class frmMain
         SQL = SQL & "CREST_INDUSTRY_SYSTEMS_CACHED_UNTIL VARCHAR(23)," ' Date
         SQL = SQL & "CREST_INDUSTRY_FACILITIES_CACHED_UNTIL VARCHAR(23)," ' Date
         SQL = SQL & "CREST_MARKET_PRICES_CACHED_UNTIL VARCHAR(23)" ' Date
+        'SQL = SQL & "SERVER_TIME_CACHED_UNTIL VARCHAR(23),"
+        'SQL = SQL & "SERVER_TIME VARCHAR(23)"
         SQL = SQL & ")"
 
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
@@ -4867,6 +4875,45 @@ Public Class frmMain
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
         SQL = "CREATE UNIQUE INDEX IDX_EMD_U_HISTORY ON EMD_UPDATE_HISTORY (TypeID, Days, RegionID, UpdateLastRan)"
+        Call Execute_SQLiteSQL(SQL, SQLiteDB)
+
+    End Sub
+
+    ' MARKET_HISTORY
+    Private Sub Build_MARKET_HISTORY()
+        Dim SQL As String
+
+        SQL = "CREATE TABLE MARKET_HISTORY ("
+        SQL = SQL & "TYPE_ID INTEGER NOT NULL,"
+        SQL = SQL & "REGION_ID INTEGER NOT NULL,"
+        SQL = SQL & "VOLUME INTEGER NOT NULL,"
+        SQL = SQL & "LOW_PRICE FLOAT NOT NULL,"
+        SQL = SQL & "HIGH_PRICE FLOAT NOT NULL,"
+        SQL = SQL & "AVERAGE_PRICE FLOAT NOT NULL,"
+        SQL = SQL & "ORDER_COUNT INTEGER NOT NULL,"
+        SQL = SQL & "DATE VARCHAR(23)"
+        SQL = SQL & ")"
+
+        Call Execute_SQLiteSQL(Sql, SQLiteDB)
+
+        SQL = "CREATE INDEX IDX_MH_TID_RID ON MARKET_HISTORY (TYPE_ID, REGION_ID)"
+        Call Execute_SQLiteSQL(SQL, SQLiteDB)
+
+    End Sub
+
+    ' MARKET_HISTORY_UPDATE_CACHE
+    Private Sub Build_MARKET_HISTORY_UPDATE_CACHE()
+        Dim SQL As String
+
+        SQL = "CREATE TABLE MARKET_HISTORY_UPDATE_CACHE ("
+        SQL = SQL & "TYPE_ID INTEGER NOT NULL,"
+        SQL = SQL & "REGION_ID INTEGER NOT NULL,"
+        SQL = SQL & "CACHE_DATE VARCHAR(23)"
+        SQL = SQL & ")"
+
+        Call Execute_SQLiteSQL(SQL, SQLiteDB)
+
+        SQL = "CREATE INDEX IDX_MHUC_TID_RID ON MARKET_HISTORY_UPDATE_CACHE (TYPE_ID, REGION_ID)"
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
 
     End Sub
