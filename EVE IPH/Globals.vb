@@ -1346,6 +1346,72 @@ InvalidDate:
 
     End Function
 
+    ' Returns the current eve time as per EVE servers
+    Public Function GetEVETime() As Date
+        Dim API As New EVEAPI
+        Dim SQL As String = ""
+        Dim rsCheck As SQLiteDataReader
+        Dim CacheDate As Date = NoDate
+        Dim ReturnDate As Date = NoDate
+
+        ' Temp use of this field until I'm done with the feature to add - this is a temp use of this field
+        DBCommand = New SQLiteCommand("SELECT CREST_INDUSTRY_TEAMS_CACHED_UNTIL FROM EVEIPH_DATA", DB)
+        rsCheck = DBCommand.ExecuteReader
+
+        ' See if it's time for an update
+        If rsCheck.Read() Then
+            If CDate(rsCheck.GetString(0)) < Date.UtcNow Then
+                ' Run the update
+                ReturnDate = Update_EVEServerTime(CacheDate)
+            Else
+                ' Return the current date in the table - this is temp use of this field
+                DBCommand = New SQLiteCommand("SELECT CREST_INDUSTRY_TEAM_AUCTIONS_CACHED_UNTIL FROM EVEIPH_DATA", DB)
+                rsCheck = DBCommand.ExecuteReader
+                rsCheck.Read()
+                ReturnDate = CDate(rsCheck.GetString(0))
+            End If
+        Else
+            ' Run the update
+            ReturnDate = Update_EVEServerTime(CacheDate)
+        End If
+
+        rsCheck.Close()
+        DBCommand = Nothing
+
+        Return ReturnDate
+
+    End Function
+
+    ' Updates the DB with the eve server time and cache date
+    Private Function Update_EVEServerTime(ByRef CacheDate As Date) As Date
+        Dim ReturnDate As Date = NoDate
+        Dim API As New EVEAPI
+        Dim SQL As String = ""
+        Dim rsCheck As SQLiteDataReader
+
+        ' Run the update
+        ReturnDate = API.GetEVEServerTime(CacheDate)
+
+        ' See if we have anything in the table yet
+        DBCommand = New SQLiteCommand("SELECT 'X' FROM EVEIPH_DATA", DB)
+        rsCheck = DBCommand.ExecuteReader
+
+        If rsCheck.Read Then
+            ' Update the cache and server date
+            SQL = "UPDATE EVEIPH_DATA SET CREST_INDUSTRY_TEAM_AUCTIONS_CACHED_UNTIL = '" & Format(ReturnDate, SQLiteDateFormat) & "',"
+            SQL = SQL & "CREST_INDUSTRY_TEAMS_CACHED_UNTIL = '" & Format(CacheDate, SQLiteDateFormat) & "'"
+            Call ExecuteNonQuerySQL(SQL)
+        Else ' insert new data
+            ' Update the cache and server date
+            SQL = "INSERT INTO EVEIPH_DATA (CREST_INDUSTRY_TEAM_AUCTIONS_CACHED_UNTIL, CREST_INDUSTRY_TEAMS_CACHED_UNTIL)"
+            SQL = SQL & "VALUES ('" & Format(ReturnDate, SQLiteDateFormat) & "','" & Format(CacheDate, SQLiteDateFormat) & "')"
+            Call ExecuteNonQuerySQL(SQL)
+        End If
+
+        Return ReturnDate
+
+    End Function
+
     ' Returns the text race for the ID sent
     Public Function GetRace(ByVal RaceID As Integer) As String
         Dim rsLookup As SQLite.SQLiteDataReader

@@ -17,6 +17,7 @@ Public Class EVECREST
     Private Const CRESTIndustryFacilities = "/industry/facilities/"
     Private Const CRESTMarketPrices = "/market/prices/"
 
+
     ' File Names
     Private Const IndustryTeamSpecialtiesFile = "IndustryTeamSpecialties"
     Private Const IndustryTeamsFile = "IndustryTeams"
@@ -24,6 +25,7 @@ Public Class EVECREST
     Private Const IndustrySystemsFile = "IndustrySystems"
     Private Const IndustryFacilitiesFile = "IndustryFacilities"
     Private Const MarketPricesFile = "MarketPrices"
+    Private Const MarketHistoryPreName = "MarketHistory-"
 
     ' Files location
     Private Const CRESTFileDownloadLocation = ""
@@ -41,6 +43,106 @@ Public Class EVECREST
     Private Const IndustryFacilitiesLength As Integer = 1
     Private Const MarketPricesField As String = "CREST_MARKET_PRICES_CACHED_UNTIL"
     Private Const MarketPricesLength As Integer = 23
+
+    ' market/{region_id}/types/{type_id}/history/ (cache: 23 hours)
+    'https://public-crest.eveonline.com/market/10000002/types/34/history/
+    ' Provides per day summary of market activity for 13 months for the region_id and type_id sent.
+
+    ' Gets the CREST file from CCP for current Market History and updates the EVEIPH DB with the values
+    Public Sub UpdateMarketHistory(ByVal TypeID As Long, RegionID As Long)
+        Dim MarketPricesOutput As MarketHistory
+        Dim SQL As String
+        Dim rsCache As SQLiteDataReader
+        Dim CacheDate As Date
+
+        ' First look up the cache date to see if it's time to run the update
+        SQL = "SELECT CACHE_DATE FROM MARKET_HISTORY_UPDATE_CACHE WHERE TYPE_ID = " & CStr(TypeID) & " AND REGION_ID = " & CStr(RegionID)
+        DBCommand = New SQLiteCommand(SQL, DB)
+        rsCache = DBCommand.ExecuteReader
+
+        If rsCache.Read Then
+            If Not IsDBNull(rsCache.GetValue(0)) Then
+                If rsCache.GetString(0) = "" Then
+                    CacheDate = NoDate
+                Else
+                    CacheDate = CDate(rsCache.GetString(0))
+                End If
+            Else
+                CacheDate = NoDate
+            End If
+        Else
+            CacheDate = NoDate
+        End If
+
+        rsCache.Close()
+        rsCache = Nothing
+        DBCommand = Nothing
+
+        ' If it's later than now, update
+        If CacheDate <= Now Then
+
+            Application.DoEvents()
+
+            ' Dump the file into the Specializations object
+            MarketPricesOutput = JsonConvert.DeserializeObject(Of MarketHistory) _
+                (GetJSONFile(CRESTRootServerURL & "/market/" & CStr(RegionID) & "/types/" & CStr(TypeID) & "/history/", CRESTFileDownloadLocation, MarketHistoryPreName & CStr(RegionID) & "-" & CStr(TypeID)))
+
+            ' Read in the data
+            If Not IsNothing(MarketPricesOutput) Then
+                If MarketPricesOutput.items.Count > 0 Then
+                    Call BeginSQLiteTransaction()
+
+                    ' Clear the old record first
+                    Call ExecuteNonQuerySQL("DELETE FROM MARKET_HISTORY WHERE TYPE_ID = " & CStr(TypeID) & " AND REGION_ID = " & CStr(RegionID))
+
+                    Application.DoEvents()
+
+                    ' Now read through all the output items and update them in ITEM_PRICES
+                    For i = 0 To MarketPricesOutput.totalCount - 1
+                        With MarketPricesOutput.items(i)
+                            SQL = "INSERT INTO MARKET_HISTORY VALUES (" & CStr(TypeID) & "," & CStr(RegionID) & "," & CStr(.volume) & ","
+                            SQL = SQL & CStr(.lowPrice) & "," & CStr(.highPrice) & "," & CStr(.avgPrice) & "," & CStr(.orderCount) & ",'" & .date_str.Replace("T", " ") & "')"
+                            Call ExecuteNonQuerySQL(SQL)
+                        End With
+
+                        Application.DoEvents()
+                    Next
+
+                    ' Set the Cache Date to now plus the length since it's not sent in the file
+                    Call ExecuteNonQuerySQL("DELETE FROM MARKET_HISTORY_UPDATE_CACHE WHERE TYPE_ID = " & CStr(TypeID) & " AND REGION_ID = " & CStr(RegionID))
+                    Dim TempDate As String = Format(DateAdd(DateInterval.Day, 1, GetEVETime().Date), SQLiteDateFormat) ' Set to midnight of current day plus 1
+                    Call ExecuteNonQuerySQL("INSERT INTO MARKET_HISTORY_UPDATE_CACHE VALUES (" & CStr(TypeID) & "," & CStr(RegionID) & "," & "'" & TempDate & "')")
+
+                    ' Done updating
+                    Call CommitSQLiteTransaction()
+                End If
+            End If
+        End If
+
+    End Sub
+
+    ' For Market History
+    Private Class MarketHistory
+        '{"totalCount_str": "414", "items": [], "pageCount": 1, "pageCount_str": "1", "totalCount": 414}
+        <JsonProperty("totalCount_str")> Public totalCount_str As String
+        <JsonProperty("items")> Public items() As MarketPriceItems
+        <JsonProperty("pageCount")> Public pageCount As Integer
+        <JsonProperty("pageCount_str")> Public pageCount_str As String
+        <JsonProperty("totalCount")> Public totalCount As Integer
+    End Class
+
+    ' For Market History
+    Private Class MarketPriceItems
+        '{"volume_str": "28662910175", "orderCount": 4312, "lowPrice": 4.98, "highPrice": 5.04, "avgPrice": 5.0, "volume": 28662910175, "orderCount_str": "4312", "date": "2014-02-01T00:00:00"}
+        <JsonProperty("volume_str")> Public volume_str As String
+        <JsonProperty("orderCount")> Public orderCount As Long
+        <JsonProperty("lowPrice")> Public lowPrice As Double
+        <JsonProperty("highPrice")> Public highPrice As Double
+        <JsonProperty("avgPrice")> Public avgPrice As Double
+        <JsonProperty("volume")> Public volume As Long
+        <JsonProperty("orderCount_str")> Public orderCount_str As String
+        <JsonProperty("date")> Public date_str As String
+    End Class
 
     ' Current endpoints as of July 22, 2014
 

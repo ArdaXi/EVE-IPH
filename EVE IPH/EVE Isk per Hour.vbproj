@@ -147,6 +147,15 @@
     <Compile Include="ApplicationEvents.vb" />
     <Compile Include="Blueprint.vb" />
     <Compile Include="Character.vb" />
+    <Compile Include="DoubleTrackBar - No designer.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="frmCRESTMarketViewer.Designer.vb">
+      <DependentUpon>frmCRESTMarketViewer.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmCRESTMarketViewer.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="frmUsageViewer.Designer.vb">
       <DependentUpon>frmUsageViewer.vb</DependentUpon>
     </Compile>
@@ -390,6 +399,10 @@
     <Compile Include="TopMostMessageBox.vb" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="frmCRESTMarketViewer.resx">
+      <DependentUpon>frmCRESTMarketViewer.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmUsageViewer.resx">
       <DependentUpon>frmUsageViewer.vb</DependentUpon>
       <SubType>Designer</SubType>

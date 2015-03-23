@@ -43,6 +43,8 @@ Public Class EVEAPI
 
     Private Const EVEOutpostData As String = "/eve/ConquerableStationList.xml.aspx" ' List of conquerable stations
 
+    Private Const EVEServerData As String = "/server/ServerStatus.xml.aspx" ' Singularity server data
+
     Private APIError As ErrorData
 
     Public Sub New()
@@ -808,6 +810,41 @@ Public Class EVEAPI
         Next
 
         Return ReturnData
+
+    End Function
+
+    ' Function gets the current EVE server time for singularity
+    Public Function GetEVEServerTime(ByRef CachedUntilDate As Date) As Date
+        ' XML Variables
+        Dim m_xmld As XmlDocument
+        Dim m_nodelist As XmlNodeList
+
+        Dim EVEAPIQuery As String
+
+        Dim ReturnDate As Date
+
+        ' Set up query string
+        EVEAPIQuery = APIURL & EVEServerData
+
+        'Create the XML Document
+        m_xmld = QueryEVEAPI(EVEAPIQuery)
+
+        ' Check data
+        If IsNothing(m_xmld) Then
+            Return Nothing
+        End If
+
+        ' Update the cache update to 24 hours from this query
+        'CacheDate = DateAdd(DateInterval.Day, 1, Date.UtcNow)
+        ' Get the cache update
+        m_nodelist = m_xmld.SelectNodes("/eveapi/cachedUntil")
+        ' Should only be one time
+        CachedUntilDate = CDate(m_nodelist.Item(0).InnerText)
+
+        m_nodelist = m_xmld.SelectNodes("/eveapi/cachedUntil")
+        ReturnDate = CDate(m_nodelist.Item(0).InnerText)
+
+        Return ReturnDate
 
     End Function
 

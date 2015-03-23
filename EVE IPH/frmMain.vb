@@ -15712,6 +15712,11 @@ CheckTechs:
 #End Region
 
     Private Sub InitManufacturingTab()
+
+        If Developer Then
+            lstManufacturing.ContextMenuStrip = ListOptionsMenu
+        End If
+
         lstManufacturing.Items.Clear()
 
         With UserManufacturingTabSettings
@@ -18863,6 +18868,49 @@ ExitCalc:
             CalcComponentFacilityLoaded = LoadedValue
         End If
     End Sub
+
+#Region "List Options Menu"
+
+    ' Gets the line selected, grabs the TypeID and then looks up the CREST Market data for updates, then displays the market history form
+    Private Sub OpenMarketDataToolStripMenuItem_Click(sender As System.Object, e As System.EventArgs) Handles OpenMarketDataToolStripMenuItem.Click
+
+        Dim FoundItem As New ManufacturingItem
+        Dim SQL As String
+        Dim readerRegion As SQLiteDataReader
+        Dim RegionID As Long
+
+        ' Find the item clicked in the list of items by looking up the row number stored in the hidden column
+        ManufacturingItemToFind = CLng(lstManufacturing.SelectedItems(0).SubItems(0).Text)
+        FoundItem = FinalManufacturingItemList.Find(AddressOf FindManufacturingItem)
+
+        If FoundItem IsNot Nothing Then
+            Dim TempCrest As New EVECREST
+
+            ' Get the region ID
+            Sql = "SELECT regionID FROM REGIONS WHERE regionName ='" & cmbCalcSVRRegion.Text & "'"
+            DBCommand = New SQLiteCommand(Sql, DB)
+            readerRegion = DBCommand.ExecuteReader
+
+            If readerRegion.Read Then
+                RegionID = readerRegion.GetInt64(0)
+            Else
+                RegionID = TheForgeTypeID ' The Forge as default
+            End If
+
+            readerRegion.Close()
+            DBCommand = Nothing
+
+            Call TempCrest.UpdateMarketHistory(FoundItem.ItemTypeID, RegionID)
+
+            ' Now open the window for that item after updated
+
+
+            TempCrest = Nothing
+        End If
+
+    End Sub
+
+#End Region
 
 #End Region
 

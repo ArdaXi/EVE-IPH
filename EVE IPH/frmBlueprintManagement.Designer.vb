@@ -25,6 +25,13 @@ Partial Class frmBlueprintManagement
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmBlueprintManagement))
         Me.gbBPFilter = New System.Windows.Forms.GroupBox()
+        Me.gbBlueprintTech = New System.Windows.Forms.GroupBox()
+        Me.chkBPPirateFaction = New System.Windows.Forms.CheckBox()
+        Me.chkBPStoryline = New System.Windows.Forms.CheckBox()
+        Me.chkBPNavyFaction = New System.Windows.Forms.CheckBox()
+        Me.chkBPT3 = New System.Windows.Forms.CheckBox()
+        Me.chkBPT2 = New System.Windows.Forms.CheckBox()
+        Me.chkBPT1 = New System.Windows.Forms.CheckBox()
         Me.gbRace = New System.Windows.Forms.GroupBox()
         Me.chkRacePirate = New System.Windows.Forms.CheckBox()
         Me.chkRaceOther = New System.Windows.Forms.CheckBox()
@@ -32,13 +39,14 @@ Partial Class frmBlueprintManagement
         Me.chkRaceCaldari = New System.Windows.Forms.CheckBox()
         Me.chkRaceAmarr = New System.Windows.Forms.CheckBox()
         Me.chkRaceMinmatar = New System.Windows.Forms.CheckBox()
+        Me.gbBackup = New System.Windows.Forms.GroupBox()
+        Me.btnLoadBPs = New System.Windows.Forms.Button()
+        Me.btnBackupBPs = New System.Windows.Forms.Button()
         Me.gbSize = New System.Windows.Forms.GroupBox()
         Me.chkBPXL = New System.Windows.Forms.CheckBox()
         Me.chkBPLarge = New System.Windows.Forms.CheckBox()
         Me.chkBPMedium = New System.Windows.Forms.CheckBox()
         Me.chkBPSmall = New System.Windows.Forms.CheckBox()
-        Me.btnLoadBPs = New System.Windows.Forms.Button()
-        Me.btnBackupBPs = New System.Windows.Forms.Button()
         Me.gbBPCopyOptions = New System.Windows.Forms.GroupBox()
         Me.rbtnOnlyBPO = New System.Windows.Forms.RadioButton()
         Me.rbtnOnlyCopies = New System.Windows.Forms.RadioButton()
@@ -51,13 +59,6 @@ Partial Class frmBlueprintManagement
         Me.btnScanCorpBPs = New System.Windows.Forms.Button()
         Me.btnResetAll = New System.Windows.Forms.Button()
         Me.btnRefresh = New System.Windows.Forms.Button()
-        Me.gbBlueprintTech = New System.Windows.Forms.GroupBox()
-        Me.chkBPPirateFaction = New System.Windows.Forms.CheckBox()
-        Me.chkBPStoryline = New System.Windows.Forms.CheckBox()
-        Me.chkBPNavyFaction = New System.Windows.Forms.CheckBox()
-        Me.chkBPT3 = New System.Windows.Forms.CheckBox()
-        Me.chkBPT2 = New System.Windows.Forms.CheckBox()
-        Me.chkBPT1 = New System.Windows.Forms.CheckBox()
         Me.gbItemTypeFilter = New System.Windows.Forms.GroupBox()
         Me.cmbBPTypeFilter = New System.Windows.Forms.ComboBox()
         Me.lblBPCombo = New System.Windows.Forms.Label()
@@ -88,8 +89,9 @@ Partial Class frmBlueprintManagement
         Me.txtBPEdit = New System.Windows.Forms.TextBox()
         Me.btnReset = New System.Windows.Forms.Button()
         Me.gbUpdateOptions = New System.Windows.Forms.GroupBox()
-        Me.chkMarkasFavorite = New System.Windows.Forms.CheckBox()
         Me.chkMarkAsCopy = New System.Windows.Forms.CheckBox()
+        Me.chkMarkasFavorite = New System.Windows.Forms.CheckBox()
+        Me.chkDisableMETE = New System.Windows.Forms.CheckBox()
         Me.rbtnMarkasUnowned = New System.Windows.Forms.RadioButton()
         Me.rbtnMarkasOwned = New System.Windows.Forms.RadioButton()
         Me.txtBPTE = New System.Windows.Forms.TextBox()
@@ -105,20 +107,18 @@ Partial Class frmBlueprintManagement
         Me.OpenFileDialog = New System.Windows.Forms.OpenFileDialog()
         Me.cmbEdit = New System.Windows.Forms.ComboBox()
         Me.lstBPs = New EVE_Isk_per_Hour.MyListView()
-        Me.chkDisableMETE = New System.Windows.Forms.CheckBox()
-        Me.gbBackup = New System.Windows.Forms.GroupBox()
         Me.gbBPFilter.SuspendLayout()
+        Me.gbBlueprintTech.SuspendLayout()
         Me.gbRace.SuspendLayout()
+        Me.gbBackup.SuspendLayout()
         Me.gbSize.SuspendLayout()
         Me.gbBPCopyOptions.SuspendLayout()
         Me.gbBPTextSearch.SuspendLayout()
-        Me.gbBlueprintTech.SuspendLayout()
         Me.gbItemTypeFilter.SuspendLayout()
         Me.gbBlueprintType.SuspendLayout()
         Me.gbBPSelect.SuspendLayout()
         Me.gbUpdateOptions.SuspendLayout()
         Me.grpScanAssets.SuspendLayout()
-        Me.gbBackup.SuspendLayout()
         Me.SuspendLayout()
         '
         'gbBPFilter
@@ -142,6 +142,83 @@ Partial Class frmBlueprintManagement
         Me.gbBPFilter.TabIndex = 0
         Me.gbBPFilter.TabStop = False
         Me.gbBPFilter.Text = "Blueprint Filters"
+        '
+        'gbBlueprintTech
+        '
+        Me.gbBlueprintTech.Controls.Add(Me.chkBPPirateFaction)
+        Me.gbBlueprintTech.Controls.Add(Me.chkBPStoryline)
+        Me.gbBlueprintTech.Controls.Add(Me.chkBPNavyFaction)
+        Me.gbBlueprintTech.Controls.Add(Me.chkBPT3)
+        Me.gbBlueprintTech.Controls.Add(Me.chkBPT2)
+        Me.gbBlueprintTech.Controls.Add(Me.chkBPT1)
+        Me.gbBlueprintTech.Location = New System.Drawing.Point(266, 13)
+        Me.gbBlueprintTech.Name = "gbBlueprintTech"
+        Me.gbBlueprintTech.Size = New System.Drawing.Size(102, 119)
+        Me.gbBlueprintTech.TabIndex = 2
+        Me.gbBlueprintTech.TabStop = False
+        Me.gbBlueprintTech.Text = "Tech"
+        '
+        'chkBPPirateFaction
+        '
+        Me.chkBPPirateFaction.AutoSize = True
+        Me.chkBPPirateFaction.Location = New System.Drawing.Point(9, 100)
+        Me.chkBPPirateFaction.Name = "chkBPPirateFaction"
+        Me.chkBPPirateFaction.Size = New System.Drawing.Size(91, 17)
+        Me.chkBPPirateFaction.TabIndex = 22
+        Me.chkBPPirateFaction.Text = "Pirate Faction"
+        Me.chkBPPirateFaction.TextAlign = System.Drawing.ContentAlignment.TopLeft
+        Me.chkBPPirateFaction.UseVisualStyleBackColor = True
+        '
+        'chkBPStoryline
+        '
+        Me.chkBPStoryline.AutoSize = True
+        Me.chkBPStoryline.Location = New System.Drawing.Point(9, 66)
+        Me.chkBPStoryline.Name = "chkBPStoryline"
+        Me.chkBPStoryline.Size = New System.Drawing.Size(66, 17)
+        Me.chkBPStoryline.TabIndex = 20
+        Me.chkBPStoryline.Text = "Storyline"
+        Me.chkBPStoryline.UseVisualStyleBackColor = True
+        '
+        'chkBPNavyFaction
+        '
+        Me.chkBPNavyFaction.AutoSize = True
+        Me.chkBPNavyFaction.Location = New System.Drawing.Point(9, 83)
+        Me.chkBPNavyFaction.Name = "chkBPNavyFaction"
+        Me.chkBPNavyFaction.Size = New System.Drawing.Size(89, 17)
+        Me.chkBPNavyFaction.TabIndex = 21
+        Me.chkBPNavyFaction.Text = "Navy Faction"
+        Me.chkBPNavyFaction.TextAlign = System.Drawing.ContentAlignment.TopLeft
+        Me.chkBPNavyFaction.UseVisualStyleBackColor = True
+        '
+        'chkBPT3
+        '
+        Me.chkBPT3.AutoSize = True
+        Me.chkBPT3.Location = New System.Drawing.Point(9, 49)
+        Me.chkBPT3.Name = "chkBPT3"
+        Me.chkBPT3.Size = New System.Drawing.Size(60, 17)
+        Me.chkBPT3.TabIndex = 19
+        Me.chkBPT3.Text = "Tech 3"
+        Me.chkBPT3.UseVisualStyleBackColor = True
+        '
+        'chkBPT2
+        '
+        Me.chkBPT2.AutoSize = True
+        Me.chkBPT2.Location = New System.Drawing.Point(9, 32)
+        Me.chkBPT2.Name = "chkBPT2"
+        Me.chkBPT2.Size = New System.Drawing.Size(60, 17)
+        Me.chkBPT2.TabIndex = 18
+        Me.chkBPT2.Text = "Tech 2"
+        Me.chkBPT2.UseVisualStyleBackColor = True
+        '
+        'chkBPT1
+        '
+        Me.chkBPT1.AutoSize = True
+        Me.chkBPT1.Location = New System.Drawing.Point(9, 15)
+        Me.chkBPT1.Name = "chkBPT1"
+        Me.chkBPT1.Size = New System.Drawing.Size(60, 17)
+        Me.chkBPT1.TabIndex = 17
+        Me.chkBPT1.Text = "Tech 1"
+        Me.chkBPT1.UseVisualStyleBackColor = True
         '
         'gbRace
         '
@@ -218,6 +295,34 @@ Partial Class frmBlueprintManagement
         Me.chkRaceMinmatar.Text = "Minmatar"
         Me.chkRaceMinmatar.UseVisualStyleBackColor = True
         '
+        'gbBackup
+        '
+        Me.gbBackup.Controls.Add(Me.btnLoadBPs)
+        Me.gbBackup.Controls.Add(Me.btnBackupBPs)
+        Me.gbBackup.Location = New System.Drawing.Point(266, 128)
+        Me.gbBackup.Name = "gbBackup"
+        Me.gbBackup.Size = New System.Drawing.Size(186, 47)
+        Me.gbBackup.TabIndex = 44
+        Me.gbBackup.TabStop = False
+        '
+        'btnLoadBPs
+        '
+        Me.btnLoadBPs.Location = New System.Drawing.Point(95, 12)
+        Me.btnLoadBPs.Name = "btnLoadBPs"
+        Me.btnLoadBPs.Size = New System.Drawing.Size(86, 26)
+        Me.btnLoadBPs.TabIndex = 42
+        Me.btnLoadBPs.Text = "Load BPs"
+        Me.btnLoadBPs.UseVisualStyleBackColor = True
+        '
+        'btnBackupBPs
+        '
+        Me.btnBackupBPs.Location = New System.Drawing.Point(5, 12)
+        Me.btnBackupBPs.Name = "btnBackupBPs"
+        Me.btnBackupBPs.Size = New System.Drawing.Size(86, 26)
+        Me.btnBackupBPs.TabIndex = 41
+        Me.btnBackupBPs.Text = "Backup BPs"
+        Me.btnBackupBPs.UseVisualStyleBackColor = True
+        '
         'gbSize
         '
         Me.gbSize.Controls.Add(Me.chkBPXL)
@@ -271,24 +376,6 @@ Partial Class frmBlueprintManagement
         Me.chkBPSmall.Text = "S"
         Me.chkBPSmall.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
         Me.chkBPSmall.UseVisualStyleBackColor = True
-        '
-        'btnLoadBPs
-        '
-        Me.btnLoadBPs.Location = New System.Drawing.Point(95, 12)
-        Me.btnLoadBPs.Name = "btnLoadBPs"
-        Me.btnLoadBPs.Size = New System.Drawing.Size(86, 26)
-        Me.btnLoadBPs.TabIndex = 42
-        Me.btnLoadBPs.Text = "Load BPs"
-        Me.btnLoadBPs.UseVisualStyleBackColor = True
-        '
-        'btnBackupBPs
-        '
-        Me.btnBackupBPs.Location = New System.Drawing.Point(5, 12)
-        Me.btnBackupBPs.Name = "btnBackupBPs"
-        Me.btnBackupBPs.Size = New System.Drawing.Size(86, 26)
-        Me.btnBackupBPs.TabIndex = 41
-        Me.btnBackupBPs.Text = "Backup BPs"
-        Me.btnBackupBPs.UseVisualStyleBackColor = True
         '
         'gbBPCopyOptions
         '
@@ -407,83 +494,6 @@ Partial Class frmBlueprintManagement
         Me.btnRefresh.TabIndex = 39
         Me.btnRefresh.Text = "Refresh"
         Me.btnRefresh.UseVisualStyleBackColor = True
-        '
-        'gbBlueprintTech
-        '
-        Me.gbBlueprintTech.Controls.Add(Me.chkBPPirateFaction)
-        Me.gbBlueprintTech.Controls.Add(Me.chkBPStoryline)
-        Me.gbBlueprintTech.Controls.Add(Me.chkBPNavyFaction)
-        Me.gbBlueprintTech.Controls.Add(Me.chkBPT3)
-        Me.gbBlueprintTech.Controls.Add(Me.chkBPT2)
-        Me.gbBlueprintTech.Controls.Add(Me.chkBPT1)
-        Me.gbBlueprintTech.Location = New System.Drawing.Point(266, 13)
-        Me.gbBlueprintTech.Name = "gbBlueprintTech"
-        Me.gbBlueprintTech.Size = New System.Drawing.Size(102, 119)
-        Me.gbBlueprintTech.TabIndex = 2
-        Me.gbBlueprintTech.TabStop = False
-        Me.gbBlueprintTech.Text = "Tech"
-        '
-        'chkBPPirateFaction
-        '
-        Me.chkBPPirateFaction.AutoSize = True
-        Me.chkBPPirateFaction.Location = New System.Drawing.Point(9, 100)
-        Me.chkBPPirateFaction.Name = "chkBPPirateFaction"
-        Me.chkBPPirateFaction.Size = New System.Drawing.Size(91, 17)
-        Me.chkBPPirateFaction.TabIndex = 22
-        Me.chkBPPirateFaction.Text = "Pirate Faction"
-        Me.chkBPPirateFaction.TextAlign = System.Drawing.ContentAlignment.TopLeft
-        Me.chkBPPirateFaction.UseVisualStyleBackColor = True
-        '
-        'chkBPStoryline
-        '
-        Me.chkBPStoryline.AutoSize = True
-        Me.chkBPStoryline.Location = New System.Drawing.Point(9, 66)
-        Me.chkBPStoryline.Name = "chkBPStoryline"
-        Me.chkBPStoryline.Size = New System.Drawing.Size(66, 17)
-        Me.chkBPStoryline.TabIndex = 20
-        Me.chkBPStoryline.Text = "Storyline"
-        Me.chkBPStoryline.UseVisualStyleBackColor = True
-        '
-        'chkBPNavyFaction
-        '
-        Me.chkBPNavyFaction.AutoSize = True
-        Me.chkBPNavyFaction.Location = New System.Drawing.Point(9, 83)
-        Me.chkBPNavyFaction.Name = "chkBPNavyFaction"
-        Me.chkBPNavyFaction.Size = New System.Drawing.Size(89, 17)
-        Me.chkBPNavyFaction.TabIndex = 21
-        Me.chkBPNavyFaction.Text = "Navy Faction"
-        Me.chkBPNavyFaction.TextAlign = System.Drawing.ContentAlignment.TopLeft
-        Me.chkBPNavyFaction.UseVisualStyleBackColor = True
-        '
-        'chkBPT3
-        '
-        Me.chkBPT3.AutoSize = True
-        Me.chkBPT3.Location = New System.Drawing.Point(9, 49)
-        Me.chkBPT3.Name = "chkBPT3"
-        Me.chkBPT3.Size = New System.Drawing.Size(60, 17)
-        Me.chkBPT3.TabIndex = 19
-        Me.chkBPT3.Text = "Tech 3"
-        Me.chkBPT3.UseVisualStyleBackColor = True
-        '
-        'chkBPT2
-        '
-        Me.chkBPT2.AutoSize = True
-        Me.chkBPT2.Location = New System.Drawing.Point(9, 32)
-        Me.chkBPT2.Name = "chkBPT2"
-        Me.chkBPT2.Size = New System.Drawing.Size(60, 17)
-        Me.chkBPT2.TabIndex = 18
-        Me.chkBPT2.Text = "Tech 2"
-        Me.chkBPT2.UseVisualStyleBackColor = True
-        '
-        'chkBPT1
-        '
-        Me.chkBPT1.AutoSize = True
-        Me.chkBPT1.Location = New System.Drawing.Point(9, 15)
-        Me.chkBPT1.Name = "chkBPT1"
-        Me.chkBPT1.Size = New System.Drawing.Size(60, 17)
-        Me.chkBPT1.TabIndex = 17
-        Me.chkBPT1.Text = "Tech 1"
-        Me.chkBPT1.UseVisualStyleBackColor = True
         '
         'gbItemTypeFilter
         '
@@ -829,6 +839,17 @@ Partial Class frmBlueprintManagement
         Me.gbUpdateOptions.TabStop = False
         Me.gbUpdateOptions.Text = "Update Options"
         '
+        'chkMarkAsCopy
+        '
+        Me.chkMarkAsCopy.AutoSize = True
+        Me.chkMarkAsCopy.Location = New System.Drawing.Point(10, 96)
+        Me.chkMarkAsCopy.Name = "chkMarkAsCopy"
+        Me.chkMarkAsCopy.Size = New System.Drawing.Size(92, 17)
+        Me.chkMarkAsCopy.TabIndex = 47
+        Me.chkMarkAsCopy.Text = "Mark As Copy"
+        Me.chkMarkAsCopy.TextAlign = System.Drawing.ContentAlignment.TopLeft
+        Me.chkMarkAsCopy.UseVisualStyleBackColor = True
+        '
         'chkMarkasFavorite
         '
         Me.chkMarkasFavorite.AutoSize = True
@@ -840,16 +861,16 @@ Partial Class frmBlueprintManagement
         Me.chkMarkasFavorite.TextAlign = System.Drawing.ContentAlignment.TopLeft
         Me.chkMarkasFavorite.UseVisualStyleBackColor = True
         '
-        'chkMarkAsCopy
+        'chkDisableMETE
         '
-        Me.chkMarkAsCopy.AutoSize = True
-        Me.chkMarkAsCopy.Location = New System.Drawing.Point(10, 96)
-        Me.chkMarkAsCopy.Name = "chkMarkAsCopy"
-        Me.chkMarkAsCopy.Size = New System.Drawing.Size(92, 17)
-        Me.chkMarkAsCopy.TabIndex = 47
-        Me.chkMarkAsCopy.Text = "Mark As Copy"
-        Me.chkMarkAsCopy.TextAlign = System.Drawing.ContentAlignment.TopLeft
-        Me.chkMarkAsCopy.UseVisualStyleBackColor = True
+        Me.chkDisableMETE.AutoSize = True
+        Me.chkDisableMETE.Location = New System.Drawing.Point(10, 66)
+        Me.chkDisableMETE.Name = "chkDisableMETE"
+        Me.chkDisableMETE.Size = New System.Drawing.Size(105, 17)
+        Me.chkDisableMETE.TabIndex = 52
+        Me.chkDisableMETE.Text = "Disable ME / TE"
+        Me.chkDisableMETE.TextAlign = System.Drawing.ContentAlignment.TopLeft
+        Me.chkDisableMETE.UseVisualStyleBackColor = True
         '
         'rbtnMarkasUnowned
         '
@@ -978,27 +999,6 @@ Partial Class frmBlueprintManagement
         Me.lstBPs.UseCompatibleStateImageBehavior = False
         Me.lstBPs.View = System.Windows.Forms.View.Details
         '
-        'chkDisableMETE
-        '
-        Me.chkDisableMETE.AutoSize = True
-        Me.chkDisableMETE.Location = New System.Drawing.Point(10, 66)
-        Me.chkDisableMETE.Name = "chkDisableMETE"
-        Me.chkDisableMETE.Size = New System.Drawing.Size(105, 17)
-        Me.chkDisableMETE.TabIndex = 52
-        Me.chkDisableMETE.Text = "Disable ME / TE"
-        Me.chkDisableMETE.TextAlign = System.Drawing.ContentAlignment.TopLeft
-        Me.chkDisableMETE.UseVisualStyleBackColor = True
-        '
-        'gbBackup
-        '
-        Me.gbBackup.Controls.Add(Me.btnLoadBPs)
-        Me.gbBackup.Controls.Add(Me.btnBackupBPs)
-        Me.gbBackup.Location = New System.Drawing.Point(266, 128)
-        Me.gbBackup.Name = "gbBackup"
-        Me.gbBackup.Size = New System.Drawing.Size(186, 47)
-        Me.gbBackup.TabIndex = 44
-        Me.gbBackup.TabStop = False
-        '
         'frmBlueprintManagement
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -1018,16 +1018,17 @@ Partial Class frmBlueprintManagement
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "Blueprint Management"
         Me.gbBPFilter.ResumeLayout(False)
+        Me.gbBlueprintTech.ResumeLayout(False)
+        Me.gbBlueprintTech.PerformLayout()
         Me.gbRace.ResumeLayout(False)
         Me.gbRace.PerformLayout()
+        Me.gbBackup.ResumeLayout(False)
         Me.gbSize.ResumeLayout(False)
         Me.gbSize.PerformLayout()
         Me.gbBPCopyOptions.ResumeLayout(False)
         Me.gbBPCopyOptions.PerformLayout()
         Me.gbBPTextSearch.ResumeLayout(False)
         Me.gbBPTextSearch.PerformLayout()
-        Me.gbBlueprintTech.ResumeLayout(False)
-        Me.gbBlueprintTech.PerformLayout()
         Me.gbItemTypeFilter.ResumeLayout(False)
         Me.gbItemTypeFilter.PerformLayout()
         Me.gbBlueprintType.ResumeLayout(False)
@@ -1037,7 +1038,6 @@ Partial Class frmBlueprintManagement
         Me.gbUpdateOptions.ResumeLayout(False)
         Me.gbUpdateOptions.PerformLayout()
         Me.grpScanAssets.ResumeLayout(False)
-        Me.gbBackup.ResumeLayout(False)
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
