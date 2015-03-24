@@ -18,19 +18,6 @@ Public Class EVECREST
     Private Const CRESTIndustryFacilities = "/industry/facilities/"
     Private Const CRESTMarketPrices = "/market/prices/"
 
-
-    ' File Names
-    Private Const IndustryTeamSpecialtiesFile = "IndustryTeamSpecialties"
-    Private Const IndustryTeamsFile = "IndustryTeams"
-    Private Const IndustryTeamAuctionsFile = "IndustryTeamAuctions"
-    Private Const IndustrySystemsFile = "IndustrySystems"
-    Private Const IndustryFacilitiesFile = "IndustryFacilities"
-    Private Const MarketPricesFile = "MarketPrices"
-    Private Const MarketHistoryPreName = "MarketHistory-"
-
-    ' Files location
-    Private Const CRESTFileDownloadLocation = ""
-
     ' Cache field names and times
     Private Const IndustryTeamSpecialtiesCacheDateField As String = "CREST_INDUSTRY_SPECIALIZATIONS_CACHED_UNTIL"
     Private Const IndustryTeamSpecalitiesCacheDateLength As Integer = 1
