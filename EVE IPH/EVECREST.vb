@@ -3,6 +3,7 @@ Imports System.IO
 Imports System.Data.SQLite
 Imports Newtonsoft.Json
 Imports Newtonsoft.Json.Linq
+Imports System.Net
 
 ' Class for all CREST function calls, which will update tables in the DB if past cache time
 Public Class EVECREST
@@ -85,7 +86,7 @@ Public Class EVECREST
 
             ' Dump the file into the Specializations object
             MarketPricesOutput = JsonConvert.DeserializeObject(Of MarketHistory) _
-                (GetJSONFile(CRESTRootServerURL & "/market/" & CStr(RegionID) & "/types/" & CStr(TypeID) & "/history/", CRESTFileDownloadLocation, MarketHistoryPreName & CStr(RegionID) & "-" & CStr(TypeID)))
+                (GetJSONFile(CRESTRootServerURL & "/market/" & CStr(RegionID) & "/types/" & CStr(TypeID) & "/history/", CacheDate))
 
             ' Read in the data
             If Not IsNothing(MarketPricesOutput) Then
@@ -110,8 +111,7 @@ Public Class EVECREST
 
                     ' Set the Cache Date to now plus the length since it's not sent in the file
                     Call ExecuteNonQuerySQL("DELETE FROM MARKET_HISTORY_UPDATE_CACHE WHERE TYPE_ID = " & CStr(TypeID) & " AND REGION_ID = " & CStr(RegionID))
-                    Dim TempDate As String = Format(DateAdd(DateInterval.Day, 1, GetEVETime().Date), SQLiteDateFormat) ' Set to midnight of current day plus 1
-                    Call ExecuteNonQuerySQL("INSERT INTO MARKET_HISTORY_UPDATE_CACHE VALUES (" & CStr(TypeID) & "," & CStr(RegionID) & "," & "'" & TempDate & "')")
+                    Call ExecuteNonQuerySQL("INSERT INTO MARKET_HISTORY_UPDATE_CACHE VALUES (" & CStr(TypeID) & "," & CStr(RegionID) & "," & "'" & CacheDate & "')")
 
                     ' Done updating
                     Call CommitSQLiteTransaction()
@@ -187,7 +187,7 @@ Public Class EVECREST
 
             ' Dump the file into the Specializations object
             TeamSpecialtiesOutput = JsonConvert.DeserializeObject(Of TeamSpecializations) _
-                (GetJSONFile(CRESTRootServerURL & CRESTIndustryTeamSpecialties, CRESTFileDownloadLocation, IndustryTeamSpecialtiesFile))
+                (GetJSONFile(CRESTRootServerURL & CRESTIndustryTeamSpecialties, CacheDate))
 
             ' Read in the data
             If Not IsNothing(TeamSpecialtiesOutput) Then
@@ -329,8 +329,7 @@ Public Class EVECREST
             Application.DoEvents()
 
             ' Dump the file into the Specializations object
-            IndustryTeamsOutput = JsonConvert.DeserializeObject(Of IndustryTeams) _
-                (GetJSONFile(CRESTRootServerURL & CRESTIndustryTeams, CRESTFileDownloadLocation, IndustryTeamsFile))
+            IndustryTeamsOutput = JsonConvert.DeserializeObject(Of IndustryTeams)(GetJSONFile(CRESTRootServerURL & CRESTIndustryTeams, CacheDate))
 
             ' Read in the data
             If Not IsNothing(IndustryTeamsOutput) Then
@@ -395,7 +394,7 @@ Public Class EVECREST
                     Next
 
                     ' Set the Cache Date to now plus the length since it's not sent in the file
-                    Call SetCRESTCacheDate(IndustryTeamsCacheDateField, DateAdd("h", IndustryTeamsCacheDateLength, Now))
+                    Call SetCRESTCacheDate(IndustryTeamsCacheDateField, CacheDate)
 
                     TempLabel.Text = "Finalizing Team Data..."
                     TempPB.Visible = False
@@ -549,8 +548,7 @@ Public Class EVECREST
             Application.DoEvents()
 
             ' Dump the file into the Specializations object
-            IndustryTeamAuctionsOutput = JsonConvert.DeserializeObject(Of IndustryTeamAuctions) _
-                (GetJSONFile(CRESTRootServerURL & CRESTIndustryTeamAuctions, CRESTFileDownloadLocation, IndustryTeamAuctionsFile))
+            IndustryTeamAuctionsOutput = JsonConvert.DeserializeObject(Of IndustryTeamAuctions)(GetJSONFile(CRESTRootServerURL & CRESTIndustryTeamAuctions, CacheDate))
 
             ' Read in the data
             If Not IsNothing(IndustryTeamAuctionsOutput) Then
@@ -618,7 +616,7 @@ Public Class EVECREST
                     Next
 
                     ' Set the Cache Date to now plus the length since it's not sent in the file
-                    Call SetCRESTCacheDate(IndustryTeamAuctionsField, DateAdd("h", IndustryTeamAuctionsLength, Now))
+                    Call SetCRESTCacheDate(IndustryTeamAuctionsField, CacheDate)
 
                     TempLabel.Text = "Finalizing Team Auction Data..."
                     TempPB.Visible = False
@@ -771,7 +769,7 @@ Public Class EVECREST
 
             ' Dump the file into the Specializations object
             IndustryFacilitiesOutput = JsonConvert.DeserializeObject(Of IndustryFacilities) _
-                (GetJSONFile(CRESTRootServerURL & CRESTIndustryFacilities, CRESTFileDownloadLocation, IndustryFacilitiesFile))
+                (GetJSONFile(CRESTRootServerURL & CRESTIndustryFacilities, CacheDate))
 
             ' Read in the data
             If Not IsNothing(IndustryFacilitiesOutput) Then
@@ -960,7 +958,7 @@ Public Class EVECREST
                     Call ExecuteNonQuerySQL(SQL)
 
                     ' Set the Cache Date to now plus the length since it's not sent in the file
-                    Call SetCRESTCacheDate(IndustryFacilitiesField, DateAdd("h", IndustryFacilitiesLength, Now))
+                    Call SetCRESTCacheDate(IndustryFacilitiesField, CacheDate)
 
                     Call CommitSQLiteTransaction()
 
@@ -1059,7 +1057,7 @@ Public Class EVECREST
 
             ' Dump the file into the Specializations object
             IndustrySystemsIndex = JsonConvert.DeserializeObject(Of IndustrySystemCostIndicies) _
-                (GetJSONFile(CRESTRootServerURL & CRESTIndustrySystems, CRESTFileDownloadLocation, IndustrySystemsFile))
+                (GetJSONFile(CRESTRootServerURL & CRESTIndustrySystems, CacheDate))
 
             ' Read in the data
             If Not IsNothing(IndustrySystemsIndex) Then
@@ -1101,7 +1099,7 @@ Public Class EVECREST
                     Call ExecuteNonQuerySQL("REINDEX IDX_ISCI_AID_SSID")
 
                     ' Set the Cache Date to now plus the length since it's not sent in the file
-                    Call SetCRESTCacheDate(IndustrySystemsField, DateAdd("h", IndustrySystemsLength, Now))
+                    Call SetCRESTCacheDate(IndustrySystemsField, CacheDate)
                     ' Done updating
                     Call CommitSQLiteTransaction()
                 End If
@@ -1171,7 +1169,7 @@ Public Class EVECREST
 
             ' Dump the file into the Specializations object
             MarketPricesOutput = JsonConvert.DeserializeObject(Of MarketPrices) _
-                (GetJSONFile(CRESTRootServerURL & CRESTMarketPrices, CRESTFileDownloadLocation, MarketPricesFile))
+                (GetJSONFile(CRESTRootServerURL & CRESTMarketPrices, CacheDate))
 
             ' Read in the data
             If Not IsNothing(MarketPricesOutput) Then
@@ -1202,7 +1200,7 @@ Public Class EVECREST
                     Next
 
                     ' Set the Cache Date to now plus the length since it's not sent in the file
-                    Call SetCRESTCacheDate(MarketPricesField, DateAdd("h", MarketPricesLength, Now))
+                    Call SetCRESTCacheDate(MarketPricesField, CacheDate)
                     ' Done updating
                     Call CommitSQLiteTransaction()
                 End If
@@ -1265,35 +1263,39 @@ Public Class EVECREST
     End Class
 
     ' Downloads the JSON file sent and saves it to the location, then imports it into a string to return
-    Private Function GetJSONFile(URL As String, FileLocation As String, FileName As String) As String
-        Dim Returnfile As String
+    Private Function GetJSONFile(ByVal URL As String, ByRef CacheDate As Date) As String
+        Dim request As HttpWebRequest
+        Dim response As HttpWebResponse = Nothing
+        Dim reader As StreamReader
+        Dim MaxAge As String
+        Dim CallStatus As String
 
-        '' Make the directory if it doesn't exist
-        'If Not Directory.Exists(FileLocation) Then
-        '    ' Create the settings folder
-        '    Directory.CreateDirectory(FileLocation)
-        'End If
-
-        ' Delete and make a fresh copy of the file
-        If File.Exists(FileLocation & FileName) Then
-            File.Delete(FileLocation & FileName)
-        End If
-
-        ' Return the text from the file
         Try
-            Returnfile = File.ReadAllText(DownloadFileFromServer(URL, FileLocation & FileName))
-        Catch ex As Exception
-            Returnfile = ""
+            ' Create the web request  
+            request = DirectCast(WebRequest.Create(URL), HttpWebRequest)
+
+            ' Get response  
+            response = DirectCast(request.GetResponse(), HttpWebResponse)
+
+            ' Use later to see what calls hit or fail
+            CallStatus = response.Headers.Get("X-Cache-Status")
+
+            ' Get the max-age from cache control
+            MaxAge = response.Headers.Get("Cache-Control")
+            ' Parse max age for seconds
+            Dim Seconds As Integer = CInt(MaxAge.Substring(MaxAge.IndexOf("=") + 1))
+
+            ' Get the response stream into a reader  
+            reader = New StreamReader(response.GetResponseStream())
+
+            ' Set the cache date by ref
+            CacheDate = DateAdd(DateInterval.Second, Seconds, CDate(response.Headers.Get("Date")))
+
+            Return reader.ReadToEnd
+
+        Finally
+            If Not response Is Nothing Then response.Close()
         End Try
-
-        ' Clean up the file
-        Try
-            File.Delete(FileLocation & FileName)
-        Catch ex As Exception
-
-        End Try
-
-        Return Returnfile
 
     End Function
 
