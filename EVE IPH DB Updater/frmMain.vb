@@ -10,7 +10,7 @@ Imports ComponentAce.Compression.Archiver
 Public Class frmMain
     Inherits System.Windows.Forms.Form
 
-    Public Const DatabaseName As String = "Tiamat_1.0_110751" ' also folder name to update YAML and Universe DB stuff
+    Public Const DatabaseName As String = "Scylla_1.0_111482" ' also folder name to update YAML and Universe DB stuff
 
     ' DB
     Public Const DatabasePath As String = "C:\Users\Brian\EVE Stuff\EVE IPH Project\DataDump Working\"
@@ -1543,8 +1543,6 @@ Public Class frmMain
         SQL = SQL & "CREST_INDUSTRY_SYSTEMS_CACHED_UNTIL VARCHAR(23)," ' Date
         SQL = SQL & "CREST_INDUSTRY_FACILITIES_CACHED_UNTIL VARCHAR(23)," ' Date
         SQL = SQL & "CREST_MARKET_PRICES_CACHED_UNTIL VARCHAR(23)" ' Date
-        'SQL = SQL & "SERVER_TIME_CACHED_UNTIL VARCHAR(23),"
-        'SQL = SQL & "SERVER_TIME VARCHAR(23)"
         SQL = SQL & ")"
 
         Call Execute_SQLiteSQL(SQL, SQLiteDB)
