@@ -8,7 +8,7 @@ Imports System.Xml
 ' Place to store all public variables and functions
 Public Module Public_Variables
     ' DB name and version
-    Public Const DataDumpVersion As String = "Tiamat_1.0_110751"
+    Public Const DataDumpVersion As String = "Scylla_1.0_111482"
     Public Const VersionNumber As String = "3.1.*"
 
     Public TestingVersion As Boolean ' This flag will test the test downloads from the server for an update
@@ -205,6 +205,8 @@ Public Module Public_Variables
     Public Const None As String = "None" ' For decryptors, facilities and teams
 
     Public APIAdded As Boolean ' To flag if a new api was added, then we can use to reload apis if needed in other areas (eg industry jobs)
+
+    Public RareandShipSkinBPs As New List(Of Long)
 
     Public Enum StationType
         Station = 0
@@ -562,6 +564,24 @@ Public Module Public_Variables
     End Sub
 
 #End Region
+
+    ' Get the rare ship id's and ship skins to weed out in the bps
+    Public Sub SetRareandShipSkinBPs()
+        Dim rsBP As SQLiteDataReader
+        Dim SQL As String
+
+        SQL = "SELECT BLUEPRINT_ID FROM ALL_BLUEPRINTS WHERE ITEM_CATEGORY_ID = 6 "
+        SQL = SQL & "AND (MARKET_GROUP NOT IN ('Amarr','Caldari','Gallente','Minmatar','Navy Faction','Pirate Faction','Exhumers','Expedition Frigates','Faction Carrier','Mining Barges','ORE') "
+        SQL = SQL & "OR ITEM_NAME LIKE '%Edition%')"
+
+        DBCommand = New SQLiteCommand(SQL, DB)
+        rsBP = DBCommand.ExecuteReader
+
+        While rsBP.Read
+            RareandShipSkinBPs.Add(rsBP.GetInt64(0))
+        End While
+
+    End Sub
 
     ' Converts a time in d h m s to a long of seconds
     Public Function ConvertDHMSTimetoSeconds(ByVal SentTime As String) As Long

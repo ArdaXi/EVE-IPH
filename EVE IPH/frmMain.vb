@@ -371,6 +371,7 @@ Public Class frmMain
         ' Set test platform
         If File.Exists("Test.txt") Then
             TestingVersion = True
+            MsgBox("The test version of IPH is no longer being updated." & vbCrLf & vbCrLf & "Please delete the 'Test.txt' file in your installation directory to get new updates")
         Else
             TestingVersion = False
         End If
@@ -559,6 +560,11 @@ Public Class frmMain
         If UserApplicationSettings.ShowToolTips Then
             Me.ttMain = New System.Windows.Forms.ToolTip(Me.components)
             Me.ttMain.IsBalloon = True
+        End If
+
+        ' Temp addition
+        If UserApplicationSettings.IgnoreRareandShipSkinBPs Then
+            Call SetRareandShipSkinBPs()
         End If
 
         ' Nothing in shopping List
@@ -1162,7 +1168,7 @@ NoBonus:
             SQL = SQL & "AND INDUSTRY_GROUP_SPECIALTIES.GROUP_ID IN " & GroupIDList & " "
         End If
         SQL = SQL & "AND TEAM_ACTIVITY_ID = " & CStr(Activity) & " "
-        If Tab = BPTab And UserApplicationSettings.LinkBPTabtoFacilitySystem And cmbBPFacilitySystem.Text <> "" Then
+        If Tab = BPTab And UserApplicationSettings.IgnoreRareandShipSkinBPs And cmbBPFacilitySystem.Text <> "" Then
             ' Link the query of teams to only that system
             SQL = SQL & "AND INDUSTRY_TEAMS.SOLAR_SYSTEM_NAME = '" & cmbBPFacilitySystem.Text & "' "
         End If
@@ -1175,7 +1181,7 @@ NoBonus:
             SQL = SQL & "AND INDUSTRY_GROUP_SPECIALTIES.GROUP_ID IN " & GroupIDList & " "
         End If
         SQL = SQL & "AND TEAM_ACTIVITY_ID = " & CStr(Activity) & " "
-        If Tab = BPTab And UserApplicationSettings.LinkBPTabtoFacilitySystem And cmbBPFacilitySystem.Text <> "" Then
+        If Tab = BPTab And UserApplicationSettings.IgnoreRareandShipSkinBPs And cmbBPFacilitySystem.Text <> "" Then
             ' Link the query of teams to only that system
             SQL = SQL & "AND INDUSTRY_TEAMS_AUCTIONS.SOLAR_SYSTEM_NAME = '" & cmbBPFacilitySystem.Text & "' "
         End If
@@ -3557,7 +3563,7 @@ NoBonus:
                     TempRelic = Inputs.Substring(InStr(Inputs, "-") + 1)
                 End If
                 SQL = "SELECT typeName FROM INVENTORY_TYPES, INDUSTRY_ACTIVITY_PRODUCTS WHERE productTypeID =" & BPID & " "
-                SQL = SQL & "and typeID = blueprintTypeID AND typeName LIKE '" & TempRelic & "%'"
+                SQL = SQL & "and typeID = blueprintTypeID AND typeName LIKE '%" & TempRelic & "%'"
 
                 DBCommand = New SQLiteCommand(SQL, DB)
                 readerRelic = DBCommand.ExecuteReader
@@ -8090,6 +8096,16 @@ ExitForm:
         End If
 
         SQL = SQL & SizesClause
+
+        ' Temp for ignoring all the special edition stuff
+        If RareandShipSkinBPs.Count > 0 Then
+            SQL = SQL & " AND ALL_BLUEPRINTS.BLUEPRINT_ID NOT IN ("
+            For i = 0 To RareandShipSkinBPs.Count - 1
+                SQL = SQL & CStr(RareandShipSkinBPs(i)) & ","
+            Next
+            SQL = SQL.Substring(0, Len(SQL) - 1)
+            SQL = SQL & ")"
+        End If
 
         SQL = SQL & " ORDER BY X"
 
@@ -17987,7 +18003,6 @@ ExitCalc:
         Dim SQLTemp As String = ""
         Dim WhereClause As String = ""
         Dim ComboType As String = ""
-        Dim IgnoreItems As String = " AND ITEM_NAME NOT IN ('Primae','Apotheosis','Echelon') " ' Items we don't want to include in bp queries TO DO
 
         ' Core Query
         SQL = "SELECT * FROM " & USER_BLUEPRINTS
@@ -18011,7 +18026,7 @@ ExitCalc:
         CMDCount.Parameters.AddWithValue("@USERBP_USERID", CStr(SelectedCharacter.ID))
         RecordCount = CInt(CMDCount.ExecuteScalar())
 
-        Return SQL & WhereClause & IgnoreItems & " ORDER BY ITEM_GROUP, ITEM_NAME"
+        Return SQL & WhereClause & " ORDER BY ITEM_GROUP, ITEM_NAME"
 
     End Function
 
@@ -18258,6 +18273,16 @@ ExitCalc:
                 WhereClause = WhereClause & "AND (X.ITEM_NAME LIKE '%" & FormatDBString(Trim(txtCalcItemFilter.Text)) & "%' OR X.ITEM_GROUP LIKE '%" & FormatDBString(Trim(txtCalcItemFilter.Text)) & "%') "
             End If
 
+        End If
+
+        ' Temp for ignoring all the special edition stuff
+        If RareandShipSkinBPs.Count > 0 Then
+            WhereClause = WhereClause & " AND X.BP_ID NOT IN ("
+            For i = 0 To RareandShipSkinBPs.Count - 1
+                WhereClause = WhereClause & CStr(RareandShipSkinBPs(i)) & ","
+            Next
+            WhereClause = WhereClause.Substring(0, Len(WhereClause) - 1)
+            WhereClause = WhereClause & ")"
         End If
 
         Return WhereClause

@@ -109,7 +109,7 @@ Public Class ProgramSettings
     Public DefaultRefineTax As Double = 0.05 ' Default tax rate
 
     Public DefaultCheckBuildBuy As Boolean = False
-    Public DefaultLinkTeamstoFacilitySystems As Boolean = False
+    Public DefaultIgnoreRareandShipSkinBPs As Boolean = True
     Public DefaultSaveBPRelicsDecryptors As Boolean = False
 
     Public DefaultSettingME As Integer = 0
@@ -983,7 +983,7 @@ Public Class ProgramSettings
                     .SuggestBuildBPNotOwned = CBool(GetSettingValue(AppSettingsFileName, SettingTypes.TypeBoolean, "ApplicationSettings", "SuggestBuildBPNotOwned", DefaultSuggestBuildBPNotOwned))
                     .EVECentralRefreshInterval = CInt(GetSettingValue(AppSettingsFileName, SettingTypes.TypeInteger, "ApplicationSettings", "EVECentralRefreshInterval", DefaultEVECentralRefreshInterval))
                     .DisableSound = CBool(GetSettingValue(AppSettingsFileName, SettingTypes.TypeBoolean, "ApplicationSettings", "DisableSound", DefaultDisableSound))
-                    .LinkBPTabtoFacilitySystem = CBool(GetSettingValue(AppSettingsFileName, SettingTypes.TypeBoolean, "ApplicationSettings", "LinkBPTabtoFacilitySystem", DefaultLinkTeamstoFacilitySystems))
+                    .IgnoreRareandShipSkinBPs = CBool(GetSettingValue(AppSettingsFileName, SettingTypes.TypeBoolean, "ApplicationSettings", "IgnoreRareandShipSkinBPs", DefaultIgnoreRareandShipSkinBPs))
                     .SaveBPRelicsDecryptors = CBool(GetSettingValue(AppSettingsFileName, SettingTypes.TypeBoolean, "ApplicationSettings", "SaveBPRelicsDecryptors", DefaultSaveBPRelicsDecryptors))
                 End With
 
@@ -1047,7 +1047,7 @@ Public Class ProgramSettings
 
         TempSettings.DisableSVR = DefaultDisableSVR
         TempSettings.SuggestBuildBPNotOwned = DefaultSuggestBuildBPNotOwned
-        TempSettings.LinkBPTabtoFacilitySystem = DefaultLinkTeamstoFacilitySystems
+        TempSettings.IgnoreRareandShipSkinBPs = DefaultIgnoreRareandShipSkinBPs
         TempSettings.SaveBPRelicsDecryptors = DefaultSaveBPRelicsDecryptors
 
         TempSettings.ShopListIncludeInventMats = DefaultShopListIncludeInventMats
@@ -1091,7 +1091,7 @@ Public Class ProgramSettings
             ApplicationSettingsList(22) = New Setting("LoadCRESTTeamDataonStartup", CStr(SentSettings.LoadCRESTTeamDataonStartup))
             ApplicationSettingsList(23) = New Setting("LoadCRESTFacilityDataonStartup", CStr(SentSettings.LoadCRESTFacilityDataonStartup))
             ApplicationSettingsList(24) = New Setting("LoadCRESTMarketDataonStartup", CStr(SentSettings.LoadCRESTMarketDataonStartup))
-            ApplicationSettingsList(25) = New Setting("LinkBPTabtoFacilitySystem", CStr(SentSettings.LinkBPTabtoFacilitySystem))
+            ApplicationSettingsList(25) = New Setting("IgnoreRareandShipSkinBPs", CStr(SentSettings.IgnoreRareandShipSkinBPs))
             ApplicationSettingsList(26) = New Setting("SaveBPRelicsDecryptors", CStr(SentSettings.SaveBPRelicsDecryptors))
 
             Call WriteSettingsToFile(AppSettingsFileName, ApplicationSettingsList, "ApplicationSettings")
@@ -4574,7 +4574,7 @@ Public Structure ApplicationSettings
     Dim SuggestBuildBPNotOwned As Boolean ' For Build/Buy suggestions
     Dim SaveBPRelicsDecryptors As Boolean ' For auto-loading relics and decryptor types
 
-    Dim LinkBPTabtoFacilitySystem As Boolean ' Links the team drop downs to only teams or auctions in the selected facility system
+    Dim IgnoreRareandShipSkinBPs As Boolean ' Links the team drop downs to only teams or auctions in the selected facility system
 
     Dim DisableSVR As Boolean ' For disabling SVR updates
 

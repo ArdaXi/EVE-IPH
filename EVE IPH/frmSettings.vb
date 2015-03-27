@@ -348,7 +348,7 @@ Public Class frmSettings
 
             chkDisableSVR.Checked = .DisableSVR
 
-            chkLinkBPTabTeamstoSystem.Checked = .LinkBPTabtoFacilitySystem
+            chkIgnoreRareandSkinBPs.Checked = .IgnoreRareandShipSkinBPs
 
             ' ShoppingList
             chkIncludeShopListInventMats.Checked = .ShopListIncludeInventMats
@@ -485,7 +485,7 @@ Public Class frmSettings
             TempSettings.DisableSVR = chkDisableSVR.Checked
             TempSettings.SuggestBuildBPNotOwned = chkSuggestBuildwhenBPnotOwned.Checked
             TempSettings.SaveBPRelicsDecryptors = chkSaveBPRelicsDecryptors.Checked
-            TempSettings.LinkBPTabtoFacilitySystem = chkLinkBPTabTeamstoSystem.Checked
+            TempSettings.IgnoreRareandShipSkinBPs = chkIgnoreRareandSkinBPs.Checked
 
             TempSettings.ShopListIncludeInventMats = chkIncludeShopListInventMats.Checked
             TempSettings.ShopListIncludeREMats = chkIncludeShopListREMats.Checked
@@ -499,6 +499,12 @@ Public Class frmSettings
             End If
 
             TempSettings.EVECentralRefreshInterval = CInt(txtEVECentralInterval.Text)
+
+            RareandShipSkinBPs = New List(Of Long)
+
+            If chkIgnoreRareandSkinBPs.Checked = True Then
+                Call SetRareandShipSkinBPs()
+            End If
 
             ' Save the data in the XML file
             Call Settings.SaveApplicationSettings(TempSettings)
@@ -663,11 +669,12 @@ InvalidData:
         btnSave.Text = "Save"
     End Sub
 
-    Private Sub chkLinkBPTabTeamstoSystem_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkLinkBPTabTeamstoSystem.CheckedChanged
+    Private Sub chkLinkBPTabTeamstoSystem_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkIgnoreRareandSkinBPs.CheckedChanged
         btnSave.Text = "Save"
     End Sub
 
     Private Sub chkSaveBPRelicsDecryptors_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkSaveBPRelicsDecryptors.CheckedChanged
         btnSave.Text = "Save"
     End Sub
+
 End Class

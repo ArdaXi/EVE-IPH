@@ -1275,8 +1275,16 @@ Public Class EVECREST
             ' Get the response stream into a reader  
             reader = New StreamReader(response.GetResponseStream())
 
-            ' Set the cache date by ref
-            CacheDate = DateAdd(DateInterval.Second, Seconds, CDate(response.Headers.Get("Date")))
+            ' Set the cache date by ref - if we are looking at market history, use special processing until we get this figured out
+            If URL.Contains("/market/") And URL.Contains("/history/") Then
+                Dim Tempdate As DateTime
+                ' TO DO Fix processing to use the seconds from headers if it's from midnight
+                Tempdate = DateValue(response.Headers.Get("Date"))
+                ' Strip off time here from GMT date and add one day so it gets set to midnight tomorrow GMT
+                CacheDate = DateAdd(DateInterval.Day, 1, CDate(Tempdate.ToShortDateString))
+            Else
+                CacheDate = DateAdd(DateInterval.Second, Seconds, CDate(response.Headers.Get("Date")))
+            End If
 
             Return reader.ReadToEnd
 

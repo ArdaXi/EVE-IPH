@@ -31,7 +31,7 @@ Partial Class frmSettings
         Me.chkDisableSound = New System.Windows.Forms.CheckBox()
         Me.chkDisableSVR = New System.Windows.Forms.CheckBox()
         Me.chkShowToolTips = New System.Windows.Forms.CheckBox()
-        Me.chkLinkBPTabTeamstoSystem = New System.Windows.Forms.CheckBox()
+        Me.chkIgnoreRareandSkinBPs = New System.Windows.Forms.CheckBox()
         Me.chkRefreshBPsonStartup = New System.Windows.Forms.CheckBox()
         Me.chkRefreshAssetsonStartup = New System.Windows.Forms.CheckBox()
         Me.chkBeanCounterManufacturing = New System.Windows.Forms.CheckBox()
@@ -123,7 +123,7 @@ Partial Class frmSettings
         Me.gbGeneral.Controls.Add(Me.chkDisableSound)
         Me.gbGeneral.Controls.Add(Me.chkDisableSVR)
         Me.gbGeneral.Controls.Add(Me.chkShowToolTips)
-        Me.gbGeneral.Controls.Add(Me.chkLinkBPTabTeamstoSystem)
+        Me.gbGeneral.Controls.Add(Me.chkIgnoreRareandSkinBPs)
         Me.gbGeneral.Location = New System.Drawing.Point(5, 12)
         Me.gbGeneral.Name = "gbGeneral"
         Me.gbGeneral.Size = New System.Drawing.Size(237, 104)
@@ -161,15 +161,15 @@ Partial Class frmSettings
         Me.chkShowToolTips.Text = "Show Tool Tips"
         Me.chkShowToolTips.UseVisualStyleBackColor = True
         '
-        'chkLinkBPTabTeamstoSystem
+        'chkIgnoreRareandSkinBPs
         '
-        Me.chkLinkBPTabTeamstoSystem.Enabled = False
-        Me.chkLinkBPTabTeamstoSystem.Location = New System.Drawing.Point(17, 70)
-        Me.chkLinkBPTabTeamstoSystem.Name = "chkLinkBPTabTeamstoSystem"
-        Me.chkLinkBPTabTeamstoSystem.Size = New System.Drawing.Size(184, 32)
-        Me.chkLinkBPTabTeamstoSystem.TabIndex = 26
-        Me.chkLinkBPTabTeamstoSystem.Text = "Link BP Tab Teams to Current Facility System"
-        Me.chkLinkBPTabTeamstoSystem.UseVisualStyleBackColor = True
+        Me.chkIgnoreRareandSkinBPs.AutoSize = True
+        Me.chkIgnoreRareandSkinBPs.Location = New System.Drawing.Point(17, 71)
+        Me.chkIgnoreRareandSkinBPs.Name = "chkIgnoreRareandSkinBPs"
+        Me.chkIgnoreRareandSkinBPs.Size = New System.Drawing.Size(173, 17)
+        Me.chkIgnoreRareandSkinBPs.TabIndex = 26
+        Me.chkIgnoreRareandSkinBPs.Text = "Ignore Rare and Ship Skin BPs"
+        Me.chkIgnoreRareandSkinBPs.UseVisualStyleBackColor = True
         '
         'chkRefreshBPsonStartup
         '
@@ -732,7 +732,7 @@ Partial Class frmSettings
     Friend WithEvents chkRefreshTeamDataonStartup As System.Windows.Forms.CheckBox
     Friend WithEvents chkRefreshFacilityDataonStartup As System.Windows.Forms.CheckBox
     Friend WithEvents chkRefreshMarketDataonStartup As System.Windows.Forms.CheckBox
-    Friend WithEvents chkLinkBPTabTeamstoSystem As System.Windows.Forms.CheckBox
+    Friend WithEvents chkIgnoreRareandSkinBPs As System.Windows.Forms.CheckBox
     Friend WithEvents gbExportOptions As System.Windows.Forms.GroupBox
     Friend WithEvents rbtnExportDefault As System.Windows.Forms.RadioButton
     Friend WithEvents rbtnExportSSV As System.Windows.Forms.RadioButton

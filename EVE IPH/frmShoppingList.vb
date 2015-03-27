@@ -215,6 +215,9 @@ Public Class frmShoppingList
         lblTotalItemsBrokersFees.Text = "0.00 ISK"
         lblTotalItemsTax.Text = "0.00 ISK"
 
+        lblUsage.Text = "0.00"
+        lblFees.Text = "0.00"
+
         ' Update the main form notice of no items
         frmMain.pnlShoppingList.Text = "No Items in Shopping List"
         frmMain.pnlShoppingList.ForeColor = Color.Black
