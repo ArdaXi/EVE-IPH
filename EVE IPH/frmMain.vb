@@ -378,7 +378,6 @@ Public Class frmMain
 
         Call SetProgress("Initializing...")
 
-
         ' This call is required by the designer.
         InitializeComponent()
 
@@ -4625,59 +4624,58 @@ NoBonus:
         Call f1.Show()
         Application.DoEvents()
         ' Always do indicies first since facilities has a field it uses
-        Call CREST.UpdateIndustrySystemsCostIndex(f1.lblCRESTStatus, f1.pgCREST)
-        Call CREST.UpdateIndustryFacilties(f1.lblCRESTStatus, f1.pgCREST)
-        f1.Dispose()
+        If CREST.UpdateIndustrySystemsCostIndex(f1.lblCRESTStatus, f1.pgCREST) And CREST.UpdateIndustryFacilties(f1.lblCRESTStatus, f1.pgCREST) Then
+            ' Reset all facility combos
+            CalcBaseFacilityRegionsLoaded = False
+            CalcBaseFacilitySystemsLoaded = False
+            CalcBaseFacilitiesLoaded = False
+            CalcComponentFacilityRegionsLoaded = False
+            CalcComponentFacilitySystemsLoaded = False
+            CalcComponentFacilitiesLoaded = False
+            CalcInventionFacilityRegionsLoaded = False
+            CalcInventionFacilitySystemsLoaded = False
+            CalcInventionFacilitiesLoaded = False
+            CalcCopyFacilityRegionsLoaded = False
+            CalcCopyFacilitySystemsLoaded = False
+            CalcCopyFacilitiesLoaded = False
+            CalcNoPOSFacilityRegionsLoaded = False
+            CalcNoPOSFacilitySystemsLoaded = False
+            CalcNoPOSFacilitiesLoaded = False
+            CalcCapitalFacilityRegionsLoaded = False
+            CalcCapitalFacilitySystemsLoaded = False
+            CalcCapitalFacilitiesLoaded = False
+            CalcSuperFacilityRegionsLoaded = False
+            CalcSuperFacilitySystemsLoaded = False
+            CalcSuperFacilitiesLoaded = False
+            CalcT3FacilityRegionsLoaded = False
+            CalcT3FacilitySystemsLoaded = False
+            CalcT3FacilitiesLoaded = False
+            CalcSubsystemFacilityRegionsLoaded = False
+            CalcSubsystemFacilitySystemsLoaded = False
+            CalcSubsystemFacilitiesLoaded = False
+            CalcBoosterFacilityRegionsLoaded = False
+            CalcBoosterFacilitySystemsLoaded = False
+            CalcBoosterFacilitiesLoaded = False
 
-        ' Reset all facility combos
-        CalcBaseFacilityRegionsLoaded = False
-        CalcBaseFacilitySystemsLoaded = False
-        CalcBaseFacilitiesLoaded = False
-        CalcComponentFacilityRegionsLoaded = False
-        CalcComponentFacilitySystemsLoaded = False
-        CalcComponentFacilitiesLoaded = False
-        CalcInventionFacilityRegionsLoaded = False
-        CalcInventionFacilitySystemsLoaded = False
-        CalcInventionFacilitiesLoaded = False
-        CalcCopyFacilityRegionsLoaded = False
-        CalcCopyFacilitySystemsLoaded = False
-        CalcCopyFacilitiesLoaded = False
-        CalcNoPOSFacilityRegionsLoaded = False
-        CalcNoPOSFacilitySystemsLoaded = False
-        CalcNoPOSFacilitiesLoaded = False
-        CalcCapitalFacilityRegionsLoaded = False
-        CalcCapitalFacilitySystemsLoaded = False
-        CalcCapitalFacilitiesLoaded = False
-        CalcSuperFacilityRegionsLoaded = False
-        CalcSuperFacilitySystemsLoaded = False
-        CalcSuperFacilitiesLoaded = False
-        CalcT3FacilityRegionsLoaded = False
-        CalcT3FacilitySystemsLoaded = False
-        CalcT3FacilitiesLoaded = False
-        CalcSubsystemFacilityRegionsLoaded = False
-        CalcSubsystemFacilitySystemsLoaded = False
-        CalcSubsystemFacilitiesLoaded = False
-        CalcBoosterFacilityRegionsLoaded = False
-        CalcBoosterFacilitySystemsLoaded = False
-        CalcBoosterFacilitiesLoaded = False
+            LoadingFacilityActivities = False
+            LoadingFacilityTypes = False
+            LoadingFacilityRegions = False
+            LoadingFacilitySystems = False
+            LoadingFacilities = False
 
-        LoadingFacilityActivities = False
-        LoadingFacilityTypes = False
-        LoadingFacilityRegions = False
-        LoadingFacilitySystems = False
-        LoadingFacilities = False
+            ' Reload the industry facilities now
+            Call SetAllFacilities(False)
 
-        Application.UseWaitCursor = False
+            ' Refresh the BP Tab if there is a blueprint selected
+            If Not IsNothing(SelectedBlueprint) Then
+                Call RefreshBP(True)
+            End If
 
-        ' Reload the industry facilities now
-        Call SetAllFacilities(False)
-
-        ' Refresh the BP Tab if there is a blueprint selected
-        If Not IsNothing(SelectedBlueprint) Then
-            Call RefreshBP(True)
+            MsgBox("Industry System Indicies Updated", vbInformation, Application.ProductName)
         End If
 
-        MsgBox("Industry System Indicies Updated", vbInformation, Application.ProductName)
+        f1.Dispose()
+        Application.UseWaitCursor = False
 
     End Sub
 
@@ -4689,24 +4687,23 @@ NoBonus:
         Application.UseWaitCursor = True
         Call f1.Show()
         Application.DoEvents()
-        Call CREST.UpdateIndustryTeams(f1.lblCRESTStatus, f1.pgCREST)
-        Call CREST.UpdateIndustryTeamAuctions(f1.lblCRESTStatus, f1.pgCREST)
-        Call CREST.UpdateIndustrySpecialties(f1.lblCRESTStatus, f1.pgCREST)
+        If CREST.UpdateIndustryTeams(f1.lblCRESTStatus, f1.pgCREST) And CREST.UpdateIndustryTeamAuctions(f1.lblCRESTStatus, f1.pgCREST) And CREST.UpdateIndustrySpecialties(f1.lblCRESTStatus, f1.pgCREST) Then
+            ' Reset Team Combos
+            BPTeamComboLoaded = False
+            CalcManufacturingTeamComboLoaded = False
+            CalcComponentManufacturingTeamComboLoaded = False
+            CalcInventionTeamComboLoaded = False
+            CalcCopyTeamComboLoaded = False
+
+            ' Reload all the teams
+            Call SetAllTeams(False)
+
+            MsgBox("Industry Teams Updated", vbInformation, Application.ProductName)
+
+        End If
+
         f1.Dispose()
-
-        ' Reset Team Combos
-        BPTeamComboLoaded = False
-        CalcManufacturingTeamComboLoaded = False
-        CalcComponentManufacturingTeamComboLoaded = False
-        CalcInventionTeamComboLoaded = False
-        CalcCopyTeamComboLoaded = False
-
-        ' Reload all the teams
-        Call SetAllTeams(False)
-
         Application.UseWaitCursor = False
-
-        MsgBox("Industry Teams Updated", vbInformation, Application.ProductName)
 
     End Sub
 
@@ -4718,14 +4715,16 @@ NoBonus:
         Application.UseWaitCursor = True
         Call f1.Show()
         Application.DoEvents()
-        Call CREST.UpdateMarketPrices(f1.lblCRESTStatus, f1.pgCREST)
+        If CREST.UpdateMarketPrices(f1.lblCRESTStatus, f1.pgCREST) Then
+
+            ' Update all the prices in the program
+            Call UpdateProgramPrices()
+
+            MsgBox("Market Prices Updated", vbInformation, Application.ProductName)
+        End If
+
         f1.Dispose()
         Application.UseWaitCursor = False
-
-        ' Update all the prices in the program
-        Call UpdateProgramPrices()
-
-        MsgBox("Market Prices Updated", vbInformation, Application.ProductName)
 
     End Sub
 
@@ -18925,10 +18924,9 @@ ExitCalc:
             readerRegion.Close()
             DBCommand = Nothing
 
-            Call TempCrest.UpdateMarketHistory(FoundItem.ItemTypeID, RegionID)
-
-            ' Now open the window for that item after updated
-
+            If TempCrest.UpdateMarketHistory(FoundItem.ItemTypeID, RegionID) Then
+                ' Now open the window for that item after updated
+            End If
 
             TempCrest = Nothing
         End If

@@ -374,7 +374,7 @@ Partial Class frmIndustryBeltFlip
         '
         Me.cmbMineStationEff.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cmbMineStationEff.FormattingEnabled = True
-        Me.cmbMineStationEff.Items.AddRange(New Object() {"75%", "50%", "40%", "35%", "32%", "30%"})
+        Me.cmbMineStationEff.Items.AddRange(New Object() {"50%", "52%", "53%", "54%", "57%", "60%"})
         Me.cmbMineStationEff.Location = New System.Drawing.Point(106, 30)
         Me.cmbMineStationEff.Name = "cmbMineStationEff"
         Me.cmbMineStationEff.Size = New System.Drawing.Size(50, 21)

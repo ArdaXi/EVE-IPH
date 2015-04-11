@@ -37,7 +37,7 @@ Public Class EVECREST
     ' Provides per day summary of market activity for 13 months for the region_id and type_id sent.
 
     ' Gets the CREST file from CCP for current Market History and updates the EVEIPH DB with the values
-    Public Sub UpdateMarketHistory(ByVal TypeID As Long, RegionID As Long)
+    Public Function UpdateMarketHistory(ByVal TypeID As Long, RegionID As Long) As Boolean
         Dim MarketPricesOutput As MarketHistory
         Dim SQL As String
         Dim rsCache As SQLiteDataReader
@@ -73,7 +73,7 @@ Public Class EVECREST
 
             ' Dump the file into the Specializations object
             MarketPricesOutput = JsonConvert.DeserializeObject(Of MarketHistory) _
-                (GetJSONFile(CRESTRootServerURL & "/market/" & CStr(RegionID) & "/types/" & CStr(TypeID) & "/history/", CacheDate))
+                (GetJSONFile(CRESTRootServerURL & "/market/" & CStr(RegionID) & "/types/" & CStr(TypeID) & "/history/", CacheDate, "Market History"))
 
             ' Read in the data
             If Not IsNothing(MarketPricesOutput) Then
@@ -102,11 +102,18 @@ Public Class EVECREST
 
                     ' Done updating
                     Call CommitSQLiteTransaction()
+
+                    Return True
+
                 End If
             End If
+            ' Json file didn't download
+            Return False
         End If
 
-    End Sub
+        Return True
+
+    End Function
 
     ' For Market History
     Private Class MarketHistory
@@ -138,7 +145,7 @@ Public Class EVECREST
     ' Lists all specialties that can be associated with teams and what groups those specialties modify.
 
     ' Gets the CREST file from CCP for current Industry Specialties and updates the EVEIPH DB with the values
-    Public Sub UpdateIndustrySpecialties(Optional ByRef UpdateLabel As Label = Nothing, Optional ByRef PB As ProgressBar = Nothing)
+    Public Function UpdateIndustrySpecialties(Optional ByRef UpdateLabel As Label = Nothing, Optional ByRef PB As ProgressBar = Nothing) As Boolean
         Dim TeamSpecialtiesOutput As TeamSpecializations
         Dim SQL As String
 
@@ -174,7 +181,7 @@ Public Class EVECREST
 
             ' Dump the file into the Specializations object
             TeamSpecialtiesOutput = JsonConvert.DeserializeObject(Of TeamSpecializations) _
-                (GetJSONFile(CRESTRootServerURL & CRESTIndustryTeamSpecialties, CacheDate))
+                (GetJSONFile(CRESTRootServerURL & CRESTIndustryTeamSpecialties, CacheDate, "Industry Specialities"))
 
             ' Read in the data
             If Not IsNothing(TeamSpecialtiesOutput) Then
@@ -225,11 +232,18 @@ Public Class EVECREST
                     Call SetCRESTCacheDate(IndustryTeamSpecialtiesCacheDateField, DateAdd("h", IndustryTeamSpecalitiesCacheDateLength, Now))
                     ' Done updating
                     Call CommitSQLiteTransaction()
+
+                    Return True
+
                 End If
             End If
+            ' Json file didn't download
+            Return False
         End If
 
-    End Sub
+        Return True
+
+    End Function
 
     ' For Team Specalizations
     Private Class TeamSpecializations
@@ -264,7 +278,7 @@ Public Class EVECREST
     ' Returns a list of all active teams, excluding the teams in auction. This does not include wormhole space.
 
     ' Gets the CREST file from CCP for current Industry Teams and updates the EVEIPH DB with the values
-    Public Sub UpdateIndustryTeams(Optional ByRef UpdateLabel As Label = Nothing, Optional ByRef PB As ProgressBar = Nothing)
+    Public Function UpdateIndustryTeams(Optional ByRef UpdateLabel As Label = Nothing, Optional ByRef PB As ProgressBar = Nothing) As Boolean
         Dim IndustryTeamsOutput As IndustryTeams
         Dim SQL As String
 
@@ -316,7 +330,7 @@ Public Class EVECREST
             Application.DoEvents()
 
             ' Dump the file into the Specializations object
-            IndustryTeamsOutput = JsonConvert.DeserializeObject(Of IndustryTeams)(GetJSONFile(CRESTRootServerURL & CRESTIndustryTeams, CacheDate))
+            IndustryTeamsOutput = JsonConvert.DeserializeObject(Of IndustryTeams)(GetJSONFile(CRESTRootServerURL & CRESTIndustryTeams, CacheDate, "Industry Teams"))
 
             ' Read in the data
             If Not IsNothing(IndustryTeamsOutput) Then
@@ -433,11 +447,18 @@ Public Class EVECREST
 
                     ' Done updating
                     Call CommitSQLiteTransaction()
+
+                    Return True
+
                 End If
             End If
+            ' Json file didn't download
+            Return False
         End If
 
-    End Sub
+        Return True
+
+    End Function
 
     ' For Industry Teams
     Private Class IndustryTeams
@@ -496,7 +517,7 @@ Public Class EVECREST
     ' Returns a list of all the teams currently up for auction.
 
     ' Gets the CREST file from CCP for current Industry Team Auctions and updates the EVEIPH DB with the values
-    Public Sub UpdateIndustryTeamAuctions(Optional ByRef UpdateLabel As Label = Nothing, Optional ByRef PB As ProgressBar = Nothing)
+    Public Function UpdateIndustryTeamAuctions(Optional ByRef UpdateLabel As Label = Nothing, Optional ByRef PB As ProgressBar = Nothing) As Boolean
         Dim IndustryTeamAuctionsOutput As IndustryTeamAuctions
         Dim SQL As String
         Dim CacheDate As Date
@@ -535,7 +556,7 @@ Public Class EVECREST
             Application.DoEvents()
 
             ' Dump the file into the Specializations object
-            IndustryTeamAuctionsOutput = JsonConvert.DeserializeObject(Of IndustryTeamAuctions)(GetJSONFile(CRESTRootServerURL & CRESTIndustryTeamAuctions, CacheDate))
+            IndustryTeamAuctionsOutput = JsonConvert.DeserializeObject(Of IndustryTeamAuctions)(GetJSONFile(CRESTRootServerURL & CRESTIndustryTeamAuctions, CacheDate, "Team Auctions"))
 
             ' Read in the data
             If Not IsNothing(IndustryTeamAuctionsOutput) Then
@@ -657,11 +678,17 @@ Public Class EVECREST
                     ' Done updating
                     Call CommitSQLiteTransaction()
 
+                    Return True
+
                 End If
             End If
+            ' Json file didn't download
+            Return False
         End If
 
-    End Sub
+        Return True
+
+    End Function
 
     ' For Industry Team Auctions
     Private Class IndustryTeamAuctions
@@ -723,7 +750,7 @@ Public Class EVECREST
     ' This returns a list of all publicly accessible facilities, including player built outposts in nullsec.
 
     ' Gets the CREST file from CCP for current Industry Facilities and updates the EVEIPH DB with the values
-    Public Sub UpdateIndustryFacilties(Optional ByRef UpdateLabel As Label = Nothing, Optional ByRef PB As ProgressBar = Nothing)
+    Public Function UpdateIndustryFacilties(Optional ByRef UpdateLabel As Label = Nothing, Optional ByRef PB As ProgressBar = Nothing) As Boolean
         Dim IndustryFacilitiesOutput As IndustryFacilities
         Dim SQL As String
         Dim CacheDate As Date
@@ -756,7 +783,7 @@ Public Class EVECREST
 
             ' Dump the file into the Specializations object
             IndustryFacilitiesOutput = JsonConvert.DeserializeObject(Of IndustryFacilities) _
-                (GetJSONFile(CRESTRootServerURL & CRESTIndustryFacilities, CacheDate))
+                (GetJSONFile(CRESTRootServerURL & CRESTIndustryFacilities, CacheDate, "Industry Facilities"))
 
             ' Read in the data
             If Not IsNothing(IndustryFacilitiesOutput) Then
@@ -949,11 +976,17 @@ Public Class EVECREST
 
                     Call CommitSQLiteTransaction()
 
+                    Return True
+
                 End If
             End If
+            ' Json file didn't download
+            Return False
         End If
 
-    End Sub
+        Return True
+
+    End Function
 
     ' For Industry Facilities
     Private Class IndustryFacilities
@@ -1010,7 +1043,7 @@ Public Class EVECREST
     ' Lists the cost index for installing industry jobs per type of activity. This does not include wormhole space.
 
     ' Gets the CREST file from CCP for current Cost Indexes of Industry Systems and updates the EVEIPH DB with the values
-    Public Sub UpdateIndustrySystemsCostIndex(Optional ByRef UpdateLabel As Label = Nothing, Optional ByRef PB As ProgressBar = Nothing)
+    Public Function UpdateIndustrySystemsCostIndex(Optional ByRef UpdateLabel As Label = Nothing, Optional ByRef PB As ProgressBar = Nothing) As Boolean
         Dim IndustrySystemsIndex As IndustrySystemCostIndicies
         Dim SQL As String
         Dim CacheDate As Date
@@ -1044,7 +1077,7 @@ Public Class EVECREST
 
             ' Dump the file into the Specializations object
             IndustrySystemsIndex = JsonConvert.DeserializeObject(Of IndustrySystemCostIndicies) _
-                (GetJSONFile(CRESTRootServerURL & CRESTIndustrySystems, CacheDate))
+                (GetJSONFile(CRESTRootServerURL & CRESTIndustrySystems, CacheDate, "Industry System Indexes"))
 
             ' Read in the data
             If Not IsNothing(IndustrySystemsIndex) Then
@@ -1089,11 +1122,18 @@ Public Class EVECREST
                     Call SetCRESTCacheDate(IndustrySystemsField, CacheDate)
                     ' Done updating
                     Call CommitSQLiteTransaction()
+
+                    Return True
+
                 End If
             End If
+            ' Json file didn't download
+            Return False
         End If
 
-    End Sub
+        Return True
+
+    End Function
 
     ' For Industry System Cost Indicies
     Private Class IndustrySystemCostIndicies
@@ -1126,7 +1166,7 @@ Public Class EVECREST
     ' Returns the list of trade-able types and their average market price, as shown in the inventory UI in the EVE client. Also includes an adjusted market price which is used in industry calculations.
 
     ' Gets the CREST file from CCP for current Market Prices and updates the EVEIPH DB with the values
-    Public Sub UpdateMarketPrices(Optional ByRef UpdateLabel As Label = Nothing, Optional ByRef PB As ProgressBar = Nothing)
+    Public Function UpdateMarketPrices(Optional ByRef UpdateLabel As Label = Nothing, Optional ByRef PB As ProgressBar = Nothing) As Boolean
         Dim MarketPricesOutput As MarketPrices
         Dim SQL As String
         Dim CacheDate As Date
@@ -1156,7 +1196,7 @@ Public Class EVECREST
 
             ' Dump the file into the Specializations object
             MarketPricesOutput = JsonConvert.DeserializeObject(Of MarketPrices) _
-                (GetJSONFile(CRESTRootServerURL & CRESTMarketPrices, CacheDate))
+                (GetJSONFile(CRESTRootServerURL & CRESTMarketPrices, CacheDate, "Market Prices"))
 
             ' Read in the data
             If Not IsNothing(MarketPricesOutput) Then
@@ -1190,11 +1230,16 @@ Public Class EVECREST
                     Call SetCRESTCacheDate(MarketPricesField, CacheDate)
                     ' Done updating
                     Call CommitSQLiteTransaction()
+                    Return True
                 End If
             End If
+            ' Json file didn't download
+            Return False
         End If
 
-    End Sub
+        Return True
+
+    End Function
 
     ' For Market Prices
     Private Class MarketPrices
@@ -1250,7 +1295,7 @@ Public Class EVECREST
     End Class
 
     ' Downloads the JSON file sent and saves it to the location, then imports it into a string to return
-    Private Function GetJSONFile(ByVal URL As String, ByRef CacheDate As Date) As String
+    Private Function GetJSONFile(ByVal URL As String, ByRef CacheDate As Date, ByVal UpdateType As String) As String
         Dim request As HttpWebRequest
         Dim response As HttpWebResponse = Nothing
         Dim reader As StreamReader
@@ -1258,6 +1303,7 @@ Public Class EVECREST
         Dim CallStatus As String
 
         Try
+
             ' Create the web request  
             request = DirectCast(WebRequest.Create(URL), HttpWebRequest)
 
@@ -1288,6 +1334,9 @@ Public Class EVECREST
 
             Return reader.ReadToEnd
 
+        Catch ex As Exception
+            MsgBox("Unable to download CREST data for " & UpdateType & vbCrLf & "Error: " & ex.Message, vbInformation, Application.ProductName)
+            Return ""
         Finally
             If Not response Is Nothing Then response.Close()
         End Try
