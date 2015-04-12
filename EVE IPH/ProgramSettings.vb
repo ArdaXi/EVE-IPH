@@ -231,6 +231,7 @@ Public Class ProgramSettings
     Public DefaultPriceRegion As String = ""
     Public DefaultPriceRawMatsCombo As String = "Max Buy"
     Public DefaultPriceItemsCombo As String = "Min Sell"
+    Public DefaultPriceCRESTHistory As Boolean = False
 
     ' Default Manufacturing Tab
     Public DefaultBlueprintType As String = "All Blueprints"
@@ -266,7 +267,7 @@ Public Class ProgramSettings
     Public DefaultCheckDecryptor18 As Boolean = False
     Public DefaultCheckDecryptor19 As Boolean = False
     Public DefaultCheckDecryptorUseforT2 As Boolean = True
-    Public defaultCheckDecryptorUseforT3 As Boolean = True
+    Public DefaultCheckDecryptorUseforT3 As Boolean = True
     Public DefaultCheckIgnoreInvention As Boolean = False
     Public DefaultCheckRelicWrecked As Boolean = True
     Public DefaultCheckRelicIntact As Boolean = False
@@ -1423,6 +1424,7 @@ Public Class ProgramSettings
                     .PriceImportType = CStr(GetSettingValue(UpdatePricesFileName, SettingTypes.TypeString, "UpdatePricesSettings", "PriceImportType", DefaultPriceImportPriceType))
                     .ItemsCombo = CStr(GetSettingValue(UpdatePricesFileName, SettingTypes.TypeString, "UpdatePricesSettings", "ItemsCombo", DefaultPriceItemsCombo))
                     .RawMatsCombo = CStr(GetSettingValue(UpdatePricesFileName, SettingTypes.TypeString, "UpdatePricesSettings", "RawMatsCombo", DefaultPriceRawMatsCombo))
+                    .UpdatePriceHistory = CBool(GetSettingValue(UpdatePricesFileName, SettingTypes.TypeBoolean, "UpdatePricesSettings", "UpdatePriceHistory", DefaultPriceCRESTHistory))
 
                 End With
 
@@ -1446,7 +1448,7 @@ Public Class ProgramSettings
 
     ' Saves the tab settings to XML
     Public Sub SaveUpdatePricesSettings(PriceSettings As UpdatePriceTabSettings)
-        Dim UpdatePricesSettingsList(49) As Setting
+        Dim UpdatePricesSettingsList(50) As Setting
 
         Try
             UpdatePricesSettingsList(0) = New Setting("AllRawMats", CStr(PriceSettings.AllRawMats))
@@ -1513,6 +1515,8 @@ Public Class ProgramSettings
             UpdatePricesSettingsList(47) = New Setting("Deployables", CStr(PriceSettings.Deployables))
             UpdatePricesSettingsList(48) = New Setting("Celestials", CStr(PriceSettings.Celestials))
             UpdatePricesSettingsList(49) = New Setting("Implants", CStr(PriceSettings.Implants))
+
+            UpdatePricesSettingsList(50) = New Setting("UpdatePriceHistory", CStr(PriceSettings.UpdatePriceHistory))
 
             Call WriteSettingsToFile(UpdatePricesFileName, UpdatePricesSettingsList, "UpdatePricesSettings")
 
@@ -1581,6 +1585,7 @@ Public Class ProgramSettings
             .PriceImportType = DefaultPriceImportPriceType
             .ItemsCombo = DefaultPriceItemsCombo
             .RawMatsCombo = DefaultPriceRawMatsCombo
+            .UpdatePriceHistory = DefaultPriceCRESTHistory
         End With
 
         ' Save locally
@@ -2168,7 +2173,17 @@ Public Class ProgramSettings
                     .NumIceMiners = CInt(GetSettingValue(MiningSettingsFileName, SettingTypes.TypeInteger, "MiningSettings", "NumIceMiners", DefaultMiningNumIceMiners))
                     .NumGasHarvesters = CInt(GetSettingValue(MiningSettingsFileName, SettingTypes.TypeInteger, "MiningSettings", "NumGasHarvesters", DefaultMiningNumGasHarvesters))
                     .OreUpgrade = CStr(GetSettingValue(MiningSettingsFileName, SettingTypes.TypeString, "MiningSettings", "OreUpgrade", DefaultMiningOreUpgrade))
+                    ' Changed the text in the box on 4/11/2015
+                    If Not MiningUpgradesCollection.Contains(.OreUpgrade) Then
+                        ' Set to default
+                        .OreUpgrade = DefaultMiningOreUpgrade
+                    End If
                     .IceUpgrade = CStr(GetSettingValue(MiningSettingsFileName, SettingTypes.TypeString, "MiningSettings", "IceUpgrade", DefaultMiningIceUpgrade))
+                    ' Changed the text in the box on 4/11/2015
+                    If Not MiningUpgradesCollection.Contains(.IceUpgrade) Then
+                        ' Set to default
+                        .IceUpgrade = DefaultMiningOreUpgrade
+                    End If
                     .GasUpgrade = CStr(GetSettingValue(MiningSettingsFileName, SettingTypes.TypeString, "MiningSettings", "GasUpgrade", DefaultMiningGasUpgrade))
                     .NumOreUpgrades = CInt(GetSettingValue(MiningSettingsFileName, SettingTypes.TypeInteger, "MiningSettings", "NumOreUpgrades", DefaultMiningNumOreUpgrades))
                     .NumIceUpgrades = CInt(GetSettingValue(MiningSettingsFileName, SettingTypes.TypeInteger, "MiningSettings", "NumIceUpgrades", DefaultMiningNumIceUpgrades))
@@ -2214,7 +2229,7 @@ Public Class ProgramSettings
             End If
 
         Catch ex As Exception
-            MsgBox("An error occured when loading Reaction Tab Settings. Error: " & Err.Description & vbCrLf & "Default settings were loaded.", vbExclamation, Application.ProductName)
+            MsgBox("An error occured when loading Mining Tab Settings. Error: " & Err.Description & vbCrLf & "Default settings were loaded.", vbExclamation, Application.ProductName)
             ' Load defaults 
             TempSettings = SetDefaultMiningSettings()
         End Try
@@ -4686,6 +4701,8 @@ Public Structure UpdatePriceTabSettings
     Dim PriceImportType As String
     Dim ItemsCombo As String
     Dim RawMatsCombo As String
+
+    Dim UpdatePriceHistory As Boolean
 
 End Structure
 

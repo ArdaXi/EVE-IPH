@@ -32,12 +32,33 @@ Public Class EVECREST
     Private Const MarketPricesField As String = "CREST_MARKET_PRICES_CACHED_UNTIL"
     Private Const MarketPricesLength As Integer = 23
 
+    ' Rate limits
+    ' You can send an occasional burst of 100 requests all at once. If you do, you'll hit the rate limit once you try to send your 101st request unless you wait.
+    ' Your bucket refills at a rate of 1 per 1/30th of a second. So if you send 100 requests at once, you need to wait 3.33 seconds before you can send another 100 requests. 
+    ' Or if you only wait 2 seconds you can send another 60 etc. Or you can send a constant 30 requests every 1 second instead.
+    Private Const CRESTRatePerSecond As Integer = 30 ' max requests per second
+    Private Const CRESTBurstSize As Integer = 100 ' max burst of requests, which need 3.33 seconds to refill before re-bursting
+
+    Public RecordsInserted As Integer ' number of records currently inserted
+
+    Public Sub New()
+        RecordsInserted = 0
+    End Sub
+
+    Public Function GetRatePerSecond() As Integer
+        Return CRESTRatePerSecond
+    End Function
+
+    Public Function GetBurstSize() As Integer
+        Return CRESTBurstSize
+    End Function
+
     ' market/{region_id}/types/{type_id}/history/ (cache: 23 hours)
     'https://public-crest.eveonline.com/market/10000002/types/34/history/
     ' Provides per day summary of market activity for 13 months for the region_id and type_id sent.
 
     ' Gets the CREST file from CCP for current Market History and updates the EVEIPH DB with the values
-    Public Function UpdateMarketHistory(ByVal TypeID As Long, RegionID As Long) As Boolean
+    Public Function UpdateMarketHistory(ByVal TypeID As Long, RegionID As Long, OpenTransaction As Boolean) As Boolean
         Dim MarketPricesOutput As MarketHistory
         Dim SQL As String
         Dim rsCache As SQLiteDataReader
@@ -78,19 +99,22 @@ Public Class EVECREST
             ' Read in the data
             If Not IsNothing(MarketPricesOutput) Then
                 If MarketPricesOutput.items.Count > 0 Then
-                    Call BeginSQLiteTransaction()
+                    If OpenTransaction Then
+                        Call BeginSQLiteTransaction()
+                    End If
 
                     ' Clear the old record first
                     Call ExecuteNonQuerySQL("DELETE FROM MARKET_HISTORY WHERE TYPE_ID = " & CStr(TypeID) & " AND REGION_ID = " & CStr(RegionID))
 
                     Application.DoEvents()
-
+                    Dim i As Integer
                     ' Now read through all the output items and update them in ITEM_PRICES
                     For i = 0 To MarketPricesOutput.totalCount - 1
                         With MarketPricesOutput.items(i)
                             SQL = "INSERT INTO MARKET_HISTORY VALUES (" & CStr(TypeID) & "," & CStr(RegionID) & "," & CStr(.volume) & ","
                             SQL = SQL & CStr(.lowPrice) & "," & CStr(.highPrice) & "," & CStr(.avgPrice) & "," & CStr(.orderCount) & ",'" & .date_str.Replace("T", " ") & "')"
                             Call ExecuteNonQuerySQL(SQL)
+                            RecordsInserted += 1
                         End With
 
                         Application.DoEvents()
@@ -98,11 +122,12 @@ Public Class EVECREST
 
                     ' Set the Cache Date to now plus the length since it's not sent in the file
                     Call ExecuteNonQuerySQL("DELETE FROM MARKET_HISTORY_UPDATE_CACHE WHERE TYPE_ID = " & CStr(TypeID) & " AND REGION_ID = " & CStr(RegionID))
-                    Call ExecuteNonQuerySQL("INSERT INTO MARKET_HISTORY_UPDATE_CACHE VALUES (" & CStr(TypeID) & "," & CStr(RegionID) & "," & "'" & CacheDate & "')")
+                    Call ExecuteNonQuerySQL("INSERT INTO MARKET_HISTORY_UPDATE_CACHE VALUES (" & CStr(TypeID) & "," & CStr(RegionID) & "," & "'" & Format(CacheDate, SQLiteDateFormat) & "')")
 
                     ' Done updating
-                    Call CommitSQLiteTransaction()
-
+                    If OpenTransaction Then
+                        Call CommitSQLiteTransaction()
+                    End If
                     Return True
 
                 End If
@@ -229,7 +254,7 @@ Public Class EVECREST
                     Call ExecuteNonQuerySQL("REINDEX IDX_CAT_ID")
 
                     ' Set the Cache Date to now plus the length since it's not sent in the file
-                    Call SetCRESTCacheDate(IndustryTeamSpecialtiesCacheDateField, DateAdd("h", IndustryTeamSpecalitiesCacheDateLength, Now))
+                    Call SetCRESTCacheDate(IndustryTeamSpecialtiesCacheDateField, CacheDate)
                     ' Done updating
                     Call CommitSQLiteTransaction()
 

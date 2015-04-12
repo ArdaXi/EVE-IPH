@@ -4,6 +4,7 @@ Imports System.Net
 Imports System.Data.SQLite
 Imports System.Globalization
 Imports System.Threading
+Imports System.Threading.Tasks
 Imports System.IO
 
 Public Class frmMain
@@ -344,6 +345,11 @@ Public Class frmMain
     Private Const MineRefineYieldColumnWidth As Integer = 70
     Private Const MineCrystalColumnWidth As Integer = 45
 
+    Private Structure ItemRegionPairs
+        Dim ItemID As Long
+        Dim RegionID As Long
+    End Structure
+
 #Region "Initialization Code"
 
     ' Set default window theme so tabs in invention window display correctly on all systems
@@ -407,7 +413,7 @@ Public Class frmMain
             ' Check for program updates
             Application.UseWaitCursor = True
             Me.Activate()
-            Call CheckForUpdates(False)
+            Call CheckForUpdates(False, Me.Icon)
             Application.UseWaitCursor = False
             Application.DoEvents()
         End If
@@ -477,11 +483,22 @@ Public Class frmMain
 
         If Developer Then
             Me.Text = Me.Text & " - Developer"
+            mnuRefinery.Visible = True
+            chkUpdatePricesCRESTHistory.Visible = True
+        Else
+            ' Hide all the development stuff
+            mnuRefinery.Visible = False
+            tabMain.TabPages.Remove(tabPI)
+            chkUpdatePricesCRESTHistory.Visible = False
         End If
 
-        ' Hide all the development stuff
-        mnuRefinery.Visible = False
-        tabMain.TabPages.Remove(tabPI)
+        ' For changes to mining upgrade combo
+        MiningUpgradesCollection.Add(None)
+        MiningUpgradesCollection.Add("5% (T1)")
+        MiningUpgradesCollection.Add("8% (M1)")
+        MiningUpgradesCollection.Add("9% (T2)")
+        MiningUpgradesCollection.Add("9% (M6)")
+        MiningUpgradesCollection.Add("10% (M6)")
 
         ' Don't include invention teams until CCP implements it
         tabCalcTeams.TabPages.Remove(tabCalcTeamInvention)
@@ -638,6 +655,7 @@ Public Class frmMain
             ttMain.SetToolTip(chkBPXL, "'Capital' or 'XL' in Name or 5000m3 (Fighters) Drones")
             ttMain.SetToolTip(lblBPDecryptorStats, "Selected Decryptor Stats and End Runs per BPC")
             ttMain.SetToolTip(lblBPT3Stats, "Selected Decryptor Stats and End Runs per BPC")
+            ttMain.SetToolTip(chkUpdatePricesCRESTHistory, "Updates the price history of each selected item and region for the last year." & vbCrLf & "Note: This may take a long time to complete, especially with more than one region checked.")
         End If
 
         '*******************************************
@@ -4258,7 +4276,7 @@ NoBonus:
     Private Sub mnuCheckforUpdates_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuCheckforUpdates.Click
         Me.Cursor = Cursors.WaitCursor
         Application.DoEvents()
-        Call CheckForUpdates(True)
+        Call CheckForUpdates(True, Me.Icon)
         Me.Cursor = Cursors.Default
     End Sub
 
@@ -9773,6 +9791,8 @@ ExitForm:
             IgnoreSystemCheckUpdates = False
         End If
 
+        chkUpdatePricesCRESTHistory.Checked = UserUpdatePricesTabSettings.UpdatePriceHistory
+
         ' Refresh the prices
         Call UpdatePriceList()
 
@@ -9853,6 +9873,7 @@ ExitForm:
 
         TempSettings.ItemsCombo = cmbItemsSplitPrices.Text
         TempSettings.RawMatsCombo = cmbRawMatsSplitPrices.Text
+        TempSettings.UpdatePriceHistory = chkUpdatePricesCRESTHistory.Checked
 
         ' Search for a set system first
         TempSettings.SelectedSystem = "0"
@@ -9954,6 +9975,7 @@ ExitForm:
     Private Sub btnImportPrices_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnImportPrices.Click
         Dim i As Integer
         Dim j As Integer
+
         Dim RegionChecked As Boolean
         Dim SystemChecked As Boolean
         Dim readerRegions As SQLiteDataReader
@@ -9963,9 +9985,8 @@ ExitForm:
         Dim RegionName As String = ""
         Dim Items As New List(Of PriceItem)
         Dim TempItem As PriceItem
-        Dim SearchRegions() As String
+        Dim SearchRegions As New List(Of String)
         Dim SearchSystem As String = ""
-        Dim NumRegions As Integer = 0
         Dim NumSystems As Integer = 0
 
         RegionChecked = False
@@ -10032,16 +10053,6 @@ ExitForm:
             End If
         Next
 
-        ' Redim the array to match number of checked regions
-        For i = 1 To (RegionCheckBoxes.Length - 1)
-            If RegionCheckBoxes(i).Checked Then
-                NumRegions = NumRegions + 1
-            End If
-        Next
-
-        ReDim SearchRegions(NumRegions - 1)
-        NumRegions = 0
-
         ' Build the region list as a string
         If RegionChecked Then
             For i = 1 To (RegionCheckBoxes.Length - 1)
@@ -10065,8 +10076,7 @@ ExitForm:
                     readerRegions = DBCommand.ExecuteReader
 
                     readerRegions.Read()
-                    SearchRegions(NumRegions) = CStr(readerRegions.GetValue(0))
-                    NumRegions = NumRegions + 1
+                    SearchRegions.Add(CStr(readerRegions.GetInt64(0)))
                     readerRegions.Close()
                 End If
             Next
@@ -10096,6 +10106,121 @@ ExitForm:
         ' Load the prices
         Call LoadPrices(Items, SearchRegions, SearchSystem)
 
+        ' See if they want to load historical prices from CREST
+        If chkUpdatePricesCRESTHistory.Checked Then
+
+            ' See what they want and process accordingly
+            If SystemChecked Then
+                ' Need to look up region ID since we can only price history for regions
+                ' Get the system list string
+                SQL = "SELECT regionID FROM SOLAR_SYSTEMS WHERE solarsystemID = " & CStr(SearchSystem)
+
+                DBCommand = New SQLiteCommand(SQL, DB)
+                readerSystems = DBCommand.ExecuteReader
+                If readerSystems.Read Then
+                    SearchRegions.Add(CStr(readerSystems.GetValue(0)))
+                Else
+                    MsgBox("Invalid Solar System Name", vbCritical, Application.ProductName)
+                    GoTo ExitSub
+                End If
+
+                readerSystems.Close()
+                readerSystems = Nothing
+                DBCommand = Nothing
+
+            Else ' Regions
+                Dim Response As MsgBoxResult
+                If SearchRegions.Count > 1 Then
+                    ' Make sure they know this will take a bit to run - unless this is fairly quick
+                    Response = MsgBox("Updating price history for multiple regions will take a long time to complete. Do you want to continue?", vbYesNo, Me.Text)
+
+                    If Response = vbNo Then
+                        ' Just display the results of the query
+                        GoTo UpdateProgramPrices
+                    End If
+                End If
+            End If
+
+            ' Reset the value of the progress bar
+            pnlProgressBar.Value = 0
+            pnlProgressBar.Maximum = (SearchRegions.Count * Items.Count) - 1
+            pnlProgressBar.Visible = True
+
+            pnlStatus.Text = "Updating Market Price History..."
+            Application.DoEvents()
+
+            ' Set the DB up for speed
+            Call ExecuteNonQuerySQL("PRAGMA synchronous = OFF; PRAGMA locking_mode = EXCLUSIVE; PRAGMA temp_store = MEMORY;")
+
+            ' Start a transaction here to speed up processing in the updates
+            Call ExecuteNonQuerySQL("BEGIN EXCLUSIVE;")
+
+            ' Build the list of regions and items
+            Dim Pairs As New List(Of ItemRegionPairs)
+            For i = 0 To SearchRegions.Count - 1
+                For j = 0 To Items.Count - 1
+                    Dim TempPair As ItemRegionPairs
+                    TempPair.ItemID = Items(j).TypeID
+                    TempPair.RegionID = CLng(SearchRegions(i))
+                    Pairs.Add(TempPair)
+                Next
+            Next
+
+            Dim BatchStart As DateTime = Now
+            Dim BatchEnd As DateTime
+            Dim BatchCounter As Integer = 0
+            Const MaxBatches As Integer = 30
+
+            Dim CRESTHistory As New EVECREST
+
+            Dim MaxRequestsperSecond As Integer = CRESTHistory.GetRatePerSecond
+
+            For i = 0 To Pairs.Count - 1
+                pnlProgressBar.Value = i
+                Application.DoEvents()
+
+                ' Add limiting if needed here - only wait if we go over the per request limit and only for the time left
+                Call CRESTHistory.UpdateMarketHistory(Pairs(i).ItemID, Pairs(i).RegionID, False)
+
+                BatchCounter += 1
+
+                If BatchCounter = MaxBatches Then
+                    ' Need to see if we are over the time limit and sleep
+                    BatchEnd = Now
+
+                    ' Figure out the difference between the max time for 30 requests and our 30 requests
+                    Dim Difference As Integer = CInt((1000 / MaxRequestsperSecond * MaxBatches) - ((BatchEnd.Ticks - BatchStart.Ticks) / 10000))
+                    If Difference > 0 Then
+                        Threading.Thread.Sleep(Difference)
+                    End If
+                    ' Reset
+                    BatchCounter = 0
+                    BatchStart = Now
+                End If
+
+                If CRESTHistory.RecordsInserted >= 50000 Then
+                    Call CommitSQLiteTransaction()
+                    Call ExecuteNonQuerySQL("BEGIN EXCLUSIVE;")
+                    CRESTHistory.RecordsInserted = 0
+                End If
+
+            Next
+
+            ' Finish updating the DB
+            Call CommitSQLiteTransaction()
+
+            ' Reset DB variables
+            Call ExecuteNonQuerySQL("PRAGMA synchronous = NORMAL; PRAGMA locking_mode = NORMAL; PRAGMA temp_store = DEFAULT")
+
+            ' Done updating, hide the progress bar
+            pnlProgressBar.Visible = False
+            pnlStatus.Text = ""
+            Application.DoEvents()
+
+        End If
+
+UpdateProgramPrices:
+
         ' Update all the prices in the program
         Call UpdateProgramPrices()
 
@@ -10111,7 +10236,7 @@ ExitSub:
     End Sub
 
     ' Loads prices from the cache into the ITEM_PRICES table based on the info selected on the main form
-    Private Sub LoadPrices(ByVal SentItems As List(Of PriceItem), ByVal SearchRegions() As String, ByVal SearchSystem As String)
+    Private Sub LoadPrices(ByVal SentItems As List(Of PriceItem), ByVal SearchRegions As List(Of String), ByVal SearchSystem As String)
         Dim readerPrices As SQLiteDataReader
         Dim SQL As String = ""
         Dim i As Integer
@@ -10138,10 +10263,10 @@ ExitSub:
 
         ' First build the region list, this will be the same for all items in the list
         If SearchSystem = "" Then
-            For i = 0 To SearchRegions.Length - 1
+            For i = 0 To SearchRegions.Count - 1
                 RegionList = RegionList & SearchRegions(i)
 
-                If i < SearchRegions.Length - 1 Then
+                If i < SearchRegions.Count - 1 Then
                     RegionList = RegionList & ","
                 End If
             Next
@@ -10290,7 +10415,7 @@ ExitSub:
     End Sub
 
     ' Adds prices for each type id and region to the cache by using the (my) EVE Central API Wrapper Class. 
-    Private Function UpdatePricesCache(ByVal CacheItems As List(Of PriceItem), ByVal SearchRegions() As String, ByVal SearchSystem As String) As Boolean
+    Private Function UpdatePricesCache(ByVal CacheItems As List(Of PriceItem), ByVal SearchRegions As List(Of String), ByVal SearchSystem As String) As Boolean
         ' Rewrite Variables
         Dim TypeIDUpdatePriceList As New List(Of Long)
 
@@ -10308,10 +10433,10 @@ ExitSub:
 
         ' First build the region list for storing in database and sending to EVE Central API
         If SearchSystem = "" Then
-            For i = 0 To SearchRegions.Length - 1
+            For i = 0 To SearchRegions.Count - 1
                 RegionSystemSearchList = RegionSystemSearchList & SearchRegions(i)
 
-                If i < SearchRegions.Length - 1 Then
+                If i < SearchRegions.Count - 1 Then
                     RegionSystemSearchList = RegionSystemSearchList & ","
                 End If
             Next
@@ -18924,7 +19049,7 @@ ExitCalc:
             readerRegion.Close()
             DBCommand = Nothing
 
-            If TempCrest.UpdateMarketHistory(FoundItem.ItemTypeID, RegionID) Then
+            If TempCrest.UpdateMarketHistory(FoundItem.ItemTypeID, RegionID, True) Then
                 ' Now open the window for that item after updated
             End If
 
@@ -19542,8 +19667,6 @@ ExitCalc:
         ' Price Updates
         Dim TypeIDs As New List(Of PriceItem)
         Dim TempItem As PriceItem = Nothing
-        Dim TempRegionList() As String = Nothing
-        Dim TempSystemList() As String = Nothing
         Dim DCTypeIDList As New List(Of PriceItem)
         Dim DCSystemList As New List(Of String)
         Dim DCRegionList As New List(Of String)
@@ -19873,11 +19996,10 @@ ExitCalc:
 
             Next
 
-            ' Need to update the cache for each region, for all typeids so send one region at a time
-            ReDim TempRegionList(0)
-
             For i = 0 To DCRegionList.Count - 1
-                TempRegionList(0) = DCRegionList(i)
+                ' Need to update the cache for each region, for all typeids, so send one region at a time
+                Dim TempRegionList As New List(Of String)
+                TempRegionList.Add(DCRegionList(i))
                 Call UpdatePricesCache(DCTypeIDList, TempRegionList, "")
             Next
 
@@ -23571,7 +23693,9 @@ Leave:
 
             ' Look up each based on bonus
             If cmbMineMiningUpgrade.Enabled = True And cmbMineMiningUpgrade.Text <> None Then
-                MiningUpgrades = CInt(cmbMineMiningUpgrade.Text.Substring(0, 1))
+                ' Replace the percent if it's in the string so we can take the 9 or 10% bonus easier
+                Dim TempUpgradeText As String = cmbMineMiningUpgrade.Text.Replace("%", "")
+                MiningUpgrades = CInt(TempUpgradeText.Substring(0, 2))
             Else
                 MiningUpgrades = 0
             End If
@@ -23854,7 +23978,9 @@ Leave:
 
             ' Apply the upgrades
             If cmbMineMiningUpgrade.Enabled = True And cmbMineMiningUpgrade.Text <> None Then
-                TempCycleTime = TempCycleTime * ((1 - (CDec(CDbl(cmbMineMiningUpgrade.Text.Substring(0, 1)) / 100))) ^ CInt(cmbMineNumMiningUpgrades.Text)) ' Diminishing returns
+                ' Replace the percent if it's in the string so we can take the 9 or 10% bonus easier
+                Dim TempUpgradeText As String = cmbMineMiningUpgrade.Text.Replace("%", "")
+                TempCycleTime = TempCycleTime * ((1 - (CDec(CDbl(TempUpgradeText.Substring(0, 2)) / 100))) ^ CInt(cmbMineNumMiningUpgrades.Text)) ' Diminishing returns
             End If
 
             ' Finally include the implant value

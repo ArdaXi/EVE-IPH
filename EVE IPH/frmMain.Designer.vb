@@ -784,6 +784,7 @@ Partial Class frmMain
         Me.lblTempME = New System.Windows.Forms.Label()
         Me.lstManufacturing = New System.Windows.Forms.ListView()
         Me.tabUpdatePrices = New System.Windows.Forms.TabPage()
+        Me.chkUpdatePricesCRESTHistory = New System.Windows.Forms.CheckBox()
         Me.chkUpdatePricesNoPrice = New System.Windows.Forms.CheckBox()
         Me.gbTradeHubSystems = New System.Windows.Forms.GroupBox()
         Me.cmbPriceSystems = New System.Windows.Forms.ComboBox()
@@ -3093,7 +3094,7 @@ Partial Class frmMain
         '
         Me.cmbMineMiningUpgrade.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList
         Me.cmbMineMiningUpgrade.FormattingEnabled = true
-        Me.cmbMineMiningUpgrade.Items.AddRange(New Object() {"None", "5% (T1)", "6% (M1)", "7% (M2)", "8% (M3)", "9% (M4/T2)"})
+        Me.cmbMineMiningUpgrade.Items.AddRange(New Object() {"None", "5% (T1)", "8% (M1)", "9% (T2)", "9% (M6)", "10% (M6)"})
         Me.cmbMineMiningUpgrade.Location = New System.Drawing.Point(92, 44)
         Me.cmbMineMiningUpgrade.Name = "cmbMineMiningUpgrade"
         Me.cmbMineMiningUpgrade.Size = New System.Drawing.Size(110, 21)
@@ -8975,6 +8976,7 @@ Partial Class frmMain
         '
         'tabUpdatePrices
         '
+        Me.tabUpdatePrices.Controls.Add(Me.chkUpdatePricesCRESTHistory)
         Me.tabUpdatePrices.Controls.Add(Me.chkUpdatePricesNoPrice)
         Me.tabUpdatePrices.Controls.Add(Me.gbTradeHubSystems)
         Me.tabUpdatePrices.Controls.Add(Me.lstPricesView)
@@ -8999,10 +9001,21 @@ Partial Class frmMain
         Me.tabUpdatePrices.Text = "Update Prices"
         Me.tabUpdatePrices.UseVisualStyleBackColor = true
         '
+        'chkUpdatePricesCRESTHistory
+        '
+        Me.chkUpdatePricesCRESTHistory.AutoSize = true
+        Me.chkUpdatePricesCRESTHistory.Location = New System.Drawing.Point(568, 583)
+        Me.chkUpdatePricesCRESTHistory.Name = "chkUpdatePricesCRESTHistory"
+        Me.chkUpdatePricesCRESTHistory.Size = New System.Drawing.Size(123, 17)
+        Me.chkUpdatePricesCRESTHistory.TabIndex = 15
+        Me.chkUpdatePricesCRESTHistory.Text = "Update Price History"
+        Me.chkUpdatePricesCRESTHistory.UseVisualStyleBackColor = true
+        Me.chkUpdatePricesCRESTHistory.Visible = False
+        '
         'chkUpdatePricesNoPrice
         '
         Me.chkUpdatePricesNoPrice.AutoSize = true
-        Me.chkUpdatePricesNoPrice.Location = New System.Drawing.Point(568, 583)
+        Me.chkUpdatePricesNoPrice.Location = New System.Drawing.Point(448, 583)
         Me.chkUpdatePricesNoPrice.Name = "chkUpdatePricesNoPrice"
         Me.chkUpdatePricesNoPrice.Size = New System.Drawing.Size(108, 17)
         Me.chkUpdatePricesNoPrice.TabIndex = 6
@@ -9102,7 +9115,7 @@ Partial Class frmMain
         '
         Me.txtPriceItemFilter.Location = New System.Drawing.Point(80, 581)
         Me.txtPriceItemFilter.Name = "txtPriceItemFilter"
-        Me.txtPriceItemFilter.Size = New System.Drawing.Size(410, 20)
+        Me.txtPriceItemFilter.Size = New System.Drawing.Size(290, 20)
         Me.txtPriceItemFilter.TabIndex = 3
         '
         'chkSplitPrices
@@ -9186,7 +9199,7 @@ Partial Class frmMain
         '
         'btnClearItemFilter
         '
-        Me.btnClearItemFilter.Location = New System.Drawing.Point(497, 581)
+        Me.btnClearItemFilter.Location = New System.Drawing.Point(376, 581)
         Me.btnClearItemFilter.Name = "btnClearItemFilter"
         Me.btnClearItemFilter.Size = New System.Drawing.Size(59, 21)
         Me.btnClearItemFilter.TabIndex = 4
@@ -12749,7 +12762,7 @@ Partial Class frmMain
         '
         Me.ListOptionsMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.OpenMarketDataToolStripMenuItem})
         Me.ListOptionsMenu.Name = "ListOptionsMenu"
-        Me.ListOptionsMenu.Size = New System.Drawing.Size(167, 48)
+        Me.ListOptionsMenu.Size = New System.Drawing.Size(167, 26)
         '
         'OpenMarketDataToolStripMenuItem
         '
@@ -14091,5 +14104,6 @@ End Sub
     Friend WithEvents cmbMineRefineryEff As System.Windows.Forms.ComboBox
     Friend WithEvents ListOptionsMenu As System.Windows.Forms.ContextMenuStrip
     Friend WithEvents OpenMarketDataToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents chkUpdatePricesCRESTHistory As System.Windows.Forms.CheckBox
 
 End Class

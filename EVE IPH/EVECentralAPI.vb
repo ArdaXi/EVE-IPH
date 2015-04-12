@@ -10,7 +10,7 @@ Public Class EVECentralAPI
     Private ErrorData As MyError
 
     ' Function takes an array of strings for Regions and a TypeID list, returns an array of EVE Central prices
-    Public Function GetPrices(ByVal Regions() As String, ByVal System As String, ByVal TypeIDList As List(Of Long), Optional TypeIDBatchCount As Integer = 100) As List(Of EVECentralPrice)
+    Public Function GetPrices(ByVal Regions As List(Of String), ByVal System As String, ByVal TypeIDList As List(Of Long), Optional TypeIDBatchCount As Integer = 100) As List(Of EVECentralPrice)
         Dim PriceRecords As New List(Of EVECentralPrice)
         Dim TempRecord As EVECentralPrice
 

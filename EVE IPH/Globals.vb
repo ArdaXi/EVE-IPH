@@ -208,6 +208,8 @@ Public Module Public_Variables
 
     Public RareandShipSkinBPs As New List(Of Long)
 
+    Public MiningUpgradesCollection As New List(Of String)
+
     Public Enum StationType
         Station = 0
         Outpost = 1
@@ -343,8 +345,9 @@ Public Module Public_Variables
 
     Public Sub InitDB()
 
-        DB.ConnectionString = "Data Source=" & SQLiteDBFileName & ";Version=3; SyncPragma=NORMAL;"
+        DB.ConnectionString = "Data Source=" & SQLiteDBFileName & ";Version=3;"
         DB.Open()
+        Call ExecuteNonQuerySQL("PRAGMA synchronous = NORMAL; PRAGMA locking_mode = NORMAL; PRAGMA cache_size = 10000; PRAGMA page_size = 4096; PRAGMA temp_store = DEFAULT; PRAGMA journal_mode = TRUNCATE; PRAGMA count_changes = OFF")
         Call ExecuteNonQuerySQL("PRAGMA auto_vacuum = FULL;") ' Keep the DB small
 
     End Sub
@@ -1195,7 +1198,7 @@ InvalidDate:
     End Function
 
     ' Checks for program updates
-    Public Sub CheckForUpdates(ByVal ShowFinalMessage As Boolean)
+    Public Sub CheckForUpdates(ByVal ShowFinalMessage As Boolean, ByVal ProgramIcon As Icon)
         Dim Response As DialogResult
         ' Program Updater
         Dim Updater As New ProgramUpdater
@@ -1206,7 +1209,7 @@ InvalidDate:
 
         If UpdateCode = 1 Then
 
-            Response = TopMostMessageBox.Show("Update Available - Do you want to update now?", Application.ProductName, MessageBoxButtons.YesNo)
+            Response = TopMostMessageBox.Show("Update Available - Do you want to update now?", Application.ProductName, MessageBoxButtons.YesNo, ProgramIcon)
 
             If Response = DialogResult.Yes Then
                 ' Run the updater
