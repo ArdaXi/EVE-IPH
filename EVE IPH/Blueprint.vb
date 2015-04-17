@@ -543,7 +543,10 @@ Public Class Blueprint
         Dim SQL As String
         Dim readerBP As SQLiteDataReader
         Dim readerME As SQLiteDataReader
-        Dim readerLookup As SQLiteDataReader
+
+        Dim TempME As Double
+        Dim TempTE As Double
+        Dim OwnedBP As Boolean = False
 
         ' Recursion variables
         Dim ComponentBlueprint As Blueprint = Nothing
@@ -556,11 +559,6 @@ Public Class Blueprint
 
         ' Temp Materials for passing
         Dim TempMaterials As New Materials
-
-        ' Temp ME and TE
-        Dim TempME As Double
-        Dim TempTE As Double
-        Dim OwnedBP As Boolean = False
 
         Dim TempNumBPs As Integer = 1
 
@@ -592,7 +590,7 @@ Public Class Blueprint
                 Call CurrentMaterial.SetQuantity(CurrentMatQuantity)
 
                 ' If it has a value in ALL_BLUEPRINTS, then the item can be built from it's own BP
-                SQL = "SELECT BLUEPRINT_ID FROM ALL_BLUEPRINTS WHERE ITEM_ID =" & CurrentMaterial.GetMaterialTypeID
+                SQL = "SELECT BLUEPRINT_ID, TECH_LEVEL FROM ALL_BLUEPRINTS WHERE ITEM_ID =" & CurrentMaterial.GetMaterialTypeID
                 DBCommand = New SQLiteCommand(SQL, DB)
                 readerME = DBCommand.ExecuteReader
 
@@ -601,30 +599,9 @@ Public Class Blueprint
                     And Not BlueprintName.Contains("Edition") And Not BlueprintName.Contains("Polarized") Then
                     ' We can build it from another BP
                     HasBuildableComponents = True
-                    ' The user can't define an ME or TE for this blueprint, so just look it up
-                    SQL = "SELECT ME, TE, OWNED FROM OWNED_BLUEPRINTS WHERE USER_ID =" & SelectedCharacter.ID & " AND BLUEPRINT_ID =" & CStr(readerME.GetInt64(0)) & " AND OWNED <> 0 "
-                    DBCommand = New SQLiteCommand(SQL, DB)
-                    readerLookup = DBCommand.ExecuteReader
 
-                    If readerLookup.Read Then
-                        TempME = readerLookup.GetDouble(0)
-                        TempTE = readerLookup.GetDouble(1)
-                        ' Check if owned
-                        OwnedBP = CBool(readerLookup.GetInt64(2))
-                    Else
-                        ' T2
-                        If TechLevel = BlueprintTechLevel.T2 Or TechLevel = BlueprintTechLevel.T3 Then
-                            TempME = BaseT2T3ME
-                            TempTE = BaseT2T3TE
-                        Else
-                            TempME = UserSettings.DefaultBPME
-                            TempTE = UserSettings.DefaultBPTE
-                        End If
-                        OwnedBP = False
-                    End If
-
-                    readerLookup.Close()
-                    readerLookup = Nothing
+                    ' Look up the ME/TE and owned data for the bp
+                    Call GetMETEforBP(readerME.GetInt64(0), readerME.GetInt32(1), TempME, TempTE, OwnedBP)
 
                     ' Update the current material's ME
                     CurrentMaterial.SetItemME(CStr(TempME))
@@ -769,6 +746,14 @@ Public Class Blueprint
 
 
                 Else ' Just raw material or T2 drone for augmented drones, ORE Mack and Polarized weapons, insert into list
+
+                    If readerME.HasRows And ((BlueprintName.Contains("'Augmented'") Or CurrentMaterial.GetMaterialGroup = "Drone") _
+                    Or Not BlueprintName.Contains("Edition") Or Not BlueprintName.Contains("Polarized")) Then
+                        ' This is a component, so look up the ME of the item to put on the material before adding (fixes issue when searching for shopping list items of the same type - no ME is "-" and these have an me
+                        ' For example, see modulate core strip miner and polarized heavy pulse weapons.
+                        Call GetMETEforBP(readerME.GetInt64(0), readerME.GetInt32(1), TempME, TempTE, OwnedBP)
+                        CurrentMaterial.SetItemME(CStr(TempME))
+                    End If
 
                     ' We are not building these
                     CurrentMaterial.SetBuildItem(False)
@@ -1157,6 +1142,38 @@ Public Class Blueprint
         Return TeamBonus * (1 - (iME / 100)) * ManufacturingFacility.MaterialMultiplier
 
     End Function
+
+    ' Gets the ME/TE for the BP
+    Public Sub GetMETEforBP(ByVal BlueprintID As Long, ByVal BPTech As Integer, ByRef RefME As Double, ByRef RefTE As Double, ByRef OwnedBP As Boolean)
+        Dim SQL As String
+        Dim readerLookup As SQLiteDataReader
+
+        ' The user can't define an ME or TE for this blueprint, so just look it up
+        SQL = "SELECT ME, TE, OWNED FROM OWNED_BLUEPRINTS WHERE USER_ID =" & BPCharacter.ID & " AND BLUEPRINT_ID =" & CStr(BlueprintID) & " AND OWNED <> 0 "
+        DBCommand = New SQLiteCommand(SQL, DB)
+        readerLookup = DBCommand.ExecuteReader
+
+        If readerLookup.Read Then
+            RefME = readerLookup.GetDouble(0)
+            RefTE = readerLookup.GetDouble(1)
+            ' Check if owned
+            OwnedBP = CBool(readerLookup.GetInt64(2))
+        Else
+            ' T2
+            If BPTech = BlueprintTechLevel.T2 Or BPTech = BlueprintTechLevel.T3 Then
+                RefME = BaseT2T3ME
+                RefTE = BaseT2T3TE
+            Else
+                RefME = UserSettings.DefaultBPME
+                RefTE = UserSettings.DefaultBPTE
+            End If
+            OwnedBP = False
+        End If
+
+        readerLookup.Close()
+        readerLookup = Nothing
+
+    End Sub
 
     ' Calculates the total time muliplier for the blueprint based on the bp, facility, implants and team bonuses
     Private Function SetBPTimeModifier() As Double

@@ -871,7 +871,8 @@ Public Class frmShoppingList
 
                         OutputText = BuyListLabel
                         MyStream.Write(OutputText & Environment.NewLine)
-                        OutputText = "Material" & Separator & "Quantity" & Separator & "Cost Per Item" & Separator & "Buy Type" & Separator
+                        OutputText = "Material" & Separator & "Quantity" & Separator & "Cost Per Item" & Separator
+                        OutputText = OutputText & "Min Sell" & Separator & "Max Buy" & Separator & "Buy Type" & Separator
                         OutputText = OutputText & "Total m3" & Separator & "Isk/m3" & Separator & "TotalCost "
                         MyStream.Write(OutputText & Environment.NewLine)
 
@@ -884,18 +885,22 @@ Public Class frmShoppingList
                                 OutputText = ListItem.SubItems(1).Text & Separator
                                 OutputText = OutputText & ConvertUStoEUDecimal(ListItem.SubItems(2).Text) & Separator
                                 OutputText = OutputText & ConvertUStoEUDecimal(ListItem.SubItems(3).Text) & Separator
-                                OutputText = OutputText & ListItem.SubItems(4).Text & Separator
+                                OutputText = OutputText & ConvertUStoEUDecimal(ListItem.SubItems(4).Text) & Separator
                                 OutputText = OutputText & ConvertUStoEUDecimal(ListItem.SubItems(5).Text) & Separator
-                                OutputText = OutputText & ConvertUStoEUDecimal(ListItem.SubItems(6).Text) & Separator
-                                OutputText = OutputText & ConvertUStoEUDecimal(ListItem.SubItems(7).Text)
+                                OutputText = OutputText & ListItem.SubItems(6).Text & Separator
+                                OutputText = OutputText & ConvertUStoEUDecimal(ListItem.SubItems(7).Text) & Separator
+                                OutputText = OutputText & ConvertUStoEUDecimal(ListItem.SubItems(8).Text) & Separator
+                                OutputText = OutputText & ConvertUStoEUDecimal(ListItem.SubItems(9).Text)
                             Else
                                 OutputText = ListItem.SubItems(1).Text & Separator
                                 OutputText = OutputText & Format(ListItem.SubItems(2).Text, "Fixed") & Separator
                                 OutputText = OutputText & Format(ListItem.SubItems(3).Text, "Fixed") & Separator
-                                OutputText = OutputText & ListItem.SubItems(4).Text & Separator
+                                OutputText = OutputText & Format(ListItem.SubItems(4).Text, "Fixed") & Separator
                                 OutputText = OutputText & Format(ListItem.SubItems(5).Text, "Fixed") & Separator
-                                OutputText = OutputText & Format(ListItem.SubItems(6).Text, "Fixed") & Separator
-                                OutputText = OutputText & Format(ListItem.SubItems(7).Text, "Fixed")
+                                OutputText = OutputText & ListItem.SubItems(6).Text & Separator
+                                OutputText = OutputText & Format(ListItem.SubItems(7).Text, "Fixed") & Separator
+                                OutputText = OutputText & Format(ListItem.SubItems(8).Text, "Fixed") & Separator
+                                OutputText = OutputText & Format(ListItem.SubItems(9).Text, "Fixed")
                             End If
 
                             MyStream.Write(OutputText & Environment.NewLine)
@@ -1250,9 +1255,7 @@ Public Class frmShoppingList
 
             Catch Ex As Exception
                 ' Error'd so restore old shopping list
-                If SavedShoppingList.GetNumShoppingItems <> 0 Then
-                    TotalShoppingList = CType(SavedShoppingList.Clone, ShoppingList)
-                End If
+                TotalShoppingList = CType(SavedShoppingList.Clone, ShoppingList)
                 Application.UseWaitCursor = False
                 MessageBox.Show("Cannot read file from disk - Error: " & Ex.Message)
             Finally
