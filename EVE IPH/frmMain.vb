@@ -13221,12 +13221,21 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcT3FacilityManualME_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcT3FacilityManualME.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcT3FacilityManualME, SelectedCalcT3ManufacturingFacility, _
-                                      cmbCalcT3FacilityType, btnCalcT3FacilitySave, lblCalcT3FacilityDefault)
+        If chkCalcT3DestroyersFacility.Checked Then
+            Call OutpostMETETaxText_KeyUp(txtCalcT3FacilityManualME, SelectedCalcT3DestroyerManufacturingFacility, _
+                                          cmbCalcT3FacilityType, btnCalcT3FacilitySave, lblCalcT3FacilityDefault)
+        Else
+            Call OutpostMETETaxText_KeyUp(txtCalcT3FacilityManualME, SelectedCalcT3CruiserManufacturingFacility, _
+                              cmbCalcT3FacilityType, btnCalcT3FacilitySave, lblCalcT3FacilityDefault)
+        End If
     End Sub
 
     Private Sub txtCalcT3FacilityManualME_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcT3FacilityManualME.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcT3FacilityManualME, cmbCalcT3FacilityType, SelectedCalcT3Facility.MaterialMultiplier)
+        If chkCalcT3DestroyersFacility.Checked Then
+            Call OutpostMETETaxText_LostFocus(txtCalcT3FacilityManualME, cmbCalcT3FacilityType, SelectedCalcT3DestroyerManufacturingFacility.MaterialMultiplier)
+        Else
+            Call OutpostMETETaxText_LostFocus(txtCalcT3FacilityManualME, cmbCalcT3FacilityType, SelectedCalcT3CruiserManufacturingFacility.MaterialMultiplier)
+        End If
     End Sub
 
     Private Sub txtCalcT3FacilityManualTE_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcT3FacilityManualTE.KeyPress
@@ -13234,12 +13243,21 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcT3FacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcT3FacilityManualTE.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcT3FacilityManualTE, SelectedCalcT3Facility, _
-                                      cmbCalcT3FacilityType, btnCalcT3FacilitySave, lblCalcT3FacilityDefault)
+        If chkCalcT3DestroyersFacility.Checked Then
+            Call OutpostMETETaxText_KeyUp(txtCalcT3FacilityManualTE, SelectedCalcT3DestroyerManufacturingFacility, _
+                                          cmbCalcT3FacilityType, btnCalcT3FacilitySave, lblCalcT3FacilityDefault)
+        Else
+            Call OutpostMETETaxText_KeyUp(txtCalcT3FacilityManualTE, SelectedCalcT3CruiserManufacturingFacility, _
+                              cmbCalcT3FacilityType, btnCalcT3FacilitySave, lblCalcT3FacilityDefault)
+        End If
     End Sub
 
     Private Sub txtCalcT3FacilityManualTE_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcT3FacilityManualTE.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcT3FacilityManualTE, cmbCalcT3FacilityType, SelectedCalcT3Facility.MaterialMultiplier)
+        If chkCalcT3DestroyersFacility.Checked Then
+            Call OutpostMETETaxText_LostFocus(txtCalcT3FacilityManualTE, cmbCalcT3FacilityType, SelectedCalcT3DestroyerManufacturingFacility.MaterialMultiplier)
+        Else
+            Call OutpostMETETaxText_LostFocus(txtCalcT3FacilityManualTE, cmbCalcT3FacilityType, SelectedCalcT3CruiserManufacturingFacility.MaterialMultiplier)
+        End If
     End Sub
 
     Private Sub txtCalcT3FacilityManualTax_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcT3FacilityManualTax.KeyPress
@@ -13247,12 +13265,21 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcT3FacilityManualTax_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcT3FacilityManualTax.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcT3FacilityManualTax, SelectedCalcT3Facility, _
-                                      cmbCalcT3FacilityType, btnCalcT3FacilitySave, lblCalcT3FacilityDefault)
+        If chkCalcT3DestroyersFacility.Checked Then
+            Call OutpostMETETaxText_KeyUp(txtCalcT3FacilityManualTax, SelectedCalcT3DestroyerManufacturingFacility, _
+                                          cmbCalcT3FacilityType, btnCalcT3FacilitySave, lblCalcT3FacilityDefault)
+        Else
+            Call OutpostMETETaxText_KeyUp(txtCalcT3FacilityManualTax, SelectedCalcT3CruiserManufacturingFacility, _
+                              cmbCalcT3FacilityType, btnCalcT3FacilitySave, lblCalcT3FacilityDefault)
+        End If
     End Sub
 
     Private Sub txtCalcT3FacilityManualTax_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcT3FacilityManualTax.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcT3FacilityManualTax, cmbCalcT3FacilityType, SelectedCalcT3Facility.MaterialMultiplier)
+        If chkCalcT3DestroyersFacility.Checked Then
+            Call OutpostMETETaxText_LostFocus(txtCalcT3FacilityManualTax, cmbCalcT3FacilityType, SelectedCalcT3DestroyerManufacturingFacility.MaterialMultiplier)
+        Else
+            Call OutpostMETETaxText_LostFocus(txtCalcT3FacilityManualTax, cmbCalcT3FacilityType, SelectedCalcT3CruiserManufacturingFacility.MaterialMultiplier)
+        End If
     End Sub
 
     Private Sub chkCalcT3FacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcT3FacilityIncludeUsage.CheckedChanged
@@ -13280,13 +13307,19 @@ ExitSub:
             If Not LoadingFacilityTypes And Not FirstLoad Then
                 Call LoadFacilityRegions(-1, SubsystemCategoryID, True, _
                                          ActivityManufacturing, cmbCalcSubsystemFacilityType, cmbCalcSubsystemFacilityRegion, cmbCalcSubsystemFacilitySystem, cmbCalcSubsystemFacilityorArray, _
-                                         lblCalcSubsystemFacilityBonus, lblCalcSubsystemFacilityDefault, lblCalcSubsystemFacilityManualME, txtCalcSubsystemFacilityManualME, _
-                                         lblCalcSubsystemFacilityManualTE, txtCalcSubsystemFacilityManualTE, btnCalcSubsystemFacilitySave, lblCalcSubsystemFacilityTaxRate, CalcTab, chkCalcSubsystemFacilityIncludeUsage)
+                                         lblCalcSubsystemFacilityBonus, lblCalcSubsystemFacilityDefault, _
+                                         lblCalcSubsystemFacilityManualME, txtCalcSubsystemFacilityManualME, _
+                                         lblCalcSubsystemFacilityManualTE, txtCalcSubsystemFacilityManualTE, _
+                                         lblCalcSubsystemFacilityManualTax, txtCalcSubsystemFacilityManualTax, _
+                                         btnCalcSubsystemFacilitySave, lblCalcSubsystemFacilityTaxRate, CalcTab, chkCalcSubsystemFacilityIncludeUsage)
                 Call cmbCalcSubsystemFacilityRegion.Focus()
             End If
 
             ' Anytime this changes, set all the other ME/TE boxes to not viewed
-            Call HideFacilityBonusBoxes(lblCalcSubsystemFacilityBonus, lblCalcSubsystemFacilityTaxRate, lblCalcSubsystemFacilityManualME, lblCalcSubsystemFacilityManualTE, txtCalcSubsystemFacilityManualME, txtCalcSubsystemFacilityManualTE)
+            Call HideFacilityBonusBoxes(lblCalcSubsystemFacilityBonus, lblCalcSubsystemFacilityTaxRate, _
+                                        lblCalcSubsystemFacilityManualME, lblCalcSubsystemFacilityManualTE, _
+                                        txtCalcSubsystemFacilityManualME, txtCalcSubsystemFacilityManualTE, _
+                                        lblCalcSubsystemFacilityManualTax, txtCalcSubsystemFacilityManualTax)
             CalcSubsystemFacilityLoaded = False
             PreviousCalcSubsystemFacilityType = cmbCalcSubsystemFacilityType.Text
         End If
@@ -13298,8 +13331,11 @@ ExitSub:
             PreviousCalcSubsystemFacilityRegion = cmbCalcSubsystemFacilityRegion.Text
             Call LoadFacilityRegions(-1, SubsystemCategoryID, False, _
                                      ActivityManufacturing, cmbCalcSubsystemFacilityType, cmbCalcSubsystemFacilityRegion, cmbCalcSubsystemFacilitySystem, cmbCalcSubsystemFacilityorArray, _
-                                     lblCalcSubsystemFacilityBonus, lblCalcSubsystemFacilityDefault, lblCalcSubsystemFacilityManualME, txtCalcSubsystemFacilityManualME, _
-                                     lblCalcSubsystemFacilityManualTE, txtCalcSubsystemFacilityManualTE, btnCalcSubsystemFacilitySave, lblCalcSubsystemFacilityTaxRate, CalcTab, chkCalcSubsystemFacilityIncludeUsage)
+                                     lblCalcSubsystemFacilityBonus, lblCalcSubsystemFacilityDefault, _
+                                     lblCalcSubsystemFacilityManualME, txtCalcSubsystemFacilityManualME, _
+                                     lblCalcSubsystemFacilityManualTE, txtCalcSubsystemFacilityManualTE, _
+                                     lblCalcSubsystemFacilityManualTax, txtCalcSubsystemFacilityManualTax, _
+                                     btnCalcSubsystemFacilitySave, lblCalcSubsystemFacilityTaxRate, CalcTab, chkCalcSubsystemFacilityIncludeUsage)
         End If
     End Sub
 
@@ -13311,10 +13347,16 @@ ExitSub:
         If Not LoadingFacilityRegions And Not FirstLoad And PreviousCalcSubsystemFacilityRegion <> cmbCalcSubsystemFacilityRegion.Text Then
             Call LoadFacilitySystems(-1, SubsystemCategoryID, True, _
                                      ActivityManufacturing, cmbCalcSubsystemFacilityType, cmbCalcSubsystemFacilityRegion, cmbCalcSubsystemFacilitySystem, cmbCalcSubsystemFacilityorArray, _
-                                     lblCalcSubsystemFacilityBonus, lblCalcSubsystemFacilityTaxRate, lblCalcSubsystemFacilityManualME, txtCalcSubsystemFacilityManualME, _
-                                     lblCalcSubsystemFacilityManualTE, txtCalcSubsystemFacilityManualTE, lblCalcSubsystemFacilityDefault, btnCalcSubsystemFacilitySave, CalcTab, chkCalcSubsystemFacilityIncludeUsage)
+                                     lblCalcSubsystemFacilityBonus, lblCalcSubsystemFacilityTaxRate, _
+                                     lblCalcSubsystemFacilityManualME, txtCalcSubsystemFacilityManualME, _
+                                     lblCalcSubsystemFacilityManualTE, txtCalcSubsystemFacilityManualTE, _
+                                     lblCalcSubsystemFacilityManualTax, txtCalcSubsystemFacilityManualTax, _
+                                     lblCalcSubsystemFacilityDefault, btnCalcSubsystemFacilitySave, CalcTab, chkCalcSubsystemFacilityIncludeUsage)
             Call cmbCalcSubsystemFacilitySystem.Focus()
-            Call HideFacilityBonusBoxes(lblCalcSubsystemFacilityBonus, lblCalcSubsystemFacilityTaxRate, lblCalcSubsystemFacilityManualME, lblCalcSubsystemFacilityManualTE, txtCalcSubsystemFacilityManualME, txtCalcSubsystemFacilityManualTE)
+            Call HideFacilityBonusBoxes(lblCalcSubsystemFacilityBonus, lblCalcSubsystemFacilityTaxRate, _
+                             lblCalcSubsystemFacilityManualME, lblCalcSubsystemFacilityManualTE, _
+                             txtCalcSubsystemFacilityManualME, txtCalcSubsystemFacilityManualTE, _
+                             lblCalcSubsystemFacilityManualTax, txtCalcSubsystemFacilityManualTax)
             CalcSubsystemFacilityLoaded = False
         End If
     End Sub
@@ -13324,8 +13366,11 @@ ExitSub:
             PreviousCalcSubsystemFacilitySystem = cmbCalcSubsystemFacilitySystem.Text
             Call LoadFacilitySystems(-1, SubsystemCategoryID, False, _
                                      ActivityManufacturing, cmbCalcSubsystemFacilityType, cmbCalcSubsystemFacilityRegion, cmbCalcSubsystemFacilitySystem, cmbCalcSubsystemFacilityorArray, _
-                                     lblCalcSubsystemFacilityBonus, lblCalcSubsystemFacilityTaxRate, lblCalcSubsystemFacilityManualME, txtCalcSubsystemFacilityManualME, _
-                                     lblCalcSubsystemFacilityManualTE, txtCalcSubsystemFacilityManualTE, lblCalcSubsystemFacilityDefault, btnCalcSubsystemFacilitySave, CalcTab, chkCalcSubsystemFacilityIncludeUsage)
+                                     lblCalcSubsystemFacilityBonus, lblCalcSubsystemFacilityTaxRate, _
+                                     lblCalcSubsystemFacilityManualME, txtCalcSubsystemFacilityManualME, _
+                                     lblCalcSubsystemFacilityManualTE, txtCalcSubsystemFacilityManualTE, _
+                                     lblCalcSubsystemFacilityManualTax, txtCalcSubsystemFacilityManualTax, _
+                                     lblCalcSubsystemFacilityDefault, btnCalcSubsystemFacilitySave, CalcTab, chkCalcSubsystemFacilityIncludeUsage)
         End If
     End Sub
 
@@ -13341,8 +13386,11 @@ ExitSub:
             ' Load the facility
             Call LoadFacilities(-1, SubsystemCategoryID, False, _
                                 ActivityManufacturing, cmbCalcSubsystemFacilityType, cmbCalcSubsystemFacilityRegion, cmbCalcSubsystemFacilitySystem, cmbCalcSubsystemFacilityorArray, _
-                                lblCalcSubsystemFacilityBonus, lblCalcSubsystemFacilityDefault, lblCalcSubsystemFacilityManualME, txtCalcSubsystemFacilityManualME, _
-                                lblCalcSubsystemFacilityManualTE, txtCalcSubsystemFacilityManualTE, btnCalcSubsystemFacilitySave, lblCalcSubsystemFacilityTaxRate, CalcTab, _
+                                lblCalcSubsystemFacilityBonus, lblCalcSubsystemFacilityDefault, _
+                                lblCalcSubsystemFacilityManualME, txtCalcSubsystemFacilityManualME, _
+                                lblCalcSubsystemFacilityManualTE, txtCalcSubsystemFacilityManualTE, _
+                                lblCalcSubsystemFacilityManualTax, txtCalcSubsystemFacilityManualTax, _
+                                btnCalcSubsystemFacilitySave, lblCalcSubsystemFacilityTaxRate, CalcTab, _
                                 chkCalcSubsystemFacilityIncludeUsage, Nothing, Nothing, Autoload, chkCalcSubsystemFacilityIncludeUsage.Checked)
 
             Call cmbCalcSubsystemFacilityorArray.Focus()
@@ -13360,8 +13408,11 @@ ExitSub:
         If Not CalcSubsystemFacilitiesLoaded And Not FirstLoad Then
             Call LoadFacilities(-1, SubsystemCategoryID, False, _
                                 ActivityManufacturing, cmbCalcSubsystemFacilityType, cmbCalcSubsystemFacilityRegion, cmbCalcSubsystemFacilitySystem, cmbCalcSubsystemFacilityorArray, _
-                                lblCalcSubsystemFacilityBonus, lblCalcSubsystemFacilityDefault, lblCalcSubsystemFacilityManualME, txtCalcSubsystemFacilityManualME, _
-                                lblCalcSubsystemFacilityManualTE, txtCalcSubsystemFacilityManualTE, btnCalcSubsystemFacilitySave, lblCalcSubsystemFacilityTaxRate, CalcTab, _
+                                lblCalcSubsystemFacilityBonus, lblCalcSubsystemFacilityDefault, _
+                                lblCalcSubsystemFacilityManualME, txtCalcSubsystemFacilityManualME, _
+                                lblCalcSubsystemFacilityManualTE, txtCalcSubsystemFacilityManualTE, _
+                                lblCalcSubsystemFacilityManualTax, txtCalcSubsystemFacilityManualTax, _
+                                btnCalcSubsystemFacilitySave, lblCalcSubsystemFacilityTaxRate, CalcTab, _
                                 chkCalcSubsystemFacilityIncludeUsage, Nothing, Nothing, Nothing, chkCalcSubsystemFacilityIncludeUsage.Checked)
         End If
     End Sub
@@ -13380,8 +13431,11 @@ ExitSub:
                                       Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, -1, SubsystemCategoryID, _
                                       ActivityManufacturing, cmbCalcSubsystemFacilityType.Text, cmbCalcSubsystemFacilityorArray.Text, _
                                       cmbCalcSubsystemFacilityRegion, cmbCalcSubsystemFacilitySystem, cmbCalcSubsystemFacilityorArray, _
-                                      lblCalcSubsystemFacilityBonus, lblCalcSubsystemFacilityDefault, lblCalcSubsystemFacilityManualME, txtCalcSubsystemFacilityManualME, _
-                                      lblCalcSubsystemFacilityManualTE, txtCalcSubsystemFacilityManualTE, btnCalcSubsystemFacilitySave, lblCalcSubsystemFacilityTaxRate, _
+                                      lblCalcSubsystemFacilityBonus, lblCalcSubsystemFacilityDefault, _
+                                      lblCalcSubsystemFacilityManualME, txtCalcSubsystemFacilityManualME, _
+                                      lblCalcSubsystemFacilityManualTE, txtCalcSubsystemFacilityManualTE, _
+                                      lblCalcSubsystemFacilityManualTax, txtCalcSubsystemFacilityManualTax, _
+                                      btnCalcSubsystemFacilitySave, lblCalcSubsystemFacilityTaxRate, _
                                       chkCalcSubsystemFacilityIncludeUsage, Nothing, Nothing, CalcTab, CalcSubsystemFacilityLoaded, chkCalcSubsystemFacilityIncludeUsage.Checked)
 
             If txtCalcSubsystemFacilityManualME.Visible Then
@@ -13468,13 +13522,19 @@ ExitSub:
             If Not LoadingFacilityTypes And Not FirstLoad Then
                 Call LoadFacilityRegions(BoosterGroupID, -1, True, _
                                          ActivityManufacturing, cmbCalcBoosterFacilityType, cmbCalcBoosterFacilityRegion, cmbCalcBoosterFacilitySystem, cmbCalcBoosterFacilityorArray, _
-                                         lblCalcBoosterFacilityBonus, lblCalcBoosterFacilityDefault, lblCalcBoosterFacilityManualME, txtCalcBoosterFacilityManualME, _
-                                         lblCalcBoosterFacilityManualTE, txtCalcBoosterFacilityManualTE, btnCalcBoosterFacilitySave, lblCalcBoosterFacilityTaxRate, CalcTab, chkCalcBoosterFacilityIncludeUsage)
+                                         lblCalcBoosterFacilityBonus, lblCalcBoosterFacilityDefault, _
+                                         lblCalcBoosterFacilityManualME, txtCalcBoosterFacilityManualME, _
+                                         lblCalcBoosterFacilityManualTE, txtCalcBoosterFacilityManualTE, _
+                                         lblCalcBoosterFacilityManualTax, txtCalcBoosterFacilityManualTax, _
+                                         btnCalcBoosterFacilitySave, lblCalcBoosterFacilityTaxRate, CalcTab, chkCalcBoosterFacilityIncludeUsage)
                 Call cmbCalcBoosterFacilityRegion.Focus()
             End If
 
             ' Anytime this changes, set all the other ME/TE boxes to not viewed
-            Call HideFacilityBonusBoxes(lblCalcBoosterFacilityBonus, lblCalcBoosterFacilityTaxRate, lblCalcBoosterFacilityManualME, lblCalcBoosterFacilityManualTE, txtCalcBoosterFacilityManualME, txtCalcBoosterFacilityManualTE)
+            Call HideFacilityBonusBoxes(lblCalcBoosterFacilityBonus, lblCalcBoosterFacilityTaxRate, _
+                                        lblCalcBoosterFacilityManualME, lblCalcBoosterFacilityManualTE, _
+                                        txtCalcBoosterFacilityManualME, txtCalcBoosterFacilityManualTE, _
+                                        lblCalcBoosterFacilityManualTax, txtCalcBoosterFacilityManualTax)
             CalcBoosterFacilityLoaded = False
             PreviousCalcBoosterFacilityType = cmbCalcBoosterFacilityType.Text
         End If
@@ -13486,8 +13546,11 @@ ExitSub:
             PreviousCalcBoosterFacilityRegion = cmbCalcBoosterFacilityRegion.Text
             Call LoadFacilityRegions(BoosterGroupID, -1, False, _
                                      ActivityManufacturing, cmbCalcBoosterFacilityType, cmbCalcBoosterFacilityRegion, cmbCalcBoosterFacilitySystem, cmbCalcBoosterFacilityorArray, _
-                                     lblCalcBoosterFacilityBonus, lblCalcBoosterFacilityDefault, lblCalcBoosterFacilityManualME, txtCalcBoosterFacilityManualME, _
-                                     lblCalcBoosterFacilityManualTE, txtCalcBoosterFacilityManualTE, btnCalcBoosterFacilitySave, lblCalcBoosterFacilityTaxRate, CalcTab, chkCalcBoosterFacilityIncludeUsage)
+                                     lblCalcBoosterFacilityBonus, lblCalcBoosterFacilityDefault, _
+                                     lblCalcBoosterFacilityManualME, txtCalcBoosterFacilityManualME, _
+                                     lblCalcBoosterFacilityManualTE, txtCalcBoosterFacilityManualTE, _
+                                     lblCalcBoosterFacilityManualTax, txtCalcBoosterFacilityManualTax, _
+                                     btnCalcBoosterFacilitySave, lblCalcBoosterFacilityTaxRate, CalcTab, chkCalcBoosterFacilityIncludeUsage)
         End If
     End Sub
 
@@ -13499,10 +13562,16 @@ ExitSub:
         If Not LoadingFacilityRegions And Not FirstLoad And PreviousCalcBoosterFacilityRegion <> cmbCalcBoosterFacilityRegion.Text Then
             Call LoadFacilitySystems(BoosterGroupID, -1, True, _
                                      ActivityManufacturing, cmbCalcBoosterFacilityType, cmbCalcBoosterFacilityRegion, cmbCalcBoosterFacilitySystem, cmbCalcBoosterFacilityorArray, _
-                                     lblCalcBoosterFacilityBonus, lblCalcBoosterFacilityTaxRate, lblCalcBoosterFacilityManualME, txtCalcBoosterFacilityManualME, _
-                                     lblCalcBoosterFacilityManualTE, txtCalcBoosterFacilityManualTE, lblCalcBoosterFacilityDefault, btnCalcBoosterFacilitySave, CalcTab, chkCalcBoosterFacilityIncludeUsage)
+                                     lblCalcBoosterFacilityBonus, lblCalcBoosterFacilityTaxRate, _
+                                     lblCalcBoosterFacilityManualME, txtCalcBoosterFacilityManualME, _
+                                     lblCalcBoosterFacilityManualTE, txtCalcBoosterFacilityManualTE, _
+                                     lblCalcBoosterFacilityManualTax, txtCalcBoosterFacilityManualTax, _
+                                     lblCalcBoosterFacilityDefault, btnCalcBoosterFacilitySave, CalcTab, chkCalcBoosterFacilityIncludeUsage)
             Call cmbCalcBoosterFacilitySystem.Focus()
-            Call HideFacilityBonusBoxes(lblCalcBoosterFacilityBonus, lblCalcBoosterFacilityTaxRate, lblCalcBoosterFacilityManualME, lblCalcBoosterFacilityManualTE, txtCalcBoosterFacilityManualME, txtCalcBoosterFacilityManualTE)
+            Call HideFacilityBonusBoxes(lblCalcBoosterFacilityBonus, lblCalcBoosterFacilityTaxRate, _
+                                        lblCalcBoosterFacilityManualME, lblCalcBoosterFacilityManualTE, _
+                                        txtCalcBoosterFacilityManualME, txtCalcBoosterFacilityManualTE, _
+                                        lblCalcBoosterFacilityManualTax, txtCalcBoosterFacilityManualTax)
             CalcBoosterFacilityLoaded = False
         End If
     End Sub
@@ -13512,8 +13581,11 @@ ExitSub:
             PreviousCalcBoosterFacilitySystem = cmbCalcBoosterFacilitySystem.Text
             Call LoadFacilitySystems(BoosterGroupID, -1, False, _
                                      ActivityManufacturing, cmbCalcBoosterFacilityType, cmbCalcBoosterFacilityRegion, cmbCalcBoosterFacilitySystem, cmbCalcBoosterFacilityorArray, _
-                                     lblCalcBoosterFacilityBonus, lblCalcBoosterFacilityTaxRate, lblCalcBoosterFacilityManualME, txtCalcBoosterFacilityManualME, _
-                                     lblCalcBoosterFacilityManualTE, txtCalcBoosterFacilityManualTE, lblCalcBoosterFacilityDefault, btnCalcBoosterFacilitySave, CalcTab, chkCalcBoosterFacilityIncludeUsage)
+                                     lblCalcBoosterFacilityBonus, lblCalcBoosterFacilityTaxRate, _
+                                     lblCalcBoosterFacilityManualME, txtCalcBoosterFacilityManualME, _
+                                     lblCalcBoosterFacilityManualTE, txtCalcBoosterFacilityManualTE, _
+                                     lblCalcBoosterFacilityManualTax, txtCalcBoosterFacilityManualTax, _
+                                     lblCalcBoosterFacilityDefault, btnCalcBoosterFacilitySave, CalcTab, chkCalcBoosterFacilityIncludeUsage)
         End If
     End Sub
 
@@ -13529,8 +13601,11 @@ ExitSub:
             ' Load the facility
             Call LoadFacilities(BoosterGroupID, -1, False, _
                                 ActivityManufacturing, cmbCalcBoosterFacilityType, cmbCalcBoosterFacilityRegion, cmbCalcBoosterFacilitySystem, cmbCalcBoosterFacilityorArray, _
-                                lblCalcBoosterFacilityBonus, lblCalcBoosterFacilityDefault, lblCalcBoosterFacilityManualME, txtCalcBoosterFacilityManualME, _
-                                lblCalcBoosterFacilityManualTE, txtCalcBoosterFacilityManualTE, btnCalcBoosterFacilitySave, lblCalcBoosterFacilityTaxRate, CalcTab, _
+                                lblCalcBoosterFacilityBonus, lblCalcBoosterFacilityDefault, _
+                                lblCalcBoosterFacilityManualME, txtCalcBoosterFacilityManualME, _
+                                lblCalcBoosterFacilityManualTE, txtCalcBoosterFacilityManualTE, _
+                                lblCalcBoosterFacilityManualTax, txtCalcBoosterFacilityManualTax, _
+                                btnCalcBoosterFacilitySave, lblCalcBoosterFacilityTaxRate, CalcTab, _
                                 chkCalcBoosterFacilityIncludeUsage, Nothing, Nothing, Autoload, chkCalcBoosterFacilityIncludeUsage.Checked)
 
             Call cmbCalcBoosterFacilityorArray.Focus()
@@ -13548,8 +13623,11 @@ ExitSub:
         If Not CalcBoosterFacilitiesLoaded And Not FirstLoad Then
             Call LoadFacilities(BoosterGroupID, -1, False, _
                                 ActivityManufacturing, cmbCalcBoosterFacilityType, cmbCalcBoosterFacilityRegion, cmbCalcBoosterFacilitySystem, cmbCalcBoosterFacilityorArray, _
-                                lblCalcBoosterFacilityBonus, lblCalcBoosterFacilityDefault, lblCalcBoosterFacilityManualME, txtCalcBoosterFacilityManualME, _
-                                lblCalcBoosterFacilityManualTE, txtCalcBoosterFacilityManualTE, btnCalcBoosterFacilitySave, lblCalcBoosterFacilityTaxRate, CalcTab, _
+                                lblCalcBoosterFacilityBonus, lblCalcBoosterFacilityDefault, _
+                                lblCalcBoosterFacilityManualME, txtCalcBoosterFacilityManualME, _
+                                lblCalcBoosterFacilityManualTE, txtCalcBoosterFacilityManualTE, _
+                                lblCalcBoosterFacilityManualTax, txtCalcBoosterFacilityManualTax, _
+                                btnCalcBoosterFacilitySave, lblCalcBoosterFacilityTaxRate, CalcTab, _
                                 chkCalcBoosterFacilityIncludeUsage, Nothing, Nothing, Nothing, chkCalcBoosterFacilityIncludeUsage.Checked)
         End If
     End Sub
@@ -13568,8 +13646,11 @@ ExitSub:
                                       Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, BoosterGroupID, -1, _
                                       ActivityManufacturing, cmbCalcBoosterFacilityType.Text, cmbCalcBoosterFacilityorArray.Text, _
                                       cmbCalcBoosterFacilityRegion, cmbCalcBoosterFacilitySystem, cmbCalcBoosterFacilityorArray, _
-                                      lblCalcBoosterFacilityBonus, lblCalcBoosterFacilityDefault, lblCalcBoosterFacilityManualME, txtCalcBoosterFacilityManualME, _
-                                      lblCalcBoosterFacilityManualTE, txtCalcBoosterFacilityManualTE, btnCalcBoosterFacilitySave, lblCalcBoosterFacilityTaxRate, _
+                                      lblCalcBoosterFacilityBonus, lblCalcBoosterFacilityDefault, _
+                                      lblCalcBoosterFacilityManualME, txtCalcBoosterFacilityManualME, _
+                                      lblCalcBoosterFacilityManualTE, txtCalcBoosterFacilityManualTE, _
+                                      lblCalcBoosterFacilityManualTax, txtCalcBoosterFacilityManualTax, _
+                                      btnCalcBoosterFacilitySave, lblCalcBoosterFacilityTaxRate, _
                                       chkCalcBoosterFacilityIncludeUsage, Nothing, Nothing, CalcTab, CalcBoosterFacilityLoaded, chkCalcBoosterFacilityIncludeUsage.Checked)
 
             If txtCalcBoosterFacilityManualME.Visible Then
@@ -15709,13 +15790,19 @@ CheckTechs:
             chkCalcBaseFacilityIncludeUsage.Checked = DefaultCalcBaseManufacturingFacility.IncludeActivityUsage
             Call LoadFacility(IndustryType.Manufacturing, True, False, _
                               ActivityManufacturing, cmbCalcBaseFacilityType, cmbCalcBaseFacilityRegion, cmbCalcBaseFacilitySystem, cmbCalcBaseFacilityorArray, _
-                              lblCalcBaseFacilityBonus, lblCalcBaseFacilityDefault, lblCalcBaseFacilityManualME, txtCalcBaseFacilityManualME, _
-                              lblCalcBaseFacilityManualTE, txtCalcBaseFacilityManualTE, btnCalcBaseFacilitySave, lblCalcBaseFacilityTaxRate, _
+                              lblCalcBaseFacilityBonus, lblCalcBaseFacilityDefault, _
+                              lblCalcBaseFacilityManualME, txtCalcBaseFacilityManualME, _
+                              lblCalcBaseFacilityManualTE, txtCalcBaseFacilityManualTE, _
+                              lblCalcBaseFacilityManualTax, txtCalcBaseFacilityManualTax, _
+                              btnCalcBaseFacilitySave, lblCalcBaseFacilityTaxRate, _
                               CalcTab, chkCalcBaseFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcBaseFacilityLoaded, Nothing, 1, 0, 0, False)
             If cmbCalcBaseFacilityType.Text = POSFacility Then
                 ' Show the POS modules for multi-use
                 SetPOSMultiUseArraysVisibility(True)
-                Call HideFacilityBonusBoxes(lblCalcBaseFacilityBonus, lblCalcBaseFacilityTaxRate, lblCalcBaseFacilityManualME, lblCalcBaseFacilityManualTE, txtCalcBaseFacilityManualME, txtCalcBaseFacilityManualTE)
+                Call HideFacilityBonusBoxes(lblCalcBaseFacilityBonus, lblCalcBaseFacilityTaxRate, _
+                                            lblCalcBaseFacilityManualME, lblCalcBaseFacilityManualTE, _
+                                            txtCalcBaseFacilityManualME, txtCalcBaseFacilityManualTE, _
+                                            lblCalcBaseFacilityManualTax, txtCalcBaseFacilityManualTax)
                 ' Set the default values - need to truncate the names though
                 cmbCalcPOSFuelBlocks.Text = GetTruncatedCalcPOSMultiUseArrayName(SelectedCalcPOSFuelBlockFacility.FacilityName)
                 cmbCalcPOSLargeShips.Text = GetTruncatedCalcPOSMultiUseArrayName(SelectedCalcPOSLargeShipFacility.FacilityName)
@@ -15736,8 +15823,11 @@ CheckTechs:
             End If
             Call LoadFacility(GetComponentsIndustryType(.CheckCapitalComponentsFacility), True, False, _
                               ActivityComponentManufacturing, cmbCalcComponentFacilityType, cmbCalcComponentFacilityRegion, cmbCalcComponentFacilitySystem, cmbCalcComponentFacilityorArray, _
-                              lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
-                              lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, _
+                              lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, _
+                              lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
+                              lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, _
+                              lblCalcComponentFacilityManualTax, txtCalcComponentFacilityManualTax, _
+                              btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, _
                               CalcTab, chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, Nothing, TempCalcComponentFacilityLoaded, _
                               Nothing, 1, GetComponentsGroupID(.CheckCapitalComponentsFacility), -1, False)
             Call SetComponentFacilityLoaded(chkCalcComponentFacilityIncludeUsage.Checked, TempCalcComponentFacilityLoaded)
@@ -15750,8 +15840,11 @@ CheckTechs:
             chkCalcInventionFacilityIncludeTime.Checked = DefaultCalcInventionFacility.IncludeActivityTime
             Call LoadFacility(IndustryType.Invention, True, False, _
                               ActivityInvention, cmbCalcInventionFacilityType, cmbCalcInventionFacilityRegion, cmbCalcInventionFacilitySystem, cmbCalcInventionFacilityorArray, _
-                              lblCalcInventionFacilityBonus, lblCalcInventionFacilityDefault, lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
-                              lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualTE, btnCalcInventionFacilitySave, lblCalcInventionFacilityTaxRate, _
+                              lblCalcInventionFacilityBonus, lblCalcInventionFacilityDefault, _
+                              lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
+                              lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualTE, _
+                              lblCalcInventionFacilityManualTax, txtCalcInventionFacilityManualTax, _
+                              btnCalcInventionFacilitySave, lblCalcInventionFacilityTaxRate, _
                               CalcTab, chkCalcInventionFacilityIncludeUsage, lblCalcInventionInclude, chkCalcInventionFacilityIncludeCost, chkCalcInventionFacilityIncludeTime, CalcInventionFacilityLoaded, Nothing, 1, 0, 0, False)
             LoadingFacilityActivities = False
 
@@ -15762,8 +15855,11 @@ CheckTechs:
             chkCalcT3InventionFacilityIncludeTime.Checked = DefaultCalcT3InventionFacility.IncludeActivityTime
             Call LoadFacility(IndustryType.T3Invention, True, False, _
                               ActivityInvention, cmbCalcT3InventionFacilityType, cmbCalcT3InventionFacilityRegion, cmbCalcT3InventionFacilitySystem, cmbCalcT3InventionFacilityorArray, _
-                              lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityDefault, lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
-                              lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualTE, btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityTaxRate, _
+                              lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityDefault, _
+                              lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
+                              lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualTE, _
+                              lblCalcT3InventionFacilityManualTax, txtCalcT3InventionFacilityManualTax, _
+                              btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityTaxRate, _
                               CalcTab, chkCalcT3InventionFacilityIncludeUsage, lblCalcT3InventionInclude, chkCalcT3InventionFacilityIncludeCost, chkCalcT3InventionFacilityIncludeTime, CalcT3InventionFacilityLoaded, Nothing, 1, StrategicCruiserGroupID, -1, False)
             LoadingFacilityActivities = False
 
@@ -15774,8 +15870,11 @@ CheckTechs:
             chkCalcCopyFacilityIncludeTime.Checked = DefaultCalcCopyFacility.IncludeActivityTime
             Call LoadFacility(IndustryType.Copying, True, False, _
                               ActivityCopying, cmbCalcCopyFacilityType, cmbCalcCopyFacilityRegion, cmbCalcCopyFacilitySystem, cmbCalcCopyFacilityorArray, _
-                              lblCalcCopyFacilityBonus, lblCalcCopyFacilityDefault, lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
-                              lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualTE, btnCalcCopyFacilitySave, lblCalcCopyFacilityTaxRate, _
+                              lblCalcCopyFacilityBonus, lblCalcCopyFacilityDefault, _
+                              lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
+                              lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualTE, _
+                              lblCalcCopyFacilityManualTax, txtCalcCopyFacilityManualTax, _
+                              btnCalcCopyFacilitySave, lblCalcCopyFacilityTaxRate, _
                               CalcTab, chkCalcCopyFacilityIncludeUsage, lblCalcCopyInclude, chkCalcCopyFacilityIncludeCost, chkCalcCopyFacilityIncludeTime, CalcCopyFacilityLoaded, Nothing, 1, 0, 0, False)
             LoadingFacilityActivities = False
 
