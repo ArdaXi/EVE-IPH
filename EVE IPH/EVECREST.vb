@@ -103,7 +103,7 @@ Public Class EVECREST
                         Call BeginSQLiteTransaction()
                     End If
 
-                    ' Clear the old record first
+                    ' Clear the old records first
                     Call ExecuteNonQuerySQL("DELETE FROM MARKET_HISTORY WHERE TYPE_ID = " & CStr(TypeID) & " AND REGION_ID = " & CStr(RegionID))
 
                     Application.DoEvents()
@@ -120,7 +120,7 @@ Public Class EVECREST
                         Application.DoEvents()
                     Next
 
-                    ' Set the Cache Date to now plus the length since it's not sent in the file
+                    ' Set the Cache Date 
                     Call ExecuteNonQuerySQL("DELETE FROM MARKET_HISTORY_UPDATE_CACHE WHERE TYPE_ID = " & CStr(TypeID) & " AND REGION_ID = " & CStr(RegionID))
                     Call ExecuteNonQuerySQL("INSERT INTO MARKET_HISTORY_UPDATE_CACHE VALUES (" & CStr(TypeID) & "," & CStr(RegionID) & "," & "'" & Format(CacheDate, SQLiteDateFormat) & "')")
 
@@ -779,6 +779,7 @@ Public Class EVECREST
         Dim IndustryFacilitiesOutput As IndustryFacilities
         Dim SQL As String
         Dim CacheDate As Date
+        Dim rsLookup As SQLiteDataReader
 
         Dim TempLabel As Label
         Dim TempPB As ProgressBar
@@ -813,16 +814,15 @@ Public Class EVECREST
             ' Read in the data
             If Not IsNothing(IndustryFacilitiesOutput) Then
                 If IndustryFacilitiesOutput.items.Count > 0 Then
+
                     Call BeginSQLiteTransaction()
+
                     TempLabel.Text = "Saving Industry Facilities Data..."
                     TempPB.Minimum = 0
                     TempPB.Value = 0
                     TempPB.Maximum = IndustryFacilitiesOutput.totalCount - 1
                     TempPB.Visible = True
                     Application.DoEvents()
-
-                    ' Delete the old records first
-                    Call ExecuteNonQuerySQL("DELETE FROM INDUSTRY_FACILITIES")
 
                     ' Now read through all the output items and input them into the DB
                     For i = 0 To IndustryFacilitiesOutput.totalCount - 1
@@ -846,10 +846,38 @@ Public Class EVECREST
                                     FacilityName = Format(.name)
                             End Select
 
-                            SQL = "INSERT INTO INDUSTRY_FACILITIES VALUES (" & CStr(.facilityID) & ",'" & FormatDBString(FacilityName) & "'," & CStr(.type.id) & ","
-                            SQL = SQL & CStr(.tax) & "," & CStr(.solarSystem.id) & "," & CStr(.region.id) & ","
-                            SQL = SQL & CStr(.owner.id) & ")"
+                            ' Look up each facility and if found, update it. If not, insert - this way if the CREST is having issues, we won't delete all the station data (which doesn't change much)
+                            SQL = "SELECT 'X' FROM INDUSTRY_FACILITIES WHERE FACILITY_ID = " & CStr(.facilityID)
+
+                            DBCommand = New SQLiteCommand(SQL, DB)
+                            rsLookup = DBCommand.ExecuteReader
+
+                            If rsLookup.Read() Then
+                                SQL = "UPDATE INDUSTRY_FACILITIES "
+                                SQL = SQL & "SET FACILITY_NAME = '" & FormatDBString(FacilityName) & "',"
+                                SQL = SQL & "FACILITY_TYPE_ID = " & CStr(.type.id) & ","
+                                SQL = SQL & "FACILITY_TAX = " & CStr(.tax) & ","
+                                SQL = SQL & "SOLAR_SYSTEM_ID = " & CStr(.solarSystem.id) & ","
+                                SQL = SQL & "REGION_ID = " & CStr(.region.id) & ","
+                                SQL = SQL & "OWNER_ID = " & CStr(.owner.id) & " "
+                                SQL = SQL & "WHERE FACILITY_ID = " & CStr(.facilityID)
+
+                            Else ' New record, insert
+                                SQL = "INSERT INTO INDUSTRY_FACILITIES VALUES ("
+                                SQL = SQL & CStr(.facilityID) & ",'"
+                                SQL = SQL & FormatDBString(FacilityName) & "',"
+                                SQL = SQL & CStr(.type.id) & ","
+                                SQL = SQL & CStr(.tax) & ","
+                                SQL = SQL & CStr(.solarSystem.id) & ","
+                                SQL = SQL & CStr(.region.id) & ","
+                                SQL = SQL & CStr(.owner.id) & ")"
+                            End If
+
                             Call ExecuteNonQuerySQL(SQL)
+
+                            rsLookup.Close()
+                            DBCommand = Nothing
+
                         End With
 
                         TempPB.Value = i
@@ -1072,6 +1100,7 @@ Public Class EVECREST
         Dim IndustrySystemsIndex As IndustrySystemCostIndicies
         Dim SQL As String
         Dim CacheDate As Date
+        Dim rsLookup As SQLiteDataReader
 
         Dim SolarSystemID As Long
         Dim SolarSystemName As String
@@ -1116,9 +1145,6 @@ Public Class EVECREST
                     TempPB.Visible = True
                     Application.DoEvents()
 
-                    ' Delete the old records first
-                    Call ExecuteNonQuerySQL("DELETE FROM INDUSTRY_SYSTEMS_COST_INDICIES")
-
                     ' Now read through all the output items and input them into the DB
                     For i = 0 To IndustrySystemsIndex.totalCount - 1
 
@@ -1127,9 +1153,26 @@ Public Class EVECREST
 
                         For j = 0 To IndustrySystemsIndex.items(i).systemCostIndices.Count - 1
                             With IndustrySystemsIndex.items(i).systemCostIndices(j)
-                                ' Insert the record
-                                SQL = "INSERT INTO INDUSTRY_SYSTEMS_COST_INDICIES VALUES(" & CStr(SolarSystemID) & ",'" & SolarSystemName & "',"
-                                SQL = SQL & CStr(.activityID) & ",'" & .activityName & "'," & CStr(.costIndex) & ")"
+                                ' Look up each facility and if found, update it. If not, insert - this way if the CREST is having issues, we won't delete all the station data (which doesn't change much)
+                                SQL = "SELECT 'X' FROM INDUSTRY_SYSTEMS_COST_INDICIES WHERE SOLAR_SYSTEM_ID = " & CStr(SolarSystemID) & " AND ACTIVITY_ID = " & CStr(.activityID)
+
+                                DBCommand = New SQLiteCommand(SQL, DB)
+                                rsLookup = DBCommand.ExecuteReader
+
+                                If rsLookup.Read Then
+                                    ' Update the old
+                                    SQL = "UPDATE INDUSTRY_SYSTEMS_COST_INDICIES "
+                                    SQL = SQL & "SET SOLAR_SYSTEM_NAME = '" & FormatDBString(SolarSystemName) & "',"
+                                    SQL = SQL & "ACTIVITY_ID = " & CStr(.activityID) & ","
+                                    SQL = SQL & "ACTIVITY_NAME = '" & FormatDBString(.activityName) & "',"
+                                    SQL = SQL & "COST_INDEX = " & CStr(.costIndex) & " "
+                                    SQL = SQL & "WHERE SOLAR_SYSTEM_ID = " & CStr(SolarSystemID) & " AND ACTIVITY_ID = " & CStr(.activityID)
+                                Else
+                                    ' Insert the new record
+                                    SQL = "INSERT INTO INDUSTRY_SYSTEMS_COST_INDICIES VALUES(" & CStr(SolarSystemID) & ",'" & FormatDBString(SolarSystemName) & "',"
+                                    SQL = SQL & CStr(.activityID) & ",'" & FormatDBString(.activityName) & "'," & CStr(.costIndex) & ")"
+                                End If
+
                                 Call ExecuteNonQuerySQL(SQL)
                             End With
                         Next
@@ -1371,7 +1414,7 @@ Public Class EVECREST
     ' Gets the CREST Cache Date for the field name sent in the EVEIPH_DATA table
     Private Function GetCRESTCacheDate(UpdateField As String) As Date
         Dim SQL As String
-        Dim readerData As SQLite.SQLiteDataReader
+        Dim readerData As SQLiteDataReader
         Dim RefreshDate As Date
 
         SQL = "SELECT " & UpdateField & " FROM EVEIPH_DATA"
@@ -1402,7 +1445,7 @@ Public Class EVECREST
     ' Sets the CREST Cache Date for the field name sent in the EVEIPH_DATA table
     Private Sub SetCRESTCacheDate(UpdateField As String, CacheDate As Date)
         Dim SQL As String
-        Dim readerData As SQLite.SQLiteDataReader
+        Dim readerData As SQLiteDataReader
 
         ' Update the cache for this CREST file
         SQL = "SELECT " & UpdateField & " FROM EVEIPH_DATA"

@@ -4,19 +4,21 @@ Public Class Materials
     Implements ICloneable
 
     ' The List of Materials
-    Private MaterialList() As Material
+    Private MaterialList As List(Of Material)
 
     ' Total Cost of materials in the list
     Private TotalMaterialsCost As Double
     ' Total Volume of materials in the list
     Private TotalMaterialsVolume As Double
 
+    Private MaterialtoFind As Material
+
     ' Constructor
     Public Sub New()
         TotalMaterialsCost = 0
         TotalMaterialsVolume = 0
 
-        MaterialList = Nothing
+        MaterialList = New List(Of Material)
     End Sub
 
     ' Destructor
@@ -75,7 +77,7 @@ Public Class Materials
     End Function
 
     ' Just adds a Full list to the Class
-    Public Sub InsertMaterialList(ByVal SentList As Material())
+    Public Sub InsertMaterialList(ByVal SentList As List(Of Material))
         Dim i As Integer
 
         If Not IsNothing(SentList) Then
@@ -87,7 +89,7 @@ Public Class Materials
     End Sub
 
     ' Removes a full list of materials from the list
-    Public Sub RemoveMaterialList(ByVal SentList As Material())
+    Public Sub RemoveMaterialList(ByVal SentList As List(Of Material))
         Dim i As Integer
 
         If Not IsNothing(SentList) Then
@@ -100,72 +102,27 @@ Public Class Materials
 
     ' Inserts a Single material into list
     Public Sub InsertMaterial(ByVal SentMaterial As Material)
-        Dim i As Integer
-        Dim TempMaterialArray() As Material
         Dim TempMat As Material
 
-        Dim inList As Boolean
-        Dim InListIndex As Integer
-
-        inList = False
-
-        ' Three possibilities
-        ' 1 - No list created yet
-        ' 2 - List created, not in list, add material
-        ' 3 - List created, in list, need to update
-
-        ' See if the material is in the list
-        If Not IsNothing(MaterialList) Then
-            For i = 0 To MaterialList.Count - 1
-                ' Check name and group, the group is used by shopping list to store meta levels for now. ME values may be different as well that distinguishes the material
-                If MaterialList(i).GetMaterialName = SentMaterial.GetMaterialName _
-                    And MaterialList(i).GetMaterialGroup = SentMaterial.GetMaterialGroup _
-                    And MaterialList(i).GetItemME = SentMaterial.GetItemME Then
-                    InListIndex = i
-                    inList = True
-                    Exit For
-                End If
-            Next
-        End If
-
-        ' No List yet
-        If IsNothing(MaterialList) Then
-            ReDim MaterialList(0)
-            ' Add material
-        ElseIf inList Then ' In the list, just update quantity
-            ' Just update quantity if in the List, material function will update volume and cost
-            MaterialList(i).AddQuantity(SentMaterial.GetQuantity)
-            ' Update this lists total cost with this new material
-            TotalMaterialsCost = TotalMaterialsCost + SentMaterial.GetTotalCost
-            TotalMaterialsVolume = TotalMaterialsVolume + SentMaterial.GetTotalVolume
+        ' Make sure they send a valid material
+        If IsNothing(SentMaterial) Then
             Exit Sub
-        Else ' New record, Copy old array, rebuild new with new record on end
-            ' Build the temp array
-            ReDim TempMaterialArray(MaterialList.Count - 1)
-
-            ' Copy old list
-            TempMaterialArray = MaterialList
-
-            ' Build the new array with one new record
-            ReDim MaterialList(MaterialList.Count)
-
-            ' Copy old data
-            For i = 0 To MaterialList.Count - 2
-                With TempMaterialArray(i)
-                    TempMat = New Material(.GetMaterialTypeID, .GetMaterialName, .GetMaterialGroup, .GetQuantity, .GetVolume, .GetCostPerItem, .GetItemME, .GetBuildItem, .GetItemType)
-                End With
-
-                ' Set the new mat
-                MaterialList(i) = TempMat
-            Next
-
         End If
 
-        ' Add the material at the end
-        With SentMaterial
-            TempMat = New Material(.GetMaterialTypeID, .GetMaterialName, .GetMaterialGroup, .GetQuantity, .GetVolume, .GetCostPerItem, .GetItemME, .GetBuildItem, .GetItemType)
-            MaterialList(i) = TempMat
-        End With
+        ' Find the item
+        MaterialtoFind = SentMaterial
+        TempMat = MaterialList.Find(AddressOf FindMaterial)
+
+        If TempMat IsNot Nothing Then
+            ' Remove the mat, and update the temp quantity to save later
+            MaterialList.Remove(TempMat)
+            TempMat.AddQuantity(SentMaterial.GetQuantity)
+        Else
+            TempMat = SentMaterial
+        End If
+
+        ' Add the material and update totals
+        MaterialList.Add(TempMat)
 
         ' Update the total cost of the class
         TotalMaterialsCost = TotalMaterialsCost + SentMaterial.GetTotalCost
@@ -200,75 +157,27 @@ Public Class Materials
 
     ' Removes a Single material from the list
     Public Sub RemoveMaterial(ByVal SentMaterial As Material)
-        Dim i As Integer
-        Dim TempMaterialArray() As Material
         Dim TempMat As Material
-
-        Dim InList As Boolean = False
-        Dim InListIndex As Integer
-
-        Dim PastRemovedItem As Boolean
-
-        InList = False
 
         ' Make sure they send a valid material
         If IsNothing(SentMaterial) Then
             Exit Sub
         End If
 
-        If IsNothing(MaterialList) Then
-            ' There is no list yet
-            Exit Sub
-        Else
-            ' See if the material is in the list
-            For i = 0 To MaterialList.Count - 1
-                If MaterialList(i).GetMaterialName = SentMaterial.GetMaterialName Then
-                    InListIndex = i
-                    InList = True
-                    ' Found it, save location and exit loop
-                    Exit For
-                End If
-            Next
-        End If
+        ' Find the item and remove it from the list
+        MaterialtoFind = SentMaterial
+        TempMat = MaterialList.Find(AddressOf FindMaterial)
 
-        If InList Then ' In the list, check to see if the quantity is the same (name is), if so just remove, else update
-
-            If MaterialList(i).GetQuantity = SentMaterial.GetQuantity Then
-                ' Its in the list and all the quantity is the same, so remove
-
-                ' Build the material array to save old mats
-                ReDim TempMaterialArray(MaterialList.Count - 1)
-
-                ' Copy old list
-                TempMaterialArray = MaterialList
-
-                ' Build the new array with one less record
-                ReDim MaterialList(MaterialList.Count - 2)
-                PastRemovedItem = False
-
-                ' Copy old data until we get to the one we want to remove, then skip over it
-                For i = 0 To TempMaterialArray.Count - 1
-                    If TempMaterialArray(i).GetMaterialName <> SentMaterial.GetMaterialName Then
-                        With TempMaterialArray(i)
-                            TempMat = New Material(.GetMaterialTypeID, .GetMaterialName, .GetMaterialGroup, .GetQuantity, .GetVolume, .GetCostPerItem, .GetItemME, .GetBuildItem, .GetItemType)
-                        End With
-
-                        ' Set the new mat
-                        If Not PastRemovedItem Then
-                            MaterialList(i) = TempMat
-                        Else
-                            MaterialList(i - 1) = TempMat
-                        End If
-                    Else
-                        PastRemovedItem = True
-                    End If
-                Next
-
-            Else ' Update the quantity of the item in the list
+        If TempMat IsNot Nothing Then
+            ' Remove from list first
+            MaterialList.Remove(TempMat)
+            ' If the quantity is not the same, then update the temp and re-add
+            If TempMat.GetQuantity <> SentMaterial.GetQuantity Then
                 ' Just update quantity (negative to remove), material function will update volume and cost
-                MaterialList(i).AddQuantity(-1 * SentMaterial.GetQuantity)
+                TempMat.AddQuantity(-1 * SentMaterial.GetQuantity)
+                ' Add it back
+                MaterialList.Add(TempMat)
             End If
-
         End If
 
         ' Update the total cost of the class
@@ -300,7 +209,7 @@ Public Class Materials
     End Sub
 
     ' Returns the list of Materials
-    Public Function GetMaterialList() As Material()
+    Public Function GetMaterialList() As List(Of Material)
         Return MaterialList
     End Function
 
@@ -489,7 +398,7 @@ SkipFormat:
     End Function
 
     ' Sorts the material list by quantity
-    Private Sub SortListDesc(ByVal List() As Material, ByVal First As Integer, ByVal Last As Integer)
+    Private Sub SortListDesc(ByVal MatList As List(Of Material), ByVal First As Integer, ByVal Last As Integer)
         Dim LowIndex As Integer
         Dim HighIndex As Integer
         Dim MidValue As Long
@@ -497,14 +406,14 @@ SkipFormat:
         ' Quicksort
         LowIndex = First
         HighIndex = Last
-        MidValue = List((First + Last) \ 2).GetQuantity
+        MidValue = MatList((First + Last) \ 2).GetQuantity
 
         Do
-            While List(LowIndex).GetQuantity > MidValue
+            While MatList(LowIndex).GetQuantity > MidValue
                 LowIndex = LowIndex + 1
             End While
 
-            While List(HighIndex).GetQuantity < MidValue
+            While MatList(HighIndex).GetQuantity < MidValue
                 HighIndex = HighIndex - 1
             End While
 
@@ -516,11 +425,11 @@ SkipFormat:
         Loop While LowIndex <= HighIndex
 
         If First < HighIndex Then
-            SortListDesc(List, First, HighIndex)
+            SortListDesc(MatList, First, HighIndex)
         End If
 
         If LowIndex < Last Then
-            SortListDesc(List, LowIndex, Last)
+            SortListDesc(MatList, LowIndex, Last)
         End If
 
     End Sub
@@ -538,7 +447,7 @@ SkipFormat:
     ' Returns boolean comparison of two material lists
     Public Function MaterialListsEqual(ByVal List1 As Materials, ByVal List2 As Materials) As Boolean
         Dim i, j As Integer
-        Dim Matlist1, Matlist2 As Material()
+        Dim Matlist1, Matlist2 As List(Of Material)
         Dim ItemFound As Boolean
 
         Matlist1 = List1.GetMaterialList
@@ -596,6 +505,17 @@ SkipFormat:
 
         Return True
 
+    End Function
+
+    ' Predicate for finding an item in the profit list
+    Private Function FindMaterial(ByVal Mat As Material) As Boolean
+        If Mat.GetMaterialName = MaterialtoFind.GetMaterialName And _
+            Mat.GetMaterialGroup = MaterialtoFind.GetMaterialGroup And _
+            Mat.GetItemME = MaterialtoFind.GetItemME Then
+            Return True
+        Else
+            Return False
+        End If
     End Function
 
 End Class

@@ -345,11 +345,6 @@ Public Class frmMain
     Private Const MineRefineYieldColumnWidth As Integer = 70
     Private Const MineCrystalColumnWidth As Integer = 45
 
-    Private Structure ItemRegionPairs
-        Dim ItemID As Long
-        Dim RegionID As Long
-    End Structure
-
 #Region "Initialization Code"
 
     ' Set default window theme so tabs in invention window display correctly on all systems
@@ -1365,6 +1360,7 @@ NoBonus:
                              ByRef FacilityBonusLabel As Label, ByRef FacilityDefaultLabel As Label, _
                              ByRef FacilityManualMELabel As Label, ByRef FacilityManualMETextBox As TextBox, _
                              ByRef FacilityManualTELabel As Label, ByRef FacilityManualTETextBox As TextBox,
+                             ByRef FacilityManualTaxLabel As Label, ByRef FacilityManualTaxTextBox As TextBox,
                              ByRef FacilitySaveButton As Button, ByRef FacilityTaxRateLabel As Label, Tab As String, _
                              ByRef FacilityUsageCheck As CheckBox, ByRef FacilityIncludeLabel As Label, _
                              ByRef FacilityActivityCostCheck As CheckBox, ByRef FacilityActivityTimeCheck As CheckBox, _
@@ -1606,7 +1602,8 @@ NoBonus:
         ' Load the combo if they want to change
         Call LoadFacilityTypeCombo(ProductionType, FacilityActivity, FacilityTypeCombo, FacilityRegionCombo, FacilitySystemCombo, _
                                    FacilityCombo, FacilityBonusLabel, FacilityDefaultLabel, FacilityManualMELabel, FacilityManualMETextBox, _
-                                   FacilityManualTELabel, FacilityManualMETextBox, FacilitySaveButton, FacilityTaxRateLabel, Tab, FacilityUsageLabel, FacilityUsageCheck)
+                                   FacilityManualTELabel, FacilityManualMETextBox, FacilityManualTaxLabel, FacilityManualTaxTextBox, _
+                                   FacilitySaveButton, FacilityTaxRateLabel, Tab, FacilityUsageLabel, FacilityUsageCheck)
 
         ' Enable the type of facility and set
         LoadingFacilityTypes = True
@@ -1616,8 +1613,10 @@ NoBonus:
 
         If SelectedFacility.FacilityType = None Then
             ' Just hide the boxes and exit
-            Call HideFacilityBonusBoxes(FacilityBonusLabel, FacilityTaxRateLabel, FacilityManualMELabel, FacilityManualTELabel, FacilityManualMETextBox, FacilityManualTETextBox, FacilityUsageLabel)
-            Call SetNoFacility(FacilityRegionCombo, FacilitySystemCombo, FacilityCombo, FacilityUsageCheck, FacilityActivityCostCheck, FacilityActivityTimeCheck, FacilityIncludeLabel)
+            Call HideFacilityBonusBoxes(FacilityBonusLabel, FacilityTaxRateLabel, FacilityManualMELabel, FacilityManualTELabel, _
+                                        FacilityManualMETextBox, FacilityManualTETextBox, FacilityManualTaxLabel, FacilityManualTaxTextBox, FacilityUsageLabel)
+            Call SetNoFacility(FacilityRegionCombo, FacilitySystemCombo, FacilityCombo, FacilityUsageCheck, _
+                               FacilityActivityCostCheck, FacilityActivityTimeCheck, FacilityIncludeLabel)
             FacilityLoaded = True ' Even with none, it's loaded
             Exit Sub
         End If
@@ -1643,7 +1642,8 @@ NoBonus:
             Call LoadFacilities(ItemGroupID, ItemCategoryID, False, _
                                 FacilityActivity, FacilityTypeCombo, FacilityRegionCombo, FacilitySystemCombo, FacilityCombo, _
                                 FacilityBonusLabel, FacilityDefaultLabel, FacilityManualMELabel, FacilityManualMETextBox, _
-                                FacilityManualTELabel, FacilityManualTETextBox, FacilitySaveButton, FacilityTaxRateLabel, Tab, _
+                                FacilityManualTELabel, FacilityManualTETextBox, FacilityManualTaxLabel, FacilityManualTaxTextBox, _
+                                FacilitySaveButton, FacilityTaxRateLabel, Tab, _
                                 FacilityUsageCheck, FacilityActivityCostCheck, FacilityActivityTimeCheck, AutoLoad, _
                                 SelectedFacility.IncludeActivityUsage, SelectedFacility.FacilityName, FacilityUsageLabel)
         ElseIf Tab = CalcTab Then
@@ -1651,7 +1651,8 @@ NoBonus:
             Call LoadFacilities(ItemGroupID, ItemCategoryID, False, _
                     FacilityActivity, FacilityTypeCombo, FacilityRegionCombo, FacilitySystemCombo, FacilityCombo, _
                     FacilityBonusLabel, FacilityDefaultLabel, FacilityManualMELabel, FacilityManualMETextBox, _
-                    FacilityManualTELabel, FacilityManualTETextBox, FacilitySaveButton, FacilityTaxRateLabel, Tab, _
+                    FacilityManualTELabel, FacilityManualTETextBox, FacilityManualTaxLabel, FacilityManualTaxTextBox, _
+                    FacilitySaveButton, FacilityTaxRateLabel, Tab, _
                     FacilityUsageCheck, FacilityActivityCostCheck, FacilityActivityTimeCheck, AutoLoad, _
                     SelectedFacility.IncludeActivityUsage, SelectedFacility.FacilityName, FacilityUsageLabel)
         End If
@@ -1677,8 +1678,11 @@ NoBonus:
             Call DisplayFacilityBonus(SelectedFacility.ProductionType, SelectedFacility.MaterialMultiplier, SelectedFacility.TimeMultiplier, ItemGroupID, ItemCategoryID, _
                                       FacilityActivity, FacilityTypeCombo.Text, FacilityCombo.Text, _
                                       FacilityRegionCombo, FacilitySystemCombo, FacilityCombo, _
-                                      FacilityBonusLabel, FacilityDefaultLabel, FacilityManualMELabel, FacilityManualMETextBox, _
-                                      FacilityManualTELabel, FacilityManualTETextBox, FacilitySaveButton, FacilityTaxRateLabel, _
+                                      FacilityBonusLabel, FacilityDefaultLabel, _
+                                      FacilityManualMELabel, FacilityManualMETextBox, _
+                                      FacilityManualTELabel, FacilityManualTETextBox, _
+                                      FacilityManualTaxLabel, FacilityManualTaxTextBox, _
+                                      FacilitySaveButton, FacilityTaxRateLabel, _
                                       FacilityUsageCheck, FacilityActivityCostCheck, FacilityActivityTimeCheck, Tab, FacilityLoaded, SelectedFacility.IncludeActivityUsage)
             LoadingFacilities = False
         End If
@@ -1758,7 +1762,8 @@ NoBonus:
                              ByRef FacilityRegionCombo As ComboBox, ByRef FacilitySystemCombo As ComboBox, ByRef FacilityCombo As ComboBox, _
                              ByRef FacilityBonusLabel As Label, ByRef FacilityDefaultLabel As Label, _
                              ByRef FacilityManualMELabel As Label, ByRef FacilityManualMETextBox As TextBox, _
-                             ByRef FacilityManualTELabel As Label, ByRef FacilityManualTETextBox As TextBox,
+                             ByRef FacilityManualTELabel As Label, ByRef FacilityManualTETextBox As TextBox, _
+                             ByRef FacilityManualTaxLabel As Label, ByRef FacilityManualTaxTextBox As TextBox, _
                              ByRef FacilitySaveButton As Button, ByRef FacilityTaxRateLabel As Label, Tab As String, _
                              ByRef FacilityUsageLabel As Label, ByRef FacilityUsageCheck As CheckBox)
 
@@ -1829,7 +1834,7 @@ NoBonus:
             PreviousIndustryType = ProductionType
             PreviousActivity = FacilityActivity
             Call HideFacilityBonusBoxes(FacilityBonusLabel, FacilityTaxRateLabel, FacilityManualMELabel, FacilityManualTELabel, _
-                                        FacilityManualMETextBox, FacilityManualTETextBox, FacilityUsageLabel)
+                                        FacilityManualMETextBox, FacilityManualTETextBox, FacilityManualTaxLabel, FacilityManualTaxTextBox, FacilityUsageLabel)
 
 
         End If
@@ -1862,6 +1867,7 @@ NoBonus:
                                     ByRef FacilityBonusLabel As Label, ByRef FacilityDefaultLabel As Label, _
                                     ByRef FacilityManualMELabel As Label, ByRef FacilityManualMETextBox As TextBox, _
                                     ByRef FacilityManualTELabel As Label, ByRef FacilityManualTETextBox As TextBox, _
+                                    ByRef FacilityManualTaxLabel As Label, ByRef FacilityManualTaxTextBox As TextBox, _
                                     ByRef FacilitySaveButton As Button, ByRef FacilityTaxRateLabel As Label, Tab As String, _
                                     ByRef FacilityUsageCheck As CheckBox, Optional ByRef FacilityUsageLabel As Label = Nothing)
         Dim SQL As String = ""
@@ -1921,7 +1927,7 @@ NoBonus:
                 SQL = SQL & "AND (factionID <> 500005 OR factionID IS NULL) "
 
                 ' For supers, only show null regions where you can have sov (no factionID excludes NPC null, etc)
-                If ItemGroupID = SuperCarrierGroupID Or ItemGroupID = TitanGroupID Then
+                If ItemGroupID = SupercarrierGroupID Or ItemGroupID = TitanGroupID Then
                     SQL = SQL & " AND security <= 0.0 AND factionID IS NULL AND regionName <> 'Wormhole Space' "
                 ElseIf ItemGroupID = DreadnoughtGroupID Or ItemGroupID = CarrierGroupID Or ItemGroupID = CapitalIndustrialShipGroupID Then
                     ' For caps, only show low sec
@@ -1955,7 +1961,7 @@ NoBonus:
             FacilitySaveButton.Enabled = False
             FacilityUsageCheck.Enabled = False
             Call HideFacilityBonusBoxes(FacilityBonusLabel, FacilityTaxRateLabel, FacilityManualMELabel, FacilityManualTELabel, _
-                                        FacilityManualMETextBox, FacilityManualTETextBox, FacilityUsageLabel)
+                                        FacilityManualMETextBox, FacilityManualTETextBox, FacilityManualTaxLabel, FacilityManualTaxtextbox, FacilityUsageLabel)
         End If
 
         ' Only reset the region if the current selected region is not in list, also if it is in list, enable solarsystem
@@ -1984,6 +1990,7 @@ NoBonus:
                                ByRef FacilityBonusLabel As Label, ByRef FacilityTaxRateLabel As Label, _
                                ByRef FacilityManualMELabel As Label, ByRef FacilityManualMETextBox As TextBox, _
                                ByRef FacilityManualTELabel As Label, ByRef FacilityManualTETextBox As TextBox, _
+                               ByRef FacilityManualTaxLabel As Label, ByRef FacilityManualTaxTextBox As TextBox, _
                                ByRef FacilityDefaultLabel As Label, ByRef FacilitySaveButton As Button, Tab As String, _
                                ByRef FacilityUsageCheck As CheckBox, Optional ByRef FacilityUsageLabel As Label = Nothing)
 
@@ -2046,7 +2053,7 @@ NoBonus:
                 End If
 
                 ' For supers, only show null regions where you can have sov (no factionID excludes NPC null, etc)
-                If ItemGroupID = SuperCarrierGroupID Or ItemGroupID = TitanGroupID Then
+                If ItemGroupID = SupercarrierGroupID Or ItemGroupID = TitanGroupID Then
                     SQL = SQL & " AND security <= 0.0 AND factionID IS NULL AND regionName <> 'Wormhole Space' "
                 ElseIf ItemGroupID = DreadnoughtGroupID Or ItemGroupID = CarrierGroupID Or ItemGroupID = CapitalIndustrialShipGroupID Then
                     ' For caps, only show low sec
@@ -2081,7 +2088,7 @@ NoBonus:
             FacilitySaveButton.Enabled = False
             FacilityUsageCheck.Enabled = False
             Call HideFacilityBonusBoxes(FacilityBonusLabel, FacilityTaxRateLabel, FacilityManualMELabel, FacilityManualTELabel, _
-                                        FacilityManualMETextBox, FacilityManualTETextBox, FacilityUsageLabel)
+                                        FacilityManualMETextBox, FacilityManualTETextBox, FacilityManualTaxLabel, FacilityManualTaxTextBox, FacilityUsageLabel)
         End If
 
         ' Only reset the system if the current selected system is not in list, also if it is in list, enable facilty
@@ -2109,8 +2116,9 @@ NoBonus:
                                ByRef FacilityBonusLabel As Label, ByRef FacilityDefaultLabel As Label, _
                                ByRef FacilityManualMELabel As Label, ByRef FacilityManualMETextBox As TextBox, _
                                ByRef FacilityManualTELabel As Label, ByRef FacilityManualTETextBox As TextBox, _
-                               ByRef FacilitySaveButton As Button, ByRef FacilityTaxRateLabel As Label, Tab As String, _
-                               ByRef FacilityUsageCheck As CheckBox, _
+                               ByRef FacilityManualTaxLabel As Label, ByRef FacilityManualTaxTextBox As TextBox, _
+                               ByRef FacilitySaveButton As Button, ByRef FacilityTaxRateLabel As Label, _
+                               ByVal Tab As String, ByRef FacilityUsageCheck As CheckBox, _
                                ByRef FacilityIncludeActivityCostsCheck As CheckBox, ByRef FacilityIncludeActivityTimeCheck As CheckBox, _
                                ByRef AutoLoadFacility As Boolean, ByVal FacilityUsageCheckValue As Boolean, _
                                Optional OverrideFacilityName As String = "", Optional ByRef FacilityUsageLabel As Label = Nothing)
@@ -2238,8 +2246,11 @@ NoBonus:
                           Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, ItemGroupID, ItemCategoryID, _
                           FacilityActivity, FacilityTypeCombo.Text, FacilityCombo.Text, _
                           FacilityRegionCombo, FacilitySystemCombo, FacilityCombo, _
-                          FacilityBonusLabel, FacilityDefaultLabel, FacilityManualMELabel, FacilityManualMETextBox, _
-                          FacilityManualTELabel, FacilityManualTETextBox, FacilitySaveButton, FacilityTaxRateLabel, _
+                          FacilityBonusLabel, FacilityDefaultLabel, _
+                          FacilityManualMELabel, FacilityManualMETextBox, _
+                          FacilityManualTELabel, FacilityManualTETextBox, _
+                          FacilityManualTaxLabel, FacilityManualTaxTextBox, _
+                          FacilitySaveButton, FacilityTaxRateLabel, _
                           FacilityUsageCheck, FacilityIncludeActivityCostsCheck, FacilityIncludeActivityTimeCheck, _
                           Tab, FullyLoadedBPFacility, FacilityUsageCheckValue)
 
@@ -2276,7 +2287,7 @@ NoBonus:
             FacilityDefaultLabel.Visible = False
             FacilitySaveButton.Enabled = False
             Call HideFacilityBonusBoxes(FacilityBonusLabel, FacilityTaxRateLabel, FacilityManualMELabel, FacilityManualTELabel, _
-                                        FacilityManualMETextBox, FacilityManualTETextBox, FacilityUsageLabel)
+                                        FacilityManualMETextBox, FacilityManualTETextBox, FacilityManualTaxLabel, FacilityManualTaxTextBox, FacilityUsageLabel)
         End If
 
         LoadingFacilities = False
@@ -2294,6 +2305,7 @@ NoBonus:
                                      ByRef FacilityBonusLabel As Label, ByRef FacilityDefaultLabel As Label, _
                                      ByRef FacilityManualMELabel As Label, ByRef FacilityManualMEText As TextBox, _
                                      ByRef FacilityManualTELabel As Label, ByRef FacilityManualTEText As TextBox, _
+                                     ByRef FacilityManualTaxLabel As Label, ByRef FacilityManualTaxText As TextBox, _
                                      ByRef FacilitySaveButton As Button, ByRef FacilityTaxRateLabel As Label, _
                                      ByRef FacilityUsageCheck As CheckBox, _
                                      ByRef ActivityCostCheck As CheckBox, ByRef ActivityTimeCheck As CheckBox, _
@@ -2413,28 +2425,35 @@ NoBonus:
 
         Dim MMText As String = FormatPercent(1 - MaterialMultiplier, 1)
         Dim TMText As String = FormatPercent(1 - TimeMultiplier, 1)
+        Dim TaxText As String = FormatPercent(1 - Tax, 1)
 
-        ' Show boxes for the user to enter for outposts since I can't get the upgrades from CREST
+        ' Show boxes for the user to enter for outposts since I can't get the upgrades or taxes from CREST
         If FacilityType = OutpostFacility Then
             FacilityBonusLabel.Visible = False
             FacilityManualMELabel.Visible = True
             FacilityManualTELabel.Visible = True
+            FacilityManualTaxLabel.Visible = True
             FacilityManualMEText.Visible = True
             FacilityManualTEText.Visible = True
+            FacilityManualTaxText.Visible = True
             FacilityManualMEText.Text = MMText
             FacilityManualTEText.Text = TMText
+            FacilityManualTaxText.Text = TaxText
+            FacilityTaxRateLabel.Text = ""
+            FacilityTaxRateLabel.Visible = False
         Else
             FacilityBonusLabel.Visible = True
             FacilityManualMELabel.Visible = False
             FacilityManualTELabel.Visible = False
+            FacilityManualTaxLabel.Visible = False
             FacilityManualMEText.Visible = False
             FacilityManualTEText.Visible = False
+            FacilityManualTaxText.Visible = False
 
             FacilityBonusLabel.Text = "ME: " & MMText & " TE: " & TMText
+            FacilityTaxRateLabel.Text = "Tax: " & FormatPercent(Tax, 1)
+            FacilityTaxRateLabel.Visible = True
         End If
-
-        FacilityTaxRateLabel.Text = "Tax: " & FormatPercent(Tax, 1)
-        FacilityTaxRateLabel.Visible = True
 
         ' Now that we have everything, load the full facility into the appropriate selected facility to use later
         With SelectedFacility
@@ -2927,13 +2946,17 @@ NoBonus:
 
     ' Hides all the facility bonus boxes and such
     Private Sub HideFacilityBonusBoxes(ByRef LabelBonus As Label, LabelTaxRate As Label, ByRef LabelME As Label, _
-                                       ByRef LabelTE As Label, ByRef TextME As TextBox, ByRef TextTE As TextBox, Optional ByRef UsageLabel As Label = Nothing)
+                                       ByRef LabelTE As Label, ByRef TextME As TextBox, ByRef TextTE As TextBox, _
+                                       ByRef LabelTax As Label, ByRef TextTax As TextBox, _
+                                       Optional ByRef UsageLabel As Label = Nothing)
         LabelBonus.Visible = False
         LabelTaxRate.Visible = False
         LabelME.Visible = False
         LabelTE.Visible = False
         TextME.Visible = False
         TextTE.Visible = False
+        LabelTax.Visible = False
+        TextTax.Visible = False
         ' Clear the usage until these are set
         If Not IsNothing(UsageLabel) Then
             UsageLabel.Text = ""
@@ -3156,6 +3179,56 @@ NoBonus:
     End Sub
 
 #End Region
+
+    ' Keypress, Keyup, and Lost focus functions for manual ME/TE/Tax boxes
+    Private Sub OutpostMETETaxText_KeyPress(e As System.Windows.Forms.KeyPressEventArgs)
+        ' only let them enter the right things
+        If e.KeyChar <> ControlChars.Back Then
+            If allowedMETEChars.IndexOf(e.KeyChar) = -1 Then
+                ' Invalid Character
+                e.Handled = True
+                Exit Sub
+            End If
+        End If
+    End Sub
+
+    Private Sub OutpostMETETaxText_KeyUp(ByRef ManualTextBox As TextBox, ByRef SelectedFacility As IndustryFacility, _
+                                         ByRef FacilityTypeCombo As ComboBox, ByRef SaveButton As Button, ByRef DefaultLabel As Label)
+        Dim Temp As String
+        Dim TempValue As Double
+
+        ' Get rid of the percent sign if it exists
+        Temp = Replace(ManualTextBox.Text, "%", "")
+
+        If Not IsNumeric(Temp) Then
+            Temp = "0.0"
+            ManualTextBox.Text = "0.0%"
+        End If
+
+        TempValue = (100 - CDbl(Temp)) / 100
+
+        ' If it's an outpost, then save the ME/TE/Tax for this in the current facility
+        If FacilityTypeCombo.Text = OutpostFacility Then
+            SelectedFacility.MaterialMultiplier = CDbl(TempValue)
+        End If
+
+        ' They changed the value, so enable save
+        SaveButton.Enabled = True
+        ' changed so not the default
+        DefaultLabel.Visible = False
+
+    End Sub
+
+    Private Sub OutpostMETETaxText_LostFocus(ByRef ManualTextBox As TextBox, ByRef FacilityTypeCombo As ComboBox, ByRef MaterialMultiplier As Double)
+        If Trim(Replace(ManualTextBox.Text, "%", "")) = "" And FacilityTypeCombo.Text = OutpostFacility Then
+            ManualTextBox.Text = FormatPercent(MaterialMultiplier, 1)
+        End If
+
+        If Not ManualTextBox.Text.Contains("%") Then
+            ' Format with percent sign
+            ManualTextBox.Text = FormatPercent(CDbl(ManualTextBox.Text) / 100, 1)
+        End If
+    End Sub
 
     ' Loads all the facilities
     Private Sub SetAllFacilities(LoadDefault As Boolean)
@@ -5258,7 +5331,8 @@ Tabs:
                 Call LoadFacility(CurrentIndustryType, False, True, _
                                   cmbBPFacilityActivities.Text, cmbBPFacilityType, cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, _
                                   lblBPFacilityBonus, lblBPFacilityDefault, lblBPFacilityManualME, txtBPFacilityManualME, _
-                                  lblBPFacilityManualTE, txtBPFacilityManualTE, btnBPFacilitySave, lblBPFacilityTaxRate, BPTab, _
+                                  lblBPFacilityManualTE, txtBPFacilityManualTE, lblBPFacilityManualTax, txtBPFacilityManualTax, _
+                                  btnBPFacilitySave, lblBPFacilityTaxRate, BPTab, _
                                   chkBPFacilityIncludeUsage, Nothing, CostCheck, TimeCheck, FullyLoadedBPFacility,
                                   cmbBPFacilityActivities, SelectedBlueprint.GetTechLevel, CurrentBPGroupID, CurrentBPCategoryID, False)
                 PreviousIndustryType = CurrentIndustryType
@@ -5285,6 +5359,7 @@ Tabs:
                 Call LoadFacilityRegions(SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID, True, _
                                          cmbBPFacilityActivities.Text, cmbBPFacilityType, cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, _
                                          lblBPFacilityBonus, lblBPFacilityDefault, lblBPFacilityManualME, txtBPFacilityManualME, _
+                                         lblBPFacilityManualTax, txtBPFacilityManualTax, _
                                          lblBPFacilityManualTE, txtBPFacilityManualTE, btnBPFacilitySave, lblBPFacilityTaxRate, BPTab, _
                                          chkBPFacilityIncludeUsage, lblBPFacilityUsage)
                 Call cmbBPFacilityRegion.Focus()
@@ -5320,13 +5395,18 @@ Tabs:
                               Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, CurrentBPGroupID, CurrentBPCategoryID, _
                               cmbBPFacilityActivities.Text, cmbBPFacilityType.Text, cmbBPFacilityorArray.Text, _
                               cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, _
-                              lblBPFacilityBonus, lblBPFacilityDefault, lblBPFacilityManualME, txtBPFacilityManualME, _
-                              lblBPFacilityManualTE, txtBPFacilityManualTE, btnBPFacilitySave, lblBPFacilityTaxRate, _
+                              lblBPFacilityBonus, lblBPFacilityDefault, _
+                              lblBPFacilityManualME, txtBPFacilityManualME, _
+                              lblBPFacilityManualTE, txtBPFacilityManualTE, _
+                              lblBPFacilityManualTax, txtBPFacilityManualTax, _
+                              btnBPFacilitySave, lblBPFacilityTaxRate, _
                               chkBPFacilityIncludeUsage, CostCheck, TimeCheck, BPTab, FullyLoadedBPFacility, chkBPFacilityIncludeUsage.Checked)
             End If
 
             ' Anytime this changes, set all the other ME/TE boxes to not viewed
-            Call HideFacilityBonusBoxes(lblBPFacilityBonus, lblBPFacilityTaxRate, lblBPFacilityManualME, lblBPFacilityManualTE, txtBPFacilityManualME, txtBPFacilityManualTE, lblBPFacilityUsage)
+            Call HideFacilityBonusBoxes(lblBPFacilityBonus, lblBPFacilityTaxRate, lblBPFacilityManualME, _
+                                        lblBPFacilityManualTE, txtBPFacilityManualME, txtBPFacilityManualTE, _
+                                        lblBPFacilityManualTax, txtBPFacilityManualTax, lblBPFacilityUsage)
             FullyLoadedBPFacility = False
             PreviousFacilityType = cmbBPFacilityType.Text
             ' Reset the previous records
@@ -5344,7 +5424,8 @@ Tabs:
             Call LoadFacilityRegions(SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID, False, _
                                      cmbBPFacilityActivities.Text, cmbBPFacilityType, cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, _
                                      lblBPFacilityBonus, lblBPFacilityDefault, lblBPFacilityManualME, txtBPFacilityManualME, _
-                                     lblBPFacilityManualTE, txtBPFacilityManualTE, btnBPFacilitySave, lblBPFacilityTaxRate, BPTab, _
+                                     lblBPFacilityManualTE, txtBPFacilityManualTE, lblBPFacilityManualTax, txtBPFacilityManualTax, _
+                                     btnBPFacilitySave, lblBPFacilityTaxRate, BPTab, _
                                      chkBPFacilityIncludeUsage, lblBPFacilityUsage)
         End If
     End Sub
@@ -5358,9 +5439,12 @@ Tabs:
             Call LoadFacilitySystems(SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID, True, _
                                      cmbBPFacilityActivities.Text, cmbBPFacilityType, cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, _
                                      lblBPFacilityBonus, lblBPFacilityTaxRate, lblBPFacilityManualME, txtBPFacilityManualME, _
-                                     lblBPFacilityManualTE, txtBPFacilityManualTE, lblBPFacilityDefault, btnBPFacilitySave, BPTab, chkBPFacilityIncludeUsage, lblBPFacilityUsage)
+                                     lblBPFacilityManualTE, txtBPFacilityManualTE, lblBPFacilityManualTax, txtBPFacilityManualTax, _
+                                     lblBPFacilityDefault, btnBPFacilitySave, BPTab, chkBPFacilityIncludeUsage, lblBPFacilityUsage)
             Call cmbBPFacilitySystem.Focus()
-            Call HideFacilityBonusBoxes(lblBPFacilityBonus, lblBPFacilityTaxRate, lblBPFacilityManualME, lblBPFacilityManualTE, txtBPFacilityManualME, txtBPFacilityManualTE, lblBPFacilityUsage)
+            Call HideFacilityBonusBoxes(lblBPFacilityBonus, lblBPFacilityTaxRate, lblBPFacilityManualME, _
+                                        lblBPFacilityManualTE, txtBPFacilityManualME, txtBPFacilityManualTE, _
+                                        lblBPFacilityManualTax, txtBPFacilityManualTax, lblBPFacilityUsage)
             FullyLoadedBPFacility = False
             PreviousFacilityRegion = cmbBPFacilityRegion.Text
         End If
@@ -5376,7 +5460,8 @@ Tabs:
             Call LoadFacilitySystems(SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID, False, _
                                      cmbBPFacilityActivities.Text, cmbBPFacilityType, cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, _
                                      lblBPFacilityBonus, lblBPFacilityTaxRate, lblBPFacilityManualME, txtBPFacilityManualME, _
-                                     lblBPFacilityManualTE, txtBPFacilityManualTE, lblBPFacilityDefault, btnBPFacilitySave, BPTab, chkBPFacilityIncludeUsage, lblBPFacilityUsage)
+                                     lblBPFacilityManualTE, txtBPFacilityManualTE, lblBPFacilityManualTax, txtBPFacilityManualTax, _
+                                     lblBPFacilityDefault, btnBPFacilitySave, BPTab, chkBPFacilityIncludeUsage, lblBPFacilityUsage)
         End If
     End Sub
 
@@ -5399,7 +5484,7 @@ Tabs:
                 Call LoadFacilities(SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID, False, _
                                     cmbBPFacilityActivities.Text, cmbBPFacilityType, cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, _
                                     lblBPFacilityBonus, lblBPFacilityDefault, lblBPFacilityManualME, txtBPFacilityManualME, _
-                                    lblBPFacilityManualTE, txtBPFacilityManualTE, btnBPFacilitySave, lblBPFacilityTaxRate, BPTab, _
+                                    lblBPFacilityManualTE, txtBPFacilityManualTE, lblBPFacilityManualTax, txtBPFacilityManualTax, btnBPFacilitySave, lblBPFacilityTaxRate, BPTab, _
                                     chkBPFacilityIncludeUsage, Nothing, Nothing, Autoload, chkBPFacilityIncludeUsage.Checked, OverrideFacilityName, lblBPFacilityUsage)
 
 
@@ -5408,7 +5493,9 @@ Tabs:
                     Call UpdateBPGrids(SelectedBlueprint.GetBPTypeID, SelectedBlueprint.GetTechLevel, False, SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID)
                     FullyLoadedBPFacility = True
                 Else
-                    Call HideFacilityBonusBoxes(lblBPFacilityBonus, lblBPFacilityTaxRate, lblBPFacilityManualME, lblBPFacilityManualTE, txtBPFacilityManualME, txtBPFacilityManualTE, lblBPFacilityUsage)
+                    Call HideFacilityBonusBoxes(lblBPFacilityBonus, lblBPFacilityTaxRate, lblBPFacilityManualME, lblBPFacilityManualTE, _
+                                                txtBPFacilityManualME, txtBPFacilityManualTE, _
+                                                lblBPFacilityManualTax, txtBPFacilityManualTax, lblBPFacilityUsage)
                     FullyLoadedBPFacility = False
                 End If
 
@@ -5431,7 +5518,8 @@ Tabs:
             Call LoadFacilities(SelectedBlueprint.GetItemGroupID, SelectedBlueprint.GetItemCategoryID, False, _
                                 cmbBPFacilityActivities.Text, cmbBPFacilityType, cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, _
                                 lblBPFacilityBonus, lblBPFacilityDefault, lblBPFacilityManualME, txtBPFacilityManualME, _
-                                lblBPFacilityManualTE, txtBPFacilityManualTE, btnBPFacilitySave, lblBPFacilityTaxRate, BPTab, chkBPFacilityIncludeUsage, _
+                                lblBPFacilityManualTE, txtBPFacilityManualTE, lblBPFacilityManualTax, txtBPFacilityManualTax, _
+                                btnBPFacilitySave, lblBPFacilityTaxRate, BPTab, chkBPFacilityIncludeUsage, _
                                 Nothing, Nothing, Nothing, chkBPFacilityIncludeUsage.Checked, "", lblBPFacilityUsage)
         End If
     End Sub
@@ -5446,8 +5534,11 @@ Tabs:
                                       Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, CurrentBPGroupID, CurrentBPCategoryID, _
                                       cmbBPFacilityActivities.Text, cmbBPFacilityType.Text, cmbBPFacilityorArray.Text, _
                                       cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, _
-                                      lblBPFacilityBonus, lblBPFacilityDefault, lblBPFacilityManualME, txtBPFacilityManualME, _
-                                      lblBPFacilityManualTE, txtBPFacilityManualTE, btnBPFacilitySave, lblBPFacilityTaxRate, _
+                                      lblBPFacilityBonus, lblBPFacilityDefault, _
+                                      lblBPFacilityManualME, txtBPFacilityManualME, _
+                                      lblBPFacilityManualTE, txtBPFacilityManualTE, _
+                                      lblBPFacilityManualTax, txtBPFacilityManualTax, _
+                                      btnBPFacilitySave, lblBPFacilityTaxRate, _
                                       chkBPFacilityIncludeUsage, Nothing, Nothing, BPTab, FullyLoadedBPFacility, chkBPFacilityIncludeUsage.Checked)
 
             If txtBPFacilityManualME.Visible Then
@@ -5599,186 +5690,42 @@ Tabs:
     End Sub
 
     Private Sub txtBPFacilityManualME_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtBPFacilityManualME.KeyPress
-        ' only let them enter the right things
-        If e.KeyChar <> ControlChars.Back Then
-            If allowedMETEChars.IndexOf(e.KeyChar) = -1 Then
-                ' Invalid Character
-                e.Handled = True
-                Exit Sub
-            End If
-        End If
-
+        Call OutpostMETETaxText_KeyPress(e)
     End Sub
 
     Private Sub txtBPFacilityManualME_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtBPFacilityManualME.KeyUp
-        Dim TempMM As String
-        Dim TempMMValue As Double
-
-        ' Get rid of the percent sign if it exists
-        TempMM = Trim(Replace(txtBPFacilityManualME.Text, "%", ""))
-
-        If Not IsNumeric(TempMM) Then
-            TempMM = "0.0"
-            txtBPFacilityManualME.Text = "0.0%"
-        End If
-
-        TempMMValue = (100 - CDbl(TempMM)) / 100
-
-        ' If it's an outpost, then save the me/te for this in the current facility
-        If cmbBPFacilityType.Text = OutpostFacility Then
-            Select Case CurrentIndustryType
-                Case IndustryType.Manufacturing
-                    SelectedBPManufacturingFacility.MaterialMultiplier = CDbl(TempMMValue)
-                Case IndustryType.BoosterManufacturing
-                    SelectedBPBoosterManufacturingFacility.MaterialMultiplier = CDbl(TempMMValue)
-                Case IndustryType.SuperManufacturing
-                    SelectedBPSuperManufacturingFacility.MaterialMultiplier = CDbl(TempMMValue)
-                Case IndustryType.CapitalManufacturing
-                    SelectedBPCapitalManufacturingFacility.MaterialMultiplier = CDbl(TempMMValue)
-                Case IndustryType.ComponentManufacturing
-                    SelectedBPComponentManufacturingFacility.MaterialMultiplier = CDbl(TempMMValue)
-                Case IndustryType.CapitalComponentManufacturing
-                    SelectedBPCapitalComponentManufacturingFacility.MaterialMultiplier = CDbl(TempMMValue)
-                Case IndustryType.T3CruiserManufacturing
-                    SelectedBPT3CruiserManufacturingFacility.MaterialMultiplier = CDbl(TempMMValue)
-                Case IndustryType.SubsystemManufacturing
-                    SelectedBPSubsystemManufacturingFacility.MaterialMultiplier = CDbl(TempMMValue)
-                Case IndustryType.Copying
-                    SelectedBPCopyFacility.MaterialMultiplier = CDbl(TempMMValue)
-                Case IndustryType.Invention
-                    SelectedBPInventionFacility.MaterialMultiplier = CDbl(TempMMValue)
-                Case IndustryType.T3Invention
-                    SelectedBPT3InventionFacility.MaterialMultiplier = CDbl(TempMMValue)
-                Case IndustryType.NoPOSManufacturing
-                    SelectedBPNoPOSFacility.MaterialMultiplier = CDbl(TempMMValue)
-            End Select
-        End If
-
-        ' They changed the value, so enable save
-        btnBPFacilitySave.Enabled = True
-        ' changed so not the default
-        lblBPFacilityDefault.Visible = False
-
+        Call OutpostMETETaxText_KeyUp(txtBPFacilityManualME, SelectedBPManufacturingFacility, _
+                                      cmbBPFacilityType, btnBPFacilitySave, lblBPFacilityDefault)
     End Sub
 
     Private Sub txtBPFacilityManualME_LostFocus(sender As Object, e As System.EventArgs) Handles txtBPFacilityManualME.LostFocus
-        If Trim(Replace(txtBPFacilityManualME.Text, "%", "")) = "" And cmbBPFacilityType.Text = OutpostFacility Then
-            Select Case CurrentIndustryType
-                Case IndustryType.Manufacturing
-                    txtBPFacilityManualME.Text = FormatPercent(SelectedBPManufacturingFacility.MaterialMultiplier, 1)
-                Case IndustryType.BoosterManufacturing
-                    txtBPFacilityManualME.Text = FormatPercent(SelectedBPBoosterManufacturingFacility.MaterialMultiplier, 1)
-                Case IndustryType.SuperManufacturing
-                    txtBPFacilityManualME.Text = FormatPercent(SelectedBPSuperManufacturingFacility.MaterialMultiplier, 1)
-                Case IndustryType.CapitalManufacturing
-                    txtBPFacilityManualME.Text = FormatPercent(SelectedBPCapitalManufacturingFacility.MaterialMultiplier, 1)
-                Case IndustryType.ComponentManufacturing
-                    txtBPFacilityManualME.Text = FormatPercent(SelectedBPComponentManufacturingFacility.MaterialMultiplier, 1)
-                Case IndustryType.CapitalComponentManufacturing
-                    txtBPFacilityManualME.Text = FormatPercent(SelectedBPCapitalComponentManufacturingFacility.MaterialMultiplier, 1)
-                Case IndustryType.T3CruiserManufacturing
-                    txtBPFacilityManualME.Text = FormatPercent(SelectedBPT3CruiserManufacturingFacility.MaterialMultiplier, 1)
-                Case IndustryType.SubsystemManufacturing
-                    txtBPFacilityManualME.Text = FormatPercent(SelectedBPSubsystemManufacturingFacility.MaterialMultiplier, 1)
-                Case IndustryType.Copying
-                    txtBPFacilityManualME.Text = FormatPercent(SelectedBPCopyFacility.MaterialMultiplier, 1)
-                Case IndustryType.Invention
-                    txtBPFacilityManualME.Text = FormatPercent(SelectedBPInventionFacility.MaterialMultiplier, 1)
-                Case IndustryType.T3Invention
-                    txtBPFacilityManualME.Text = FormatPercent(SelectedBPT3InventionFacility.MaterialMultiplier, 1)
-                Case IndustryType.NoPOSManufacturing
-                    txtBPFacilityManualME.Text = FormatPercent(SelectedBPNoPOSFacility.MaterialMultiplier, 1)
-            End Select
-        End If
-
-        If Not txtBPFacilityManualME.Text.Contains("%") Then
-            ' Format with percent sign
-            txtBPFacilityManualME.Text = FormatPercent(CDbl(txtBPFacilityManualME.Text) / 100, 1)
-        End If
-
+        Call OutpostMETETaxText_LostFocus(txtBPFacilityManualME, cmbBPFacilityType, SelectedBPManufacturingFacility.MaterialMultiplier)
     End Sub
 
     Private Sub txtBPFacilityManualTE_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtBPFacilityManualTE.KeyPress
-        Dim TempTM As String
-        Dim TempTMValue As Double
-
-        ' Get rid of the percent sign if it exists
-        TempTM = Replace(txtBPFacilityManualTE.Text, "%", "")
-
-        TempTMValue = (100 - CDbl(TempTM)) / 100
-
-        ' If it's an outpost, then save the me/te for this in the current facility
-        If cmbBPFacilityType.Text = OutpostFacility Then
-            Select Case CurrentIndustryType
-                Case IndustryType.Manufacturing
-                    SelectedBPManufacturingFacility.MaterialMultiplier = CDbl(TempTMValue)
-                Case IndustryType.BoosterManufacturing
-                    SelectedBPBoosterManufacturingFacility.MaterialMultiplier = CDbl(TempTMValue)
-                Case IndustryType.SuperManufacturing
-                    SelectedBPSuperManufacturingFacility.MaterialMultiplier = CDbl(TempTMValue)
-                Case IndustryType.CapitalManufacturing
-                    SelectedBPCapitalManufacturingFacility.MaterialMultiplier = CDbl(TempTMValue)
-                Case IndustryType.ComponentManufacturing
-                    SelectedBPComponentManufacturingFacility.MaterialMultiplier = CDbl(TempTMValue)
-                Case IndustryType.CapitalComponentManufacturing
-                    SelectedBPCapitalComponentManufacturingFacility.MaterialMultiplier = CDbl(TempTMValue)
-                Case IndustryType.T3CruiserManufacturing
-                    SelectedBPT3CruiserManufacturingFacility.MaterialMultiplier = CDbl(TempTMValue)
-                Case IndustryType.SubsystemManufacturing
-                    SelectedBPSubsystemManufacturingFacility.MaterialMultiplier = CDbl(TempTMValue)
-                Case IndustryType.Copying
-                    SelectedBPCopyFacility.MaterialMultiplier = CDbl(TempTMValue)
-                Case IndustryType.Invention
-                    SelectedBPInventionFacility.MaterialMultiplier = CDbl(TempTMValue)
-                Case IndustryType.T3Invention
-                    SelectedBPT3InventionFacility.MaterialMultiplier = CDbl(TempTMValue)
-                Case IndustryType.NoPOSManufacturing
-                    SelectedBPNoPOSFacility.MaterialMultiplier = CDbl(TempTMValue)
-            End Select
-        End If
-
-        ' They changed the value, so enable save
-        btnBPFacilitySave.Enabled = True
-        ' changed so not the default
-        lblBPFacilityDefault.Visible = False
-
+        Call OutpostMETETaxText_KeyPress(e)
     End Sub
 
-    Private Sub txtBPFacilityManualTM_LostFocus(sender As Object, e As System.EventArgs) Handles txtBPFacilityManualTE.LostFocus
-        If Trim(Replace(txtBPFacilityManualTE.Text, "%", "")) = "" And cmbBPFacilityType.Text = OutpostFacility Then
-            Select Case CurrentIndustryType
-                Case IndustryType.Manufacturing
-                    txtBPFacilityManualTE.Text = FormatPercent(SelectedBPManufacturingFacility.MaterialMultiplier, 1)
-                Case IndustryType.BoosterManufacturing
-                    txtBPFacilityManualTE.Text = FormatPercent(SelectedBPBoosterManufacturingFacility.MaterialMultiplier, 1)
-                Case IndustryType.SuperManufacturing
-                    txtBPFacilityManualTE.Text = FormatPercent(SelectedBPSuperManufacturingFacility.MaterialMultiplier, 1)
-                Case IndustryType.CapitalManufacturing
-                    txtBPFacilityManualTE.Text = FormatPercent(SelectedBPCapitalManufacturingFacility.MaterialMultiplier, 1)
-                Case IndustryType.ComponentManufacturing
-                    txtBPFacilityManualTE.Text = FormatPercent(SelectedBPComponentManufacturingFacility.MaterialMultiplier, 1)
-                Case IndustryType.CapitalComponentManufacturing
-                    txtBPFacilityManualTE.Text = FormatPercent(SelectedBPCapitalComponentManufacturingFacility.MaterialMultiplier, 1)
-                Case IndustryType.T3CruiserManufacturing
-                    txtBPFacilityManualTE.Text = FormatPercent(SelectedBPT3CruiserManufacturingFacility.MaterialMultiplier, 1)
-                Case IndustryType.SubsystemManufacturing
-                    txtBPFacilityManualTE.Text = FormatPercent(SelectedBPSubsystemManufacturingFacility.MaterialMultiplier, 1)
-                Case IndustryType.Copying
-                    txtBPFacilityManualTE.Text = FormatPercent(SelectedBPCopyFacility.MaterialMultiplier, 1)
-                Case IndustryType.Invention
-                    txtBPFacilityManualTE.Text = FormatPercent(SelectedBPInventionFacility.MaterialMultiplier, 1)
-                Case IndustryType.T3Invention
-                    txtBPFacilityManualTE.Text = FormatPercent(SelectedBPT3InventionFacility.MaterialMultiplier, 1)
-                Case IndustryType.NoPOSManufacturing
-                    txtBPFacilityManualTE.Text = FormatPercent(SelectedBPNoPOSFacility.MaterialMultiplier, 1)
-            End Select
-        End If
+    Private Sub txtBPFacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtBPFacilityManualTE.KeyUp
+        Call OutpostMETETaxText_KeyUp(txtBPFacilityManualTE, SelectedBPManufacturingFacility, _
+                                      cmbBPFacilityType, btnBPFacilitySave, lblBPFacilityDefault)
+    End Sub
 
-        If Not txtBPFacilityManualTE.Text.Contains("%") Then
-            ' Format with percent sign
-            txtBPFacilityManualTE.Text = FormatPercent(CDbl(txtBPFacilityManualTE.Text) / 100, 1)
-        End If
+    Private Sub txtBPFacilityManualTE_LostFocus(sender As Object, e As System.EventArgs) Handles txtBPFacilityManualTE.LostFocus
+        Call OutpostMETETaxText_LostFocus(txtBPFacilityManualTE, cmbBPFacilityType, SelectedBPManufacturingFacility.MaterialMultiplier)
+    End Sub
 
+    Private Sub txtBPFacilityManualTax_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtBPFacilityManualTax.KeyPress
+        Call OutpostMETETaxText_KeyPress(e)
+    End Sub
+
+    Private Sub txtBPFacilityManualTax_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtBPFacilityManualTax.KeyUp
+        Call OutpostMETETaxText_KeyUp(txtBPFacilityManualTax, SelectedBPManufacturingFacility, _
+                                      cmbBPFacilityType, btnBPFacilitySave, lblBPFacilityDefault)
+    End Sub
+
+    Private Sub txtBPFacilityManualTax_LostFocus(sender As Object, e As System.EventArgs) Handles txtBPFacilityManualTax.LostFocus
+        Call OutpostMETETaxText_LostFocus(txtBPFacilityManualTax, cmbBPFacilityType, SelectedBPManufacturingFacility.MaterialMultiplier)
     End Sub
 
     ' Team functions
@@ -6906,7 +6853,7 @@ Tabs:
         Call LoadFacility(IndustryType.Manufacturing, True, False, _
                           cmbBPFacilityActivities.Text, cmbBPFacilityType, cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, _
                           lblBPFacilityBonus, lblBPFacilityDefault, lblBPFacilityManualME, txtBPFacilityManualME, _
-                          lblBPFacilityManualTE, txtBPFacilityManualTE, btnBPFacilitySave, lblBPFacilityTaxRate, _
+                          lblBPFacilityManualTE, txtBPFacilityManualTE, lblBPFacilityManualTax, txtBPFacilityManualTax, btnBPFacilitySave, lblBPFacilityTaxRate, _
                           BPTab, chkBPFacilityIncludeUsage, Nothing, Nothing, Nothing, FullyLoadedBPFacility, cmbBPFacilityActivities, 1, 0, 0, True, False)
         LoadingFacilityActivities = False
 
@@ -7384,7 +7331,8 @@ Tabs:
             Call LoadFacility(SelectedIndyType, False, True, _
                           cmbBPFacilityActivities.Text, cmbBPFacilityType, cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, _
                           lblBPFacilityBonus, lblBPFacilityDefault, lblBPFacilityManualME, txtBPFacilityManualME, _
-                          lblBPFacilityManualTE, txtBPFacilityManualTE, btnBPFacilitySave, lblBPFacilityTaxRate, BPTab, _
+                          lblBPFacilityManualTE, txtBPFacilityManualTE, lblBPFacilityManualTax, txtBPFacilityManualTax, _
+                          btnBPFacilitySave, lblBPFacilityTaxRate, BPTab, _
                           chkBPFacilityIncludeUsage, Nothing, CostCheck, TimeCheck, FullyLoadedBPFacility, cmbBPFacilityActivities, _
                           TempTech, ItemGroupID, ItemCategoryID, False, False) ' Don't load activites again
         End If
@@ -7435,8 +7383,8 @@ Tabs:
     Private Sub UpdateBPGrids(ByVal BPID As Long, ByVal BPTech As Integer, ByVal NewBPSelection As Boolean, BPGroupID As Long, BPCategoryID As Long, Optional UpdateTeamBonusLabel As Boolean = True)
         Dim IndustrySkill As Integer = 0
         Dim i As Integer = 0
-        Dim BPRawMats() As Material
-        Dim BPComponentMats() As Material
+        Dim BPRawMats As List(Of Material)
+        Dim BPComponentMats As List(Of Material)
         Dim rawlstViewRow As ListViewItem
         Dim complstViewRow As ListViewItem
         Dim TempME As String = "0"
@@ -7553,7 +7501,8 @@ Tabs:
             Call LoadFacility(IndyType, True, True, _
                               cmbBPFacilityActivities.Text, cmbBPFacilityType, cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, _
                               lblBPFacilityBonus, lblBPFacilityDefault, lblBPFacilityManualME, txtBPFacilityManualME, _
-                              lblBPFacilityManualTE, txtBPFacilityManualTE, btnBPFacilitySave, lblBPFacilityTaxRate, BPTab, _
+                              lblBPFacilityManualTE, txtBPFacilityManualTE, lblBPFacilityManualTax, txtBPFacilityManualTax, _
+                              btnBPFacilitySave, lblBPFacilityTaxRate, BPTab, _
                               chkBPFacilityIncludeUsage, Nothing, CostCheck, TimeCheck, FullyLoadedBPFacility, cmbBPFacilityActivities, _
                               BPTech, BPGroupID, BPCategoryID, False)
         End If
@@ -9791,7 +9740,11 @@ ExitForm:
             IgnoreSystemCheckUpdates = False
         End If
 
-        chkUpdatePricesCRESTHistory.Checked = UserUpdatePricesTabSettings.UpdatePriceHistory
+        If Developer Then
+            chkUpdatePricesCRESTHistory.Checked = UserUpdatePricesTabSettings.UpdatePriceHistory
+        Else
+            chkUpdatePricesCRESTHistory.Checked = False
+        End If
 
         ' Refresh the prices
         Call UpdatePriceList()
@@ -9969,6 +9922,11 @@ ExitForm:
     Public Structure PriceItem
         Dim TypeID As Long
         Dim Manufacture As Boolean
+    End Structure
+
+    Private Structure ItemRegionPairs
+        Dim ItemID As Long
+        Dim RegionID As Long
     End Structure
 
     ' Checks the user entry and then sends the type ids and regions to the cache update
@@ -11041,8 +10999,11 @@ ExitSub:
             If Not LoadingFacilityTypes And Not FirstLoad Then
                 Call LoadFacilityRegions(0, 0, True, _
                                          ActivityManufacturing, cmbCalcBaseFacilityType, cmbCalcBaseFacilityRegion, cmbCalcBaseFacilitySystem, cmbCalcBaseFacilityorArray, _
-                                         lblCalcBaseFacilityBonus, lblCalcBaseFacilityDefault, lblCalcBaseFacilityManualME, txtCalcBaseFacilityManualME, _
-                                         lblCalcBaseFacilityManualTE, txtCalcBaseFacilityManualTE, btnCalcBaseFacilitySave, lblCalcBaseFacilityTaxRate, CalcTab, chkCalcBaseFacilityIncludeUsage)
+                                         lblCalcBaseFacilityBonus, lblCalcBaseFacilityDefault, _
+                                         lblCalcBaseFacilityManualME, txtCalcBaseFacilityManualME, _
+                                         lblCalcBaseFacilityManualTE, txtCalcBaseFacilityManualTE, _
+                                         lblCalcBaseFacilityManualTax, txtCalcBaseFacilityManualTax, _
+                                         btnCalcBaseFacilitySave, lblCalcBaseFacilityTaxRate, CalcTab, chkCalcBaseFacilityIncludeUsage)
                 Call cmbCalcBaseFacilityRegion.Focus()
             End If
 
@@ -11055,7 +11016,10 @@ ExitSub:
             End If
 
             ' Anytime this changes, set all the other ME/TE boxes to not viewed
-            Call HideFacilityBonusBoxes(lblCalcBaseFacilityBonus, lblCalcBaseFacilityTaxRate, lblCalcBaseFacilityManualME, lblCalcBaseFacilityManualTE, txtCalcBaseFacilityManualME, txtCalcBaseFacilityManualTE)
+            Call HideFacilityBonusBoxes(lblCalcBaseFacilityBonus, lblCalcBaseFacilityTaxRate, _
+                                        lblCalcBaseFacilityManualME, lblCalcBaseFacilityManualTE, _
+                                        txtCalcBaseFacilityManualME, txtCalcBaseFacilityManualTE, _
+                                        lblCalcBaseFacilityManualTax, txtCalcBaseFacilityManualTax)
             CalcBaseFacilityLoaded = False
         End If
     End Sub
@@ -11066,8 +11030,11 @@ ExitSub:
             PreviousCalcBaseFacilityRegion = cmbCalcBaseFacilityRegion.Text
             Call LoadFacilityRegions(0, 0, False, _
                                      ActivityManufacturing, cmbCalcBaseFacilityType, cmbCalcBaseFacilityRegion, cmbCalcBaseFacilitySystem, cmbCalcBaseFacilityorArray, _
-                                     lblCalcBaseFacilityBonus, lblCalcBaseFacilityDefault, lblCalcBaseFacilityManualME, txtCalcBaseFacilityManualME, _
-                                     lblCalcBaseFacilityManualTE, txtCalcBaseFacilityManualTE, btnCalcBaseFacilitySave, lblCalcBaseFacilityTaxRate, CalcTab, chkCalcBaseFacilityIncludeUsage)
+                                     lblCalcBaseFacilityBonus, lblCalcBaseFacilityDefault, _
+                                     lblCalcBaseFacilityManualME, txtCalcBaseFacilityManualME, _
+                                     lblCalcBaseFacilityManualTE, txtCalcBaseFacilityManualTE, _
+                                     lblCalcBaseFacilityManualTax, txtCalcBaseFacilityManualTax, _
+                                     btnCalcBaseFacilitySave, lblCalcBaseFacilityTaxRate, CalcTab, chkCalcBaseFacilityIncludeUsage)
         End If
     End Sub
 
@@ -11079,10 +11046,16 @@ ExitSub:
         If Not LoadingFacilityRegions And Not FirstLoad And PreviousCalcBaseFacilityRegion <> cmbCalcBaseFacilityRegion.Text Then
             Call LoadFacilitySystems(0, 0, True, _
                                      ActivityManufacturing, cmbCalcBaseFacilityType, cmbCalcBaseFacilityRegion, cmbCalcBaseFacilitySystem, cmbCalcBaseFacilityorArray, _
-                                     lblCalcBaseFacilityBonus, lblCalcBaseFacilityTaxRate, lblCalcBaseFacilityManualME, txtCalcBaseFacilityManualME, _
-                                     lblCalcBaseFacilityManualTE, txtCalcBaseFacilityManualTE, lblCalcBaseFacilityDefault, btnCalcBaseFacilitySave, CalcTab, chkCalcBaseFacilityIncludeUsage)
+                                     lblCalcBaseFacilityBonus, lblCalcBaseFacilityTaxRate, _
+                                     lblCalcBaseFacilityManualME, txtCalcBaseFacilityManualME, _
+                                     lblCalcBaseFacilityManualTE, txtCalcBaseFacilityManualTE, _
+                                     lblCalcBaseFacilityManualTax, txtCalcBaseFacilityManualTax, _
+                                     lblCalcBaseFacilityDefault, btnCalcBaseFacilitySave, CalcTab, chkCalcBaseFacilityIncludeUsage)
             Call cmbCalcBaseFacilitySystem.Focus()
-            Call HideFacilityBonusBoxes(lblCalcBaseFacilityBonus, lblCalcBaseFacilityTaxRate, lblCalcBaseFacilityManualME, lblCalcBaseFacilityManualTE, txtCalcBaseFacilityManualME, txtCalcBaseFacilityManualTE)
+            Call HideFacilityBonusBoxes(lblCalcBaseFacilityBonus, lblCalcBaseFacilityTaxRate, _
+                             lblCalcBaseFacilityManualME, lblCalcBaseFacilityManualTE, _
+                             txtCalcBaseFacilityManualME, txtCalcBaseFacilityManualTE, _
+                             lblCalcBaseFacilityManualTax, txtCalcBaseFacilityManualTax)
             CalcBaseFacilityLoaded = False
             PreviousCalcBaseFacilityRegion = cmbCalcBaseFacilityRegion.Text
         End If
@@ -11093,8 +11066,11 @@ ExitSub:
             PreviousCalcBaseFacilitySystem = cmbCalcBaseFacilitySystem.Text
             Call LoadFacilitySystems(0, 0, False, _
                                      ActivityManufacturing, cmbCalcBaseFacilityType, cmbCalcBaseFacilityRegion, cmbCalcBaseFacilitySystem, cmbCalcBaseFacilityorArray, _
-                                     lblCalcBaseFacilityBonus, lblCalcBaseFacilityTaxRate, lblCalcBaseFacilityManualME, txtCalcBaseFacilityManualME, _
-                                     lblCalcBaseFacilityManualTE, txtCalcBaseFacilityManualTE, lblCalcBaseFacilityDefault, btnCalcBaseFacilitySave, CalcTab, chkCalcBaseFacilityIncludeUsage)
+                                     lblCalcBaseFacilityBonus, lblCalcBaseFacilityTaxRate, _
+                                     lblCalcBaseFacilityManualME, txtCalcBaseFacilityManualME, _
+                                     lblCalcBaseFacilityManualTE, txtCalcBaseFacilityManualTE, _
+                                     lblCalcBaseFacilityManualTax, txtCalcBaseFacilityManualTax, _
+                                     lblCalcBaseFacilityDefault, btnCalcBaseFacilitySave, CalcTab, chkCalcBaseFacilityIncludeUsage)
         End If
     End Sub
 
@@ -11118,8 +11094,11 @@ ExitSub:
             ' Load the facility and set the auto
             Call LoadFacilities(0, 0, False, _
                                 ActivityManufacturing, cmbCalcBaseFacilityType, cmbCalcBaseFacilityRegion, cmbCalcBaseFacilitySystem, cmbCalcBaseFacilityorArray, _
-                                lblCalcBaseFacilityBonus, lblCalcBaseFacilityDefault, lblCalcBaseFacilityManualME, txtCalcBaseFacilityManualME, _
-                                lblCalcBaseFacilityManualTE, txtCalcBaseFacilityManualTE, btnCalcBaseFacilitySave, lblCalcBaseFacilityTaxRate, CalcTab, _
+                                lblCalcBaseFacilityBonus, lblCalcBaseFacilityDefault, _
+                                lblCalcBaseFacilityManualME, txtCalcBaseFacilityManualME, _
+                                lblCalcBaseFacilityManualTE, txtCalcBaseFacilityManualTE, _
+                                lblCalcBaseFacilityManualTax, txtCalcBaseFacilityManualTax, _
+                                btnCalcBaseFacilitySave, lblCalcBaseFacilityTaxRate, CalcTab, _
                                 chkCalcBaseFacilityIncludeUsage, Nothing, Nothing, chkCalcBaseFacilityIncludeUsage.Checked, Autoload, OverrideFacilityName)
 
             If cmbCalcBaseFacilityType.Text <> POSFacility Then
@@ -11128,7 +11107,10 @@ ExitSub:
 
             Else
                 ' Hide all these labels so we can see the other blocks
-                Call HideFacilityBonusBoxes(lblCalcBaseFacilityBonus, lblCalcBaseFacilityTaxRate, lblCalcBaseFacilityManualME, lblCalcBaseFacilityManualTE, txtCalcBaseFacilityManualME, txtCalcBaseFacilityManualTE)
+                Call HideFacilityBonusBoxes(lblCalcBaseFacilityBonus, lblCalcBaseFacilityTaxRate, _
+                                            lblCalcBaseFacilityManualME, lblCalcBaseFacilityManualTE, _
+                                            txtCalcBaseFacilityManualME, txtCalcBaseFacilityManualTE, _
+                                            lblCalcBaseFacilityManualTax, txtCalcBaseFacilityManualTax)
 
                 ' Also show all the multi-use array boxes
                 SetPOSMultiUseArraysVisibility(True)
@@ -11194,8 +11176,11 @@ ExitSub:
         If Not CalcBaseFacilitiesLoaded And Not FirstLoad And cmbCalcBaseFacilityType.Text <> POSFacility Then
             Call LoadFacilities(0, 0, False, _
                                 ActivityManufacturing, cmbCalcBaseFacilityType, cmbCalcBaseFacilityRegion, cmbCalcBaseFacilitySystem, cmbCalcBaseFacilityorArray, _
-                                lblCalcBaseFacilityBonus, lblCalcBaseFacilityDefault, lblCalcBaseFacilityManualME, txtCalcBaseFacilityManualME, _
-                                lblCalcBaseFacilityManualTE, txtCalcBaseFacilityManualTE, btnCalcBaseFacilitySave, lblCalcBaseFacilityTaxRate, CalcTab, _
+                                lblCalcBaseFacilityBonus, lblCalcBaseFacilityDefault, _
+                                lblCalcBaseFacilityManualME, txtCalcBaseFacilityManualME, _
+                                lblCalcBaseFacilityManualTE, txtCalcBaseFacilityManualTE, _
+                                lblCalcBaseFacilityManualTax, txtCalcBaseFacilityManualTax, _
+                                btnCalcBaseFacilitySave, lblCalcBaseFacilityTaxRate, CalcTab, _
                                 chkCalcBaseFacilityIncludeUsage, Nothing, Nothing, Nothing, chkCalcBaseFacilityIncludeUsage.Checked)
         End If
     End Sub
@@ -11214,8 +11199,11 @@ ExitSub:
                                       Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, 0, 0, _
                                       ActivityManufacturing, cmbCalcBaseFacilityType.Text, cmbCalcBaseFacilityorArray.Text, _
                                       cmbCalcBaseFacilityRegion, cmbCalcBaseFacilitySystem, cmbCalcBaseFacilityorArray, _
-                                      lblCalcBaseFacilityBonus, lblCalcBaseFacilityDefault, lblCalcBaseFacilityManualME, txtCalcBaseFacilityManualME, _
-                                      lblCalcBaseFacilityManualTE, txtCalcBaseFacilityManualTE, btnCalcBaseFacilitySave, lblCalcBaseFacilityTaxRate, _
+                                      lblCalcBaseFacilityBonus, lblCalcBaseFacilityDefault, _
+                                      lblCalcBaseFacilityManualME, txtCalcBaseFacilityManualME, _
+                                      lblCalcBaseFacilityManualTE, txtCalcBaseFacilityManualTE, _
+                                      lblCalcBaseFacilityManualTax, txtCalcBaseFacilityManualTax, _
+                                      btnCalcBaseFacilitySave, lblCalcBaseFacilityTaxRate, _
                                       chkCalcBaseFacilityIncludeUsage, Nothing, Nothing, CalcTab, CalcBaseFacilityLoaded, chkCalcBaseFacilityIncludeUsage.Checked)
 
             If txtCalcBaseFacilityManualME.Visible Then
@@ -11262,88 +11250,42 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcBaseFacilityManualME_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcBaseFacilityManualME.KeyPress
-        ' only let them enter the right things
-        If e.KeyChar <> ControlChars.Back Then
-            If allowedMETEChars.IndexOf(e.KeyChar) = -1 Then
-                ' Invalid Character
-                e.Handled = True
-                Exit Sub
-            End If
-        End If
-
+        Call OutpostMETETaxText_KeyPress(e)
     End Sub
 
     Private Sub txtCalcBaseFacilityManualME_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcBaseFacilityManualME.KeyUp
-        Dim TempMM As String
-        Dim TempMMValue As Double
-
-        ' Get rid of the percent sign if it exists
-        TempMM = Trim(Replace(txtCalcBaseFacilityManualME.Text, "%", ""))
-
-        If Not IsNumeric(TempMM) Then
-            TempMM = "0.0"
-            txtCalcBaseFacilityManualME.Text = "0.0%"
-        End If
-
-        TempMMValue = (100 - CDbl(TempMM)) / 100
-
-        ' If it's an outpost, then save the me/te for this in the current facility
-        If cmbCalcBaseFacilityType.Text = OutpostFacility Then
-            SelectedCalcBaseManufacturingFacility.MaterialMultiplier = CDbl(TempMMValue)
-        End If
-
-        ' They changed the value, so enable save
-        btnCalcBaseFacilitySave.Enabled = True
-        ' changed so not the default
-        lblCalcBaseFacilityDefault.Visible = False
-
+        Call OutpostMETETaxText_KeyUp(txtCalcBaseFacilityManualME, SelectedCalcBaseManufacturingFacility, _
+                                      cmbCalcBaseFacilityType, btnCalcBaseFacilitySave, lblCalcBaseFacilityDefault)
     End Sub
 
     Private Sub txtCalcBaseFacilityManualME_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcBaseFacilityManualME.LostFocus
-
-        If Trim(Replace(txtCalcBaseFacilityManualME.Text, "%", "")) = "" And cmbCalcBaseFacilityType.Text = OutpostFacility Then
-            txtCalcBaseFacilityManualME.Text = FormatPercent(SelectedCalcBaseManufacturingFacility.MaterialMultiplier, 1)
-        End If
-
-        If Not txtCalcBaseFacilityManualME.Text.Contains("%") Then
-            ' Format with percent sign
-            txtCalcBaseFacilityManualME.Text = FormatPercent(CDbl(txtCalcBaseFacilityManualME.Text) / 100, 1)
-        End If
-
+        Call OutpostMETETaxText_LostFocus(txtCalcBaseFacilityManualME, cmbCalcBaseFacilityType, SelectedCalcBaseManufacturingFacility.MaterialMultiplier)
     End Sub
 
     Private Sub txtCalcBaseFacilityManualTE_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcBaseFacilityManualTE.KeyPress
-        Dim TempTM As String
-        Dim TempTMValue As Double
-
-        ' Get rid of the percent sign if it exists
-        TempTM = Replace(txtCalcBaseFacilityManualTE.Text, "%", "")
-
-        TempTMValue = (100 - CDbl(TempTM)) / 100
-
-        ' If it's an outpost, then save the me/te for this in the current facility
-        If cmbCalcBaseFacilityType.Text = OutpostFacility Then
-            SelectedCalcBaseManufacturingFacility.MaterialMultiplier = CDbl(TempTMValue)
-        End If
-
-        ' They changed the value, so enable save
-        btnCalcBaseFacilitySave.Enabled = True
-        ' changed so not the default
-        lblCalcBaseFacilityDefault.Visible = False
-
+        Call OutpostMETETaxText_KeyPress(e)
     End Sub
 
-    Private Sub txtCalcBaseFacilityManualTM_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcBaseFacilityManualTE.LostFocus
+    Private Sub txtCalcBaseFacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcBaseFacilityManualTE.KeyUp
+        Call OutpostMETETaxText_KeyUp(txtCalcBaseFacilityManualTE, SelectedCalcBaseManufacturingFacility, _
+                                      cmbCalcBaseFacilityType, btnCalcBaseFacilitySave, lblCalcBaseFacilityDefault)
+    End Sub
 
-        If Trim(Replace(txtCalcBaseFacilityManualTE.Text, "%", "")) = "" And cmbCalcBaseFacilityType.Text = OutpostFacility Then
-            txtCalcBaseFacilityManualTE.Text = FormatPercent(SelectedCalcBaseManufacturingFacility.MaterialMultiplier, 1)
-        End If
+    Private Sub txtCalcBaseFacilityManualTE_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcBaseFacilityManualTE.LostFocus
+        Call OutpostMETETaxText_LostFocus(txtCalcBaseFacilityManualTE, cmbCalcBaseFacilityType, SelectedCalcBaseManufacturingFacility.MaterialMultiplier)
+    End Sub
 
-        If Not txtCalcBaseFacilityManualTE.Text.Contains("%") Then
-            ' Format with percent sign
-            txtCalcBaseFacilityManualTE.Text = FormatPercent(CDbl(txtCalcBaseFacilityManualTE.Text) / 100, 1)
-        End If
+    Private Sub txtCalcBaseFacilityManualTax_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcBaseFacilityManualTax.KeyPress
+        Call OutpostMETETaxText_KeyPress(e)
+    End Sub
 
+    Private Sub txtCalcBaseFacilityManualTax_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcBaseFacilityManualTax.KeyUp
+        Call OutpostMETETaxText_KeyUp(txtCalcBaseFacilityManualTax, SelectedCalcBaseManufacturingFacility, _
+                                      cmbCalcBaseFacilityType, btnCalcBaseFacilitySave, lblCalcBaseFacilityDefault)
+    End Sub
+
+    Private Sub txtCalcBaseFacilityManualTax_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcBaseFacilityManualTax.LostFocus
+        Call OutpostMETETaxText_LostFocus(txtCalcBaseFacilityManualTax, cmbCalcBaseFacilityType, SelectedCalcBaseManufacturingFacility.MaterialMultiplier)
     End Sub
 
     Private Sub chkCalcBaseFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcBaseFacilityIncludeUsage.CheckedChanged
@@ -11386,8 +11328,11 @@ ExitSub:
         Call LoadFacility(GetComponentsIndustryType(chkCalcCapComponentsFacility.Checked), False, False, _
                           GetComponentActivityType(chkCalcCapComponentsFacility.Checked), cmbCalcComponentFacilityType, _
                           cmbCalcComponentFacilityRegion, cmbCalcComponentFacilitySystem, cmbCalcComponentFacilityorArray, _
-                          lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
-                          lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, _
+                          lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, _
+                          lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
+                          lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, _
+                          lblCalcComponentFacilityManualTax, txtCalcComponentFacilityManualTax, _
+                          btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, _
                           CalcTab, chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, Nothing, TempCalcComponentFacilityLoaded, _
                           Nothing, 1, GetComponentsGroupID(chkCalcCapComponentsFacility.Checked), -1, False)
         Call SetComponentFacilityLoaded(chkCalcComponentFacilityIncludeUsage.Checked, TempCalcComponentFacilityLoaded) ' Set if the facility loaded here
@@ -11409,13 +11354,19 @@ ExitSub:
             If Not LoadingFacilityTypes And Not FirstLoad Then
                 Call LoadFacilityRegions(GetComponentsGroupID(chkCalcCapComponentsFacility.Checked), -1, True, _
                                          GetComponentActivityType(chkCalcCapComponentsFacility.Checked), cmbCalcComponentFacilityType, cmbCalcComponentFacilityRegion, cmbCalcComponentFacilitySystem, cmbCalcComponentFacilityorArray, _
-                                         lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
-                                         lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, CalcTab, chkCalcComponentFacilityIncludeUsage)
+                                         lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, _
+                                         lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
+                                         lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, _
+                                         lblCalcComponentFacilityManualTax, txtCalcComponentFacilityManualTax, _
+                                         btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, CalcTab, chkCalcComponentFacilityIncludeUsage)
                 Call cmbCalcComponentFacilityRegion.Focus()
             End If
 
             ' Anytime this changes, set all the other ME/TE boxes to not viewed
-            Call HideFacilityBonusBoxes(lblCalcComponentFacilityBonus, lblCalcComponentFacilityTaxRate, lblCalcComponentFacilityManualME, lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualME, txtCalcComponentFacilityManualTE)
+            Call HideFacilityBonusBoxes(lblCalcComponentFacilityBonus, lblCalcComponentFacilityTaxRate, _
+                                        lblCalcComponentFacilityManualME, lblCalcComponentFacilityManualTE, _
+                                        txtCalcComponentFacilityManualME, txtCalcComponentFacilityManualTE, _
+                                        lblCalcComponentFacilityManualTax, txtCalcComponentFacilityManualTax)
             Call SetComponentFacilityLoaded(chkCalcComponentFacilityIncludeUsage.Checked, False)
             PreviousFacilityType = cmbCalcComponentFacilityType.Text
         End If
@@ -11427,8 +11378,11 @@ ExitSub:
             PreviousCalcComponentFacilityRegion = cmbCalcComponentFacilityRegion.Text
             Call LoadFacilityRegions(GetComponentsGroupID(chkCalcCapComponentsFacility.Checked), -1, False, _
                                      GetComponentActivityType(chkCalcCapComponentsFacility.Checked), cmbCalcComponentFacilityType, cmbCalcComponentFacilityRegion, cmbCalcComponentFacilitySystem, cmbCalcComponentFacilityorArray, _
-                                     lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
-                                     lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, CalcTab, chkCalcComponentFacilityIncludeUsage)
+                                     lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, _
+                                     lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
+                                     lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, _
+                                     lblCalcComponentFacilityManualTax, txtCalcComponentFacilityManualTax, _
+                                     btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, CalcTab, chkCalcComponentFacilityIncludeUsage)
         End If
     End Sub
 
@@ -11440,10 +11394,16 @@ ExitSub:
         If Not LoadingFacilityRegions And Not FirstLoad And PreviousCalcComponentFacilityRegion <> cmbCalcComponentFacilityRegion.Text Then
             Call LoadFacilitySystems(GetComponentsGroupID(chkCalcCapComponentsFacility.Checked), -1, True, _
                                      GetComponentActivityType(chkCalcCapComponentsFacility.Checked), cmbCalcComponentFacilityType, cmbCalcComponentFacilityRegion, cmbCalcComponentFacilitySystem, cmbCalcComponentFacilityorArray, _
-                                     lblCalcComponentFacilityBonus, lblCalcComponentFacilityTaxRate, lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
-                                     lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, lblCalcComponentFacilityDefault, btnCalcComponentFacilitySave, CalcTab, chkCalcComponentFacilityIncludeUsage)
+                                     lblCalcComponentFacilityBonus, lblCalcComponentFacilityTaxRate, _
+                                     lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
+                                     lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, _
+                                     lblCalcComponentFacilityManualTax, txtCalcComponentFacilityManualTax, _
+                                     lblCalcComponentFacilityDefault, btnCalcComponentFacilitySave, CalcTab, chkCalcComponentFacilityIncludeUsage)
             Call cmbCalcComponentFacilitySystem.Focus()
-            Call HideFacilityBonusBoxes(lblCalcComponentFacilityBonus, lblCalcComponentFacilityTaxRate, lblCalcComponentFacilityManualME, lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualME, txtCalcComponentFacilityManualTE)
+            Call HideFacilityBonusBoxes(lblCalcBaseFacilityBonus, lblCalcBaseFacilityTaxRate, _
+                            lblCalcBaseFacilityManualME, lblCalcBaseFacilityManualTE, _
+                            txtCalcBaseFacilityManualME, txtCalcBaseFacilityManualTE, _
+                            lblCalcBaseFacilityManualTax, txtCalcBaseFacilityManualTax)
             Call SetComponentFacilityLoaded(chkCalcComponentFacilityIncludeUsage.Checked, False)
         End If
     End Sub
@@ -11453,8 +11413,11 @@ ExitSub:
             PreviousCalcComponentFacilitySystem = cmbCalcComponentFacilitySystem.Text
             Call LoadFacilitySystems(GetComponentsGroupID(chkCalcCapComponentsFacility.Checked), -1, False, _
                                      GetComponentActivityType(chkCalcCapComponentsFacility.Checked), cmbCalcComponentFacilityType, cmbCalcComponentFacilityRegion, cmbCalcComponentFacilitySystem, cmbCalcComponentFacilityorArray, _
-                                     lblCalcComponentFacilityBonus, lblCalcComponentFacilityTaxRate, lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
-                                     lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, lblCalcComponentFacilityDefault, btnCalcComponentFacilitySave, CalcTab, chkCalcComponentFacilityIncludeUsage)
+                                     lblCalcComponentFacilityBonus, lblCalcComponentFacilityTaxRate, _
+                                     lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
+                                     lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, _
+                                     lblCalcComponentFacilityManualTax, txtCalcComponentFacilityManualTax, _
+                                     lblCalcComponentFacilityDefault, btnCalcComponentFacilitySave, CalcTab, chkCalcComponentFacilityIncludeUsage)
         End If
     End Sub
 
@@ -11470,8 +11433,11 @@ ExitSub:
             ' Load the facility
             Call LoadFacilities(GetComponentsGroupID(chkCalcCapComponentsFacility.Checked), -1, False, _
                                 GetComponentActivityType(chkCalcCapComponentsFacility.Checked), cmbCalcComponentFacilityType, cmbCalcComponentFacilityRegion, cmbCalcComponentFacilitySystem, cmbCalcComponentFacilityorArray, _
-                                lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
-                                lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, CalcTab, _
+                                lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, _
+                                lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
+                                lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, _
+                                lblCalcComponentFacilityManualTax, txtCalcComponentFacilityManualTax, _
+                                btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, CalcTab, _
                                 chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, Autoload, chkCalcComponentFacilityIncludeUsage.Checked)
 
             Call cmbCalcComponentFacilityorArray.Focus()
@@ -11489,8 +11455,11 @@ ExitSub:
         If Not CalcComponentFacilitiesLoaded And Not FirstLoad Then
             Call LoadFacilities(GetComponentsGroupID(chkCalcCapComponentsFacility.Checked), -1, False, _
                                 GetComponentActivityType(chkCalcCapComponentsFacility.Checked), cmbCalcComponentFacilityType, cmbCalcComponentFacilityRegion, cmbCalcComponentFacilitySystem, cmbCalcComponentFacilityorArray, _
-                                lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
-                                lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, CalcTab, _
+                                lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, _
+                                lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
+                                lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, _
+                                lblCalcComponentFacilityManualTax, txtCalcComponentFacilityManualTax, _
+                                btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, CalcTab, _
                                 chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, Nothing, chkCalcComponentFacilityIncludeUsage.Checked)
         End If
     End Sub
@@ -11509,8 +11478,11 @@ ExitSub:
                                       Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, GetComponentsGroupID(chkCalcCapComponentsFacility.Checked), -1, _
                                       GetComponentActivityType(chkCalcCapComponentsFacility.Checked), cmbCalcComponentFacilityType.Text, cmbCalcComponentFacilityorArray.Text, _
                                       cmbCalcComponentFacilityRegion, cmbCalcComponentFacilitySystem, cmbCalcComponentFacilityorArray, _
-                                      lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
-                                      lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, _
+                                      lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, _
+                                      lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
+                                      lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, _
+                                      lblCalcComponentFacilityManualTax, txtCalcComponentFacilityManualTax, _
+                                      btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, _
                                       chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, CalcTab, TempCalcComponentFacilityLoaded, chkCalcComponentFacilityIncludeUsage.Checked)
             Call SetComponentFacilityLoaded(chkCalcComponentFacilityIncludeUsage.Checked, TempCalcComponentFacilityLoaded)
             If txtCalcComponentFacilityManualME.Visible Then
@@ -11541,88 +11513,42 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcComponentFacilityManualME_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcComponentFacilityManualME.KeyPress
-        ' only let them enter the right things
-        If e.KeyChar <> ControlChars.Back Then
-            If allowedMETEChars.IndexOf(e.KeyChar) = -1 Then
-                ' Invalid Character
-                e.Handled = True
-                Exit Sub
-            End If
-        End If
-
+        Call OutpostMETETaxText_KeyPress(e)
     End Sub
 
     Private Sub txtCalcComponentFacilityManualME_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcComponentFacilityManualME.KeyUp
-        Dim TempMM As String
-        Dim TempMMValue As Double
-
-        ' Get rid of the percent sign if it exists
-        TempMM = Trim(Replace(txtCalcComponentFacilityManualME.Text, "%", ""))
-
-        If Not IsNumeric(TempMM) Then
-            TempMM = "0.0"
-            txtCalcComponentFacilityManualME.Text = "0.0%"
-        End If
-
-        TempMMValue = (100 - CDbl(TempMM)) / 100
-
-        ' If it's an outpost, then save the me/te for this in the current facility
-        If cmbCalcComponentFacilityType.Text = OutpostFacility Then
-            SelectedCalcComponentManufacturingFacility.MaterialMultiplier = CDbl(TempMMValue)
-        End If
-
-        ' They changed the value, so enable save
-        btnCalcComponentFacilitySave.Enabled = True
-        ' changed so not the default
-        lblCalcComponentFacilityDefault.Visible = False
-
+        Call OutpostMETETaxText_KeyUp(txtCalcComponentFacilityManualME, SelectedCalcComponentManufacturingFacility, _
+                                      cmbCalcComponentFacilityType, btnCalcComponentFacilitySave, lblCalcComponentFacilityDefault)
     End Sub
 
     Private Sub txtCalcComponentFacilityManualME_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcComponentFacilityManualME.LostFocus
-
-        If Trim(Replace(txtCalcComponentFacilityManualME.Text, "%", "")) = "" And cmbCalcComponentFacilityType.Text = OutpostFacility Then
-            txtCalcComponentFacilityManualME.Text = FormatPercent(SelectedCalcComponentManufacturingFacility.MaterialMultiplier, 1)
-        End If
-
-        If Not txtCalcComponentFacilityManualME.Text.Contains("%") Then
-            ' Format with percent sign
-            txtCalcComponentFacilityManualME.Text = FormatPercent(CDbl(txtCalcComponentFacilityManualME.Text) / 100, 1)
-        End If
-
+        Call OutpostMETETaxText_LostFocus(txtCalcComponentFacilityManualME, cmbCalcComponentFacilityType, SelectedCalcComponentManufacturingFacility.MaterialMultiplier)
     End Sub
 
     Private Sub txtCalcComponentFacilityManualTE_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcComponentFacilityManualTE.KeyPress
-        Dim TempTM As String
-        Dim TempTMValue As Double
-
-        ' Get rid of the percent sign if it exists
-        TempTM = Replace(txtCalcComponentFacilityManualTE.Text, "%", "")
-
-        TempTMValue = (100 - CDbl(TempTM)) / 100
-
-        ' If it's an outpost, then save the me/te for this in the current facility
-        If cmbCalcComponentFacilityType.Text = OutpostFacility Then
-            SelectedCalcComponentManufacturingFacility.MaterialMultiplier = CDbl(TempTMValue)
-        End If
-
-        ' They changed the value, so enable save
-        btnCalcComponentFacilitySave.Enabled = True
-        ' changed so not the default
-        lblCalcComponentFacilityDefault.Visible = False
-
+        Call OutpostMETETaxText_KeyPress(e)
     End Sub
 
-    Private Sub txtCalcComponentFacilityManualTM_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcComponentFacilityManualTE.LostFocus
+    Private Sub txtCalcComponentFacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcComponentFacilityManualTE.KeyUp
+        Call OutpostMETETaxText_KeyUp(txtCalcComponentFacilityManualTE, SelectedCalcComponentManufacturingFacility, _
+                                      cmbCalcComponentFacilityType, btnCalcComponentFacilitySave, lblCalcComponentFacilityDefault)
+    End Sub
 
-        If Trim(Replace(txtCalcComponentFacilityManualTE.Text, "%", "")) = "" And cmbCalcComponentFacilityType.Text = OutpostFacility Then
-            txtCalcComponentFacilityManualTE.Text = FormatPercent(SelectedCalcComponentManufacturingFacility.MaterialMultiplier, 1)
-        End If
+    Private Sub txtCalcComponentFacilityManualTE_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcComponentFacilityManualTE.LostFocus
+        Call OutpostMETETaxText_LostFocus(txtCalcComponentFacilityManualTE, cmbCalcComponentFacilityType, SelectedCalcComponentManufacturingFacility.MaterialMultiplier)
+    End Sub
 
-        If Not txtCalcComponentFacilityManualTE.Text.Contains("%") Then
-            ' Format with percent sign
-            txtCalcComponentFacilityManualTE.Text = FormatPercent(CDbl(txtCalcComponentFacilityManualTE.Text) / 100, 1)
-        End If
+    Private Sub txtCalcComponentFacilityManualTax_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcComponentFacilityManualTax.KeyPress
+        Call OutpostMETETaxText_KeyPress(e)
+    End Sub
 
+    Private Sub txtCalcComponentFacilityManualTax_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcComponentFacilityManualTax.KeyUp
+        Call OutpostMETETaxText_KeyUp(txtCalcComponentFacilityManualTax, SelectedCalcComponentManufacturingFacility, _
+                                      cmbCalcComponentFacilityType, btnCalcComponentFacilitySave, lblCalcComponentFacilityDefault)
+    End Sub
+
+    Private Sub txtCalcComponentFacilityManualTax_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcComponentFacilityManualTax.LostFocus
+        Call OutpostMETETaxText_LostFocus(txtCalcComponentFacilityManualTax, cmbCalcComponentFacilityType, SelectedCalcComponentManufacturingFacility.MaterialMultiplier)
     End Sub
 
     Private Sub chkCalcComponentFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcComponentFacilityIncludeUsage.CheckedChanged
@@ -11651,8 +11577,11 @@ ExitSub:
             If Not LoadingFacilityTypes And Not FirstLoad And cmbCalcInventionFacilityType.Text <> None Then
                 Call LoadFacilityRegions(0, 0, True, _
                                          ActivityInvention, cmbCalcInventionFacilityType, cmbCalcInventionFacilityRegion, cmbCalcInventionFacilitySystem, cmbCalcInventionFacilityorArray, _
-                                         lblCalcInventionFacilityBonus, lblCalcInventionFacilityDefault, lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
-                                         lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualTE, btnCalcInventionFacilitySave, lblCalcInventionFacilityTaxRate, CalcTab, chkCalcInventionFacilityIncludeUsage)
+                                         lblCalcInventionFacilityBonus, lblCalcInventionFacilityDefault, _
+                                         lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
+                                         lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualTE, _
+                                         lblCalcInventionFacilityManualTax, txtCalcInventionFacilityManualTax, _
+                                         btnCalcInventionFacilitySave, lblCalcInventionFacilityTaxRate, CalcTab, chkCalcInventionFacilityIncludeUsage)
                 ' Make sure these are enabled when changed
                 chkCalcInventionFacilityIncludeUsage.Enabled = True
                 chkCalcInventionFacilityIncludeCost.Enabled = True
@@ -11674,14 +11603,20 @@ ExitSub:
                                Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, 0, 0, _
                                ActivityInvention, cmbCalcInventionFacilityType.Text, cmbCalcInventionFacilityorArray.Text, _
                                cmbCalcInventionFacilityRegion, cmbCalcInventionFacilitySystem, cmbCalcInventionFacilityorArray, _
-                               lblCalcInventionFacilityBonus, lblCalcInventionFacilityDefault, lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
-                               lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualTE, btnCalcInventionFacilitySave, lblCalcInventionFacilityTaxRate, _
+                               lblCalcInventionFacilityBonus, lblCalcInventionFacilityDefault, _
+                               lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
+                               lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualTE, _
+                               lblCalcInventionFacilityManualTax, txtCalcInventionFacilityManualTax, _
+                               btnCalcInventionFacilitySave, lblCalcInventionFacilityTaxRate, _
                                chkCalcInventionFacilityIncludeUsage, chkCalcInventionFacilityIncludeCost, chkCalcInventionFacilityIncludeTime, _
                                CalcTab, CalcInventionFacilityLoaded, chkCalcInventionFacilityIncludeUsage.Checked)
             End If
 
             ' Anytime this changes, set all the other ME/TE boxes to not viewed
-            Call HideFacilityBonusBoxes(lblCalcInventionFacilityBonus, lblCalcInventionFacilityTaxRate, lblCalcInventionFacilityManualME, lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualME, txtCalcInventionFacilityManualTE)
+            Call HideFacilityBonusBoxes(lblCalcInventionFacilityBonus, lblCalcInventionFacilityTaxRate, _
+                                        lblCalcInventionFacilityManualME, lblCalcInventionFacilityManualTE, _
+                                        txtCalcInventionFacilityManualME, txtCalcInventionFacilityManualTE, _
+                                        lblCalcInventionFacilityManualTax, txtCalcInventionFacilityManualTax)
             CalcInventionFacilityLoaded = False
             PreviousFacilityType = cmbCalcInventionFacilityType.Text
         End If
@@ -11693,8 +11628,11 @@ ExitSub:
             PreviousCalcInventionFacilityRegion = cmbCalcInventionFacilityRegion.Text
             Call LoadFacilityRegions(0, 0, False, _
                                      ActivityInvention, cmbCalcInventionFacilityType, cmbCalcInventionFacilityRegion, cmbCalcInventionFacilitySystem, cmbCalcInventionFacilityorArray, _
-                                     lblCalcInventionFacilityBonus, lblCalcInventionFacilityDefault, lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
-                                     lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualTE, btnCalcInventionFacilitySave, lblCalcInventionFacilityTaxRate, CalcTab, chkCalcInventionFacilityIncludeUsage)
+                                     lblCalcInventionFacilityBonus, lblCalcInventionFacilityDefault, _
+                                     lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
+                                     lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualTE, _
+                                     lblCalcInventionFacilityManualTax, txtCalcInventionFacilityManualTax, _
+                                     btnCalcInventionFacilitySave, lblCalcInventionFacilityTaxRate, CalcTab, chkCalcInventionFacilityIncludeUsage)
         End If
     End Sub
 
@@ -11706,10 +11644,16 @@ ExitSub:
         If Not LoadingFacilityRegions And Not FirstLoad And PreviousCalcInventionFacilityRegion <> cmbCalcInventionFacilityRegion.Text Then
             Call LoadFacilitySystems(0, 0, True, _
                                      ActivityInvention, cmbCalcInventionFacilityType, cmbCalcInventionFacilityRegion, cmbCalcInventionFacilitySystem, cmbCalcInventionFacilityorArray, _
-                                     lblCalcInventionFacilityBonus, lblCalcInventionFacilityTaxRate, lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
-                                     lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualTE, lblCalcInventionFacilityDefault, btnCalcInventionFacilitySave, CalcTab, chkCalcInventionFacilityIncludeUsage)
+                                     lblCalcInventionFacilityBonus, lblCalcInventionFacilityTaxRate, _
+                                     lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
+                                     lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualTE, _
+                                     lblCalcInventionFacilityManualTax, txtCalcInventionFacilityManualTax, _
+                                     lblCalcInventionFacilityDefault, btnCalcInventionFacilitySave, CalcTab, chkCalcInventionFacilityIncludeUsage)
             Call cmbCalcInventionFacilitySystem.Focus()
-            Call HideFacilityBonusBoxes(lblCalcInventionFacilityBonus, lblCalcInventionFacilityTaxRate, lblCalcInventionFacilityManualME, lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualME, txtCalcInventionFacilityManualTE)
+            Call HideFacilityBonusBoxes(lblCalcInventionFacilityBonus, lblCalcInventionFacilityTaxRate, _
+                                        lblCalcInventionFacilityManualME, lblCalcInventionFacilityManualTE, _
+                                        txtCalcInventionFacilityManualME, txtCalcInventionFacilityManualTE, _
+                                        lblCalcInventionFacilityManualTax, txtCalcInventionFacilityManualTax)
             CalcInventionFacilityLoaded = False
         End If
     End Sub
@@ -11719,8 +11663,11 @@ ExitSub:
             PreviousCalcInventionFacilitySystem = cmbCalcInventionFacilitySystem.Text
             Call LoadFacilitySystems(0, 0, False, _
                                      ActivityInvention, cmbCalcInventionFacilityType, cmbCalcInventionFacilityRegion, cmbCalcInventionFacilitySystem, cmbCalcInventionFacilityorArray, _
-                                     lblCalcInventionFacilityBonus, lblCalcInventionFacilityTaxRate, lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
-                                     lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualTE, lblCalcInventionFacilityDefault, btnCalcInventionFacilitySave, CalcTab, chkCalcInventionFacilityIncludeUsage)
+                                     lblCalcInventionFacilityBonus, lblCalcInventionFacilityTaxRate, _
+                                     lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
+                                     lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualTE, _
+                                     lblCalcInventionFacilityManualTax, txtCalcInventionFacilityManualTax, _
+                                     lblCalcInventionFacilityDefault, btnCalcInventionFacilitySave, CalcTab, chkCalcInventionFacilityIncludeUsage)
         End If
     End Sub
 
@@ -11736,8 +11683,11 @@ ExitSub:
             ' Load the facility
             Call LoadFacilities(-1, -1, False, _
                                 ActivityInvention, cmbCalcInventionFacilityType, cmbCalcInventionFacilityRegion, cmbCalcInventionFacilitySystem, cmbCalcInventionFacilityorArray, _
-                                lblCalcInventionFacilityBonus, lblCalcInventionFacilityDefault, lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
-                                lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualTE, btnCalcInventionFacilitySave, lblCalcInventionFacilityTaxRate, CalcTab, _
+                                lblCalcInventionFacilityBonus, lblCalcInventionFacilityDefault, _
+                                lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
+                                lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualTE, _
+                                lblCalcInventionFacilityManualTax, txtCalcInventionFacilityManualTax, _
+                                btnCalcInventionFacilitySave, lblCalcInventionFacilityTaxRate, CalcTab, _
                                 chkCalcInventionFacilityIncludeUsage, chkCalcInventionFacilityIncludeCost, chkCalcInventionFacilityIncludeTime, Autoload, chkCalcInventionFacilityIncludeUsage.Checked)
 
             Call cmbCalcInventionFacilityorArray.Focus()
@@ -11755,8 +11705,11 @@ ExitSub:
         If Not CalcInventionFacilitiesLoaded And Not FirstLoad Then
             Call LoadFacilities(-1, -1, False, _
                                 ActivityInvention, cmbCalcInventionFacilityType, cmbCalcInventionFacilityRegion, cmbCalcInventionFacilitySystem, cmbCalcInventionFacilityorArray, _
-                                lblCalcInventionFacilityBonus, lblCalcInventionFacilityDefault, lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
-                                lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualTE, btnCalcInventionFacilitySave, lblCalcInventionFacilityTaxRate, CalcTab, _
+                                lblCalcInventionFacilityBonus, lblCalcInventionFacilityDefault, _
+                                lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
+                                lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualTE, _
+                                lblCalcInventionFacilityManualTax, txtCalcInventionFacilityManualTax, _
+                                btnCalcInventionFacilitySave, lblCalcInventionFacilityTaxRate, CalcTab, _
                                 chkCalcInventionFacilityIncludeUsage, chkCalcInventionFacilityIncludeCost, chkCalcInventionFacilityIncludeTime, Nothing, chkCalcInventionFacilityIncludeUsage.Checked)
         End If
     End Sub
@@ -11775,8 +11728,11 @@ ExitSub:
                                       Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, 0, 0, _
                                       ActivityInvention, cmbCalcInventionFacilityType.Text, cmbCalcInventionFacilityorArray.Text, _
                                       cmbCalcInventionFacilityRegion, cmbCalcInventionFacilitySystem, cmbCalcInventionFacilityorArray, _
-                                      lblCalcInventionFacilityBonus, lblCalcInventionFacilityDefault, lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
-                                      lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualTE, btnCalcInventionFacilitySave, lblCalcInventionFacilityTaxRate, _
+                                      lblCalcInventionFacilityBonus, lblCalcInventionFacilityDefault, _
+                                      lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
+                                      lblCalcInventionFacilityManualTE, txtCalcInventionFacilityManualTE, _
+                                      lblCalcInventionFacilityManualTax, txtCalcInventionFacilityManualTax, _
+                                      btnCalcInventionFacilitySave, lblCalcInventionFacilityTaxRate, _
                                       chkCalcInventionFacilityIncludeUsage, chkCalcInventionFacilityIncludeCost, chkCalcInventionFacilityIncludeTime, _
                                       CalcTab, CalcInventionFacilityLoaded, chkCalcInventionFacilityIncludeUsage.Checked)
 
@@ -11803,88 +11759,42 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcInventionFacilityManualME_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcInventionFacilityManualME.KeyPress
-        ' only let them enter the right things
-        If e.KeyChar <> ControlChars.Back Then
-            If allowedMETEChars.IndexOf(e.KeyChar) = -1 Then
-                ' Invalid Character
-                e.Handled = True
-                Exit Sub
-            End If
-        End If
-
+        Call OutpostMETETaxText_KeyPress(e)
     End Sub
 
     Private Sub txtCalcInventionFacilityManualME_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcInventionFacilityManualME.KeyUp
-        Dim TempMM As String
-        Dim TempMMValue As Double
-
-        ' Get rid of the percent sign if it exists
-        TempMM = Trim(Replace(txtCalcInventionFacilityManualME.Text, "%", ""))
-
-        If Not IsNumeric(TempMM) Then
-            TempMM = "0.0"
-            txtCalcInventionFacilityManualME.Text = "0.0%"
-        End If
-
-        TempMMValue = (100 - CDbl(TempMM)) / 100
-
-        ' If it's an outpost, then save the me/te for this in the current facility
-        If cmbCalcInventionFacilityType.Text = OutpostFacility Then
-            SelectedCalcInventionFacility.MaterialMultiplier = CDbl(TempMMValue)
-        End If
-
-        ' They changed the value, so enable save
-        btnCalcInventionFacilitySave.Enabled = True
-        ' changed so not the default
-        lblCalcInventionFacilityDefault.Visible = False
-
+        Call OutpostMETETaxText_KeyUp(txtCalcInventionFacilityManualME, SelectedCalcInventionFacility, _
+                                      cmbCalcInventionFacilityType, btnCalcInventionFacilitySave, lblCalcInventionFacilityDefault)
     End Sub
 
     Private Sub txtCalcInventionFacilityManualME_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcInventionFacilityManualME.LostFocus
-
-        If Trim(Replace(txtCalcInventionFacilityManualME.Text, "%", "")) = "" And cmbCalcInventionFacilityType.Text = OutpostFacility Then
-            txtCalcInventionFacilityManualME.Text = FormatPercent(SelectedCalcInventionFacility.MaterialMultiplier, 1)
-        End If
-
-        If Not txtCalcInventionFacilityManualME.Text.Contains("%") Then
-            ' Format with percent sign
-            txtCalcInventionFacilityManualME.Text = FormatPercent(CDbl(txtCalcInventionFacilityManualME.Text) / 100, 1)
-        End If
-
+        Call OutpostMETETaxText_LostFocus(txtCalcInventionFacilityManualME, cmbCalcInventionFacilityType, SelectedCalcInventionFacility.MaterialMultiplier)
     End Sub
 
     Private Sub txtCalcInventionFacilityManualTE_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcInventionFacilityManualTE.KeyPress
-        Dim TempTM As String
-        Dim TempTMValue As Double
-
-        ' Get rid of the percent sign if it exists
-        TempTM = Replace(txtCalcInventionFacilityManualTE.Text, "%", "")
-
-        TempTMValue = (100 - CDbl(TempTM)) / 100
-
-        ' If it's an outpost, then save the me/te for this in the current facility
-        If cmbCalcInventionFacilityType.Text = OutpostFacility Then
-            SelectedCalcInventionFacility.MaterialMultiplier = CDbl(TempTMValue)
-        End If
-
-        ' They changed the value, so enable save
-        btnCalcInventionFacilitySave.Enabled = True
-        ' changed so not the default
-        lblCalcInventionFacilityDefault.Visible = False
-
+        Call OutpostMETETaxText_KeyPress(e)
     End Sub
 
-    Private Sub txtCalcInventionFacilityManualTM_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcInventionFacilityManualTE.LostFocus
+    Private Sub txtCalcInventionFacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcInventionFacilityManualTE.KeyUp
+        Call OutpostMETETaxText_KeyUp(txtCalcInventionFacilityManualTE, SelectedCalcInventionFacility, _
+                                      cmbCalcInventionFacilityType, btnCalcInventionFacilitySave, lblCalcInventionFacilityDefault)
+    End Sub
 
-        If Trim(Replace(txtCalcInventionFacilityManualTE.Text, "%", "")) = "" And cmbCalcInventionFacilityType.Text = OutpostFacility Then
-            txtCalcInventionFacilityManualTE.Text = FormatPercent(SelectedCalcInventionFacility.MaterialMultiplier, 1)
-        End If
+    Private Sub txtCalcInventionFacilityManualTE_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcInventionFacilityManualTE.LostFocus
+        Call OutpostMETETaxText_LostFocus(txtCalcInventionFacilityManualTE, cmbCalcInventionFacilityType, SelectedCalcInventionFacility.MaterialMultiplier)
+    End Sub
 
-        If Not txtCalcInventionFacilityManualTE.Text.Contains("%") Then
-            ' Format with percent sign
-            txtCalcInventionFacilityManualTE.Text = FormatPercent(CDbl(txtCalcInventionFacilityManualTE.Text) / 100, 1)
-        End If
+    Private Sub txtCalcInventionFacilityManualTax_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcInventionFacilityManualTax.KeyPress
+        Call OutpostMETETaxText_KeyPress(e)
+    End Sub
 
+    Private Sub txtCalcInventionFacilityManualTax_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcInventionFacilityManualTax.KeyUp
+        Call OutpostMETETaxText_KeyUp(txtCalcInventionFacilityManualTax, SelectedCalcInventionFacility, _
+                                      cmbCalcInventionFacilityType, btnCalcInventionFacilitySave, lblCalcInventionFacilityDefault)
+    End Sub
+
+    Private Sub txtCalcInventionFacilityManualTax_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcInventionFacilityManualTax.LostFocus
+        Call OutpostMETETaxText_LostFocus(txtCalcInventionFacilityManualTax, cmbCalcInventionFacilityType, SelectedCalcInventionFacility.MaterialMultiplier)
     End Sub
 
     Private Sub chkCalcInventionFacilityIncludeCost_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcInventionFacilityIncludeCost.CheckedChanged
@@ -11937,8 +11847,11 @@ ExitSub:
             If Not LoadingFacilityTypes And Not FirstLoad And cmbCalcT3InventionFacilityType.Text <> None Then
                 Call LoadFacilityRegions(StrategicCruiserGroupID, SubsystemCategoryID, True, _
                                          ActivityInvention, cmbCalcT3InventionFacilityType, cmbCalcT3InventionFacilityRegion, cmbCalcT3InventionFacilitySystem, cmbCalcT3InventionFacilityorArray, _
-                                         lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityDefault, lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
-                                         lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualTE, btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityTaxRate, CalcTab, chkCalcT3InventionFacilityIncludeUsage)
+                                         lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityDefault, _
+                                         lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
+                                         lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualTE, _
+                                         lblCalcT3InventionFacilityManualTax, txtCalcT3InventionFacilityManualTax, _
+                                         btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityTaxRate, CalcTab, chkCalcT3InventionFacilityIncludeUsage)
                 ' Make sure these are enabled when changed
                 chkCalcT3InventionFacilityIncludeUsage.Enabled = True
                 chkCalcT3InventionFacilityIncludeCost.Enabled = True
@@ -11960,14 +11873,20 @@ ExitSub:
                                Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, StrategicCruiserGroupID, SubsystemCategoryID, _
                                ActivityInvention, cmbCalcT3InventionFacilityType.Text, cmbCalcT3InventionFacilityorArray.Text, _
                                cmbCalcT3InventionFacilityRegion, cmbCalcT3InventionFacilitySystem, cmbCalcT3InventionFacilityorArray, _
-                               lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityDefault, lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
-                               lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualTE, btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityTaxRate, _
+                               lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityDefault, _
+                               lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
+                               lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualTE, _
+                               lblCalcT3InventionFacilityManualTax, txtCalcT3InventionFacilityManualTax, _
+                               btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityTaxRate, _
                                chkCalcT3InventionFacilityIncludeUsage, chkCalcT3InventionFacilityIncludeCost, chkCalcT3InventionFacilityIncludeTime, _
                                CalcTab, CalcT3InventionFacilityLoaded, chkCalcT3InventionFacilityIncludeUsage.Checked)
             End If
 
             ' Anytime this changes, set all the other ME/TE boxes to not viewed
-            Call HideFacilityBonusBoxes(lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityTaxRate, lblCalcT3InventionFacilityManualME, lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualTE)
+            Call HideFacilityBonusBoxes(lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityTaxRate, _
+                                        lblCalcT3InventionFacilityManualME, lblCalcT3InventionFacilityManualTE, _
+                                        txtCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualTE, _
+                                        lblCalcT3InventionFacilityManualTax, txtCalcT3InventionFacilityManualTax)
             CalcT3InventionFacilityLoaded = False
             PreviousFacilityType = cmbCalcT3InventionFacilityType.Text
         End If
@@ -11979,8 +11898,11 @@ ExitSub:
             PreviousCalcT3InventionFacilityRegion = cmbCalcT3InventionFacilityRegion.Text
             Call LoadFacilityRegions(StrategicCruiserGroupID, SubsystemCategoryID, False, _
                                      ActivityInvention, cmbCalcT3InventionFacilityType, cmbCalcT3InventionFacilityRegion, cmbCalcT3InventionFacilitySystem, cmbCalcT3InventionFacilityorArray, _
-                                     lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityDefault, lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
-                                     lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualTE, btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityTaxRate, CalcTab, chkCalcT3InventionFacilityIncludeUsage)
+                                     lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityDefault, _
+                                     lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
+                                     lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualTE, _
+                                     lblCalcT3InventionFacilityManualTax, txtCalcT3InventionFacilityManualTax, _
+                                     btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityTaxRate, CalcTab, chkCalcT3InventionFacilityIncludeUsage)
         End If
     End Sub
 
@@ -11992,10 +11914,16 @@ ExitSub:
         If Not LoadingFacilityRegions And Not FirstLoad And PreviousCalcT3InventionFacilityRegion <> cmbCalcT3InventionFacilityRegion.Text Then
             Call LoadFacilitySystems(StrategicCruiserGroupID, SubsystemCategoryID, True, _
                                      ActivityInvention, cmbCalcT3InventionFacilityType, cmbCalcT3InventionFacilityRegion, cmbCalcT3InventionFacilitySystem, cmbCalcT3InventionFacilityorArray, _
-                                     lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityTaxRate, lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
-                                     lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualTE, lblCalcT3InventionFacilityDefault, btnCalcT3InventionFacilitySave, CalcTab, chkCalcT3FacilityIncludeUsage)
+                                     lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityTaxRate, _
+                                     lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
+                                     lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualTE, _
+                                     lblCalcT3InventionFacilityManualTax, txtCalcT3InventionFacilityManualTax, _
+                                     lblCalcT3InventionFacilityDefault, btnCalcT3InventionFacilitySave, CalcTab, chkCalcT3FacilityIncludeUsage)
             Call cmbCalcT3InventionFacilitySystem.Focus()
-            Call HideFacilityBonusBoxes(lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityTaxRate, lblCalcT3InventionFacilityManualME, lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualTE)
+            Call HideFacilityBonusBoxes(lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityTaxRate, _
+                                        lblCalcT3InventionFacilityManualME, lblCalcT3InventionFacilityManualTE, _
+                                        txtCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualTE, _
+                                        lblCalcT3InventionFacilityManualTax, txtCalcT3InventionFacilityManualTax)
             CalcT3InventionFacilityLoaded = False
         End If
     End Sub
@@ -12005,8 +11933,11 @@ ExitSub:
             PreviousCalcT3InventionFacilitySystem = cmbCalcT3InventionFacilitySystem.Text
             Call LoadFacilitySystems(StrategicCruiserGroupID, SubsystemCategoryID, False, _
                                      ActivityInvention, cmbCalcT3InventionFacilityType, cmbCalcT3InventionFacilityRegion, cmbCalcT3InventionFacilitySystem, cmbCalcT3InventionFacilityorArray, _
-                                     lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityTaxRate, lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
-                                     lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualTE, lblCalcT3InventionFacilityDefault, btnCalcT3InventionFacilitySave, CalcTab, chkCalcT3FacilityIncludeUsage)
+                                     lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityTaxRate, _
+                                     lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
+                                     lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualTE, _
+                                     lblCalcT3InventionFacilityManualTax, txtCalcT3InventionFacilityManualTax, _
+                                     lblCalcT3InventionFacilityDefault, btnCalcT3InventionFacilitySave, CalcTab, chkCalcT3FacilityIncludeUsage)
         End If
     End Sub
 
@@ -12022,8 +11953,11 @@ ExitSub:
             ' Load the facility
             Call LoadFacilities(StrategicCrusierBlueprintID, SubsystemBlueprintID, False, _
                                 ActivityInvention, cmbCalcT3InventionFacilityType, cmbCalcT3InventionFacilityRegion, cmbCalcT3InventionFacilitySystem, cmbCalcT3InventionFacilityorArray, _
-                                lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityDefault, lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
-                                lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualTE, btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityTaxRate, CalcTab, _
+                                lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityDefault, _
+                                lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
+                                lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualTE, _
+                                lblCalcT3InventionFacilityManualTax, txtCalcT3InventionFacilityManualTax, _
+                                btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityTaxRate, CalcTab, _
                                 chkCalcT3InventionFacilityIncludeUsage, chkCalcT3InventionFacilityIncludeCost, chkCalcT3InventionFacilityIncludeTime, Autoload, chkCalcT3InventionFacilityIncludeUsage.Checked)
 
             Call cmbCalcT3InventionFacilityorArray.Focus()
@@ -12041,8 +11975,11 @@ ExitSub:
         If Not CalcT3InventionFacilitiesLoaded And Not FirstLoad Then
             Call LoadFacilities(StrategicCruiserGroupID, SubsystemCategoryID, False, _
                                 ActivityInvention, cmbCalcT3InventionFacilityType, cmbCalcT3InventionFacilityRegion, cmbCalcT3InventionFacilitySystem, cmbCalcT3InventionFacilityorArray, _
-                                lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityDefault, lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
-                                lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualTE, btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityTaxRate, CalcTab, _
+                                lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityDefault, _
+                                lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
+                                lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualTE, _
+                                lblCalcT3InventionFacilityManualTax, txtCalcT3InventionFacilityManualTax, _
+                                btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityTaxRate, CalcTab, _
                                 chkCalcT3InventionFacilityIncludeUsage, chkCalcT3InventionFacilityIncludeCost, chkCalcT3InventionFacilityIncludeTime, Nothing, chkCalcT3InventionFacilityIncludeUsage.Checked)
         End If
     End Sub
@@ -12061,8 +11998,11 @@ ExitSub:
                                       Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, StrategicCruiserGroupID, SubsystemCategoryID, _
                                       ActivityInvention, cmbCalcT3InventionFacilityType.Text, cmbCalcT3InventionFacilityorArray.Text, _
                                       cmbCalcT3InventionFacilityRegion, cmbCalcT3InventionFacilitySystem, cmbCalcT3InventionFacilityorArray, _
-                                      lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityDefault, lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
-                                      lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualTE, btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityTaxRate, _
+                                      lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityDefault, _
+                                      lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
+                                      lblCalcT3InventionFacilityManualTE, txtCalcT3InventionFacilityManualTE, _
+                                      lblCalcT3InventionFacilityManualTax, txtCalcT3InventionFacilityManualTax, _
+                                      btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityTaxRate, _
                                       chkCalcT3InventionFacilityIncludeUsage, chkCalcT3InventionFacilityIncludeCost, chkCalcT3InventionFacilityIncludeTime, _
                                       CalcTab, CalcT3InventionFacilityLoaded, chkCalcT3InventionFacilityIncludeUsage.Checked)
 
@@ -12090,88 +12030,42 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcT3InventionFacilityManualME_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcT3InventionFacilityManualME.KeyPress
-        ' only let them enter the right things
-        If e.KeyChar <> ControlChars.Back Then
-            If allowedMETEChars.IndexOf(e.KeyChar) = -1 Then
-                ' Invalid Character
-                e.Handled = True
-                Exit Sub
-            End If
-        End If
-
+        Call OutpostMETETaxText_KeyPress(e)
     End Sub
 
     Private Sub txtCalcT3InventionFacilityManualME_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcT3InventionFacilityManualME.KeyUp
-        Dim TempMM As String
-        Dim TempMMValue As Double
-
-        ' Get rid of the percent sign if it exists
-        TempMM = Trim(Replace(txtCalcT3InventionFacilityManualME.Text, "%", ""))
-
-        If Not IsNumeric(TempMM) Then
-            TempMM = "0.0"
-            txtCalcT3InventionFacilityManualME.Text = "0.0%"
-        End If
-
-        TempMMValue = (100 - CDbl(TempMM)) / 100
-
-        ' If it's an outpost, then save the me/te for this in the current facility
-        If cmbCalcT3InventionFacilityType.Text = OutpostFacility Then
-            SelectedCalcT3InventionFacility.MaterialMultiplier = CDbl(TempMMValue)
-        End If
-
-        ' They changed the value, so enable save
-        btnCalcT3InventionFacilitySave.Enabled = True
-        ' changed so not the default
-        lblCalcT3InventionFacilityDefault.Visible = False
-
+        Call OutpostMETETaxText_KeyUp(txtCalcT3InventionFacilityManualME, SelectedCalcT3InventionFacility, _
+                                      cmbCalcT3InventionFacilityType, btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityDefault)
     End Sub
 
     Private Sub txtCalcT3InventionFacilityManualME_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcT3InventionFacilityManualME.LostFocus
-
-        If Trim(Replace(txtCalcT3InventionFacilityManualME.Text, "%", "")) = "" And cmbCalcT3InventionFacilityType.Text = OutpostFacility Then
-            txtCalcT3InventionFacilityManualME.Text = FormatPercent(SelectedCalcT3InventionFacility.MaterialMultiplier, 1)
-        End If
-
-        If Not txtCalcT3InventionFacilityManualME.Text.Contains("%") Then
-            ' Format with percent sign
-            txtCalcT3InventionFacilityManualME.Text = FormatPercent(CDbl(txtCalcT3InventionFacilityManualME.Text) / 100, 1)
-        End If
-
+        Call OutpostMETETaxText_LostFocus(txtCalcT3InventionFacilityManualME, cmbCalcT3InventionFacilityType, SelectedCalcT3InventionFacility.MaterialMultiplier)
     End Sub
 
     Private Sub txtCalcT3InventionFacilityManualTE_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcT3InventionFacilityManualTE.KeyPress
-        Dim TempTM As String
-        Dim TempTMValue As Double
-
-        ' Get rid of the percent sign if it exists
-        TempTM = Replace(txtCalcT3InventionFacilityManualTE.Text, "%", "")
-
-        TempTMValue = (100 - CDbl(TempTM)) / 100
-
-        ' If it's an outpost, then save the me/te for this in the current facility
-        If cmbCalcT3InventionFacilityType.Text = OutpostFacility Then
-            SelectedCalcT3InventionFacility.MaterialMultiplier = CDbl(TempTMValue)
-        End If
-
-        ' They changed the value, so enable save
-        btnCalcT3InventionFacilitySave.Enabled = True
-        ' changed so not the default
-        lblCalcT3InventionFacilityDefault.Visible = False
-
+        Call OutpostMETETaxText_KeyPress(e)
     End Sub
 
-    Private Sub txtCalcT3InventionFacilityManualTM_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcT3InventionFacilityManualTE.LostFocus
+    Private Sub txtCalcT3InventionFacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcT3InventionFacilityManualTE.KeyUp
+        Call OutpostMETETaxText_KeyUp(txtCalcT3InventionFacilityManualTE, SelectedCalcT3InventionFacility, _
+                                      cmbCalcT3InventionFacilityType, btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityDefault)
+    End Sub
 
-        If Trim(Replace(txtCalcT3InventionFacilityManualTE.Text, "%", "")) = "" And cmbCalcT3InventionFacilityType.Text = OutpostFacility Then
-            txtCalcT3InventionFacilityManualTE.Text = FormatPercent(SelectedCalcT3InventionFacility.MaterialMultiplier, 1)
-        End If
+    Private Sub txtCalcT3InventionFacilityManualTE_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcT3InventionFacilityManualTE.LostFocus
+        Call OutpostMETETaxText_LostFocus(txtCalcT3InventionFacilityManualTE, cmbCalcT3InventionFacilityType, SelectedCalcT3InventionFacility.MaterialMultiplier)
+    End Sub
 
-        If Not txtCalcT3InventionFacilityManualTE.Text.Contains("%") Then
-            ' Format with percent sign
-            txtCalcT3InventionFacilityManualTE.Text = FormatPercent(CDbl(txtCalcT3InventionFacilityManualTE.Text) / 100, 1)
-        End If
+    Private Sub txtCalcT3InventionFacilityManualTax_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcT3InventionFacilityManualTax.KeyPress
+        Call OutpostMETETaxText_KeyPress(e)
+    End Sub
 
+    Private Sub txtCalcT3InventionFacilityManualTax_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcT3InventionFacilityManualTax.KeyUp
+        Call OutpostMETETaxText_KeyUp(txtCalcT3InventionFacilityManualTax, SelectedCalcT3InventionFacility, _
+                                      cmbCalcT3InventionFacilityType, btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityDefault)
+    End Sub
+
+    Private Sub txtCalcT3InventionFacilityManualTax_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcT3InventionFacilityManualTax.LostFocus
+        Call OutpostMETETaxText_LostFocus(txtCalcT3InventionFacilityManualTax, cmbCalcT3InventionFacilityType, SelectedCalcT3InventionFacility.MaterialMultiplier)
     End Sub
 
     Private Sub chkCalcT3InventionFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcT3InventionFacilityIncludeCost.CheckedChanged
@@ -12225,8 +12119,11 @@ ExitSub:
             If Not LoadingFacilityTypes And Not FirstLoad And cmbCalcCopyFacilityType.Text <> None Then
                 Call LoadFacilityRegions(0, 0, True, _
                                          ActivityCopying, cmbCalcCopyFacilityType, cmbCalcCopyFacilityRegion, cmbCalcCopyFacilitySystem, cmbCalcCopyFacilityorArray, _
-                                         lblCalcCopyFacilityBonus, lblCalcCopyFacilityDefault, lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
-                                         lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualTE, btnCalcCopyFacilitySave, lblCalcCopyFacilityTaxRate, CalcTab, chkCalcCopyFacilityIncludeUsage)
+                                         lblCalcCopyFacilityBonus, lblCalcCopyFacilityDefault, _
+                                         lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
+                                         lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualTE, _
+                                         lblCalcCopyFacilityManualTax, txtCalcCopyFacilityManualTax, _
+                                         btnCalcCopyFacilitySave, lblCalcCopyFacilityTaxRate, CalcTab, chkCalcCopyFacilityIncludeUsage)
                 ' Make sure these are enabled when changed
                 chkCalcCopyFacilityIncludeUsage.Enabled = True
                 chkCalcCopyFacilityIncludeCost.Enabled = True
@@ -12248,14 +12145,20 @@ ExitSub:
                                Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, 0, 0, _
                                ActivityCopying, cmbCalcCopyFacilityType.Text, cmbCalcCopyFacilityorArray.Text, _
                                cmbCalcCopyFacilityRegion, cmbCalcCopyFacilitySystem, cmbCalcCopyFacilityorArray, _
-                               lblCalcCopyFacilityBonus, lblCalcCopyFacilityDefault, lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
-                               lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualTE, btnCalcCopyFacilitySave, lblCalcCopyFacilityTaxRate, _
+                               lblCalcCopyFacilityBonus, lblCalcCopyFacilityDefault, _
+                               lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
+                               lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualTE, _
+                               lblCalcCopyFacilityManualTax, txtCalcCopyFacilityManualTax, _
+                               btnCalcCopyFacilitySave, lblCalcCopyFacilityTaxRate, _
                                chkCalcCopyFacilityIncludeUsage, chkCalcCopyFacilityIncludeCost, chkCalcCopyFacilityIncludeTime, _
                                CalcTab, CalcCopyFacilityLoaded, chkCalcCopyFacilityIncludeUsage.Checked)
             End If
 
             ' Anytime this changes, set all the other ME/TE boxes to not viewed
-            Call HideFacilityBonusBoxes(lblCalcCopyFacilityBonus, lblCalcCopyFacilityTaxRate, lblCalcCopyFacilityManualME, lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualME, txtCalcCopyFacilityManualTE)
+            Call HideFacilityBonusBoxes(lblCalcCopyFacilityBonus, lblCalcCopyFacilityTaxRate, _
+                                        lblCalcCopyFacilityManualME, lblCalcCopyFacilityManualTE, _
+                                        txtCalcCopyFacilityManualME, txtCalcCopyFacilityManualTE, _
+                                        lblCalcCopyFacilityManualTax, txtCalcCopyFacilityManualTax)
             CalcCopyFacilityLoaded = False
             PreviousCalcCopyFacilityType = cmbCalcCopyFacilityType.Text
         End If
@@ -12267,8 +12170,11 @@ ExitSub:
             PreviousCalcCopyFacilityRegion = cmbCalcCopyFacilityRegion.Text
             Call LoadFacilityRegions(0, 0, False, _
                                      ActivityCopying, cmbCalcCopyFacilityType, cmbCalcCopyFacilityRegion, cmbCalcCopyFacilitySystem, cmbCalcCopyFacilityorArray, _
-                                     lblCalcCopyFacilityBonus, lblCalcCopyFacilityDefault, lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
-                                     lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualTE, btnCalcCopyFacilitySave, lblCalcCopyFacilityTaxRate, CalcTab, chkCalcCopyFacilityIncludeUsage)
+                                     lblCalcCopyFacilityBonus, lblCalcCopyFacilityDefault, _
+                                     lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
+                                     lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualTE, _
+                                     lblCalcCopyFacilityManualTax, txtCalcCopyFacilityManualTax, _
+                                     btnCalcCopyFacilitySave, lblCalcCopyFacilityTaxRate, CalcTab, chkCalcCopyFacilityIncludeUsage)
         End If
     End Sub
 
@@ -12280,10 +12186,16 @@ ExitSub:
         If Not LoadingFacilityRegions And Not FirstLoad And PreviousCalcCopyFacilityRegion <> cmbCalcCopyFacilityRegion.Text Then
             Call LoadFacilitySystems(0, 0, True, _
                                      ActivityCopying, cmbCalcCopyFacilityType, cmbCalcCopyFacilityRegion, cmbCalcCopyFacilitySystem, cmbCalcCopyFacilityorArray, _
-                                     lblCalcCopyFacilityBonus, lblCalcCopyFacilityTaxRate, lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
-                                     lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualTE, lblCalcCopyFacilityDefault, btnCalcCopyFacilitySave, CalcTab, chkCalcCopyFacilityIncludeUsage)
+                                     lblCalcCopyFacilityBonus, lblCalcCopyFacilityTaxRate, _
+                                     lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
+                                     lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualTE, _
+                                     lblCalcCopyFacilityManualTax, txtCalcCopyFacilityManualTax, _
+                                     lblCalcCopyFacilityDefault, btnCalcCopyFacilitySave, CalcTab, chkCalcCopyFacilityIncludeUsage)
             Call cmbCalcCopyFacilitySystem.Focus()
-            Call HideFacilityBonusBoxes(lblCalcCopyFacilityBonus, lblCalcCopyFacilityTaxRate, lblCalcCopyFacilityManualME, lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualME, txtCalcCopyFacilityManualTE)
+            Call HideFacilityBonusBoxes(lblCalcCopyFacilityBonus, lblCalcCopyFacilityTaxRate, _
+                            lblCalcCopyFacilityManualME, lblCalcCopyFacilityManualTE, _
+                            txtCalcCopyFacilityManualME, txtCalcCopyFacilityManualTE, _
+                            lblCalcCopyFacilityManualTax, txtCalcCopyFacilityManualTax)
             CalcCopyFacilityLoaded = False
         End If
     End Sub
@@ -12293,8 +12205,11 @@ ExitSub:
             PreviousCalcCopyFacilitySystem = cmbCalcCopyFacilitySystem.Text
             Call LoadFacilitySystems(0, 0, False, _
                                      ActivityCopying, cmbCalcCopyFacilityType, cmbCalcCopyFacilityRegion, cmbCalcCopyFacilitySystem, cmbCalcCopyFacilityorArray, _
-                                     lblCalcCopyFacilityBonus, lblCalcCopyFacilityTaxRate, lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
-                                     lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualTE, lblCalcCopyFacilityDefault, btnCalcCopyFacilitySave, CalcTab, chkCalcCopyFacilityIncludeUsage)
+                                     lblCalcCopyFacilityBonus, lblCalcCopyFacilityTaxRate, _
+                                     lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
+                                     lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualTE, _
+                                     lblCalcCopyFacilityManualTax, txtCalcCopyFacilityManualTax, _
+                                     lblCalcCopyFacilityDefault, btnCalcCopyFacilitySave, CalcTab, chkCalcCopyFacilityIncludeUsage)
         End If
     End Sub
 
@@ -12310,8 +12225,11 @@ ExitSub:
             ' Load the facility
             Call LoadFacilities(-1, -1, False, _
                                 ActivityCopying, cmbCalcCopyFacilityType, cmbCalcCopyFacilityRegion, cmbCalcCopyFacilitySystem, cmbCalcCopyFacilityorArray, _
-                                lblCalcCopyFacilityBonus, lblCalcCopyFacilityDefault, lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
-                                lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualTE, btnCalcCopyFacilitySave, lblCalcCopyFacilityTaxRate, CalcTab, _
+                                lblCalcCopyFacilityBonus, lblCalcCopyFacilityDefault, _
+                                lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
+                                lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualTE, _
+                                lblCalcCopyFacilityManualTax, txtCalcCopyFacilityManualTax, _
+                                btnCalcCopyFacilitySave, lblCalcCopyFacilityTaxRate, CalcTab, _
                                 chkCalcCopyFacilityIncludeUsage, chkCalcCopyFacilityIncludeCost, chkCalcCopyFacilityIncludeTime, Autoload, chkCalcCopyFacilityIncludeUsage.Checked)
 
             Call cmbCalcCopyFacilityorArray.Focus()
@@ -12329,8 +12247,11 @@ ExitSub:
         If Not CalcCopyFacilitiesLoaded And Not FirstLoad Then
             Call LoadFacilities(-1, -1, False, _
                                 ActivityCopying, cmbCalcCopyFacilityType, cmbCalcCopyFacilityRegion, cmbCalcCopyFacilitySystem, cmbCalcCopyFacilityorArray, _
-                                lblCalcCopyFacilityBonus, lblCalcCopyFacilityDefault, lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
-                                lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualTE, btnCalcCopyFacilitySave, lblCalcCopyFacilityTaxRate, CalcTab, _
+                                lblCalcCopyFacilityBonus, lblCalcCopyFacilityDefault, _
+                                lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
+                                lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualTE, _
+                                lblCalcCopyFacilityManualTax, txtCalcCopyFacilityManualTax, _
+                                btnCalcCopyFacilitySave, lblCalcCopyFacilityTaxRate, CalcTab, _
                                 chkCalcCopyFacilityIncludeUsage, chkCalcCopyFacilityIncludeCost, chkCalcCopyFacilityIncludeTime, Nothing, chkCalcCopyFacilityIncludeUsage.Checked)
         End If
     End Sub
@@ -12349,8 +12270,11 @@ ExitSub:
                                       Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, 0, 0, _
                                       ActivityCopying, cmbCalcCopyFacilityType.Text, cmbCalcCopyFacilityorArray.Text, _
                                       cmbCalcCopyFacilityRegion, cmbCalcCopyFacilitySystem, cmbCalcCopyFacilityorArray, _
-                                      lblCalcCopyFacilityBonus, lblCalcCopyFacilityDefault, lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
-                                      lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualTE, btnCalcCopyFacilitySave, lblCalcCopyFacilityTaxRate, _
+                                      lblCalcCopyFacilityBonus, lblCalcCopyFacilityDefault, _
+                                      lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
+                                      lblCalcCopyFacilityManualTE, txtCalcCopyFacilityManualTE, _
+                                      lblCalcCopyFacilityManualTax, txtCalcCopyFacilityManualTax, _
+                                      btnCalcCopyFacilitySave, lblCalcCopyFacilityTaxRate, _
                                       chkCalcCopyFacilityIncludeUsage, chkCalcCopyFacilityIncludeCost, chkCalcCopyFacilityIncludeCost, _
                                       CalcTab, CalcCopyFacilityLoaded, chkCalcCopyFacilityIncludeUsage.Checked)
 
@@ -12378,88 +12302,42 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcCopyFacilityManualME_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcCopyFacilityManualME.KeyPress
-        ' only let them enter the right things
-        If e.KeyChar <> ControlChars.Back Then
-            If allowedMETEChars.IndexOf(e.KeyChar) = -1 Then
-                ' Invalid Character
-                e.Handled = True
-                Exit Sub
-            End If
-        End If
-
+        Call OutpostMETETaxText_KeyPress(e)
     End Sub
 
     Private Sub txtCalcCopyFacilityManualME_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcCopyFacilityManualME.KeyUp
-        Dim TempMM As String
-        Dim TempMMValue As Double
-
-        ' Get rid of the percent sign if it exists
-        TempMM = Trim(Replace(txtCalcCopyFacilityManualME.Text, "%", ""))
-
-        If Not IsNumeric(TempMM) Then
-            TempMM = "0.0"
-            txtCalcCopyFacilityManualME.Text = "0.0%"
-        End If
-
-        TempMMValue = (100 - CDbl(TempMM)) / 100
-
-        ' If it's an outpost, then save the me/te for this in the current facility
-        If cmbCalcCopyFacilityType.Text = OutpostFacility Then
-            SelectedCalcCopyFacility.MaterialMultiplier = CDbl(TempMMValue)
-        End If
-
-        ' They changed the value, so enable save
-        btnCalcCopyFacilitySave.Enabled = True
-        ' changed so not the default
-        lblCalcCopyFacilityDefault.Visible = False
-
+        Call OutpostMETETaxText_KeyUp(txtCalcCopyFacilityManualME, SelectedCalcCopyFacility, _
+                                      cmbCalcCopyFacilityType, btnCalcCopyFacilitySave, lblCalcCopyFacilityDefault)
     End Sub
 
     Private Sub txtCalcCopyFacilityManualME_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcCopyFacilityManualME.LostFocus
-
-        If Trim(Replace(txtCalcCopyFacilityManualME.Text, "%", "")) = "" And cmbCalcCopyFacilityType.Text = OutpostFacility Then
-            txtCalcCopyFacilityManualME.Text = FormatPercent(SelectedCalcCopyFacility.MaterialMultiplier, 1)
-        End If
-
-        If Not txtCalcCopyFacilityManualME.Text.Contains("%") Then
-            ' Format with percent sign
-            txtCalcCopyFacilityManualME.Text = FormatPercent(CDbl(txtCalcCopyFacilityManualME.Text) / 100, 1)
-        End If
-
+        Call OutpostMETETaxText_LostFocus(txtCalcCopyFacilityManualME, cmbCalcCopyFacilityType, SelectedCalcCopyFacility.MaterialMultiplier)
     End Sub
 
     Private Sub txtCalcCopyFacilityManualTE_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcCopyFacilityManualTE.KeyPress
-        Dim TempTM As String
-        Dim TempTMValue As Double
-
-        ' Get rid of the percent sign if it exists
-        TempTM = Replace(txtCalcCopyFacilityManualTE.Text, "%", "")
-
-        TempTMValue = (100 - CDbl(TempTM)) / 100
-
-        ' If it's an outpost, then save the me/te for this in the current facility
-        If cmbCalcCopyFacilityType.Text = OutpostFacility Then
-            SelectedCalcCopyFacility.MaterialMultiplier = CDbl(TempTMValue)
-        End If
-
-        ' They changed the value, so enable save
-        btnCalcCopyFacilitySave.Enabled = True
-        ' changed so not the default
-        lblCalcCopyFacilityDefault.Visible = False
-
+        Call OutpostMETETaxText_KeyPress(e)
     End Sub
 
-    Private Sub txtCalcCopyFacilityManualTM_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcCopyFacilityManualTE.LostFocus
+    Private Sub txtCalcCopyFacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcCopyFacilityManualTE.KeyUp
+        Call OutpostMETETaxText_KeyUp(txtCalcCopyFacilityManualTE, SelectedCalcCopyFacility, _
+                                      cmbCalcCopyFacilityType, btnCalcCopyFacilitySave, lblCalcCopyFacilityDefault)
+    End Sub
 
-        If Trim(Replace(txtCalcCopyFacilityManualTE.Text, "%", "")) = "" And cmbCalcCopyFacilityType.Text = OutpostFacility Then
-            txtCalcCopyFacilityManualTE.Text = FormatPercent(SelectedCalcCopyFacility.MaterialMultiplier, 1)
-        End If
+    Private Sub txtCalcCopyFacilityManualTE_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcCopyFacilityManualTE.LostFocus
+        Call OutpostMETETaxText_LostFocus(txtCalcCopyFacilityManualTE, cmbCalcCopyFacilityType, SelectedCalcCopyFacility.MaterialMultiplier)
+    End Sub
 
-        If Not txtCalcCopyFacilityManualTE.Text.Contains("%") Then
-            ' Format with percent sign
-            txtCalcCopyFacilityManualTE.Text = FormatPercent(CDbl(txtCalcCopyFacilityManualTE.Text) / 100, 1)
-        End If
+    Private Sub txtCalcCopyFacilityManualTax_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcCopyFacilityManualTax.KeyPress
+        Call OutpostMETETaxText_KeyPress(e)
+    End Sub
 
+    Private Sub txtCalcCopyFacilityManualTax_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcCopyFacilityManualTax.KeyUp
+        Call OutpostMETETaxText_KeyUp(txtCalcCopyFacilityManualTax, SelectedCalcCopyFacility, _
+                                      cmbCalcCopyFacilityType, btnCalcCopyFacilitySave, lblCalcCopyFacilityDefault)
+    End Sub
+
+    Private Sub txtCalcCopyFacilityManualTax_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcCopyFacilityManualTax.LostFocus
+        Call OutpostMETETaxText_LostFocus(txtCalcCopyFacilityManualTax, cmbCalcCopyFacilityType, SelectedCalcCopyFacility.MaterialMultiplier)
     End Sub
 
     Private Sub chkCalcCopyFacilityIncludeCost_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcCopyFacilityIncludeCost.CheckedChanged
@@ -12638,88 +12516,42 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcNoPOSFacilityManualME_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcNoPOSFacilityManualME.KeyPress
-        ' only let them enter the right things
-        If e.KeyChar <> ControlChars.Back Then
-            If allowedMETEChars.IndexOf(e.KeyChar) = -1 Then
-                ' Invalid Character
-                e.Handled = True
-                Exit Sub
-            End If
-        End If
-
+        Call OutpostMETETaxText_KeyPress(e)
     End Sub
 
     Private Sub txtCalcNoPOSFacilityManualME_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcNoPOSFacilityManualME.KeyUp
-        Dim TempMM As String
-        Dim TempMMValue As Double
-
-        ' Get rid of the percent sign if it exists
-        TempMM = Trim(Replace(txtCalcNoPOSFacilityManualME.Text, "%", ""))
-
-        If Not IsNumeric(TempMM) Then
-            TempMM = "0.0"
-            txtCalcNoPOSFacilityManualME.Text = "0.0%"
-        End If
-
-        TempMMValue = (100 - CDbl(TempMM)) / 100
-
-        ' If it's an outpost, then save the me/te for this in the current facility
-        If cmbCalcNoPOSFacilityType.Text = OutpostFacility Then
-            SelectedCalcNoPOSFacility.MaterialMultiplier = CDbl(TempMMValue)
-        End If
-
-        ' They changed the value, so enable save
-        btnCalcNoPOSFacilitySave.Enabled = True
-        ' changed so not the default
-        lblCalcNoPOSFacilityDefault.Visible = False
-
+        Call OutpostMETETaxText_KeyUp(txtCalcNoPOSFacilityManualME, SelectedCalcNoPOSManufacturingFacility, _
+                                      cmbCalcNoPOSFacilityType, btnCalcNoPOSFacilitySave, lblCalcNoPOSFacilityDefault)
     End Sub
 
     Private Sub txtCalcNoPOSFacilityManualME_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcNoPOSFacilityManualME.LostFocus
-
-        If Trim(Replace(txtCalcNoPOSFacilityManualME.Text, "%", "")) = "" And cmbCalcNoPOSFacilityType.Text = OutpostFacility Then
-            txtCalcNoPOSFacilityManualME.Text = FormatPercent(SelectedCalcNoPOSFacility.MaterialMultiplier, 1)
-        End If
-
-        If Not txtCalcNoPOSFacilityManualME.Text.Contains("%") Then
-            ' Format with percent sign
-            txtCalcNoPOSFacilityManualME.Text = FormatPercent(CDbl(txtCalcNoPOSFacilityManualME.Text) / 100, 1)
-        End If
-
+        Call OutpostMETETaxText_LostFocus(txtCalcNoPOSFacilityManualME, cmbCalcNoPOSFacilityType, SelectedCalcNoPOSManufacturingFacility.MaterialMultiplier)
     End Sub
 
     Private Sub txtCalcNoPOSFacilityManualTE_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcNoPOSFacilityManualTE.KeyPress
-        Dim TempTM As String
-        Dim TempTMValue As Double
-
-        ' Get rid of the percent sign if it exists
-        TempTM = Replace(txtCalcNoPOSFacilityManualTE.Text, "%", "")
-
-        TempTMValue = (100 - CDbl(TempTM)) / 100
-
-        ' If it's an outpost, then save the me/te for this in the current facility
-        If cmbCalcNoPOSFacilityType.Text = OutpostFacility Then
-            SelectedCalcNoPOSFacility.MaterialMultiplier = CDbl(TempTMValue)
-        End If
-
-        ' They changed the value, so enable save
-        btnCalcNoPOSFacilitySave.Enabled = True
-        ' changed so not the default
-        lblCalcNoPOSFacilityDefault.Visible = False
-
+        Call OutpostMETETaxText_KeyPress(e)
     End Sub
 
-    Private Sub txtCalcNoPOSFacilityManualTM_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcNoPOSFacilityManualTE.LostFocus
+    Private Sub txtCalcNoPOSFacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcNoPOSFacilityManualTE.KeyUp
+        Call OutpostMETETaxText_KeyUp(txtCalcNoPOSFacilityManualTE, SelectedCalcNoPOSManufacturingFacility, _
+                                      cmbCalcNoPOSFacilityType, btnCalcNoPOSFacilitySave, lblCalcNoPOSFacilityDefault)
+    End Sub
 
-        If Trim(Replace(txtCalcNoPOSFacilityManualTE.Text, "%", "")) = "" And cmbCalcNoPOSFacilityType.Text = OutpostFacility Then
-            txtCalcNoPOSFacilityManualTE.Text = FormatPercent(SelectedCalcNoPOSFacility.MaterialMultiplier, 1)
-        End If
+    Private Sub txtCalcNoPOSFacilityManualTE_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcNoPOSFacilityManualTE.LostFocus
+        Call OutpostMETETaxText_LostFocus(txtCalcNoPOSFacilityManualTE, cmbCalcNoPOSFacilityType, SelectedCalcNoPOSManufacturingFacility.MaterialMultiplier)
+    End Sub
 
-        If Not txtCalcNoPOSFacilityManualTE.Text.Contains("%") Then
-            ' Format with percent sign
-            txtCalcNoPOSFacilityManualTE.Text = FormatPercent(CDbl(txtCalcNoPOSFacilityManualTE.Text) / 100, 1)
-        End If
+    Private Sub txtCalcNoPOSFacilityManualTax_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcNoPOSFacilityManualTax.KeyPress
+        Call OutpostMETETaxText_KeyPress(e)
+    End Sub
 
+    Private Sub txtCalcNoPOSFacilityManualTax_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcNoPOSFacilityManualTax.KeyUp
+        Call OutpostMETETaxText_KeyUp(txtCalcNoPOSFacilityManualTax, SelectedCalcNoPOSManufacturingFacility, _
+                                      cmbCalcNoPOSFacilityType, btnCalcNoPOSFacilitySave, lblCalcNoPOSFacilityDefault)
+    End Sub
+
+    Private Sub txtCalcNoPOSFacilityManualTax_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcNoPOSFacilityManualTax.LostFocus
+        Call OutpostMETETaxText_LostFocus(txtCalcNoPOSFacilityManualTax, cmbCalcNoPOSFacilityType, SelectedCalcNoPOSManufacturingFacility.MaterialMultiplier)
     End Sub
 
     Private Sub chkCalcNoPOSFacilityIncludeCost_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcNoPOSFacilityIncludeUsage.CheckedChanged
@@ -12873,88 +12705,42 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcSuperFacilityManualME_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcSuperFacilityManualME.KeyPress
-        ' only let them enter the right things
-        If e.KeyChar <> ControlChars.Back Then
-            If allowedMETEChars.IndexOf(e.KeyChar) = -1 Then
-                ' Invalid Character
-                e.Handled = True
-                Exit Sub
-            End If
-        End If
-
+        Call OutpostMETETaxText_KeyPress(e)
     End Sub
 
     Private Sub txtCalcSuperFacilityManualME_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcSuperFacilityManualME.KeyUp
-        Dim TempMM As String
-        Dim TempMMValue As Double
-
-        ' Get rid of the percent sign if it exists
-        TempMM = Trim(Replace(txtCalcSuperFacilityManualME.Text, "%", ""))
-
-        If Not IsNumeric(TempMM) Then
-            TempMM = "0.0"
-            txtCalcSuperFacilityManualME.Text = "0.0%"
-        End If
-
-        TempMMValue = (100 - CDbl(TempMM)) / 100
-
-        ' If it's an outpost, then save the me/te for this in the current facility
-        If cmbCalcSuperFacilityType.Text = OutpostFacility Then
-            SelectedCalcSuperManufacturingFacility.MaterialMultiplier = CDbl(TempMMValue)
-        End If
-
-        ' They changed the value, so enable save
-        btnCalcSuperFacilitySave.Enabled = True
-        ' changed so not the default
-        lblCalcSuperFacilityDefault.Visible = False
-
+        Call OutpostMETETaxText_KeyUp(txtCalcSuperFacilityManualME, SelectedCalcSuperManufacturingFacility, _
+                                      cmbCalcSuperFacilityType, btnCalcSuperFacilitySave, lblCalcSuperFacilityDefault)
     End Sub
 
     Private Sub txtCalcSuperFacilityManualME_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcSuperFacilityManualME.LostFocus
-
-        If Trim(Replace(txtCalcSuperFacilityManualME.Text, "%", "")) = "" And cmbCalcSuperFacilityType.Text = OutpostFacility Then
-            txtCalcSuperFacilityManualME.Text = FormatPercent(SelectedCalcSuperManufacturingFacility.MaterialMultiplier, 1)
-        End If
-
-        If Not txtCalcSuperFacilityManualME.Text.Contains("%") Then
-            ' Format with percent sign
-            txtCalcSuperFacilityManualME.Text = FormatPercent(CDbl(txtCalcSuperFacilityManualME.Text) / 100, 1)
-        End If
-
+        Call OutpostMETETaxText_LostFocus(txtCalcSuperFacilityManualME, cmbCalcSuperFacilityType, SelectedCalcSuperManufacturingFacility.MaterialMultiplier)
     End Sub
 
     Private Sub txtCalcSuperFacilityManualTE_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcSuperFacilityManualTE.KeyPress
-        Dim TempTM As String
-        Dim TempTMValue As Double
-
-        ' Get rid of the percent sign if it exists
-        TempTM = Replace(txtCalcSuperFacilityManualTE.Text, "%", "")
-
-        TempTMValue = (100 - CDbl(TempTM)) / 100
-
-        ' If it's an outpost, then save the me/te for this in the current facility
-        If cmbCalcSuperFacilityType.Text = OutpostFacility Then
-            SelectedCalcSuperManufacturingFacility.MaterialMultiplier = CDbl(TempTMValue)
-        End If
-
-        ' They changed the value, so enable save
-        btnCalcSuperFacilitySave.Enabled = True
-        ' changed so not the default
-        lblCalcSuperFacilityDefault.Visible = False
-
+        Call OutpostMETETaxText_KeyPress(e)
     End Sub
 
-    Private Sub txtCalcSuperFacilityManualTM_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcSuperFacilityManualTE.LostFocus
+    Private Sub txtCalcSuperFacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcSuperFacilityManualTE.KeyUp
+        Call OutpostMETETaxText_KeyUp(txtCalcSuperFacilityManualTE, SelectedCalcSuperManufacturingFacility, _
+                                      cmbCalcSuperFacilityType, btnCalcSuperFacilitySave, lblCalcSuperFacilityDefault)
+    End Sub
 
-        If Trim(Replace(txtCalcSuperFacilityManualTE.Text, "%", "")) = "" And cmbCalcSuperFacilityType.Text = OutpostFacility Then
-            txtCalcSuperFacilityManualTE.Text = FormatPercent(SelectedCalcSuperManufacturingFacility.MaterialMultiplier, 1)
-        End If
+    Private Sub txtCalcSuperFacilityManualTE_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcSuperFacilityManualTE.LostFocus
+        Call OutpostMETETaxText_LostFocus(txtCalcSuperFacilityManualTE, cmbCalcSuperFacilityType, SelectedCalcSuperManufacturingFacility.MaterialMultiplier)
+    End Sub
 
-        If Not txtCalcSuperFacilityManualTE.Text.Contains("%") Then
-            ' Format with percent sign
-            txtCalcSuperFacilityManualTE.Text = FormatPercent(CDbl(txtCalcSuperFacilityManualTE.Text) / 100, 1)
-        End If
+    Private Sub txtCalcSuperFacilityManualTax_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcSuperFacilityManualTax.KeyPress
+        Call OutpostMETETaxText_KeyPress(e)
+    End Sub
 
+    Private Sub txtCalcSuperFacilityManualTax_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcSuperFacilityManualTax.KeyUp
+        Call OutpostMETETaxText_KeyUp(txtCalcSuperFacilityManualTax, SelectedCalcSuperManufacturingFacility, _
+                                      cmbCalcSuperFacilityType, btnCalcSuperFacilitySave, lblCalcSuperFacilityDefault)
+    End Sub
+
+    Private Sub txtCalcSuperFacilityManualTax_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcSuperFacilityManualTax.LostFocus
+        Call OutpostMETETaxText_LostFocus(txtCalcSuperFacilityManualTax, cmbCalcSuperFacilityType, SelectedCalcSuperManufacturingFacility.MaterialMultiplier)
     End Sub
 
     Private Sub chkCalcSuperFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcSuperFacilityIncludeUsage.CheckedChanged
@@ -13107,88 +12893,42 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcCapitalFacilityManualME_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcCapitalFacilityManualME.KeyPress
-        ' only let them enter the right things
-        If e.KeyChar <> ControlChars.Back Then
-            If allowedMETEChars.IndexOf(e.KeyChar) = -1 Then
-                ' Invalid Character
-                e.Handled = True
-                Exit Sub
-            End If
-        End If
-
+        Call OutpostMETETaxText_KeyPress(e)
     End Sub
 
     Private Sub txtCalcCapitalFacilityManualME_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcCapitalFacilityManualME.KeyUp
-        Dim TempMM As String
-        Dim TempMMValue As Double
-
-        ' Get rid of the percent sign if it exists
-        TempMM = Trim(Replace(txtCalcCapitalFacilityManualME.Text, "%", ""))
-
-        If Not IsNumeric(TempMM) Then
-            TempMM = "0.0"
-            txtCalcCapitalFacilityManualME.Text = "0.0%"
-        End If
-
-        TempMMValue = (100 - CDbl(TempMM)) / 100
-
-        ' If it's an outpost, then save the me/te for this in the current facility
-        If cmbCalcCapitalFacilityType.Text = OutpostFacility Then
-            SelectedCalcCapitalManufacturingFacility.MaterialMultiplier = CDbl(TempMMValue)
-        End If
-
-        ' They changed the value, so enable save
-        btnCalcCapitalFacilitySave.Enabled = True
-        ' changed so not the default
-        lblCalcCapitalFacilityDefault.Visible = False
-
+        Call OutpostMETETaxText_KeyUp(txtCalcCapitalFacilityManualME, SelectedCalcCapitalManufacturingFacility, _
+                                      cmbCalcCapitalFacilityType, btnCalcCapitalFacilitySave, lblCalcCapitalFacilityDefault)
     End Sub
 
     Private Sub txtCalcCapitalFacilityManualME_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcCapitalFacilityManualME.LostFocus
-
-        If Trim(Replace(txtCalcCapitalFacilityManualME.Text, "%", "")) = "" And cmbCalcCapitalFacilityType.Text = OutpostFacility Then
-            txtCalcCapitalFacilityManualME.Text = FormatPercent(SelectedCalcCapitalManufacturingFacility.MaterialMultiplier, 1)
-        End If
-
-        If Not txtCalcCapitalFacilityManualME.Text.Contains("%") Then
-            ' Format with percent sign
-            txtCalcCapitalFacilityManualME.Text = FormatPercent(CDbl(txtCalcCapitalFacilityManualME.Text) / 100, 1)
-        End If
-
+        Call OutpostMETETaxText_LostFocus(txtCalcCapitalFacilityManualME, cmbCalcCapitalFacilityType, SelectedCalcCapitalManufacturingFacility.MaterialMultiplier)
     End Sub
 
     Private Sub txtCalcCapitalFacilityManualTE_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcCapitalFacilityManualTE.KeyPress
-        Dim TempTM As String
-        Dim TempTMValue As Double
-
-        ' Get rid of the percent sign if it exists
-        TempTM = Replace(txtCalcCapitalFacilityManualTE.Text, "%", "")
-
-        TempTMValue = (100 - CDbl(TempTM)) / 100
-
-        ' If it's an outpost, then save the me/te for this in the current facility
-        If cmbCalcCapitalFacilityType.Text = OutpostFacility Then
-            SelectedCalcCapitalManufacturingFacility.MaterialMultiplier = CDbl(TempTMValue)
-        End If
-
-        ' They changed the value, so enable save
-        btnCalcCapitalFacilitySave.Enabled = True
-        ' changed so not the default
-        lblCalcCapitalFacilityDefault.Visible = False
-
+        Call OutpostMETETaxText_KeyPress(e)
     End Sub
 
-    Private Sub txtCalcCapitalFacilityManualTM_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcCapitalFacilityManualTE.LostFocus
+    Private Sub txtCalcCapitalFacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcCapitalFacilityManualTE.KeyUp
+        Call OutpostMETETaxText_KeyUp(txtCalcCapitalFacilityManualTE, SelectedCalcCapitalManufacturingFacility, _
+                                      cmbCalcCapitalFacilityType, btnCalcCapitalFacilitySave, lblCalcCapitalFacilityDefault)
+    End Sub
 
-        If Trim(Replace(txtCalcCapitalFacilityManualTE.Text, "%", "")) = "" And cmbCalcCapitalFacilityType.Text = OutpostFacility Then
-            txtCalcCapitalFacilityManualTE.Text = FormatPercent(SelectedCalcCapitalManufacturingFacility.MaterialMultiplier, 1)
-        End If
+    Private Sub txtCalcCapitalFacilityManualTE_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcCapitalFacilityManualTE.LostFocus
+        Call OutpostMETETaxText_LostFocus(txtCalcCapitalFacilityManualTE, cmbCalcCapitalFacilityType, SelectedCalcCapitalManufacturingFacility.MaterialMultiplier)
+    End Sub
 
-        If Not txtCalcCapitalFacilityManualTE.Text.Contains("%") Then
-            ' Format with percent sign
-            txtCalcCapitalFacilityManualTE.Text = FormatPercent(CDbl(txtCalcCapitalFacilityManualTE.Text) / 100, 1)
-        End If
+    Private Sub txtCalcCapitalFacilityManualTax_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcCapitalFacilityManualTax.KeyPress
+        Call OutpostMETETaxText_KeyPress(e)
+    End Sub
 
+    Private Sub txtCalcCapitalFacilityManualTax_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcCapitalFacilityManualTax.KeyUp
+        Call OutpostMETETaxText_KeyUp(txtCalcCapitalFacilityManualTax, SelectedCalcCapitalManufacturingFacility, _
+                                      cmbCalcCapitalFacilityType, btnCalcCapitalFacilitySave, lblCalcCapitalFacilityDefault)
+    End Sub
+
+    Private Sub txtCalcCapitalFacilityManualTax_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcCapitalFacilityManualTax.LostFocus
+        Call OutpostMETETaxText_LostFocus(txtCalcCapitalFacilityManualTax, cmbCalcCapitalFacilityType, SelectedCalcCapitalManufacturingFacility.MaterialMultiplier)
     End Sub
 
     Private Sub chkCalcCapitalFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcCapitalFacilityIncludeUsage.CheckedChanged
@@ -13366,88 +13106,42 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcT3FacilityManualME_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcT3FacilityManualME.KeyPress
-        ' only let them enter the right things
-        If e.KeyChar <> ControlChars.Back Then
-            If allowedMETEChars.IndexOf(e.KeyChar) = -1 Then
-                ' Invalid Character
-                e.Handled = True
-                Exit Sub
-            End If
-        End If
-
+        Call OutpostMETETaxText_KeyPress(e)
     End Sub
 
     Private Sub txtCalcT3FacilityManualME_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcT3FacilityManualME.KeyUp
-        Dim TempMM As String
-        Dim TempMMValue As Double
-
-        ' Get rid of the percent sign if it exists
-        TempMM = Trim(Replace(txtCalcT3FacilityManualME.Text, "%", ""))
-
-        If Not IsNumeric(TempMM) Then
-            TempMM = "0.0"
-            txtCalcT3FacilityManualME.Text = "0.0%"
-        End If
-
-        TempMMValue = (100 - CDbl(TempMM)) / 100
-
-        ' If it's an outpost, then save the me/te for this in the current facility
-        If cmbCalcT3FacilityType.Text = OutpostFacility Then
-            SelectedCalcT3CruiserManufacturingFacility.MaterialMultiplier = CDbl(TempMMValue)
-        End If
-
-        ' They changed the value, so enable save
-        btnCalcT3FacilitySave.Enabled = True
-        ' changed so not the default
-        lblCalcT3FacilityDefault.Visible = False
-
+        Call OutpostMETETaxText_KeyUp(txtCalcT3FacilityManualME, SelectedCalcT3ManufacturingFacility, _
+                                      cmbCalcT3FacilityType, btnCalcT3FacilitySave, lblCalcT3FacilityDefault)
     End Sub
 
     Private Sub txtCalcT3FacilityManualME_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcT3FacilityManualME.LostFocus
-
-        If Trim(Replace(txtCalcT3FacilityManualME.Text, "%", "")) = "" And cmbCalcT3FacilityType.Text = OutpostFacility Then
-            txtCalcT3FacilityManualME.Text = FormatPercent(SelectedCalcT3CruiserManufacturingFacility.MaterialMultiplier, 1)
-        End If
-
-        If Not txtCalcT3FacilityManualME.Text.Contains("%") Then
-            ' Format with percent sign
-            txtCalcT3FacilityManualME.Text = FormatPercent(CDbl(txtCalcT3FacilityManualME.Text) / 100, 1)
-        End If
-
+        Call OutpostMETETaxText_LostFocus(txtCalcT3FacilityManualME, cmbCalcT3FacilityType, SelectedCalcT3ManufacturingFacility.MaterialMultiplier)
     End Sub
 
     Private Sub txtCalcT3FacilityManualTE_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcT3FacilityManualTE.KeyPress
-        Dim TempTM As String
-        Dim TempTMValue As Double
-
-        ' Get rid of the percent sign if it exists
-        TempTM = Replace(txtCalcT3FacilityManualTE.Text, "%", "")
-
-        TempTMValue = (100 - CDbl(TempTM)) / 100
-
-        ' If it's an outpost, then save the me/te for this in the current facility
-        If cmbCalcT3FacilityType.Text = OutpostFacility Then
-            SelectedCalcT3CruiserManufacturingFacility.MaterialMultiplier = CDbl(TempTMValue)
-        End If
-
-        ' They changed the value, so enable save
-        btnCalcT3FacilitySave.Enabled = True
-        ' changed so not the default
-        lblCalcT3FacilityDefault.Visible = False
-
+        Call OutpostMETETaxText_KeyPress(e)
     End Sub
 
-    Private Sub txtCalcT3FacilityManualTM_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcT3FacilityManualTE.LostFocus
+    Private Sub txtCalcT3FacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcT3FacilityManualTE.KeyUp
+        Call OutpostMETETaxText_KeyUp(txtCalcT3FacilityManualTE, SelectedCalcT3ManufacturingFacility, _
+                                      cmbCalcT3FacilityType, btnCalcT3FacilitySave, lblCalcT3FacilityDefault)
+    End Sub
 
-        If Trim(Replace(txtCalcT3FacilityManualTE.Text, "%", "")) = "" And cmbCalcT3FacilityType.Text = OutpostFacility Then
-            txtCalcT3FacilityManualTE.Text = FormatPercent(SelectedCalcT3CruiserManufacturingFacility.MaterialMultiplier, 1)
-        End If
+    Private Sub txtCalcT3FacilityManualTE_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcT3FacilityManualTE.LostFocus
+        Call OutpostMETETaxText_LostFocus(txtCalcT3FacilityManualTE, cmbCalcT3FacilityType, SelectedCalcT3ManufacturingFacility.MaterialMultiplier)
+    End Sub
 
-        If Not txtCalcT3FacilityManualTE.Text.Contains("%") Then
-            ' Format with percent sign
-            txtCalcT3FacilityManualTE.Text = FormatPercent(CDbl(txtCalcT3FacilityManualTE.Text) / 100, 1)
-        End If
+    Private Sub txtCalcT3FacilityManualTax_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcT3FacilityManualTax.KeyPress
+        Call OutpostMETETaxText_KeyPress(e)
+    End Sub
 
+    Private Sub txtCalcT3FacilityManualTax_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcT3FacilityManualTax.KeyUp
+        Call OutpostMETETaxText_KeyUp(txtCalcT3FacilityManualTax, SelectedCalcT3ManufacturingFacility, _
+                                      cmbCalcT3FacilityType, btnCalcT3FacilitySave, lblCalcT3FacilityDefault)
+    End Sub
+
+    Private Sub txtCalcT3FacilityManualTax_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcT3FacilityManualTax.LostFocus
+        Call OutpostMETETaxText_LostFocus(txtCalcT3FacilityManualTax, cmbCalcT3FacilityType, SelectedCalcT3ManufacturingFacility.MaterialMultiplier)
     End Sub
 
     Private Sub chkCalcT3FacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcT3FacilityIncludeUsage.CheckedChanged
@@ -13601,88 +13295,42 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcSubsystemFacilityManualME_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcSubsystemFacilityManualME.KeyPress
-        ' only let them enter the right things
-        If e.KeyChar <> ControlChars.Back Then
-            If allowedMETEChars.IndexOf(e.KeyChar) = -1 Then
-                ' Invalid Character
-                e.Handled = True
-                Exit Sub
-            End If
-        End If
-
+        Call OutpostMETETaxText_KeyPress(e)
     End Sub
 
     Private Sub txtCalcSubsystemFacilityManualME_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcSubsystemFacilityManualME.KeyUp
-        Dim TempMM As String
-        Dim TempMMValue As Double
-
-        ' Get rid of the percent sign if it exists
-        TempMM = Trim(Replace(txtCalcSubsystemFacilityManualME.Text, "%", ""))
-
-        If Not IsNumeric(TempMM) Then
-            TempMM = "0.0"
-            txtCalcSubsystemFacilityManualME.Text = "0.0%"
-        End If
-
-        TempMMValue = (100 - CDbl(TempMM)) / 100
-
-        ' If it's an outpost, then save the me/te for this in the current facility
-        If cmbCalcSubsystemFacilityType.Text = OutpostFacility Then
-            SelectedCalcSubsystemManufacturingFacility.MaterialMultiplier = CDbl(TempMMValue)
-        End If
-
-        ' They changed the value, so enable save
-        btnCalcSubsystemFacilitySave.Enabled = True
-        ' changed so not the default
-        lblCalcSubsystemFacilityDefault.Visible = False
-
+        Call OutpostMETETaxText_KeyUp(txtCalcSubsystemFacilityManualME, SelectedCalcSubsystemManufacturingFacility, _
+                                      cmbCalcSubsystemFacilityType, btnCalcSubsystemFacilitySave, lblCalcSubsystemFacilityDefault)
     End Sub
 
     Private Sub txtCalcSubsystemFacilityManualME_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcSubsystemFacilityManualME.LostFocus
-
-        If Trim(Replace(txtCalcSubsystemFacilityManualME.Text, "%", "")) = "" And cmbCalcSubsystemFacilityType.Text = OutpostFacility Then
-            txtCalcSubsystemFacilityManualME.Text = FormatPercent(SelectedCalcSubsystemManufacturingFacility.MaterialMultiplier, 1)
-        End If
-
-        If Not txtCalcSubsystemFacilityManualME.Text.Contains("%") Then
-            ' Format with percent sign
-            txtCalcSubsystemFacilityManualME.Text = FormatPercent(CDbl(txtCalcSubsystemFacilityManualME.Text) / 100, 1)
-        End If
-
+        Call OutpostMETETaxText_LostFocus(txtCalcSubsystemFacilityManualME, cmbCalcSubsystemFacilityType, SelectedCalcSubsystemManufacturingFacility.MaterialMultiplier)
     End Sub
 
     Private Sub txtCalcSubsystemFacilityManualTE_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcSubsystemFacilityManualTE.KeyPress
-        Dim TempTM As String
-        Dim TempTMValue As Double
-
-        ' Get rid of the percent sign if it exists
-        TempTM = Replace(txtCalcSubsystemFacilityManualTE.Text, "%", "")
-
-        TempTMValue = (100 - CDbl(TempTM)) / 100
-
-        ' If it's an outpost, then save the me/te for this in the current facility
-        If cmbCalcSubsystemFacilityType.Text = OutpostFacility Then
-            SelectedCalcSubsystemManufacturingFacility.MaterialMultiplier = CDbl(TempTMValue)
-        End If
-
-        ' They changed the value, so enable save
-        btnCalcSubsystemFacilitySave.Enabled = True
-        ' changed so not the default
-        lblCalcSubsystemFacilityDefault.Visible = False
-
+        Call OutpostMETETaxText_KeyPress(e)
     End Sub
 
-    Private Sub txtCalcSubsystemFacilityManualTM_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcSubsystemFacilityManualTE.LostFocus
+    Private Sub txtCalcSubsystemFacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcSubsystemFacilityManualTE.KeyUp
+        Call OutpostMETETaxText_KeyUp(txtCalcSubsystemFacilityManualTE, SelectedCalcSubsystemManufacturingFacility, _
+                                      cmbCalcSubsystemFacilityType, btnCalcSubsystemFacilitySave, lblCalcSubsystemFacilityDefault)
+    End Sub
 
-        If Trim(Replace(txtCalcSubsystemFacilityManualTE.Text, "%", "")) = "" And cmbCalcSubsystemFacilityType.Text = OutpostFacility Then
-            txtCalcSubsystemFacilityManualTE.Text = FormatPercent(SelectedCalcSubsystemManufacturingFacility.MaterialMultiplier, 1)
-        End If
+    Private Sub txtCalcSubsystemFacilityManualTE_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcSubsystemFacilityManualTE.LostFocus
+        Call OutpostMETETaxText_LostFocus(txtCalcSubsystemFacilityManualTE, cmbCalcSubsystemFacilityType, SelectedCalcSubsystemManufacturingFacility.MaterialMultiplier)
+    End Sub
 
-        If Not txtCalcSubsystemFacilityManualTE.Text.Contains("%") Then
-            ' Format with percent sign
-            txtCalcSubsystemFacilityManualTE.Text = FormatPercent(CDbl(txtCalcSubsystemFacilityManualTE.Text) / 100, 1)
-        End If
+    Private Sub txtCalcSubsystemFacilityManualTax_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcSubsystemFacilityManualTax.KeyPress
+        Call OutpostMETETaxText_KeyPress(e)
+    End Sub
 
+    Private Sub txtCalcSubsystemFacilityManualTax_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcSubsystemFacilityManualTax.KeyUp
+        Call OutpostMETETaxText_KeyUp(txtCalcSubsystemFacilityManualTax, SelectedCalcSubsystemManufacturingFacility, _
+                                      cmbCalcSubsystemFacilityType, btnCalcSubsystemFacilitySave, lblCalcSubsystemFacilityDefault)
+    End Sub
+
+    Private Sub txtCalcSubsystemFacilityManualTax_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcSubsystemFacilityManualTax.LostFocus
+        Call OutpostMETETaxText_LostFocus(txtCalcSubsystemFacilityManualTax, cmbCalcSubsystemFacilityType, SelectedCalcSubsystemManufacturingFacility.MaterialMultiplier)
     End Sub
 
     Private Sub chkCalcSubsystemFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcSubsystemFacilityIncludeUsage.CheckedChanged
@@ -13835,88 +13483,42 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcBoosterFacilityManualME_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcBoosterFacilityManualME.KeyPress
-        ' only let them enter the right things
-        If e.KeyChar <> ControlChars.Back Then
-            If allowedMETEChars.IndexOf(e.KeyChar) = -1 Then
-                ' Invalid Character
-                e.Handled = True
-                Exit Sub
-            End If
-        End If
-
+        Call OutpostMETETaxText_KeyPress(e)
     End Sub
 
     Private Sub txtCalcBoosterFacilityManualME_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcBoosterFacilityManualME.KeyUp
-        Dim TempMM As String
-        Dim TempMMValue As Double
-
-        ' Get rid of the percent sign if it exists
-        TempMM = Trim(Replace(txtCalcBoosterFacilityManualME.Text, "%", ""))
-
-        If Not IsNumeric(TempMM) Then
-            TempMM = "0.0"
-            txtCalcBoosterFacilityManualME.Text = "0.0%"
-        End If
-
-        TempMMValue = (100 - CDbl(TempMM)) / 100
-
-        ' If it's an outpost, then save the me/te for this in the current facility
-        If cmbCalcBoosterFacilityType.Text = OutpostFacility Then
-            SelectedCalcBoosterManufacturingFacility.MaterialMultiplier = CDbl(TempMMValue)
-        End If
-
-        ' They changed the value, so enable save
-        btnCalcBoosterFacilitySave.Enabled = True
-        ' changed so not the default
-        lblCalcBoosterFacilityDefault.Visible = False
-
+        Call OutpostMETETaxText_KeyUp(txtCalcBoosterFacilityManualME, SelectedCalcBoosterManufacturingFacility, _
+                                      cmbCalcBoosterFacilityType, btnCalcBoosterFacilitySave, lblCalcBoosterFacilityDefault)
     End Sub
 
     Private Sub txtCalcBoosterFacilityManualME_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcBoosterFacilityManualME.LostFocus
-
-        If Trim(Replace(txtCalcBoosterFacilityManualME.Text, "%", "")) = "" And cmbCalcBoosterFacilityType.Text = OutpostFacility Then
-            txtCalcBoosterFacilityManualME.Text = FormatPercent(SelectedCalcBoosterManufacturingFacility.MaterialMultiplier, 1)
-        End If
-
-        If Not txtCalcBoosterFacilityManualME.Text.Contains("%") Then
-            ' Format with percent sign
-            txtCalcBoosterFacilityManualME.Text = FormatPercent(CDbl(txtCalcBoosterFacilityManualME.Text) / 100, 1)
-        End If
-
+        Call OutpostMETETaxText_LostFocus(txtCalcBoosterFacilityManualME, cmbCalcBoosterFacilityType, SelectedCalcBoosterManufacturingFacility.MaterialMultiplier)
     End Sub
 
     Private Sub txtCalcBoosterFacilityManualTE_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcBoosterFacilityManualTE.KeyPress
-        Dim TempTM As String
-        Dim TempTMValue As Double
-
-        ' Get rid of the percent sign if it exists
-        TempTM = Replace(txtCalcBoosterFacilityManualTE.Text, "%", "")
-
-        TempTMValue = (100 - CDbl(TempTM)) / 100
-
-        ' If it's an outpost, then save the me/te for this in the current facility
-        If cmbCalcBoosterFacilityType.Text = OutpostFacility Then
-            SelectedCalcBoosterManufacturingFacility.MaterialMultiplier = CDbl(TempTMValue)
-        End If
-
-        ' They changed the value, so enable save
-        btnCalcBoosterFacilitySave.Enabled = True
-        ' changed so not the default
-        lblCalcBoosterFacilityDefault.Visible = False
-
+        Call OutpostMETETaxText_KeyPress(e)
     End Sub
 
-    Private Sub txtCalcBoosterFacilityManualTM_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcBoosterFacilityManualTE.LostFocus
+    Private Sub txtCalcBoosterFacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcBoosterFacilityManualTE.KeyUp
+        Call OutpostMETETaxText_KeyUp(txtCalcBoosterFacilityManualTE, SelectedCalcBoosterManufacturingFacility, _
+                                      cmbCalcBoosterFacilityType, btnCalcBoosterFacilitySave, lblCalcBoosterFacilityDefault)
+    End Sub
 
-        If Trim(Replace(txtCalcBoosterFacilityManualTE.Text, "%", "")) = "" And cmbCalcBoosterFacilityType.Text = OutpostFacility Then
-            txtCalcBoosterFacilityManualTE.Text = FormatPercent(SelectedCalcBoosterManufacturingFacility.MaterialMultiplier, 1)
-        End If
+    Private Sub txtCalcBoosterFacilityManualTE_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcBoosterFacilityManualTE.LostFocus
+        Call OutpostMETETaxText_LostFocus(txtCalcBoosterFacilityManualTE, cmbCalcBoosterFacilityType, SelectedCalcBoosterManufacturingFacility.MaterialMultiplier)
+    End Sub
 
-        If Not txtCalcBoosterFacilityManualTE.Text.Contains("%") Then
-            ' Format with percent sign
-            txtCalcBoosterFacilityManualTE.Text = FormatPercent(CDbl(txtCalcBoosterFacilityManualTE.Text) / 100, 1)
-        End If
+    Private Sub txtCalcBoosterFacilityManualTax_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcBoosterFacilityManualTax.KeyPress
+        Call OutpostMETETaxText_KeyPress(e)
+    End Sub
 
+    Private Sub txtCalcBoosterFacilityManualTax_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcBoosterFacilityManualTax.KeyUp
+        Call OutpostMETETaxText_KeyUp(txtCalcBoosterFacilityManualTax, SelectedCalcBoosterManufacturingFacility, _
+                                      cmbCalcBoosterFacilityType, btnCalcBoosterFacilitySave, lblCalcBoosterFacilityDefault)
+    End Sub
+
+    Private Sub txtCalcBoosterFacilityManualTax_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcBoosterFacilityManualTax.LostFocus
+        Call OutpostMETETaxText_LostFocus(txtCalcBoosterFacilityManualTax, cmbCalcBoosterFacilityType, SelectedCalcBoosterManufacturingFacility.MaterialMultiplier)
     End Sub
 
     Private Sub chkCalcBoosterFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcBoosterFacilityIncludeUsage.CheckedChanged

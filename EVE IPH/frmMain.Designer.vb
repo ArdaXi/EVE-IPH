@@ -505,6 +505,8 @@ Partial Class frmMain
         Me.chkCalcRaceAmarr = New System.Windows.Forms.CheckBox()
         Me.tabCalcFacilities = New System.Windows.Forms.TabControl()
         Me.tabCalcFacilityBase = New System.Windows.Forms.TabPage()
+        Me.txtCalcBaseFacilityManualTax = New System.Windows.Forms.TextBox()
+        Me.lblCalcBaseFacilityManualTax = New System.Windows.Forms.Label()
         Me.lblCalcBaseFacilityDefault = New System.Windows.Forms.Label()
         Me.btnCalcBaseFacilitySave = New System.Windows.Forms.Button()
         Me.lblCalcBaseFacilityTaxRate = New System.Windows.Forms.Label()
@@ -527,6 +529,8 @@ Partial Class frmMain
         Me.cmbCalcPOSModules = New System.Windows.Forms.ComboBox()
         Me.lblCalcPOSModules = New System.Windows.Forms.Label()
         Me.tabCalcFacilityComponents = New System.Windows.Forms.TabPage()
+        Me.txtCalcComponentFacilityManualTax = New System.Windows.Forms.TextBox()
+        Me.lblCalcComponentFacilityManualTax = New System.Windows.Forms.Label()
         Me.lblCalcComponentFacilityDefault = New System.Windows.Forms.Label()
         Me.btnCalcComponentFacilitySave = New System.Windows.Forms.Button()
         Me.lblCalcComponentFacilityTaxRate = New System.Windows.Forms.Label()
@@ -544,6 +548,8 @@ Partial Class frmMain
         Me.lblCalcComponentFacilityBonus = New System.Windows.Forms.Label()
         Me.chkCalcCapComponentsFacility = New System.Windows.Forms.CheckBox()
         Me.tabCalcFacilityCopy = New System.Windows.Forms.TabPage()
+        Me.txtCalcCopyFacilityManualTax = New System.Windows.Forms.TextBox()
+        Me.lblCalcCopyFacilityManualTax = New System.Windows.Forms.Label()
         Me.lblCalcCopyInclude = New System.Windows.Forms.Label()
         Me.chkCalcCopyFacilityIncludeUsage = New System.Windows.Forms.CheckBox()
         Me.chkCalcCopyFacilityIncludeTime = New System.Windows.Forms.CheckBox()
@@ -563,6 +569,8 @@ Partial Class frmMain
         Me.lblCalcCopyFacilityManualME = New System.Windows.Forms.Label()
         Me.lblCalcCopyFacilityBonus = New System.Windows.Forms.Label()
         Me.tabCalcFacilityT2Invention = New System.Windows.Forms.TabPage()
+        Me.txtCalcInventionFacilityManualTax = New System.Windows.Forms.TextBox()
+        Me.lblCalcInventionFacilityManualTax = New System.Windows.Forms.Label()
         Me.lblCalcInventionInclude = New System.Windows.Forms.Label()
         Me.chkCalcInventionFacilityIncludeUsage = New System.Windows.Forms.CheckBox()
         Me.lblCalcInventionFacilityDefault = New System.Windows.Forms.Label()
@@ -582,6 +590,8 @@ Partial Class frmMain
         Me.lblCalcInventionFacilityManualME = New System.Windows.Forms.Label()
         Me.lblCalcInventionFacilityBonus = New System.Windows.Forms.Label()
         Me.tabCalcFacilityT3Invention = New System.Windows.Forms.TabPage()
+        Me.txtCalcT3InventionFacilityManualTax = New System.Windows.Forms.TextBox()
+        Me.lblCalcT3InventionFacilityManualTax = New System.Windows.Forms.Label()
         Me.lblCalcT3InventionInclude = New System.Windows.Forms.Label()
         Me.chkCalcT3InventionFacilityIncludeUsage = New System.Windows.Forms.CheckBox()
         Me.lblCalcT3InventionFacilityManualTE = New System.Windows.Forms.Label()
@@ -601,6 +611,8 @@ Partial Class frmMain
         Me.lblCalcT3InventionFacilityManualME = New System.Windows.Forms.Label()
         Me.lblCalcT3InventionFacilityBonus = New System.Windows.Forms.Label()
         Me.tabCalcFacilityCapitals = New System.Windows.Forms.TabPage()
+        Me.txtCalcCapitalFacilityManualTax = New System.Windows.Forms.TextBox()
+        Me.lblCalcCapitalFacilityManualTax = New System.Windows.Forms.Label()
         Me.lblCalcCapitalFacilityDefault = New System.Windows.Forms.Label()
         Me.btnCalcCapitalFacilitySave = New System.Windows.Forms.Button()
         Me.lblCalcCapitalFacilityTaxRate = New System.Windows.Forms.Label()
@@ -617,6 +629,8 @@ Partial Class frmMain
         Me.lblCalcCapitalFacilityManualME = New System.Windows.Forms.Label()
         Me.lblCalcCapitalFacilityBonus = New System.Windows.Forms.Label()
         Me.tabCalcFacilitySupers = New System.Windows.Forms.TabPage()
+        Me.txtCalcSuperFacilityManualTax = New System.Windows.Forms.TextBox()
+        Me.lblCalcSuperFacilityManualTax = New System.Windows.Forms.Label()
         Me.lblCalcSuperFacilityDefault = New System.Windows.Forms.Label()
         Me.btnCalcSuperFacilitySave = New System.Windows.Forms.Button()
         Me.lblCalcSuperFacilityTaxRate = New System.Windows.Forms.Label()
@@ -633,6 +647,8 @@ Partial Class frmMain
         Me.lblCalcSuperFacilityManualME = New System.Windows.Forms.Label()
         Me.lblCalcSuperFacilityBonus = New System.Windows.Forms.Label()
         Me.tabCalcFacilityT3Ships = New System.Windows.Forms.TabPage()
+        Me.txtCalcT3FacilityManualTax = New System.Windows.Forms.TextBox()
+        Me.lblCalcT3FacilityManualTax = New System.Windows.Forms.Label()
         Me.chkCalcT3DestroyersFacility = New System.Windows.Forms.CheckBox()
         Me.lblCalcT3FacilityDefault = New System.Windows.Forms.Label()
         Me.btnCalcT3FacilitySave = New System.Windows.Forms.Button()
@@ -650,6 +666,8 @@ Partial Class frmMain
         Me.lblCalcT3FacilityManualME = New System.Windows.Forms.Label()
         Me.lblCalcT3FacilityBonus = New System.Windows.Forms.Label()
         Me.tabCalcFacilitySubsystems = New System.Windows.Forms.TabPage()
+        Me.txtCalcSubsystemFacilityManualTax = New System.Windows.Forms.TextBox()
+        Me.lblCalcSubsystemFacilityManualTax = New System.Windows.Forms.Label()
         Me.lblCalcSubsystemFacilityDefault = New System.Windows.Forms.Label()
         Me.btnCalcSubsystemFacilitySave = New System.Windows.Forms.Button()
         Me.lblCalcSubsystemFacilityTaxRate = New System.Windows.Forms.Label()
@@ -666,6 +684,8 @@ Partial Class frmMain
         Me.lblCalcSubsystemFacilityManualME = New System.Windows.Forms.Label()
         Me.lblCalcSubsystemFacilityBonus = New System.Windows.Forms.Label()
         Me.tabCalcFacilityBoosters = New System.Windows.Forms.TabPage()
+        Me.txtCalcBoosterFacilityManualTax = New System.Windows.Forms.TextBox()
+        Me.lblCalcBoosterFacilityManualTax = New System.Windows.Forms.Label()
         Me.lblCalcBoosterFacilityDefault = New System.Windows.Forms.Label()
         Me.btnCalcBoosterFacilitySave = New System.Windows.Forms.Button()
         Me.lblCalcBoosterFacilityTaxRate = New System.Windows.Forms.Label()
@@ -682,6 +702,8 @@ Partial Class frmMain
         Me.lblCalcBoosterFacilityManualME = New System.Windows.Forms.Label()
         Me.lblCalcBoosterFacilityBonus = New System.Windows.Forms.Label()
         Me.tabCalcFacilityNoPOS = New System.Windows.Forms.TabPage()
+        Me.txtCalcNoPOSFacilityManualTax = New System.Windows.Forms.TextBox()
+        Me.lblCalcNoPOSFacilityManualTax = New System.Windows.Forms.Label()
         Me.lblCalcNoPOSFacilityDefault = New System.Windows.Forms.Label()
         Me.btnCalcNoPOSFacilitySave = New System.Windows.Forms.Button()
         Me.lblCalcNoPOSFacilityTaxRate = New System.Windows.Forms.Label()
@@ -1012,6 +1034,8 @@ Partial Class frmMain
         Me.btnBPSaveBP = New System.Windows.Forms.Button()
         Me.tabBPInventionEquip = New System.Windows.Forms.TabControl()
         Me.tabFacility = New System.Windows.Forms.TabPage()
+        Me.txtBPFacilityManualTax = New System.Windows.Forms.TextBox()
+        Me.lblBPFacilityManualTax = New System.Windows.Forms.Label()
         Me.cmbBPFacilityType = New System.Windows.Forms.ComboBox()
         Me.lblBPFacilityDefault = New System.Windows.Forms.Label()
         Me.lblBPFacilityActivity = New System.Windows.Forms.Label()
@@ -5969,6 +5993,8 @@ Partial Class frmMain
         '
         'tabCalcFacilityBase
         '
+        Me.tabCalcFacilityBase.Controls.Add(Me.txtCalcBaseFacilityManualTax)
+        Me.tabCalcFacilityBase.Controls.Add(Me.lblCalcBaseFacilityManualTax)
         Me.tabCalcFacilityBase.Controls.Add(Me.lblCalcBaseFacilityDefault)
         Me.tabCalcFacilityBase.Controls.Add(Me.btnCalcBaseFacilitySave)
         Me.tabCalcFacilityBase.Controls.Add(Me.lblCalcBaseFacilityTaxRate)
@@ -5998,6 +6024,27 @@ Partial Class frmMain
         Me.tabCalcFacilityBase.TabIndex = 1
         Me.tabCalcFacilityBase.Text = "Base"
         Me.tabCalcFacilityBase.UseVisualStyleBackColor = true
+        '
+        'txtCalcBaseFacilityManualTax
+        '
+        Me.txtCalcBaseFacilityManualTax.Location = New System.Drawing.Point(196, 89)
+        Me.txtCalcBaseFacilityManualTax.MaxLength = 5
+        Me.txtCalcBaseFacilityManualTax.Name = "txtCalcBaseFacilityManualTax"
+        Me.txtCalcBaseFacilityManualTax.Size = New System.Drawing.Size(35, 20)
+        Me.txtCalcBaseFacilityManualTax.TabIndex = 22
+        Me.txtCalcBaseFacilityManualTax.Text = "0%"
+        Me.txtCalcBaseFacilityManualTax.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
+        Me.txtCalcBaseFacilityManualTax.Visible = false
+        '
+        'lblCalcBaseFacilityManualTax
+        '
+        Me.lblCalcBaseFacilityManualTax.AutoSize = true
+        Me.lblCalcBaseFacilityManualTax.Location = New System.Drawing.Point(170, 92)
+        Me.lblCalcBaseFacilityManualTax.Name = "lblCalcBaseFacilityManualTax"
+        Me.lblCalcBaseFacilityManualTax.Size = New System.Drawing.Size(28, 13)
+        Me.lblCalcBaseFacilityManualTax.TabIndex = 21
+        Me.lblCalcBaseFacilityManualTax.Text = "Tax:"
+        Me.lblCalcBaseFacilityManualTax.Visible = false
         '
         'lblCalcBaseFacilityDefault
         '
@@ -6207,6 +6254,8 @@ Partial Class frmMain
         '
         'tabCalcFacilityComponents
         '
+        Me.tabCalcFacilityComponents.Controls.Add(Me.txtCalcComponentFacilityManualTax)
+        Me.tabCalcFacilityComponents.Controls.Add(Me.lblCalcComponentFacilityManualTax)
         Me.tabCalcFacilityComponents.Controls.Add(Me.lblCalcComponentFacilityDefault)
         Me.tabCalcFacilityComponents.Controls.Add(Me.btnCalcComponentFacilitySave)
         Me.tabCalcFacilityComponents.Controls.Add(Me.lblCalcComponentFacilityTaxRate)
@@ -6229,6 +6278,27 @@ Partial Class frmMain
         Me.tabCalcFacilityComponents.TabIndex = 10
         Me.tabCalcFacilityComponents.Text = "Components"
         Me.tabCalcFacilityComponents.UseVisualStyleBackColor = true
+        '
+        'txtCalcComponentFacilityManualTax
+        '
+        Me.txtCalcComponentFacilityManualTax.Location = New System.Drawing.Point(196, 89)
+        Me.txtCalcComponentFacilityManualTax.MaxLength = 5
+        Me.txtCalcComponentFacilityManualTax.Name = "txtCalcComponentFacilityManualTax"
+        Me.txtCalcComponentFacilityManualTax.Size = New System.Drawing.Size(35, 20)
+        Me.txtCalcComponentFacilityManualTax.TabIndex = 22
+        Me.txtCalcComponentFacilityManualTax.Text = "0%"
+        Me.txtCalcComponentFacilityManualTax.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
+        Me.txtCalcComponentFacilityManualTax.Visible = false
+        '
+        'lblCalcComponentFacilityManualTax
+        '
+        Me.lblCalcComponentFacilityManualTax.AutoSize = true
+        Me.lblCalcComponentFacilityManualTax.Location = New System.Drawing.Point(170, 92)
+        Me.lblCalcComponentFacilityManualTax.Name = "lblCalcComponentFacilityManualTax"
+        Me.lblCalcComponentFacilityManualTax.Size = New System.Drawing.Size(28, 13)
+        Me.lblCalcComponentFacilityManualTax.TabIndex = 21
+        Me.lblCalcComponentFacilityManualTax.Text = "Tax:"
+        Me.lblCalcComponentFacilityManualTax.Visible = false
         '
         'lblCalcComponentFacilityDefault
         '
@@ -6394,6 +6464,8 @@ Partial Class frmMain
         '
         'tabCalcFacilityCopy
         '
+        Me.tabCalcFacilityCopy.Controls.Add(Me.txtCalcCopyFacilityManualTax)
+        Me.tabCalcFacilityCopy.Controls.Add(Me.lblCalcCopyFacilityManualTax)
         Me.tabCalcFacilityCopy.Controls.Add(Me.lblCalcCopyInclude)
         Me.tabCalcFacilityCopy.Controls.Add(Me.chkCalcCopyFacilityIncludeUsage)
         Me.tabCalcFacilityCopy.Controls.Add(Me.chkCalcCopyFacilityIncludeTime)
@@ -6418,6 +6490,27 @@ Partial Class frmMain
         Me.tabCalcFacilityCopy.TabIndex = 3
         Me.tabCalcFacilityCopy.Text = "Copy"
         Me.tabCalcFacilityCopy.UseVisualStyleBackColor = true
+        '
+        'txtCalcCopyFacilityManualTax
+        '
+        Me.txtCalcCopyFacilityManualTax.Location = New System.Drawing.Point(196, 89)
+        Me.txtCalcCopyFacilityManualTax.MaxLength = 5
+        Me.txtCalcCopyFacilityManualTax.Name = "txtCalcCopyFacilityManualTax"
+        Me.txtCalcCopyFacilityManualTax.Size = New System.Drawing.Size(35, 20)
+        Me.txtCalcCopyFacilityManualTax.TabIndex = 22
+        Me.txtCalcCopyFacilityManualTax.Text = "0%"
+        Me.txtCalcCopyFacilityManualTax.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
+        Me.txtCalcCopyFacilityManualTax.Visible = false
+        '
+        'lblCalcCopyFacilityManualTax
+        '
+        Me.lblCalcCopyFacilityManualTax.AutoSize = true
+        Me.lblCalcCopyFacilityManualTax.Location = New System.Drawing.Point(170, 92)
+        Me.lblCalcCopyFacilityManualTax.Name = "lblCalcCopyFacilityManualTax"
+        Me.lblCalcCopyFacilityManualTax.Size = New System.Drawing.Size(28, 13)
+        Me.lblCalcCopyFacilityManualTax.TabIndex = 21
+        Me.lblCalcCopyFacilityManualTax.Text = "Tax:"
+        Me.lblCalcCopyFacilityManualTax.Visible = false
         '
         'lblCalcCopyInclude
         '
@@ -6602,6 +6695,8 @@ Partial Class frmMain
         '
         'tabCalcFacilityT2Invention
         '
+        Me.tabCalcFacilityT2Invention.Controls.Add(Me.txtCalcInventionFacilityManualTax)
+        Me.tabCalcFacilityT2Invention.Controls.Add(Me.lblCalcInventionFacilityManualTax)
         Me.tabCalcFacilityT2Invention.Controls.Add(Me.lblCalcInventionInclude)
         Me.tabCalcFacilityT2Invention.Controls.Add(Me.chkCalcInventionFacilityIncludeUsage)
         Me.tabCalcFacilityT2Invention.Controls.Add(Me.lblCalcInventionFacilityDefault)
@@ -6626,6 +6721,27 @@ Partial Class frmMain
         Me.tabCalcFacilityT2Invention.TabIndex = 2
         Me.tabCalcFacilityT2Invention.Text = "T2 Inv."
         Me.tabCalcFacilityT2Invention.UseVisualStyleBackColor = true
+        '
+        'txtCalcInventionFacilityManualTax
+        '
+        Me.txtCalcInventionFacilityManualTax.Location = New System.Drawing.Point(196, 89)
+        Me.txtCalcInventionFacilityManualTax.MaxLength = 5
+        Me.txtCalcInventionFacilityManualTax.Name = "txtCalcInventionFacilityManualTax"
+        Me.txtCalcInventionFacilityManualTax.Size = New System.Drawing.Size(35, 20)
+        Me.txtCalcInventionFacilityManualTax.TabIndex = 22
+        Me.txtCalcInventionFacilityManualTax.Text = "0%"
+        Me.txtCalcInventionFacilityManualTax.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
+        Me.txtCalcInventionFacilityManualTax.Visible = false
+        '
+        'lblCalcInventionFacilityManualTax
+        '
+        Me.lblCalcInventionFacilityManualTax.AutoSize = true
+        Me.lblCalcInventionFacilityManualTax.Location = New System.Drawing.Point(170, 92)
+        Me.lblCalcInventionFacilityManualTax.Name = "lblCalcInventionFacilityManualTax"
+        Me.lblCalcInventionFacilityManualTax.Size = New System.Drawing.Size(28, 13)
+        Me.lblCalcInventionFacilityManualTax.TabIndex = 21
+        Me.lblCalcInventionFacilityManualTax.Text = "Tax:"
+        Me.lblCalcInventionFacilityManualTax.Visible = false
         '
         'lblCalcInventionInclude
         '
@@ -6810,6 +6926,8 @@ Partial Class frmMain
         '
         'tabCalcFacilityT3Invention
         '
+        Me.tabCalcFacilityT3Invention.Controls.Add(Me.txtCalcT3InventionFacilityManualTax)
+        Me.tabCalcFacilityT3Invention.Controls.Add(Me.lblCalcT3InventionFacilityManualTax)
         Me.tabCalcFacilityT3Invention.Controls.Add(Me.lblCalcT3InventionInclude)
         Me.tabCalcFacilityT3Invention.Controls.Add(Me.chkCalcT3InventionFacilityIncludeUsage)
         Me.tabCalcFacilityT3Invention.Controls.Add(Me.lblCalcT3InventionFacilityManualTE)
@@ -6834,6 +6952,27 @@ Partial Class frmMain
         Me.tabCalcFacilityT3Invention.TabIndex = 11
         Me.tabCalcFacilityT3Invention.Text = "T3 Inv."
         Me.tabCalcFacilityT3Invention.UseVisualStyleBackColor = true
+        '
+        'txtCalcT3InventionFacilityManualTax
+        '
+        Me.txtCalcT3InventionFacilityManualTax.Location = New System.Drawing.Point(196, 89)
+        Me.txtCalcT3InventionFacilityManualTax.MaxLength = 5
+        Me.txtCalcT3InventionFacilityManualTax.Name = "txtCalcT3InventionFacilityManualTax"
+        Me.txtCalcT3InventionFacilityManualTax.Size = New System.Drawing.Size(35, 20)
+        Me.txtCalcT3InventionFacilityManualTax.TabIndex = 22
+        Me.txtCalcT3InventionFacilityManualTax.Text = "0%"
+        Me.txtCalcT3InventionFacilityManualTax.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
+        Me.txtCalcT3InventionFacilityManualTax.Visible = false
+        '
+        'lblCalcT3InventionFacilityManualTax
+        '
+        Me.lblCalcT3InventionFacilityManualTax.AutoSize = true
+        Me.lblCalcT3InventionFacilityManualTax.Location = New System.Drawing.Point(170, 92)
+        Me.lblCalcT3InventionFacilityManualTax.Name = "lblCalcT3InventionFacilityManualTax"
+        Me.lblCalcT3InventionFacilityManualTax.Size = New System.Drawing.Size(28, 13)
+        Me.lblCalcT3InventionFacilityManualTax.TabIndex = 21
+        Me.lblCalcT3InventionFacilityManualTax.Text = "Tax:"
+        Me.lblCalcT3InventionFacilityManualTax.Visible = false
         '
         'lblCalcT3InventionInclude
         '
@@ -7018,6 +7157,8 @@ Partial Class frmMain
         '
         'tabCalcFacilityCapitals
         '
+        Me.tabCalcFacilityCapitals.Controls.Add(Me.txtCalcCapitalFacilityManualTax)
+        Me.tabCalcFacilityCapitals.Controls.Add(Me.lblCalcCapitalFacilityManualTax)
         Me.tabCalcFacilityCapitals.Controls.Add(Me.lblCalcCapitalFacilityDefault)
         Me.tabCalcFacilityCapitals.Controls.Add(Me.btnCalcCapitalFacilitySave)
         Me.tabCalcFacilityCapitals.Controls.Add(Me.lblCalcCapitalFacilityTaxRate)
@@ -7039,6 +7180,27 @@ Partial Class frmMain
         Me.tabCalcFacilityCapitals.TabIndex = 5
         Me.tabCalcFacilityCapitals.Text = "Capitals"
         Me.tabCalcFacilityCapitals.UseVisualStyleBackColor = true
+        '
+        'txtCalcCapitalFacilityManualTax
+        '
+        Me.txtCalcCapitalFacilityManualTax.Location = New System.Drawing.Point(196, 89)
+        Me.txtCalcCapitalFacilityManualTax.MaxLength = 5
+        Me.txtCalcCapitalFacilityManualTax.Name = "txtCalcCapitalFacilityManualTax"
+        Me.txtCalcCapitalFacilityManualTax.Size = New System.Drawing.Size(35, 20)
+        Me.txtCalcCapitalFacilityManualTax.TabIndex = 22
+        Me.txtCalcCapitalFacilityManualTax.Text = "0%"
+        Me.txtCalcCapitalFacilityManualTax.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
+        Me.txtCalcCapitalFacilityManualTax.Visible = false
+        '
+        'lblCalcCapitalFacilityManualTax
+        '
+        Me.lblCalcCapitalFacilityManualTax.AutoSize = true
+        Me.lblCalcCapitalFacilityManualTax.Location = New System.Drawing.Point(170, 92)
+        Me.lblCalcCapitalFacilityManualTax.Name = "lblCalcCapitalFacilityManualTax"
+        Me.lblCalcCapitalFacilityManualTax.Size = New System.Drawing.Size(28, 13)
+        Me.lblCalcCapitalFacilityManualTax.TabIndex = 21
+        Me.lblCalcCapitalFacilityManualTax.Text = "Tax:"
+        Me.lblCalcCapitalFacilityManualTax.Visible = false
         '
         'lblCalcCapitalFacilityDefault
         '
@@ -7194,6 +7356,8 @@ Partial Class frmMain
         '
         'tabCalcFacilitySupers
         '
+        Me.tabCalcFacilitySupers.Controls.Add(Me.txtCalcSuperFacilityManualTax)
+        Me.tabCalcFacilitySupers.Controls.Add(Me.lblCalcSuperFacilityManualTax)
         Me.tabCalcFacilitySupers.Controls.Add(Me.lblCalcSuperFacilityDefault)
         Me.tabCalcFacilitySupers.Controls.Add(Me.btnCalcSuperFacilitySave)
         Me.tabCalcFacilitySupers.Controls.Add(Me.lblCalcSuperFacilityTaxRate)
@@ -7215,6 +7379,27 @@ Partial Class frmMain
         Me.tabCalcFacilitySupers.TabIndex = 6
         Me.tabCalcFacilitySupers.Text = "Supers"
         Me.tabCalcFacilitySupers.UseVisualStyleBackColor = true
+        '
+        'txtCalcSuperFacilityManualTax
+        '
+        Me.txtCalcSuperFacilityManualTax.Location = New System.Drawing.Point(196, 89)
+        Me.txtCalcSuperFacilityManualTax.MaxLength = 5
+        Me.txtCalcSuperFacilityManualTax.Name = "txtCalcSuperFacilityManualTax"
+        Me.txtCalcSuperFacilityManualTax.Size = New System.Drawing.Size(35, 20)
+        Me.txtCalcSuperFacilityManualTax.TabIndex = 22
+        Me.txtCalcSuperFacilityManualTax.Text = "0%"
+        Me.txtCalcSuperFacilityManualTax.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
+        Me.txtCalcSuperFacilityManualTax.Visible = false
+        '
+        'lblCalcSuperFacilityManualTax
+        '
+        Me.lblCalcSuperFacilityManualTax.AutoSize = true
+        Me.lblCalcSuperFacilityManualTax.Location = New System.Drawing.Point(170, 92)
+        Me.lblCalcSuperFacilityManualTax.Name = "lblCalcSuperFacilityManualTax"
+        Me.lblCalcSuperFacilityManualTax.Size = New System.Drawing.Size(28, 13)
+        Me.lblCalcSuperFacilityManualTax.TabIndex = 21
+        Me.lblCalcSuperFacilityManualTax.Text = "Tax:"
+        Me.lblCalcSuperFacilityManualTax.Visible = false
         '
         'lblCalcSuperFacilityDefault
         '
@@ -7370,6 +7555,8 @@ Partial Class frmMain
         '
         'tabCalcFacilityT3Ships
         '
+        Me.tabCalcFacilityT3Ships.Controls.Add(Me.txtCalcT3FacilityManualTax)
+        Me.tabCalcFacilityT3Ships.Controls.Add(Me.lblCalcT3FacilityManualTax)
         Me.tabCalcFacilityT3Ships.Controls.Add(Me.chkCalcT3DestroyersFacility)
         Me.tabCalcFacilityT3Ships.Controls.Add(Me.lblCalcT3FacilityDefault)
         Me.tabCalcFacilityT3Ships.Controls.Add(Me.btnCalcT3FacilitySave)
@@ -7392,6 +7579,27 @@ Partial Class frmMain
         Me.tabCalcFacilityT3Ships.TabIndex = 9
         Me.tabCalcFacilityT3Ships.Text = "T3 Ships"
         Me.tabCalcFacilityT3Ships.UseVisualStyleBackColor = true
+        '
+        'txtCalcT3FacilityManualTax
+        '
+        Me.txtCalcT3FacilityManualTax.Location = New System.Drawing.Point(196, 89)
+        Me.txtCalcT3FacilityManualTax.MaxLength = 5
+        Me.txtCalcT3FacilityManualTax.Name = "txtCalcT3FacilityManualTax"
+        Me.txtCalcT3FacilityManualTax.Size = New System.Drawing.Size(35, 20)
+        Me.txtCalcT3FacilityManualTax.TabIndex = 22
+        Me.txtCalcT3FacilityManualTax.Text = "0%"
+        Me.txtCalcT3FacilityManualTax.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
+        Me.txtCalcT3FacilityManualTax.Visible = false
+        '
+        'lblCalcT3FacilityManualTax
+        '
+        Me.lblCalcT3FacilityManualTax.AutoSize = true
+        Me.lblCalcT3FacilityManualTax.Location = New System.Drawing.Point(170, 92)
+        Me.lblCalcT3FacilityManualTax.Name = "lblCalcT3FacilityManualTax"
+        Me.lblCalcT3FacilityManualTax.Size = New System.Drawing.Size(28, 13)
+        Me.lblCalcT3FacilityManualTax.TabIndex = 21
+        Me.lblCalcT3FacilityManualTax.Text = "Tax:"
+        Me.lblCalcT3FacilityManualTax.Visible = false
         '
         'chkCalcT3DestroyersFacility
         '
@@ -7557,6 +7765,8 @@ Partial Class frmMain
         '
         'tabCalcFacilitySubsystems
         '
+        Me.tabCalcFacilitySubsystems.Controls.Add(Me.txtCalcSubsystemFacilityManualTax)
+        Me.tabCalcFacilitySubsystems.Controls.Add(Me.lblCalcSubsystemFacilityManualTax)
         Me.tabCalcFacilitySubsystems.Controls.Add(Me.lblCalcSubsystemFacilityDefault)
         Me.tabCalcFacilitySubsystems.Controls.Add(Me.btnCalcSubsystemFacilitySave)
         Me.tabCalcFacilitySubsystems.Controls.Add(Me.lblCalcSubsystemFacilityTaxRate)
@@ -7578,6 +7788,27 @@ Partial Class frmMain
         Me.tabCalcFacilitySubsystems.TabIndex = 8
         Me.tabCalcFacilitySubsystems.Text = "Subsystems"
         Me.tabCalcFacilitySubsystems.UseVisualStyleBackColor = true
+        '
+        'txtCalcSubsystemFacilityManualTax
+        '
+        Me.txtCalcSubsystemFacilityManualTax.Location = New System.Drawing.Point(196, 89)
+        Me.txtCalcSubsystemFacilityManualTax.MaxLength = 5
+        Me.txtCalcSubsystemFacilityManualTax.Name = "txtCalcSubsystemFacilityManualTax"
+        Me.txtCalcSubsystemFacilityManualTax.Size = New System.Drawing.Size(35, 20)
+        Me.txtCalcSubsystemFacilityManualTax.TabIndex = 22
+        Me.txtCalcSubsystemFacilityManualTax.Text = "0%"
+        Me.txtCalcSubsystemFacilityManualTax.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
+        Me.txtCalcSubsystemFacilityManualTax.Visible = false
+        '
+        'lblCalcSubsystemFacilityManualTax
+        '
+        Me.lblCalcSubsystemFacilityManualTax.AutoSize = true
+        Me.lblCalcSubsystemFacilityManualTax.Location = New System.Drawing.Point(170, 92)
+        Me.lblCalcSubsystemFacilityManualTax.Name = "lblCalcSubsystemFacilityManualTax"
+        Me.lblCalcSubsystemFacilityManualTax.Size = New System.Drawing.Size(28, 13)
+        Me.lblCalcSubsystemFacilityManualTax.TabIndex = 21
+        Me.lblCalcSubsystemFacilityManualTax.Text = "Tax:"
+        Me.lblCalcSubsystemFacilityManualTax.Visible = false
         '
         'lblCalcSubsystemFacilityDefault
         '
@@ -7733,6 +7964,8 @@ Partial Class frmMain
         '
         'tabCalcFacilityBoosters
         '
+        Me.tabCalcFacilityBoosters.Controls.Add(Me.txtCalcBoosterFacilityManualTax)
+        Me.tabCalcFacilityBoosters.Controls.Add(Me.lblCalcBoosterFacilityManualTax)
         Me.tabCalcFacilityBoosters.Controls.Add(Me.lblCalcBoosterFacilityDefault)
         Me.tabCalcFacilityBoosters.Controls.Add(Me.btnCalcBoosterFacilitySave)
         Me.tabCalcFacilityBoosters.Controls.Add(Me.lblCalcBoosterFacilityTaxRate)
@@ -7754,6 +7987,27 @@ Partial Class frmMain
         Me.tabCalcFacilityBoosters.TabIndex = 7
         Me.tabCalcFacilityBoosters.Text = "Boosters"
         Me.tabCalcFacilityBoosters.UseVisualStyleBackColor = true
+        '
+        'txtCalcBoosterFacilityManualTax
+        '
+        Me.txtCalcBoosterFacilityManualTax.Location = New System.Drawing.Point(198, 89)
+        Me.txtCalcBoosterFacilityManualTax.MaxLength = 5
+        Me.txtCalcBoosterFacilityManualTax.Name = "txtCalcBoosterFacilityManualTax"
+        Me.txtCalcBoosterFacilityManualTax.Size = New System.Drawing.Size(35, 20)
+        Me.txtCalcBoosterFacilityManualTax.TabIndex = 22
+        Me.txtCalcBoosterFacilityManualTax.Text = "0%"
+        Me.txtCalcBoosterFacilityManualTax.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
+        Me.txtCalcBoosterFacilityManualTax.Visible = false
+        '
+        'lblCalcBoosterFacilityManualTax
+        '
+        Me.lblCalcBoosterFacilityManualTax.AutoSize = true
+        Me.lblCalcBoosterFacilityManualTax.Location = New System.Drawing.Point(172, 92)
+        Me.lblCalcBoosterFacilityManualTax.Name = "lblCalcBoosterFacilityManualTax"
+        Me.lblCalcBoosterFacilityManualTax.Size = New System.Drawing.Size(28, 13)
+        Me.lblCalcBoosterFacilityManualTax.TabIndex = 21
+        Me.lblCalcBoosterFacilityManualTax.Text = "Tax:"
+        Me.lblCalcBoosterFacilityManualTax.Visible = false
         '
         'lblCalcBoosterFacilityDefault
         '
@@ -7909,6 +8163,8 @@ Partial Class frmMain
         '
         'tabCalcFacilityNoPOS
         '
+        Me.tabCalcFacilityNoPOS.Controls.Add(Me.txtCalcNoPOSFacilityManualTax)
+        Me.tabCalcFacilityNoPOS.Controls.Add(Me.lblCalcNoPOSFacilityManualTax)
         Me.tabCalcFacilityNoPOS.Controls.Add(Me.lblCalcNoPOSFacilityDefault)
         Me.tabCalcFacilityNoPOS.Controls.Add(Me.btnCalcNoPOSFacilitySave)
         Me.tabCalcFacilityNoPOS.Controls.Add(Me.lblCalcNoPOSFacilityTaxRate)
@@ -7930,6 +8186,27 @@ Partial Class frmMain
         Me.tabCalcFacilityNoPOS.TabIndex = 4
         Me.tabCalcFacilityNoPOS.Text = "No POS"
         Me.tabCalcFacilityNoPOS.UseVisualStyleBackColor = true
+        '
+        'txtCalcNoPOSFacilityManualTax
+        '
+        Me.txtCalcNoPOSFacilityManualTax.Location = New System.Drawing.Point(196, 89)
+        Me.txtCalcNoPOSFacilityManualTax.MaxLength = 5
+        Me.txtCalcNoPOSFacilityManualTax.Name = "txtCalcNoPOSFacilityManualTax"
+        Me.txtCalcNoPOSFacilityManualTax.Size = New System.Drawing.Size(35, 20)
+        Me.txtCalcNoPOSFacilityManualTax.TabIndex = 22
+        Me.txtCalcNoPOSFacilityManualTax.Text = "0%"
+        Me.txtCalcNoPOSFacilityManualTax.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
+        Me.txtCalcNoPOSFacilityManualTax.Visible = false
+        '
+        'lblCalcNoPOSFacilityManualTax
+        '
+        Me.lblCalcNoPOSFacilityManualTax.AutoSize = true
+        Me.lblCalcNoPOSFacilityManualTax.Location = New System.Drawing.Point(170, 92)
+        Me.lblCalcNoPOSFacilityManualTax.Name = "lblCalcNoPOSFacilityManualTax"
+        Me.lblCalcNoPOSFacilityManualTax.Size = New System.Drawing.Size(28, 13)
+        Me.lblCalcNoPOSFacilityManualTax.TabIndex = 21
+        Me.lblCalcNoPOSFacilityManualTax.Text = "Tax:"
+        Me.lblCalcNoPOSFacilityManualTax.Visible = false
         '
         'lblCalcNoPOSFacilityDefault
         '
@@ -9010,7 +9287,7 @@ Partial Class frmMain
         Me.chkUpdatePricesCRESTHistory.TabIndex = 15
         Me.chkUpdatePricesCRESTHistory.Text = "Update Price History"
         Me.chkUpdatePricesCRESTHistory.UseVisualStyleBackColor = true
-        Me.chkUpdatePricesCRESTHistory.Visible = False
+        Me.chkUpdatePricesCRESTHistory.Visible = false
         '
         'chkUpdatePricesNoPrice
         '
@@ -11528,6 +11805,8 @@ Partial Class frmMain
         '
         'tabFacility
         '
+        Me.tabFacility.Controls.Add(Me.txtBPFacilityManualTax)
+        Me.tabFacility.Controls.Add(Me.lblBPFacilityManualTax)
         Me.tabFacility.Controls.Add(Me.cmbBPFacilityType)
         Me.tabFacility.Controls.Add(Me.lblBPFacilityDefault)
         Me.tabFacility.Controls.Add(Me.lblBPFacilityActivity)
@@ -11554,6 +11833,27 @@ Partial Class frmMain
         Me.tabFacility.TabIndex = 1
         Me.tabFacility.Text = "Facility"
         Me.tabFacility.UseVisualStyleBackColor = true
+        '
+        'txtBPFacilityManualTax
+        '
+        Me.txtBPFacilityManualTax.Location = New System.Drawing.Point(185, 108)
+        Me.txtBPFacilityManualTax.MaxLength = 5
+        Me.txtBPFacilityManualTax.Name = "txtBPFacilityManualTax"
+        Me.txtBPFacilityManualTax.Size = New System.Drawing.Size(35, 20)
+        Me.txtBPFacilityManualTax.TabIndex = 20
+        Me.txtBPFacilityManualTax.Text = "0%"
+        Me.txtBPFacilityManualTax.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
+        Me.txtBPFacilityManualTax.Visible = false
+        '
+        'lblBPFacilityManualTax
+        '
+        Me.lblBPFacilityManualTax.AutoSize = true
+        Me.lblBPFacilityManualTax.Location = New System.Drawing.Point(159, 111)
+        Me.lblBPFacilityManualTax.Name = "lblBPFacilityManualTax"
+        Me.lblBPFacilityManualTax.Size = New System.Drawing.Size(28, 13)
+        Me.lblBPFacilityManualTax.TabIndex = 19
+        Me.lblBPFacilityManualTax.Text = "Tax:"
+        Me.lblBPFacilityManualTax.Visible = false
         '
         'cmbBPFacilityType
         '
@@ -12241,7 +12541,7 @@ Partial Class frmMain
         '
         'lblBPAddlCosts
         '
-        Me.lblBPAddlCosts.Location = New System.Drawing.Point(3, 126)
+        Me.lblBPAddlCosts.Location = New System.Drawing.Point(4, 126)
         Me.lblBPAddlCosts.Name = "lblBPAddlCosts"
         Me.lblBPAddlCosts.Size = New System.Drawing.Size(39, 28)
         Me.lblBPAddlCosts.TabIndex = 11
@@ -14105,5 +14405,29 @@ End Sub
     Friend WithEvents ListOptionsMenu As System.Windows.Forms.ContextMenuStrip
     Friend WithEvents OpenMarketDataToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents chkUpdatePricesCRESTHistory As System.Windows.Forms.CheckBox
+    Friend WithEvents txtBPFacilityManualTax As System.Windows.Forms.TextBox
+    Friend WithEvents lblBPFacilityManualTax As System.Windows.Forms.Label
+    Friend WithEvents txtCalcBaseFacilityManualTax As System.Windows.Forms.TextBox
+    Friend WithEvents lblCalcBaseFacilityManualTax As System.Windows.Forms.Label
+    Friend WithEvents txtCalcComponentFacilityManualTax As System.Windows.Forms.TextBox
+    Friend WithEvents lblCalcComponentFacilityManualTax As System.Windows.Forms.Label
+    Friend WithEvents txtCalcCopyFacilityManualTax As System.Windows.Forms.TextBox
+    Friend WithEvents lblCalcCopyFacilityManualTax As System.Windows.Forms.Label
+    Friend WithEvents txtCalcInventionFacilityManualTax As System.Windows.Forms.TextBox
+    Friend WithEvents lblCalcInventionFacilityManualTax As System.Windows.Forms.Label
+    Friend WithEvents txtCalcT3InventionFacilityManualTax As System.Windows.Forms.TextBox
+    Friend WithEvents lblCalcT3InventionFacilityManualTax As System.Windows.Forms.Label
+    Friend WithEvents txtCalcCapitalFacilityManualTax As System.Windows.Forms.TextBox
+    Friend WithEvents lblCalcCapitalFacilityManualTax As System.Windows.Forms.Label
+    Friend WithEvents txtCalcSuperFacilityManualTax As System.Windows.Forms.TextBox
+    Friend WithEvents lblCalcSuperFacilityManualTax As System.Windows.Forms.Label
+    Friend WithEvents txtCalcT3FacilityManualTax As System.Windows.Forms.TextBox
+    Friend WithEvents lblCalcT3FacilityManualTax As System.Windows.Forms.Label
+    Friend WithEvents txtCalcSubsystemFacilityManualTax As System.Windows.Forms.TextBox
+    Friend WithEvents lblCalcSubsystemFacilityManualTax As System.Windows.Forms.Label
+    Friend WithEvents txtCalcBoosterFacilityManualTax As System.Windows.Forms.TextBox
+    Friend WithEvents lblCalcBoosterFacilityManualTax As System.Windows.Forms.Label
+    Friend WithEvents txtCalcNoPOSFacilityManualTax As System.Windows.Forms.TextBox
+    Friend WithEvents lblCalcNoPOSFacilityManualTax As System.Windows.Forms.Label
 
 End Class
