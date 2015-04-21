@@ -87,7 +87,7 @@ Public Class IndustryFacility
                 RegionID = .RegionID
                 SolarSystemName = .SolarSystemName
                 SolarSystemID = .SolarSystemID
-                TaxRate = 0
+                TaxRate = .TaxRate
                 MaterialMultiplier = .MaterialMultiplier
                 TimeMultiplier = .TimeMultiplier
                 ActivityCostPerSecond = .ActivityCostperSecond
@@ -321,6 +321,7 @@ Public Class IndustryFacility
             .ActivityID = ActivityID
             .MaterialMultiplier = MaterialMultiplier
             .TimeMultiplier = TimeMultiplier
+            .TaxRate = TaxRate
             .SolarSystemID = SolarSystemID
             .SolarSystemName = SolarSystemName
             .RegionID = RegionID

@@ -1675,7 +1675,8 @@ NoBonus:
         If Not AutoLoad Then
             LoadingFacilities = True
             FacilityCombo.Text = SelectedFacility.FacilityName
-            Call DisplayFacilityBonus(SelectedFacility.ProductionType, SelectedFacility.MaterialMultiplier, SelectedFacility.TimeMultiplier, ItemGroupID, ItemCategoryID, _
+            Call DisplayFacilityBonus(SelectedFacility.ProductionType, SelectedFacility.MaterialMultiplier, SelectedFacility.TimeMultiplier, SelectedFacility.TaxRate, _
+                                      ItemGroupID, ItemCategoryID, _
                                       FacilityActivity, FacilityTypeCombo.Text, FacilityCombo.Text, _
                                       FacilityRegionCombo, FacilitySystemCombo, FacilityCombo, _
                                       FacilityBonusLabel, FacilityDefaultLabel, _
@@ -2243,7 +2244,7 @@ NoBonus:
 
             ' For a pos, need to display the results and reload the bp
             Call DisplayFacilityBonus(GetProductionType(FacilityActivity, ItemGroupID, ItemCategoryID, FacilityTypeCombo.Text), _
-                          Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, ItemGroupID, ItemCategoryID, _
+                          Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, Defaults.FacilityDefaultTax, ItemGroupID, ItemCategoryID, _
                           FacilityActivity, FacilityTypeCombo.Text, FacilityCombo.Text, _
                           FacilityRegionCombo, FacilitySystemCombo, FacilityCombo, _
                           FacilityBonusLabel, FacilityDefaultLabel, _
@@ -2299,7 +2300,8 @@ NoBonus:
     End Sub
 
     ' Displays the bonus for the facility selected in the facility or array combo
-    Private Sub DisplayFacilityBonus(ProductionType As IndustryType, SentMM As Double, SentTM As Double, ItemGroupID As Long, ItemCategoryID As Long, _
+    Private Sub DisplayFacilityBonus(ProductionType As IndustryType, SentMM As Double, SentTM As Double, SentTax As Double, _
+                                     ItemGroupID As Long, ItemCategoryID As Long, _
                                      Activity As String, FacilityType As String, FacilityName As String, _
                                      ByRef FacilityRegionCombo As ComboBox, ByRef FacilitySystemCombo As ComboBox, ByRef FacilityCombo As ComboBox,
                                      ByRef FacilityBonusLabel As Label, ByRef FacilityDefaultLabel As Label, _
@@ -2425,7 +2427,7 @@ NoBonus:
 
         Dim MMText As String = FormatPercent(1 - MaterialMultiplier, 1)
         Dim TMText As String = FormatPercent(1 - TimeMultiplier, 1)
-        Dim TaxText As String = FormatPercent(1 - Tax, 1)
+        Dim TaxText As String = FormatPercent(Tax, 1)
 
         ' Show boxes for the user to enter for outposts since I can't get the upgrades or taxes from CREST
         If FacilityType = OutpostFacility Then
@@ -3192,7 +3194,7 @@ NoBonus:
         End If
     End Sub
 
-    Private Sub OutpostMETETaxText_KeyUp(ByRef ManualTextBox As TextBox, ByRef SelectedFacility As IndustryFacility, _
+    Private Sub OutpostMETETaxText_KeyUp(ByVal UpdateType As String, ByRef ManualTextBox As TextBox, ByRef SelectedFacility As IndustryFacility, _
                                          ByRef FacilityTypeCombo As ComboBox, ByRef SaveButton As Button, ByRef DefaultLabel As Label)
         Dim Temp As String
         Dim TempValue As Double
@@ -3209,7 +3211,14 @@ NoBonus:
 
         ' If it's an outpost, then save the ME/TE/Tax for this in the current facility
         If FacilityTypeCombo.Text = OutpostFacility Then
-            SelectedFacility.MaterialMultiplier = CDbl(TempValue)
+            If UpdateType = "ME" Then
+                SelectedFacility.MaterialMultiplier = TempValue
+            ElseIf UpdateType = "TE" Then
+                SelectedFacility.TimeMultiplier = TempValue
+            Else
+                SelectedFacility.TaxRate = CDbl(Temp)
+            End If
+
         End If
 
         ' They changed the value, so enable save
@@ -5392,7 +5401,7 @@ Tabs:
                         TimeCheck = Nothing
                 End Select
                 Call DisplayFacilityBonus(TempIndustryType, _
-                              Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, CurrentBPGroupID, CurrentBPCategoryID, _
+                              Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, Defaults.FacilityDefaultTax, CurrentBPGroupID, CurrentBPCategoryID, _
                               cmbBPFacilityActivities.Text, cmbBPFacilityType.Text, cmbBPFacilityorArray.Text, _
                               cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, _
                               lblBPFacilityBonus, lblBPFacilityDefault, _
@@ -5531,7 +5540,7 @@ Tabs:
             Dim Defaults As New ProgramSettings
 
             Call DisplayFacilityBonus(GetProductionType(cmbBPFacilityActivities.Text, CurrentBPGroupID, CurrentBPCategoryID, cmbBPFacilityType.Text), _
-                                      Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, CurrentBPGroupID, CurrentBPCategoryID, _
+                                      Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, Defaults.FacilityDefaultTax, CurrentBPGroupID, CurrentBPCategoryID, _
                                       cmbBPFacilityActivities.Text, cmbBPFacilityType.Text, cmbBPFacilityorArray.Text, _
                                       cmbBPFacilityRegion, cmbBPFacilitySystem, cmbBPFacilityorArray, _
                                       lblBPFacilityBonus, lblBPFacilityDefault, _
@@ -5694,7 +5703,7 @@ Tabs:
     End Sub
 
     Private Sub txtBPFacilityManualME_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtBPFacilityManualME.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtBPFacilityManualME, SelectedBPManufacturingFacility, _
+        Call OutpostMETETaxText_KeyUp("ME", txtBPFacilityManualME, SelectedBPManufacturingFacility, _
                                       cmbBPFacilityType, btnBPFacilitySave, lblBPFacilityDefault)
     End Sub
 
@@ -5707,7 +5716,7 @@ Tabs:
     End Sub
 
     Private Sub txtBPFacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtBPFacilityManualTE.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtBPFacilityManualTE, SelectedBPManufacturingFacility, _
+        Call OutpostMETETaxText_KeyUp("TE", txtBPFacilityManualTE, SelectedBPManufacturingFacility, _
                                       cmbBPFacilityType, btnBPFacilitySave, lblBPFacilityDefault)
     End Sub
 
@@ -5720,7 +5729,7 @@ Tabs:
     End Sub
 
     Private Sub txtBPFacilityManualTax_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtBPFacilityManualTax.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtBPFacilityManualTax, SelectedBPManufacturingFacility, _
+        Call OutpostMETETaxText_KeyUp("Tax", txtBPFacilityManualTax, SelectedBPManufacturingFacility, _
                                       cmbBPFacilityType, btnBPFacilitySave, lblBPFacilityDefault)
     End Sub
 
@@ -11196,7 +11205,7 @@ ExitSub:
             Dim Defaults As New ProgramSettings
 
             Call DisplayFacilityBonus(IndustryType.Manufacturing, _
-                                      Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, 0, 0, _
+                                      Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, Defaults.FacilityDefaultTax, 0, 0, _
                                       ActivityManufacturing, cmbCalcBaseFacilityType.Text, cmbCalcBaseFacilityorArray.Text, _
                                       cmbCalcBaseFacilityRegion, cmbCalcBaseFacilitySystem, cmbCalcBaseFacilityorArray, _
                                       lblCalcBaseFacilityBonus, lblCalcBaseFacilityDefault, _
@@ -11254,7 +11263,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcBaseFacilityManualME_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcBaseFacilityManualME.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcBaseFacilityManualME, SelectedCalcBaseManufacturingFacility, _
+        Call OutpostMETETaxText_KeyUp("ME", txtCalcBaseFacilityManualME, SelectedCalcBaseManufacturingFacility, _
                                       cmbCalcBaseFacilityType, btnCalcBaseFacilitySave, lblCalcBaseFacilityDefault)
     End Sub
 
@@ -11267,7 +11276,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcBaseFacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcBaseFacilityManualTE.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcBaseFacilityManualTE, SelectedCalcBaseManufacturingFacility, _
+        Call OutpostMETETaxText_KeyUp("TE", txtCalcBaseFacilityManualTE, SelectedCalcBaseManufacturingFacility, _
                                       cmbCalcBaseFacilityType, btnCalcBaseFacilitySave, lblCalcBaseFacilityDefault)
     End Sub
 
@@ -11280,7 +11289,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcBaseFacilityManualTax_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcBaseFacilityManualTax.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcBaseFacilityManualTax, SelectedCalcBaseManufacturingFacility, _
+        Call OutpostMETETaxText_KeyUp("Tax", txtCalcBaseFacilityManualTax, SelectedCalcBaseManufacturingFacility, _
                                       cmbCalcBaseFacilityType, btnCalcBaseFacilitySave, lblCalcBaseFacilityDefault)
     End Sub
 
@@ -11475,7 +11484,7 @@ ExitSub:
             Dim Defaults As New ProgramSettings
 
             Call DisplayFacilityBonus(GetComponentsIndustryType(chkCalcCapComponentsFacility.Checked), _
-                                      Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, GetComponentsGroupID(chkCalcCapComponentsFacility.Checked), -1, _
+                                      Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, Defaults.FacilityDefaultTax, GetComponentsGroupID(chkCalcCapComponentsFacility.Checked), -1, _
                                       GetComponentActivityType(chkCalcCapComponentsFacility.Checked), cmbCalcComponentFacilityType.Text, cmbCalcComponentFacilityorArray.Text, _
                                       cmbCalcComponentFacilityRegion, cmbCalcComponentFacilitySystem, cmbCalcComponentFacilityorArray, _
                                       lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, _
@@ -11517,7 +11526,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcComponentFacilityManualME_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcComponentFacilityManualME.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcComponentFacilityManualME, SelectedCalcComponentManufacturingFacility, _
+        Call OutpostMETETaxText_KeyUp("ME", txtCalcComponentFacilityManualME, SelectedCalcComponentManufacturingFacility, _
                                       cmbCalcComponentFacilityType, btnCalcComponentFacilitySave, lblCalcComponentFacilityDefault)
     End Sub
 
@@ -11530,7 +11539,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcComponentFacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcComponentFacilityManualTE.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcComponentFacilityManualTE, SelectedCalcComponentManufacturingFacility, _
+        Call OutpostMETETaxText_KeyUp("TE", txtCalcComponentFacilityManualTE, SelectedCalcComponentManufacturingFacility, _
                                       cmbCalcComponentFacilityType, btnCalcComponentFacilitySave, lblCalcComponentFacilityDefault)
     End Sub
 
@@ -11543,7 +11552,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcComponentFacilityManualTax_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcComponentFacilityManualTax.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcComponentFacilityManualTax, SelectedCalcComponentManufacturingFacility, _
+        Call OutpostMETETaxText_KeyUp("Tax", txtCalcComponentFacilityManualTax, SelectedCalcComponentManufacturingFacility, _
                                       cmbCalcComponentFacilityType, btnCalcComponentFacilitySave, lblCalcComponentFacilityDefault)
     End Sub
 
@@ -11600,7 +11609,7 @@ ExitSub:
                 Dim Defaults As New ProgramSettings
                 ' Call display because it loads the facility
                 Call DisplayFacilityBonus(IndustryType.Invention, _
-                               Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, 0, 0, _
+                               Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, Defaults.FacilityDefaultTax, 0, 0, _
                                ActivityInvention, cmbCalcInventionFacilityType.Text, cmbCalcInventionFacilityorArray.Text, _
                                cmbCalcInventionFacilityRegion, cmbCalcInventionFacilitySystem, cmbCalcInventionFacilityorArray, _
                                lblCalcInventionFacilityBonus, lblCalcInventionFacilityDefault, _
@@ -11725,7 +11734,7 @@ ExitSub:
             Dim Defaults As New ProgramSettings
 
             Call DisplayFacilityBonus(IndustryType.Invention, _
-                                      Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, 0, 0, _
+                                      Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, Defaults.FacilityDefaultTax, 0, 0, _
                                       ActivityInvention, cmbCalcInventionFacilityType.Text, cmbCalcInventionFacilityorArray.Text, _
                                       cmbCalcInventionFacilityRegion, cmbCalcInventionFacilitySystem, cmbCalcInventionFacilityorArray, _
                                       lblCalcInventionFacilityBonus, lblCalcInventionFacilityDefault, _
@@ -11763,7 +11772,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcInventionFacilityManualME_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcInventionFacilityManualME.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcInventionFacilityManualME, SelectedCalcInventionFacility, _
+        Call OutpostMETETaxText_KeyUp("ME", txtCalcInventionFacilityManualME, SelectedCalcInventionFacility, _
                                       cmbCalcInventionFacilityType, btnCalcInventionFacilitySave, lblCalcInventionFacilityDefault)
     End Sub
 
@@ -11776,7 +11785,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcInventionFacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcInventionFacilityManualTE.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcInventionFacilityManualTE, SelectedCalcInventionFacility, _
+        Call OutpostMETETaxText_KeyUp("TE", txtCalcInventionFacilityManualTE, SelectedCalcInventionFacility, _
                                       cmbCalcInventionFacilityType, btnCalcInventionFacilitySave, lblCalcInventionFacilityDefault)
     End Sub
 
@@ -11789,7 +11798,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcInventionFacilityManualTax_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcInventionFacilityManualTax.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcInventionFacilityManualTax, SelectedCalcInventionFacility, _
+        Call OutpostMETETaxText_KeyUp("Tax", txtCalcInventionFacilityManualTax, SelectedCalcInventionFacility, _
                                       cmbCalcInventionFacilityType, btnCalcInventionFacilitySave, lblCalcInventionFacilityDefault)
     End Sub
 
@@ -11870,7 +11879,7 @@ ExitSub:
                 Dim Defaults As New ProgramSettings
                 ' Call display because it loads the facility
                 Call DisplayFacilityBonus(IndustryType.T3Invention, _
-                               Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, StrategicCruiserGroupID, SubsystemCategoryID, _
+                               Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, Defaults.FacilityDefaultTax, StrategicCruiserGroupID, SubsystemCategoryID, _
                                ActivityInvention, cmbCalcT3InventionFacilityType.Text, cmbCalcT3InventionFacilityorArray.Text, _
                                cmbCalcT3InventionFacilityRegion, cmbCalcT3InventionFacilitySystem, cmbCalcT3InventionFacilityorArray, _
                                lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityDefault, _
@@ -11995,7 +12004,7 @@ ExitSub:
             Dim Defaults As New ProgramSettings
 
             Call DisplayFacilityBonus(IndustryType.T3Invention, _
-                                      Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, StrategicCruiserGroupID, SubsystemCategoryID, _
+                                      Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, Defaults.FacilityDefaultTax, StrategicCruiserGroupID, SubsystemCategoryID, _
                                       ActivityInvention, cmbCalcT3InventionFacilityType.Text, cmbCalcT3InventionFacilityorArray.Text, _
                                       cmbCalcT3InventionFacilityRegion, cmbCalcT3InventionFacilitySystem, cmbCalcT3InventionFacilityorArray, _
                                       lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityDefault, _
@@ -12034,7 +12043,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcT3InventionFacilityManualME_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcT3InventionFacilityManualME.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcT3InventionFacilityManualME, SelectedCalcT3InventionFacility, _
+        Call OutpostMETETaxText_KeyUp("ME", txtCalcT3InventionFacilityManualME, SelectedCalcT3InventionFacility, _
                                       cmbCalcT3InventionFacilityType, btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityDefault)
     End Sub
 
@@ -12047,7 +12056,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcT3InventionFacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcT3InventionFacilityManualTE.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcT3InventionFacilityManualTE, SelectedCalcT3InventionFacility, _
+        Call OutpostMETETaxText_KeyUp("TE", txtCalcT3InventionFacilityManualTE, SelectedCalcT3InventionFacility, _
                                       cmbCalcT3InventionFacilityType, btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityDefault)
     End Sub
 
@@ -12060,7 +12069,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcT3InventionFacilityManualTax_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcT3InventionFacilityManualTax.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcT3InventionFacilityManualTax, SelectedCalcT3InventionFacility, _
+        Call OutpostMETETaxText_KeyUp("Tax", txtCalcT3InventionFacilityManualTax, SelectedCalcT3InventionFacility, _
                                       cmbCalcT3InventionFacilityType, btnCalcT3InventionFacilitySave, lblCalcT3InventionFacilityDefault)
     End Sub
 
@@ -12142,7 +12151,7 @@ ExitSub:
                 Dim Defaults As New ProgramSettings
                 ' Call display because it loads the facility
                 Call DisplayFacilityBonus(IndustryType.Copying, _
-                               Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, 0, 0, _
+                               Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, Defaults.FacilityDefaultTax, 0, 0, _
                                ActivityCopying, cmbCalcCopyFacilityType.Text, cmbCalcCopyFacilityorArray.Text, _
                                cmbCalcCopyFacilityRegion, cmbCalcCopyFacilitySystem, cmbCalcCopyFacilityorArray, _
                                lblCalcCopyFacilityBonus, lblCalcCopyFacilityDefault, _
@@ -12267,7 +12276,7 @@ ExitSub:
             Dim Defaults As New ProgramSettings
 
             Call DisplayFacilityBonus(IndustryType.Copying, _
-                                      Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, 0, 0, _
+                                      Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, Defaults.FacilityDefaultTax, 0, 0, _
                                       ActivityCopying, cmbCalcCopyFacilityType.Text, cmbCalcCopyFacilityorArray.Text, _
                                       cmbCalcCopyFacilityRegion, cmbCalcCopyFacilitySystem, cmbCalcCopyFacilityorArray, _
                                       lblCalcCopyFacilityBonus, lblCalcCopyFacilityDefault, _
@@ -12306,7 +12315,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcCopyFacilityManualME_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcCopyFacilityManualME.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcCopyFacilityManualME, SelectedCalcCopyFacility, _
+        Call OutpostMETETaxText_KeyUp("ME", txtCalcCopyFacilityManualME, SelectedCalcCopyFacility, _
                                       cmbCalcCopyFacilityType, btnCalcCopyFacilitySave, lblCalcCopyFacilityDefault)
     End Sub
 
@@ -12319,7 +12328,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcCopyFacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcCopyFacilityManualTE.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcCopyFacilityManualTE, SelectedCalcCopyFacility, _
+        Call OutpostMETETaxText_KeyUp("TE", txtCalcCopyFacilityManualTE, SelectedCalcCopyFacility, _
                                       cmbCalcCopyFacilityType, btnCalcCopyFacilitySave, lblCalcCopyFacilityDefault)
     End Sub
 
@@ -12332,7 +12341,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcCopyFacilityManualTax_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcCopyFacilityManualTax.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcCopyFacilityManualTax, SelectedCalcCopyFacility, _
+        Call OutpostMETETaxText_KeyUp("Tax", txtCalcCopyFacilityManualTax, SelectedCalcCopyFacility, _
                                       cmbCalcCopyFacilityType, btnCalcCopyFacilitySave, lblCalcCopyFacilityDefault)
     End Sub
 
@@ -12511,7 +12520,7 @@ ExitSub:
             Dim Defaults As New ProgramSettings
 
             Call DisplayFacilityBonus(IndustryType.NoPOSManufacturing, _
-                                      Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, -1, SovStructureCategoryID, _
+                                      Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, Defaults.FacilityDefaultTax, -1, SovStructureCategoryID, _
                                       ActivityManufacturing, cmbCalcNoPOSFacilityType.Text, cmbCalcNoPOSFacilityorArray.Text, _
                                       cmbCalcNoPOSFacilityRegion, cmbCalcNoPOSFacilitySystem, cmbCalcNoPOSFacilityorArray, _
                                       lblCalcNoPOSFacilityBonus, lblCalcNoPOSFacilityDefault, _
@@ -12547,7 +12556,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcNoPOSFacilityManualME_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcNoPOSFacilityManualME.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcNoPOSFacilityManualME, SelectedCalcNoPOSFacility, _
+        Call OutpostMETETaxText_KeyUp("ME", txtCalcNoPOSFacilityManualME, SelectedCalcNoPOSFacility, _
                                       cmbCalcNoPOSFacilityType, btnCalcNoPOSFacilitySave, lblCalcNoPOSFacilityDefault)
     End Sub
 
@@ -12560,7 +12569,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcNoPOSFacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcNoPOSFacilityManualTE.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcNoPOSFacilityManualTE, SelectedCalcNoPOSFacility, _
+        Call OutpostMETETaxText_KeyUp("TE", txtCalcNoPOSFacilityManualTE, SelectedCalcNoPOSFacility, _
                                       cmbCalcNoPOSFacilityType, btnCalcNoPOSFacilitySave, lblCalcNoPOSFacilityDefault)
     End Sub
 
@@ -12573,7 +12582,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcNoPOSFacilityManualTax_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcNoPOSFacilityManualTax.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcNoPOSFacilityManualTax, SelectedCalcNoPOSFacility, _
+        Call OutpostMETETaxText_KeyUp("Tax", txtCalcNoPOSFacilityManualTax, SelectedCalcNoPOSFacility, _
                                       cmbCalcNoPOSFacilityType, btnCalcNoPOSFacilitySave, lblCalcNoPOSFacilityDefault)
     End Sub
 
@@ -12727,7 +12736,7 @@ ExitSub:
             Dim Defaults As New ProgramSettings
 
             Call DisplayFacilityBonus(IndustryType.SuperManufacturing, _
-                                      Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, SupercarrierGroupID, -1, _
+                                      Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, Defaults.FacilityDefaultTax, SupercarrierGroupID, -1, _
                                       ActivityManufacturing, cmbCalcSuperFacilityType.Text, cmbCalcSuperFacilityorArray.Text, _
                                       cmbCalcSuperFacilityRegion, cmbCalcSuperFacilitySystem, cmbCalcSuperFacilityorArray, _
                                       lblCalcSuperFacilityBonus, lblCalcSuperFacilityDefault, _
@@ -12763,7 +12772,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcSuperFacilityManualME_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcSuperFacilityManualME.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcSuperFacilityManualME, SelectedCalcSuperManufacturingFacility, _
+        Call OutpostMETETaxText_KeyUp("ME", txtCalcSuperFacilityManualME, SelectedCalcSuperManufacturingFacility, _
                                       cmbCalcSuperFacilityType, btnCalcSuperFacilitySave, lblCalcSuperFacilityDefault)
     End Sub
 
@@ -12776,7 +12785,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcSuperFacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcSuperFacilityManualTE.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcSuperFacilityManualTE, SelectedCalcSuperManufacturingFacility, _
+        Call OutpostMETETaxText_KeyUp("TE", txtCalcSuperFacilityManualTE, SelectedCalcSuperManufacturingFacility, _
                                       cmbCalcSuperFacilityType, btnCalcSuperFacilitySave, lblCalcSuperFacilityDefault)
     End Sub
 
@@ -12789,7 +12798,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcSuperFacilityManualTax_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcSuperFacilityManualTax.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcSuperFacilityManualTax, SelectedCalcSuperManufacturingFacility, _
+        Call OutpostMETETaxText_KeyUp("Tax", txtCalcSuperFacilityManualTax, SelectedCalcSuperManufacturingFacility, _
                                       cmbCalcSuperFacilityType, btnCalcSuperFacilitySave, lblCalcSuperFacilityDefault)
     End Sub
 
@@ -12942,7 +12951,7 @@ ExitSub:
             Dim Defaults As New ProgramSettings
 
             Call DisplayFacilityBonus(IndustryType.CapitalManufacturing, _
-                                      Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, DreadnoughtGroupID, -1, _
+                                      Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, Defaults.FacilityDefaultTax, DreadnoughtGroupID, -1, _
                                       ActivityManufacturing, cmbCalcCapitalFacilityType.Text, cmbCalcCapitalFacilityorArray.Text, _
                                       cmbCalcCapitalFacilityRegion, cmbCalcCapitalFacilitySystem, cmbCalcCapitalFacilityorArray, _
                                       lblCalcCapitalFacilityBonus, lblCalcCapitalFacilityDefault, _
@@ -12978,7 +12987,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcCapitalFacilityManualME_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcCapitalFacilityManualME.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcCapitalFacilityManualME, SelectedCalcCapitalManufacturingFacility, _
+        Call OutpostMETETaxText_KeyUp("ME", txtCalcCapitalFacilityManualME, SelectedCalcCapitalManufacturingFacility, _
                                       cmbCalcCapitalFacilityType, btnCalcCapitalFacilitySave, lblCalcCapitalFacilityDefault)
     End Sub
 
@@ -12991,7 +13000,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcCapitalFacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcCapitalFacilityManualTE.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcCapitalFacilityManualTE, SelectedCalcCapitalManufacturingFacility, _
+        Call OutpostMETETaxText_KeyUp("TE", txtCalcCapitalFacilityManualTE, SelectedCalcCapitalManufacturingFacility, _
                                       cmbCalcCapitalFacilityType, btnCalcCapitalFacilitySave, lblCalcCapitalFacilityDefault)
     End Sub
 
@@ -13004,7 +13013,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcCapitalFacilityManualTax_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcCapitalFacilityManualTax.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcCapitalFacilityManualTax, SelectedCalcCapitalManufacturingFacility, _
+        Call OutpostMETETaxText_KeyUp("Tax", txtCalcCapitalFacilityManualTax, SelectedCalcCapitalManufacturingFacility, _
                                       cmbCalcCapitalFacilityType, btnCalcCapitalFacilitySave, lblCalcCapitalFacilityDefault)
     End Sub
 
@@ -13179,7 +13188,7 @@ ExitSub:
             Dim Defaults As New ProgramSettings
 
             Call DisplayFacilityBonus(GetT3ShipIndustryType(chkCalcT3DestroyersFacility.Checked), _
-                                      Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, GetT3ShipGroupID(chkCalcT3DestroyersFacility.Checked), -1, _
+                                      Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, Defaults.FacilityDefaultTax, GetT3ShipGroupID(chkCalcT3DestroyersFacility.Checked), -1, _
                                       ActivityManufacturing, cmbCalcT3FacilityType.Text, cmbCalcT3FacilityorArray.Text, _
                                       cmbCalcT3FacilityRegion, cmbCalcT3FacilitySystem, cmbCalcT3FacilityorArray, _
                                       lblCalcT3FacilityBonus, lblCalcT3FacilityDefault, _
@@ -13222,10 +13231,10 @@ ExitSub:
 
     Private Sub txtCalcT3FacilityManualME_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcT3FacilityManualME.KeyUp
         If chkCalcT3DestroyersFacility.Checked Then
-            Call OutpostMETETaxText_KeyUp(txtCalcT3FacilityManualME, SelectedCalcT3DestroyerManufacturingFacility, _
+            Call OutpostMETETaxText_KeyUp("ME", txtCalcT3FacilityManualME, SelectedCalcT3DestroyerManufacturingFacility, _
                                           cmbCalcT3FacilityType, btnCalcT3FacilitySave, lblCalcT3FacilityDefault)
         Else
-            Call OutpostMETETaxText_KeyUp(txtCalcT3FacilityManualME, SelectedCalcT3CruiserManufacturingFacility, _
+            Call OutpostMETETaxText_KeyUp("ME", txtCalcT3FacilityManualME, SelectedCalcT3CruiserManufacturingFacility, _
                               cmbCalcT3FacilityType, btnCalcT3FacilitySave, lblCalcT3FacilityDefault)
         End If
     End Sub
@@ -13244,10 +13253,10 @@ ExitSub:
 
     Private Sub txtCalcT3FacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcT3FacilityManualTE.KeyUp
         If chkCalcT3DestroyersFacility.Checked Then
-            Call OutpostMETETaxText_KeyUp(txtCalcT3FacilityManualTE, SelectedCalcT3DestroyerManufacturingFacility, _
+            Call OutpostMETETaxText_KeyUp("TE", txtCalcT3FacilityManualTE, SelectedCalcT3DestroyerManufacturingFacility, _
                                           cmbCalcT3FacilityType, btnCalcT3FacilitySave, lblCalcT3FacilityDefault)
         Else
-            Call OutpostMETETaxText_KeyUp(txtCalcT3FacilityManualTE, SelectedCalcT3CruiserManufacturingFacility, _
+            Call OutpostMETETaxText_KeyUp("TE", txtCalcT3FacilityManualTE, SelectedCalcT3CruiserManufacturingFacility, _
                               cmbCalcT3FacilityType, btnCalcT3FacilitySave, lblCalcT3FacilityDefault)
         End If
     End Sub
@@ -13266,10 +13275,10 @@ ExitSub:
 
     Private Sub txtCalcT3FacilityManualTax_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcT3FacilityManualTax.KeyUp
         If chkCalcT3DestroyersFacility.Checked Then
-            Call OutpostMETETaxText_KeyUp(txtCalcT3FacilityManualTax, SelectedCalcT3DestroyerManufacturingFacility, _
+            Call OutpostMETETaxText_KeyUp("Tax", txtCalcT3FacilityManualTax, SelectedCalcT3DestroyerManufacturingFacility, _
                                           cmbCalcT3FacilityType, btnCalcT3FacilitySave, lblCalcT3FacilityDefault)
         Else
-            Call OutpostMETETaxText_KeyUp(txtCalcT3FacilityManualTax, SelectedCalcT3CruiserManufacturingFacility, _
+            Call OutpostMETETaxText_KeyUp("Tax", txtCalcT3FacilityManualTax, SelectedCalcT3CruiserManufacturingFacility, _
                               cmbCalcT3FacilityType, btnCalcT3FacilitySave, lblCalcT3FacilityDefault)
         End If
     End Sub
@@ -13428,7 +13437,7 @@ ExitSub:
             Dim Defaults As New ProgramSettings
 
             Call DisplayFacilityBonus(IndustryType.SubsystemManufacturing, _
-                                      Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, -1, SubsystemCategoryID, _
+                                      Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, Defaults.FacilityDefaultTax, -1, SubsystemCategoryID, _
                                       ActivityManufacturing, cmbCalcSubsystemFacilityType.Text, cmbCalcSubsystemFacilityorArray.Text, _
                                       cmbCalcSubsystemFacilityRegion, cmbCalcSubsystemFacilitySystem, cmbCalcSubsystemFacilityorArray, _
                                       lblCalcSubsystemFacilityBonus, lblCalcSubsystemFacilityDefault, _
@@ -13464,7 +13473,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcSubsystemFacilityManualME_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcSubsystemFacilityManualME.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcSubsystemFacilityManualME, SelectedCalcSubsystemManufacturingFacility, _
+        Call OutpostMETETaxText_KeyUp("ME", txtCalcSubsystemFacilityManualME, SelectedCalcSubsystemManufacturingFacility, _
                                       cmbCalcSubsystemFacilityType, btnCalcSubsystemFacilitySave, lblCalcSubsystemFacilityDefault)
     End Sub
 
@@ -13477,7 +13486,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcSubsystemFacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcSubsystemFacilityManualTE.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcSubsystemFacilityManualTE, SelectedCalcSubsystemManufacturingFacility, _
+        Call OutpostMETETaxText_KeyUp("TE", txtCalcSubsystemFacilityManualTE, SelectedCalcSubsystemManufacturingFacility, _
                                       cmbCalcSubsystemFacilityType, btnCalcSubsystemFacilitySave, lblCalcSubsystemFacilityDefault)
     End Sub
 
@@ -13490,7 +13499,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcSubsystemFacilityManualTax_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcSubsystemFacilityManualTax.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcSubsystemFacilityManualTax, SelectedCalcSubsystemManufacturingFacility, _
+        Call OutpostMETETaxText_KeyUp("Tax", txtCalcSubsystemFacilityManualTax, SelectedCalcSubsystemManufacturingFacility, _
                                       cmbCalcSubsystemFacilityType, btnCalcSubsystemFacilitySave, lblCalcSubsystemFacilityDefault)
     End Sub
 
@@ -13643,7 +13652,7 @@ ExitSub:
             Dim Defaults As New ProgramSettings
 
             Call DisplayFacilityBonus(IndustryType.BoosterManufacturing, _
-                                      Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, BoosterGroupID, -1, _
+                                      Defaults.FacilityDefaultMM, Defaults.FacilityDefaultTM, Defaults.FacilityDefaultTax, BoosterGroupID, -1, _
                                       ActivityManufacturing, cmbCalcBoosterFacilityType.Text, cmbCalcBoosterFacilityorArray.Text, _
                                       cmbCalcBoosterFacilityRegion, cmbCalcBoosterFacilitySystem, cmbCalcBoosterFacilityorArray, _
                                       lblCalcBoosterFacilityBonus, lblCalcBoosterFacilityDefault, _
@@ -13679,7 +13688,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcBoosterFacilityManualME_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcBoosterFacilityManualME.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcBoosterFacilityManualME, SelectedCalcBoosterManufacturingFacility, _
+        Call OutpostMETETaxText_KeyUp("ME", txtCalcBoosterFacilityManualME, SelectedCalcBoosterManufacturingFacility, _
                                       cmbCalcBoosterFacilityType, btnCalcBoosterFacilitySave, lblCalcBoosterFacilityDefault)
     End Sub
 
@@ -13692,7 +13701,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcBoosterFacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcBoosterFacilityManualTE.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcBoosterFacilityManualTE, SelectedCalcBoosterManufacturingFacility, _
+        Call OutpostMETETaxText_KeyUp("TE", txtCalcBoosterFacilityManualTE, SelectedCalcBoosterManufacturingFacility, _
                                       cmbCalcBoosterFacilityType, btnCalcBoosterFacilitySave, lblCalcBoosterFacilityDefault)
     End Sub
 
@@ -13705,7 +13714,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcBoosterFacilityManualTax_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtCalcBoosterFacilityManualTax.KeyUp
-        Call OutpostMETETaxText_KeyUp(txtCalcBoosterFacilityManualTax, SelectedCalcBoosterManufacturingFacility, _
+        Call OutpostMETETaxText_KeyUp("Tax", txtCalcBoosterFacilityManualTax, SelectedCalcBoosterManufacturingFacility, _
                                       cmbCalcBoosterFacilityType, btnCalcBoosterFacilitySave, lblCalcBoosterFacilityDefault)
     End Sub
 

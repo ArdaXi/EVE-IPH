@@ -181,7 +181,8 @@ Public Class ProgramSettings
     Public FacilityDefaultMM As Double = 1
     Public FacilityDefaultTM As Double = 1
     Public DefalutFacilityCM As Double = 1
-    Public FacilityDefaultTax As Double = 0.1
+    Public FacilityDefaultTax As Double = 0.1 ' Only for processing
+    Public OutpostDefaultTax As Double = 0 ' If we are saving the settings, then the only time would be for outposts
 
     ' For POS data (T3 and general pos)
     Public FacilityDefaultSolarSystemID As Long = 30000142
@@ -4032,6 +4033,7 @@ Public Class ProgramSettings
                             .ProductionType = CType(GetSettingValue(FacilityFileName, SettingTypes.TypeInteger, Tab & "ManufacturingFacilitySettings", "ProductionType", IndustryType.Manufacturing), IndustryType)
                             .MaterialMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "ManufacturingFacilitySettings", "MaterialMultiplier", FacilityDefaultMM))
                             .TimeMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "ManufacturingFacilitySettings", "TimeMultiplier", FacilityDefaultTM))
+                            .TaxRate = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "ManufacturingFacilitySettings", "TaxRate", OutpostDefaultTax))
                             .SolarSystemID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "ManufacturingFacilitySettings", "SolarSystemID", FacilityDefaultSolarSystemID))
                             .SolarSystemName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "ManufacturingFacilitySettings", "SolarSystemName", FacilityDefaultSolarSystem))
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "ManufacturingFacilitySettings", "RegionID", FacilityDefaultRegionID))
@@ -4047,6 +4049,7 @@ Public Class ProgramSettings
                             .ProductionType = CType(GetSettingValue(FacilityFileName, SettingTypes.TypeInteger, Tab & "ComponentsManufacturingFacilitySettings", "ProductionType", IndustryType.Manufacturing), IndustryType)
                             .MaterialMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "ComponentsManufacturingFacilitySettings", "MaterialMultiplier", FacilityDefaultMM))
                             .TimeMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "ComponentsManufacturingFacilitySettings", "TimeMultiplier", FacilityDefaultTM))
+                            .TaxRate = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "ComponentsManufacturingFacilitySettings", "TaxRate", OutpostDefaultTax))
                             .SolarSystemID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "ComponentsManufacturingFacilitySettings", "SolarSystemID", FacilityDefaultSolarSystemID))
                             .SolarSystemName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "ComponentsManufacturingFacilitySettings", "SolarSystemName", FacilityDefaultSolarSystem))
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "ComponentsManufacturingFacilitySettings", "RegionID", FacilityDefaultRegionID))
@@ -4062,6 +4065,7 @@ Public Class ProgramSettings
                             .ProductionType = CType(GetSettingValue(FacilityFileName, SettingTypes.TypeInteger, Tab & "CapitalComponentsManufacturingFacilitySettings", "ProductionType", IndustryType.Manufacturing), IndustryType)
                             .MaterialMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "CapitalComponentsManufacturingFacilitySettings", "MaterialMultiplier", FacilityDefaultMM))
                             .TimeMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "CapitalComponentsManufacturingFacilitySettings", "TimeMultiplier", FacilityDefaultTM))
+                            .TaxRate = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "CapitalComponentsManufacturingFacilitySettings", "TaxRate", OutpostDefaultTax))
                             .SolarSystemID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "CapitalComponentsManufacturingFacilitySettings", "SolarSystemID", FacilityDefaultSolarSystemID))
                             .SolarSystemName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "CapitalComponentsManufacturingFacilitySettings", "SolarSystemName", FacilityDefaultSolarSystem))
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "CapitalComponentsManufacturingFacilitySettings", "RegionID", FacilityDefaultRegionID))
@@ -4077,6 +4081,7 @@ Public Class ProgramSettings
                             .ProductionType = CType(GetSettingValue(FacilityFileName, SettingTypes.TypeInteger, Tab & "CapitalManufacturingFacilitySettings", "ProductionType", IndustryType.Manufacturing), IndustryType)
                             .MaterialMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "CapitalManufacturingFacilitySettings", "MaterialMultiplier", FacilityDefaultMM))
                             .TimeMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "CapitalManufacturingFacilitySettings", "TimeMultiplier", FacilityDefaultTM))
+                            .TaxRate = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "CapitalManufacturingFacilitySettings", "TaxRate", OutpostDefaultTax))
                             .SolarSystemID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "CapitalManufacturingFacilitySettings", "SolarSystemID", FacilityDefaultSolarSystemID))
                             .SolarSystemName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "CapitalManufacturingFacilitySettings", "SolarSystemName", FacilityDefaultSolarSystem))
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "CapitalManufacturingFacilitySettings", "RegionID", FacilityDefaultRegionID))
@@ -4092,6 +4097,7 @@ Public Class ProgramSettings
                             .ProductionType = CType(GetSettingValue(FacilityFileName, SettingTypes.TypeInteger, Tab & "SuperManufacturingFacilitySettings", "ProductionType", IndustryType.Manufacturing), IndustryType)
                             .MaterialMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "SuperManufacturingFacilitySettings", "MaterialMultiplier", FacilityDefaultMM))
                             .TimeMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "SuperManufacturingFacilitySettings", "TimeMultiplier", FacilityDefaultTM))
+                            .TaxRate = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "SuperManufacturingFacilitySettings", "TaxRate", OutpostDefaultTax))
                             .SolarSystemID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "SuperManufacturingFacilitySettings", "SolarSystemID", FacilityDefaultSolarSystemID))
                             .SolarSystemName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "SuperManufacturingFacilitySettings", "SolarSystemName", FacilityDefaultSolarSystem))
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "SuperManufacturingFacilitySettings", "RegionID", FacilityDefaultRegionID))
@@ -4107,6 +4113,7 @@ Public Class ProgramSettings
                             .ProductionType = CType(GetSettingValue(FacilityFileName, SettingTypes.TypeInteger, Tab & "BoosterManufacturingFacilitySettings", "ProductionType", IndustryType.Manufacturing), IndustryType)
                             .MaterialMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "BoosterManufacturingFacilitySettings", "MaterialMultiplier", FacilityDefaultMM))
                             .TimeMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "BoosterManufacturingFacilitySettings", "TimeMultiplier", FacilityDefaultTM))
+                            .TaxRate = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "BoosterManufacturingFacilitySettings", "TaxRate", OutpostDefaultTax))
                             .SolarSystemID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "BoosterManufacturingFacilitySettings", "SolarSystemID", FacilityDefaultSolarSystemID))
                             .SolarSystemName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "BoosterManufacturingFacilitySettings", "SolarSystemName", FacilityDefaultSolarSystem))
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "BoosterManufacturingFacilitySettings", "RegionID", FacilityDefaultRegionID))
@@ -4122,6 +4129,7 @@ Public Class ProgramSettings
                             .ProductionType = CType(GetSettingValue(FacilityFileName, SettingTypes.TypeInteger, Tab & "T3CruiserManufacturingFacilitySettings", "ProductionType", IndustryType.Manufacturing), IndustryType)
                             .MaterialMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "T3CruiserManufacturingFacilitySettings", "MaterialMultiplier", FacilityDefaultMM))
                             .TimeMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "T3CruiserManufacturingFacilitySettings", "TimeMultiplier", FacilityDefaultTM))
+                            .TaxRate = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "T3CruiserManufacturingFacilitySettings", "TaxRate", OutpostDefaultTax))
                             .SolarSystemID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "T3CruiserManufacturingFacilitySettings", "SolarSystemID", FacilityDefaultSolarSystemID))
                             .SolarSystemName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "T3CruiserManufacturingFacilitySettings", "SolarSystemName", FacilityDefaultSolarSystem))
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "T3CruiserManufacturingFacilitySettings", "RegionID", FacilityDefaultRegionID))
@@ -4137,6 +4145,7 @@ Public Class ProgramSettings
                             .ProductionType = CType(GetSettingValue(FacilityFileName, SettingTypes.TypeInteger, Tab & "T3DestroyerManufacturingFacilitySettings", "ProductionType", IndustryType.Manufacturing), IndustryType)
                             .MaterialMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "T3DestroyerManufacturingFacilitySettings", "MaterialMultiplier", FacilityDefaultMM))
                             .TimeMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "T3DestroyerManufacturingFacilitySettings", "TimeMultiplier", FacilityDefaultTM))
+                            .TaxRate = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "T3DestroyerManufacturingFacilitySettings", "TaxRate", OutpostDefaultTax))
                             .SolarSystemID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "T3DestroyerManufacturingFacilitySettings", "SolarSystemID", FacilityDefaultSolarSystemID))
                             .SolarSystemName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "T3DestroyerManufacturingFacilitySettings", "SolarSystemName", FacilityDefaultSolarSystem))
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "T3DestroyerManufacturingFacilitySettings", "RegionID", FacilityDefaultRegionID))
@@ -4152,6 +4161,7 @@ Public Class ProgramSettings
                             .ProductionType = CType(GetSettingValue(FacilityFileName, SettingTypes.TypeInteger, Tab & "SubsystemManufacturing", "ProductionType", IndustryType.Manufacturing), IndustryType)
                             .MaterialMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "SubsystemManufacturingFacilitySettings", "MaterialMultiplier", FacilityDefaultMM))
                             .TimeMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "SubsystemManufacturingFacilitySettings", "TimeMultiplier", FacilityDefaultTM))
+                            .TaxRate = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "SubsystemManufacturingFacilitySettings", "TaxRate", OutpostDefaultTax))
                             .SolarSystemID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "SubsystemManufacturingFacilitySettings", "SolarSystemID", FacilityDefaultSolarSystemID))
                             .SolarSystemName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "SubsystemManufacturingFacilitySettings", "SolarSystemName", FacilityDefaultSolarSystem))
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "SubsystemManufacturingFacilitySettings", "RegionID", FacilityDefaultRegionID))
@@ -4167,6 +4177,7 @@ Public Class ProgramSettings
                             .ProductionType = CType(GetSettingValue(FacilityFileName, SettingTypes.TypeInteger, Tab & "CopyFacilitySettings", "ProductionType", IndustryType.Copying), IndustryType)
                             .MaterialMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "CopyFacilitySettings", "MaterialMultiplier", FacilityDefaultMM))
                             .TimeMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "CopyFacilitySettings", "TimeMultiplier", FacilityDefaultTM))
+                            .TaxRate = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "CopyFacilitySettings", "TaxRate", OutpostDefaultTax))
                             .SolarSystemID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "CopyFacilitySettings", "SolarSystemID", FacilityDefaultSolarSystemID))
                             .SolarSystemName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "CopyFacilitySettings", "SolarSystemName", FacilityDefaultSolarSystem))
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "CopyFacilitySettings", "RegionID", FacilityDefaultRegionID))
@@ -4182,6 +4193,7 @@ Public Class ProgramSettings
                             .ProductionType = CType(GetSettingValue(FacilityFileName, SettingTypes.TypeInteger, Tab & "InventionFacilitySettings", "ProductionType", IndustryType.Invention), IndustryType)
                             .TimeMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "InventionFacilitySettings", "MaterialMultiplier", FacilityDefaultMM))
                             .MaterialMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "InventionFacilitySettings", "TimeMultiplier", FacilityDefaultTM))
+                            .TaxRate = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "InventionFacilitySettings", "TaxRate", OutpostDefaultTax))
                             .SolarSystemID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "InventionFacilitySettings", "SolarSystemID", FacilityDefaultSolarSystemID))
                             .SolarSystemName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "InventionFacilitySettings", "SolarSystemName", FacilityDefaultSolarSystem))
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "InventionFacilitySettings", "RegionID", FacilityDefaultRegionID))
@@ -4197,6 +4209,7 @@ Public Class ProgramSettings
                             .ProductionType = CType(GetSettingValue(FacilityFileName, SettingTypes.TypeInteger, Tab & "T3InventionFacilitySettings", "ProductionType", IndustryType.Invention), IndustryType)
                             .TimeMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "T3InventionFacilitySettings", "MaterialMultiplier", FacilityDefaultMM))
                             .MaterialMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "T3InventionFacilitySettings", "TimeMultiplier", FacilityDefaultTM))
+                            .TaxRate = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "T3InventionFacilitySettings", "TaxRate", OutpostDefaultTax))
                             .SolarSystemID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "T3InventionFacilitySettings", "SolarSystemID", FacilityDefaultSolarSystemID))
                             .SolarSystemName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "T3InventionFacilitySettings", "SolarSystemName", FacilityDefaultSolarSystem))
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "T3InventionFacilitySettings", "RegionID", FacilityDefaultRegionID))
@@ -4212,6 +4225,7 @@ Public Class ProgramSettings
                             .ProductionType = CType(GetSettingValue(FacilityFileName, SettingTypes.TypeInteger, Tab & "NoPOSFacilitySettings", "ProductionType", IndustryType.NoPOSManufacturing), IndustryType)
                             .TimeMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "NoPOSFacilitySettings", "MaterialMultiplier", FacilityDefaultMM))
                             .MaterialMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "NoPOSFacilitySettings", "TimeMultiplier", FacilityDefaultTM))
+                            .TaxRate = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "NoPOSFacilitySettings", "TaxRate", OutpostDefaultTax))
                             .SolarSystemID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "NoPOSFacilitySettings", "SolarSystemID", FacilityDefaultSolarSystemID))
                             .SolarSystemName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "NoPOSFacilitySettings", "SolarSystemName", FacilityDefaultSolarSystem))
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "NoPOSFacilitySettings", "RegionID", FacilityDefaultRegionID))
@@ -4227,6 +4241,7 @@ Public Class ProgramSettings
                             .ProductionType = CType(GetSettingValue(FacilityFileName, SettingTypes.TypeInteger, Tab & "POSFuelBlockManufacturingFacilitySettings", "ProductionType", IndustryType.POSFuelBlockManufacturing), IndustryType)
                             .MaterialMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "POSFuelBlockManufacturingFacilitySettings", "MaterialMultiplier", FacilityDefaultMM))
                             .TimeMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "POSFuelBlockManufacturingFacilitySettings", "TimeMultiplier", FacilityDefaultTM))
+                            .TaxRate = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "POSFuelBlockManufacturingFacilitySettings", "TaxRate", OutpostDefaultTax))
                             .SolarSystemID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "POSFuelBlockManufacturingFacilitySettings", "SolarSystemID", FacilityDefaultSolarSystemID))
                             .SolarSystemName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "POSFuelBlockManufacturingFacilitySettings", "SolarSystemName", FacilityDefaultSolarSystem))
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "POSFuelBlockManufacturingFacilitySettings", "RegionID", FacilityDefaultRegionID))
@@ -4242,6 +4257,7 @@ Public Class ProgramSettings
                             .ProductionType = CType(GetSettingValue(FacilityFileName, SettingTypes.TypeInteger, Tab & "POSModuleManufacturingFacilitySettings", "ProductionType", IndustryType.POSModuleManufacturing), IndustryType)
                             .MaterialMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "POSModuleManufacturingFacilitySettings", "MaterialMultiplier", FacilityDefaultMM))
                             .TimeMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "POSModuleManufacturingFacilitySettings", "TimeMultiplier", FacilityDefaultTM))
+                            .TaxRate = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "POSModuleManufacturingFacilitySettings", "TaxRate", OutpostDefaultTax))
                             .SolarSystemID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "POSModuleManufacturingFacilitySettings", "SolarSystemID", FacilityDefaultSolarSystemID))
                             .SolarSystemName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "POSModuleManufacturingFacilitySettings", "SolarSystemName", FacilityDefaultSolarSystem))
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "POSModuleManufacturingFacilitySettings", "RegionID", FacilityDefaultRegionID))
@@ -4257,6 +4273,7 @@ Public Class ProgramSettings
                             .ProductionType = CType(GetSettingValue(FacilityFileName, SettingTypes.TypeInteger, Tab & "POSLargeShipManufacturingFacilitySettings", "ProductionType", IndustryType.POSLargeShipManufacturing), IndustryType)
                             .MaterialMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "POSLargeShipManufacturingFacilitySettings", "MaterialMultiplier", FacilityDefaultMM))
                             .TimeMultiplier = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "POSLargeShipManufacturingFacilitySettings", "TimeMultiplier", FacilityDefaultTM))
+                            .TaxRate = CDbl(GetSettingValue(FacilityFileName, SettingTypes.TypeDouble, Tab & "POSLargeShipManufacturingFacilitySettings", "TaxRate", OutpostDefaultTax))
                             .SolarSystemID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "POSLargeShipManufacturingFacilitySettings", "SolarSystemID", FacilityDefaultSolarSystemID))
                             .SolarSystemName = CStr(GetSettingValue(FacilityFileName, SettingTypes.TypeString, Tab & "POSLargeShipManufacturingFacilitySettings", "SolarSystemName", FacilityDefaultSolarSystem))
                             .RegionID = CLng(GetSettingValue(FacilityFileName, SettingTypes.TypeLong, Tab & "POSLargeShipManufacturingFacilitySettings", "RegionID", FacilityDefaultRegionID))
@@ -4319,7 +4336,7 @@ Public Class ProgramSettings
 
     ' Saves the Facility Settings to XML
     Public Sub FacilitySaveSettings(SentSettings As FacilitySettings, ProductionType As IndustryType, Tab As String)
-        Dim FacilitySettingsList(13) As Setting
+        Dim FacilitySettingsList(14) As Setting
 
         Try
             FacilitySettingsList(0) = New Setting("Facility", CStr(SentSettings.Facility))
@@ -4328,14 +4345,15 @@ Public Class ProgramSettings
             FacilitySettingsList(3) = New Setting("ProductionType", CStr(SentSettings.ProductionType))
             FacilitySettingsList(4) = New Setting("MaterialMultiplier", CStr(SentSettings.MaterialMultiplier))
             FacilitySettingsList(5) = New Setting("TimeMultiplier", CStr(SentSettings.TimeMultiplier))
-            FacilitySettingsList(6) = New Setting("ActivityCostperSecond", CStr(SentSettings.ActivityCostperSecond))
-            FacilitySettingsList(7) = New Setting("SolarSystemID", CStr(SentSettings.SolarSystemID))
-            FacilitySettingsList(8) = New Setting("SolarSystemName", CStr(SentSettings.SolarSystemName))
-            FacilitySettingsList(9) = New Setting("RegionID", CStr(SentSettings.RegionID))
-            FacilitySettingsList(10) = New Setting("RegionName", CStr(SentSettings.RegionName))
-            FacilitySettingsList(11) = New Setting("IncludeActivityUsage", CStr(SentSettings.IncludeActivityUsage))
-            FacilitySettingsList(12) = New Setting("IncludeActivityCost", CStr(SentSettings.IncludeActivityCost))
-            FacilitySettingsList(13) = New Setting("IncludeActivityTime", CStr(SentSettings.IncludeActivityTime))
+            FacilitySettingsList(6) = New Setting("TaxRate", CStr(SentSettings.TaxRate))
+            FacilitySettingsList(7) = New Setting("ActivityCostperSecond", CStr(SentSettings.ActivityCostperSecond))
+            FacilitySettingsList(8) = New Setting("SolarSystemID", CStr(SentSettings.SolarSystemID))
+            FacilitySettingsList(9) = New Setting("SolarSystemName", CStr(SentSettings.SolarSystemName))
+            FacilitySettingsList(10) = New Setting("RegionID", CStr(SentSettings.RegionID))
+            FacilitySettingsList(11) = New Setting("RegionName", CStr(SentSettings.RegionName))
+            FacilitySettingsList(12) = New Setting("IncludeActivityUsage", CStr(SentSettings.IncludeActivityUsage))
+            FacilitySettingsList(13) = New Setting("IncludeActivityCost", CStr(SentSettings.IncludeActivityCost))
+            FacilitySettingsList(14) = New Setting("IncludeActivityTime", CStr(SentSettings.IncludeActivityTime))
 
             Select Case ProductionType
                 Case IndustryType.Manufacturing
@@ -4427,6 +4445,7 @@ Public Class ProgramSettings
         ' These are all the same regardless
         TempSettings.MaterialMultiplier = FacilityDefaultMM
         TempSettings.TimeMultiplier = FacilityDefaultTM
+        TempSettings.TaxRate = FacilityDefaultTax
         TempSettings.ActivityCostperSecond = FacilityDefaultActivityCostperSecond
         TempSettings.IncludeActivityUsage = FacilityDefaultIncludeUsage
         TempSettings.IncludeActivityCost = FacilityDefaultIncludeCost
@@ -5304,8 +5323,9 @@ Public Structure FacilitySettings
     Dim FacilityType As String ' Type of facility (station, outpost, or pos)
     Dim ActivityID As Integer
     Dim ProductionType As IndustryType ' What will this facility be used for?
-    Dim MaterialMultiplier As Double ' May allow them to set the ME/TE for the facility (like in Outposts) when I can't get the info
+    Dim MaterialMultiplier As Double ' Allows them to set the ME/TE/Tax for the facility (like in Outposts) when I can't get the info
     Dim TimeMultiplier As Double
+    Dim TaxRate As Double
 
     ' For POS, save the location
     Dim SolarSystemID As Long
