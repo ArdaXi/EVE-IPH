@@ -2395,13 +2395,20 @@ NoBonus:
                     Else
                         TimeMultiplier = rsLoader.GetDouble(3)
                     End If
+
+                    If SentTax <> Defaults.FacilityDefaultTax Then
+                        Tax = SentTax
+                    Else
+                        Tax = rsLoader.GetDouble(5)
+                    End If
+
                 Else ' For POS and Stations, this is already set
                     MaterialMultiplier = rsLoader.GetDouble(2)
                     TimeMultiplier = rsLoader.GetDouble(3)
+                    Tax = rsLoader.GetDouble(5)
                 End If
 
                 CostMultiplier = rsLoader.GetDouble(4)
-                Tax = rsLoader.GetDouble(5)
 
                 FacilityID = rsLoader.GetInt64(0)
                 FacilityTypeID = rsLoader.GetInt64(1)
@@ -2427,7 +2434,7 @@ NoBonus:
 
         Dim MMText As String = FormatPercent(1 - MaterialMultiplier, 1)
         Dim TMText As String = FormatPercent(1 - TimeMultiplier, 1)
-        Dim TaxText As String = FormatPercent(Tax, 1)
+        Dim TaxText As String = FormatPercent(Tax / 100, 1)
 
         ' Show boxes for the user to enter for outposts since I can't get the upgrades or taxes from CREST
         If FacilityType = OutpostFacility Then
@@ -5695,6 +5702,33 @@ Tabs:
         btnBPFacilitySave.Enabled = False
 
         MsgBox("Default " & cmbBPFacilityActivities.Text & " Facility Saved", vbInformation, Application.ProductName)
+
+    End Sub
+
+    ' For outposts, save the ME/TE/Tax data since this is specific to the user's input
+    Private Sub UpdateMMTMTaxDataforOutpost(ByRef SentFacility As IndustryFacility)
+        Dim readerBPs As SQLiteDataReader
+        Dim SQL As String
+
+        ' First, see if this is an outpost, if not leave
+        If SentFacility.FacilityType <> OutpostFacility Then
+            Exit Sub
+        End If
+
+        ' Update only the outpost values for the activity type and set the outpost = 2 (updated outpost)
+        SQL = "UPDATE STATION_FACILITIES SET BASE_MM"
+
+        DBCommand = New SQLiteCommand(SQL, DB)
+        readerBPs = DBCommand.ExecuteReader
+        cmbBPBlueprintSelection.BeginUpdate()
+
+        While readerBPs.Read
+            ' Add the data to the array and combo
+            cmbBPBlueprintSelection.Items.Add(readerBPs.GetString(0))
+            Application.DoEvents()
+        End While
+
+        readerBPs.Close()
 
     End Sub
 

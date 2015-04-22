@@ -259,10 +259,16 @@ Public Class IndustryFacility
             RegionID = rsLoader.GetInt64(2)
             SolarSystemName = rsLoader.GetString(3)
             SolarSystemID = rsLoader.GetInt64(4)
-            TaxRate = rsLoader.GetDouble(5)
             CostIndex = rsLoader.GetFloat(6)
-            MaterialMultiplier = rsLoader.GetDouble(7)
-            TimeMultiplier = rsLoader.GetDouble(8)
+            If SearchFacilitySettings.FacilityType = OutpostFacility Then
+                MaterialMultiplier = SearchFacilitySettings.MaterialMultiplier
+                TimeMultiplier = SearchFacilitySettings.TimeMultiplier
+                TaxRate = SearchFacilitySettings.TaxRate
+            Else
+                MaterialMultiplier = rsLoader.GetDouble(7)
+                TimeMultiplier = rsLoader.GetDouble(8)
+                TaxRate = rsLoader.GetDouble(5)
+            End If
             ActivityID = rsLoader.GetInt32(9)
             Activity = rsLoader.GetString(10)
             ActivityCostPerSecond = SearchFacilitySettings.ActivityCostperSecond
