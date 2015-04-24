@@ -47,6 +47,18 @@ Public Class frmShoppingList
     ' For finding structure in import lists
     Private ItemQuantityToFind As ItemQuantity
 
+    Private BuyListHeaderCSV As String = "Material,Quantity,Cost Per Item,Min Sell,Max Buy,Buy Type,Total m3,Isk/m3,TotalCost"
+    Private BuildListHeaderCSV As String = "Build Item,Quantity,ME"
+    Private ItemsListHeaderCSV As String = "Item,Quantity,ME,NumBps,Build Type,Decryptor,Relic"
+
+    Private BuyListHeaderTXT As String = "Material|Quantity|Cost Per Item|Min Sell|Max Buy|Buy Type|Total m3|Isk/m3|TotalCost"
+    Private BuildListHeaderTXT As String = "Build Item|Quantity|ME"
+    Private ItemsListHeaderTXT As String = "Item|Quantity|ME|NumBps|Build Type|Decryptor|Relic"
+
+    Private BuyListHeaderSSV As String = "Material;Quantity;Cost Per Item;Min Sell;Max Buy;Buy Type;Total m3;Isk/m3;TotalCost"
+    Private BuildListHeaderSSV As String = "Build Item;Quantity;ME"
+    Private ItemsListHeaderSSV As String = "Item;Quantity;ME;NumBps;Build Type;Decryptor;Relic"
+
     Private Structure ItemQuantity
         Dim ItemName As String
         Dim ItemQuantity As Long
@@ -829,6 +841,9 @@ Public Class frmShoppingList
 
         ' Show the dialog
         Dim ExportTypeString As String
+        Dim BuyListHeader As String
+        Dim BuildListHeader As String
+        Dim ItemsListHeader As String
         Dim Separator As String
 
         If rbtnExportCSV.Checked Then
@@ -836,18 +851,27 @@ Public Class frmShoppingList
             FileName = "Shopping List - " & Format(Now, "MMddyyyy") & ".csv"
             ExportTypeString = CSVDataExport
             Separator = ","
+            BuyListHeader = BuyListHeaderCSV
+            BuildListHeader = BuildListHeaderCSV
+            ItemsListHeader = ItemsListHeaderCSV
             SaveFileDialog.Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*"
         ElseIf rbtnExportSSV.Checked Then
             ' Save file name with date
             FileName = "Shopping List - " & Format(Now, "MMddyyyy") & ".ssv"
             ExportTypeString = SSVDataExport
             Separator = ";"
+            BuyListHeader = BuyListHeaderSSV
+            BuildListHeader = BuildListHeaderSSV
+            ItemsListHeader = ItemsListHeaderSSV
             SaveFileDialog.Filter = "ssv files (*.ssv*)|*.ssv*|All files (*.*)|*.*"
         Else
             ' Save file name with date
             FileName = "Shopping List - " & Format(Now, "MMddyyyy") & ".txt"
             ExportTypeString = DefaultTextDataExport
             Separator = "|"
+            BuyListHeader = BuyListHeaderTXT
+            BuildListHeader = BuildListHeaderTXT
+            ItemsListHeader = ItemsListHeaderTXT
             SaveFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*"
         End If
 
@@ -871,9 +895,7 @@ Public Class frmShoppingList
 
                         OutputText = BuyListLabel
                         MyStream.Write(OutputText & Environment.NewLine)
-                        OutputText = "Material" & Separator & "Quantity" & Separator & "Cost Per Item" & Separator
-                        OutputText = OutputText & "Min Sell" & Separator & "Max Buy" & Separator & "Buy Type" & Separator
-                        OutputText = OutputText & "Total m3" & Separator & "Isk/m3" & Separator & "TotalCost "
+                        OutputText = BuyListHeader
                         MyStream.Write(OutputText & Environment.NewLine)
 
                         For Each ListItem In Items
@@ -920,7 +942,7 @@ Public Class frmShoppingList
 
                         OutputText = BuildListLabel
                         MyStream.Write(OutputText & Environment.NewLine)
-                        OutputText = "Build Item" & Separator & "Quantity" & Separator & "ME"
+                        OutputText = BuildListHeader
                         MyStream.Write(OutputText & Environment.NewLine)
 
                         For Each ListItem In Items
@@ -955,8 +977,7 @@ Public Class frmShoppingList
 
                         OutputText = ItemsListLabel
                         MyStream.Write(OutputText & Environment.NewLine)
-                        OutputText = "Item" & Separator & "Quantity" & Separator & "ME" & Separator & "NumBps" & Separator
-                        OutputText = OutputText & "Build Type" & Separator & "Decryptor" & Separator & "Relic"
+                        OutputText = ItemsListHeader
                         MyStream.Write(OutputText & Environment.NewLine)
 
                         For Each ListItem In Items
@@ -1027,6 +1048,10 @@ Public Class frmShoppingList
         Dim TempBPItem As BPItem
         Dim Separator As String = ""
 
+        Dim BuyListHeader As String
+        Dim BuildListHeader As String
+        Dim ItemsListHeader As String
+
         ' To save the old shopping list in case of an error and to reload
         Dim SavedShoppingList As ShoppingList = CType(TotalShoppingList.Clone, ShoppingList)
 
@@ -1039,13 +1064,23 @@ Public Class frmShoppingList
         If rbtnExportSSV.Checked = True Then
             openFileDialog1.FileName = "*.ssv"
             Separator = ";"
+            BuyListHeader = BuyListHeaderSSV
+            BuildListHeader = BuildListHeaderSSV
+            ItemsListHeader = ItemsListHeaderSSV
         ElseIf rbtnExportCSV.Checked = True Then
             openFileDialog1.FileName = "*.csv"
             Separator = ","
+            BuyListHeader = BuyListHeaderCSV
+            BuildListHeader = BuildListHeaderCSV
+            ItemsListHeader = ItemsListHeaderCSV
         Else
             openFileDialog1.FileName = "*.txt"
             Separator = "|"
+            BuyListHeader = BuyListHeaderTXT
+            BuildListHeader = BuildListHeaderTXT
+            ItemsListHeader = ItemsListHeaderTXT
         End If
+
         openFileDialog1.FilterIndex = 2
         openFileDialog1.RestoreDirectory = True
 
@@ -1076,10 +1111,6 @@ Public Class frmShoppingList
                             CurrentList = ItemsListLabel
                             Line = Line.Replace(",", "")
                         End If
-
-                        Dim BuyListHeader As String = "Material" & Separator & "Quantity" & Separator & "Cost Per Item" & Separator & "Buy Type" & Separator & "Total m3" & Separator & "Isk/m3" & Separator & "TotalCost"
-                        Dim BuildListHeader As String = "Build Item" & Separator & "Quantity" & Separator & "ME"
-                        Dim ItemsListHeader As String = "Item" & Separator & "Quantity" & Separator & "ME" & Separator & "NumBps" & Separator & "Build Type" & Separator & "Decryptor" & Separator & "Relic"
 
                         ' If the line has records, import it into the correct lists
                         If Line.Contains(Separator) And Not (Line.Contains(BuyListHeader) Or Line.Contains(BuildListHeader) Or Line.Contains(ItemsListHeader)) Then
