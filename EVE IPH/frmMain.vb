@@ -5582,22 +5582,27 @@ Tabs:
                     Case SuperCarrierGroupID, TitanGroupID
                         SelectedBPManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                         Call SelectedBPSuperManufacturingFacility.SaveFacility(BPTab)
+                        Call UpdateMMTMTaxDataforOutpost(SelectedBPSuperManufacturingFacility)
                         DefaultBPSuperManufacturingFacility = CType(SelectedBPSuperManufacturingFacility.Clone, IndustryFacility)
                     Case BoosterGroupID
                         SelectedBPBoosterManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                         Call SelectedBPBoosterManufacturingFacility.SaveFacility(BPTab)
+                        Call UpdateMMTMTaxDataforOutpost(SelectedBPBoosterManufacturingFacility)
                         DefaultBPBoosterManufacturingFacility = CType(SelectedBPBoosterManufacturingFacility.Clone, IndustryFacility)
                     Case CarrierGroupID, DreadnoughtGroupID, CapitalIndustrialShipGroupID
                         SelectedBPCapitalManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                         Call SelectedBPCapitalManufacturingFacility.SaveFacility(BPTab)
+                        Call UpdateMMTMTaxDataforOutpost(SelectedBPCapitalManufacturingFacility)
                         DefaultBPCapitalManufacturingFacility = CType(SelectedBPCapitalManufacturingFacility.Clone, IndustryFacility)
                     Case StrategicCruiserGroupID
                         SelectedBPT3CruiserManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                         Call SelectedBPT3CruiserManufacturingFacility.SaveFacility(BPTab)
+                        Call UpdateMMTMTaxDataforOutpost(SelectedBPT3CruiserManufacturingFacility)
                         DefaultBPT3CruiserManufacturingFacility = CType(SelectedBPT3CruiserManufacturingFacility.Clone, IndustryFacility)
                     Case TacticalDestroyerGroupID
                         SelectedBPT3DestroyerManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                         Call SelectedBPT3DestroyerManufacturingFacility.SaveFacility(BPTab)
+                        Call UpdateMMTMTaxDataforOutpost(SelectedBPT3DestroyerManufacturingFacility)
                         DefaultBPT3DestroyerManufacturingFacility = CType(SelectedBPT3DestroyerManufacturingFacility.Clone, IndustryFacility)
                     Case Else
                         If cmbBPFacilityType.Text = POSFacility Then
@@ -5655,20 +5660,24 @@ Tabs:
                             If BPCategoryID = SubsystemCategoryID Then
                                 SelectedBPSubsystemManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                                 Call SelectedBPSubsystemManufacturingFacility.SaveFacility(BPTab)
+                                Call UpdateMMTMTaxDataforOutpost(SelectedBPSubsystemManufacturingFacility)
                                 DefaultBPSubsystemManufacturingFacility = CType(SelectedBPSubsystemManufacturingFacility.Clone, IndustryFacility)
                             ElseIf BPCategoryID = ComponentCategoryID Then
                                 If BPGroupID = AdvCapitalComponentGroupID Or BPGroupID = CapitalComponentGroupID Then
                                     SelectedBPCapitalComponentManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                                     Call SelectedBPCapitalComponentManufacturingFacility.SaveFacility(BPTab)
+                                    Call UpdateMMTMTaxDataforOutpost(SelectedBPCapitalComponentManufacturingFacility)
                                     DefaultBPCapitalComponentManufacturingFacility = CType(SelectedBPCapitalComponentManufacturingFacility.Clone, IndustryFacility)
                                 Else
                                     SelectedBPComponentManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                                     Call SelectedBPComponentManufacturingFacility.SaveFacility(BPTab)
+                                    Call UpdateMMTMTaxDataforOutpost(SelectedBPComponentManufacturingFacility)
                                     DefaultBPComponentManufacturingFacility = CType(SelectedBPComponentManufacturingFacility.Clone, IndustryFacility)
                                 End If
                             Else
                                 SelectedBPManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                                 Call SelectedBPManufacturingFacility.SaveFacility(BPTab)
+                                Call UpdateMMTMTaxDataforOutpost(SelectedBPManufacturingFacility)
                                 DefaultBPManufacturingFacility = CType(SelectedBPManufacturingFacility.Clone, IndustryFacility)
                             End If
                         End If
@@ -5676,23 +5685,28 @@ Tabs:
             Case ActivityComponentManufacturing
                 SelectedBPComponentManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                 Call SelectedBPComponentManufacturingFacility.SaveFacility(BPTab)
+                Call UpdateMMTMTaxDataforOutpost(SelectedBPComponentManufacturingFacility)
                 DefaultBPComponentManufacturingFacility = CType(SelectedBPComponentManufacturingFacility.Clone, IndustryFacility)
             Case ActivityCapComponentManufacturing
                 SelectedBPCapitalComponentManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                 Call SelectedBPCapitalComponentManufacturingFacility.SaveFacility(BPTab)
+                Call UpdateMMTMTaxDataforOutpost(SelectedBPCapitalComponentManufacturingFacility)
                 DefaultBPCapitalComponentManufacturingFacility = CType(SelectedBPCapitalComponentManufacturingFacility.Clone, IndustryFacility)
             Case ActivityCopying
                 SelectedBPCopyFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                 Call SelectedBPCopyFacility.SaveFacility(BPTab)
+                Call UpdateMMTMTaxDataforOutpost(SelectedBPCopyFacility)
                 DefaultBPCopyFacility = CType(SelectedBPCopyFacility.Clone, IndustryFacility)
             Case ActivityInvention
                 If SelectedBlueprint.GetItemGroupID = StrategicCruiserGroupID Or SelectedBlueprint.GetItemCategoryID = SubsystemCategoryID Then
                     SelectedBPT3InventionFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                     Call SelectedBPT3InventionFacility.SaveFacility(BPTab)
+                    Call UpdateMMTMTaxDataforOutpost(SelectedBPT3InventionFacility)
                     DefaultBPT3InventionFacility = CType(SelectedBPT3InventionFacility.Clone, IndustryFacility)
                 Else
                     SelectedBPInventionFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                     Call SelectedBPInventionFacility.SaveFacility(BPTab)
+                    Call UpdateMMTMTaxDataforOutpost(SelectedBPInventionFacility)
                     DefaultBPInventionFacility = CType(SelectedBPInventionFacility.Clone, IndustryFacility)
                 End If
         End Select
@@ -5707,28 +5721,25 @@ Tabs:
 
     ' For outposts, save the ME/TE/Tax data since this is specific to the user's input
     Private Sub UpdateMMTMTaxDataforOutpost(ByRef SentFacility As IndustryFacility)
-        Dim readerBPs As SQLiteDataReader
         Dim SQL As String
 
-        ' First, see if this is an outpost, if not leave
+        If IsNothing(SentFacility) Then
+            Exit Sub
+        End If
+
+        ' See if this is an outpost, if not leave
         If SentFacility.FacilityType <> OutpostFacility Then
             Exit Sub
         End If
 
         ' Update only the outpost values for the activity type and set the outpost = 2 (updated outpost)
-        SQL = "UPDATE STATION_FACILITIES SET BASE_MM"
+        SQL = "UPDATE STATION_FACILITIES SET BASE_MM = " & CStr(SentFacility.MaterialMultiplier)
+        SQL = SQL & ", BASE_TM = " & CStr(SentFacility.TimeMultiplier)
+        SQL = SQL & ", FACILITY_TAX = " & CStr(SentFacility.TaxRate)
+        SQL = SQL & ", OUTPOST = 2 "
+        SQL = SQL & "WHERE FACILITY_ID = " & CStr(SentFacility.FacilityID)
 
-        DBCommand = New SQLiteCommand(SQL, DB)
-        readerBPs = DBCommand.ExecuteReader
-        cmbBPBlueprintSelection.BeginUpdate()
-
-        While readerBPs.Read
-            ' Add the data to the array and combo
-            cmbBPBlueprintSelection.Items.Add(readerBPs.GetString(0))
-            Application.DoEvents()
-        End While
-
-        readerBPs.Close()
+        Call ExecuteNonQuerySQL(SQL)
 
     End Sub
 
@@ -11262,6 +11273,7 @@ ExitSub:
 
         SelectedCalcBaseManufacturingFacility.IncludeActivityUsage = chkCalcBaseFacilityIncludeUsage.Checked
         Call SelectedCalcBaseManufacturingFacility.SaveFacility(CalcTab)
+        Call UpdateMMTMTaxDataforOutpost(SelectedCalcBaseManufacturingFacility)
         DefaultCalcBaseManufacturingFacility = CType(SelectedCalcBaseManufacturingFacility.Clone, IndustryFacility)
 
         If cmbCalcPOSFuelBlocks.Visible Then
@@ -11542,10 +11554,12 @@ ExitSub:
         If chkCalcCapComponentsFacility.Checked Then
             SelectedCalcCapitalComponentManufacturingFacility.IncludeActivityUsage = chkCalcComponentFacilityIncludeUsage.Checked
             Call SelectedCalcCapitalComponentManufacturingFacility.SaveFacility(CalcTab)
+            Call UpdateMMTMTaxDataforOutpost(SelectedCalcCapitalComponentManufacturingFacility)
             DefaultCalcCapitalComponentManufacturingFacility = CType(SelectedCalcCapitalComponentManufacturingFacility.Clone, IndustryFacility)
         Else
             SelectedCalcComponentManufacturingFacility.IncludeActivityUsage = chkCalcComponentFacilityIncludeUsage.Checked
             Call SelectedCalcComponentManufacturingFacility.SaveFacility(CalcTab)
+            Call UpdateMMTMTaxDataforOutpost(SelectedCalcComponentManufacturingFacility)
             DefaultCalcComponentManufacturingFacility = CType(SelectedCalcComponentManufacturingFacility.Clone, IndustryFacility)
         End If
 
@@ -11793,6 +11807,7 @@ ExitSub:
         SelectedCalcInventionFacility.IncludeActivityUsage = chkCalcInventionFacilityIncludeUsage.Checked
         SelectedCalcInventionFacility.IncludeActivityTime = chkCalcInventionFacilityIncludeTime.Checked
         Call SelectedCalcInventionFacility.SaveFacility(CalcTab)
+        Call UpdateMMTMTaxDataforOutpost(SelectedCalcInventionFacility)
         DefaultCalcInventionFacility = CType(SelectedCalcInventionFacility.Clone, IndustryFacility)
 
         lblCalcInventionFacilityDefault.Visible = True
@@ -12064,6 +12079,7 @@ ExitSub:
         SelectedCalcT3InventionFacility.IncludeActivityCost = chkCalcT3InventionFacilityIncludeCost.Checked
         SelectedCalcT3InventionFacility.IncludeActivityTime = chkCalcT3InventionFacilityIncludeTime.Checked
         Call SelectedCalcT3InventionFacility.SaveFacility(CalcTab)
+        Call UpdateMMTMTaxDataforOutpost(SelectedCalcT3InventionFacility)
         DefaultCalcT3InventionFacility = CType(SelectedCalcT3InventionFacility.Clone, IndustryFacility)
 
         lblCalcT3InventionFacilityDefault.Visible = True
@@ -12336,6 +12352,7 @@ ExitSub:
         SelectedCalcCopyFacility.IncludeActivityCost = chkCalcCopyFacilityIncludeCost.Checked
         SelectedCalcCopyFacility.IncludeActivityTime = chkCalcCopyFacilityIncludeTime.Checked
         Call SelectedCalcCopyFacility.SaveFacility(CalcTab)
+        Call UpdateMMTMTaxDataforOutpost(SelectedCalcCopyFacility)
         DefaultCalcCopyFacility = CType(SelectedCalcCopyFacility.Clone, IndustryFacility)
 
         lblCalcCopyFacilityDefault.Visible = True
@@ -12577,6 +12594,7 @@ ExitSub:
 
         SelectedCalcNoPOSFacility.IncludeActivityUsage = chkCalcNoPOSFacilityIncludeUsage.Checked
         Call SelectedCalcNoPOSFacility.SaveFacility(CalcTab)
+        Call UpdateMMTMTaxDataforOutpost(SelectedCalcNoPOSFacility)
         DefaultCalcNoPOSFacility = CType(SelectedCalcNoPOSFacility.Clone, IndustryFacility)
 
         lblCalcNoPOSFacilityDefault.Visible = True
@@ -12793,6 +12811,7 @@ ExitSub:
 
         SelectedCalcSuperManufacturingFacility.IncludeActivityUsage = chkCalcSuperFacilityIncludeUsage.Checked
         Call SelectedCalcSuperManufacturingFacility.SaveFacility(CalcTab)
+        Call UpdateMMTMTaxDataforOutpost(SelectedCalcSuperManufacturingFacility)
         DefaultCalcSuperManufacturingFacility = CType(SelectedCalcSuperManufacturingFacility.Clone, IndustryFacility)
 
         lblCalcSuperFacilityDefault.Visible = True
@@ -13008,6 +13027,7 @@ ExitSub:
 
         SelectedCalcCapitalManufacturingFacility.IncludeActivityUsage = chkCalcCapitalFacilityIncludeUsage.Checked
         Call SelectedCalcCapitalManufacturingFacility.SaveFacility(CalcTab)
+        Call UpdateMMTMTaxDataforOutpost(SelectedCalcCapitalManufacturingFacility)
         DefaultCalcCapitalManufacturingFacility = CType(SelectedCalcCapitalManufacturingFacility.Clone, IndustryFacility)
 
         lblCalcCapitalFacilityDefault.Visible = True
@@ -13246,10 +13266,12 @@ ExitSub:
         If chkCalcT3DestroyersFacility.Checked Then
             SelectedCalcT3DestroyerManufacturingFacility.IncludeActivityUsage = chkCalcT3FacilityIncludeUsage.Checked
             Call SelectedCalcT3DestroyerManufacturingFacility.SaveFacility(CalcTab)
+            Call UpdateMMTMTaxDataforOutpost(SelectedCalcT3DestroyerManufacturingFacility)
             DefaultCalcT3DestroyerManufacturingFacility = CType(SelectedCalcT3DestroyerManufacturingFacility.Clone, IndustryFacility)
         Else
             SelectedCalcT3CruiserManufacturingFacility.IncludeActivityUsage = chkCalcT3FacilityIncludeUsage.Checked
             Call SelectedCalcT3CruiserManufacturingFacility.SaveFacility(CalcTab)
+            Call UpdateMMTMTaxDataforOutpost(SelectedCalcT3CruiserManufacturingFacility)
             DefaultCalcT3CruiserManufacturingFacility = CType(SelectedCalcT3CruiserManufacturingFacility.Clone, IndustryFacility)
         End If
 
@@ -13494,6 +13516,7 @@ ExitSub:
 
         SelectedCalcSubsystemManufacturingFacility.IncludeActivityUsage = chkCalcSubsystemFacilityIncludeUsage.Checked
         Call SelectedCalcSubsystemManufacturingFacility.SaveFacility(CalcTab)
+        Call UpdateMMTMTaxDataforOutpost(SelectedCalcSubsystemManufacturingFacility)
         DefaultCalcSubsystemManufacturingFacility = CType(SelectedCalcSubsystemManufacturingFacility.Clone, IndustryFacility)
 
         lblCalcSubsystemFacilityDefault.Visible = True
@@ -13709,6 +13732,7 @@ ExitSub:
 
         SelectedCalcBoosterManufacturingFacility.IncludeActivityUsage = chkCalcBoosterFacilityIncludeUsage.Checked
         Call SelectedCalcBoosterManufacturingFacility.SaveFacility(CalcTab)
+        Call UpdateMMTMTaxDataforOutpost(SelectedCalcBoosterManufacturingFacility)
         DefaultCalcBoosterManufacturingFacility = CType(SelectedCalcBoosterManufacturingFacility.Clone, IndustryFacility)
 
         lblCalcBoosterFacilityDefault.Visible = True

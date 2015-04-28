@@ -2189,6 +2189,9 @@ Public Class frmMain
 
         Call CommitSQLiteTransaction(SQLiteDB)
 
+        SQL = "CREATE INDEX IDX_S_FID ON STATIONS (STATION_ID);"
+        Call Execute_SQLiteSQL(SQL, SQLiteDB)
+
         mySQLReader.Close()
 
     End Sub
@@ -4743,7 +4746,7 @@ Public Class frmMain
         SQL = SQL & "ITEM_TYPE INTEGER NOT NULL,"
         SQL = SQL & "PRICE_TYPE VARCHAR(20) NOT NULL,"
         SQL = SQL & "ADJUSTED_PRICE FLOAT NOT NULL,"
-        SQL = SQL & "AVERAGE_PRICE INTEGER NOT NULL"
+        SQL = SQL & "AVERAGE_PRICE FLOAT NOT NULL"
         SQL = SQL & ")"
 
         Call Execute_SQLiteSQL(SQL, SQLiteDB)

@@ -780,6 +780,7 @@ Public Class EVECREST
         Dim SQL As String
         Dim CacheDate As Date
         Dim rsLookup As SQLiteDataReader
+        Dim OUTPOST_ID_LIST As String = ""
 
         Dim TempLabel As Label
         Dim TempPB As ProgressBar
@@ -892,12 +893,27 @@ Public Class EVECREST
                     TempLabel.Text = "Building Stations Table..."
                     Application.DoEvents()
 
-                    ' First drop the table if it exists
-                    SQL = "DROP TABLE IF EXISTS STATION_FACILITIES"
+                    ' Get the list of updated outposts first (these we only want to update the name, and save user MM/TM/Tax)
+                    SQL = "SELECT FACILITY_ID FROM STATION_FACILITIES WHERE OUTPOST = 2"
+                    DBCommand = New SQLiteCommand(SQL, DB)
+                    rsLookup = DBCommand.ExecuteReader
+
+                    ' Build the list
+                    While rsLookup.Read()
+                        OUTPOST_ID_LIST = OUTPOST_ID_LIST & CStr(rsLookup.GetInt64(0)) & ","
+                    End While
+
+                    If OUTPOST_ID_LIST <> "" Then
+                        ' Strip off the last comma
+                        OUTPOST_ID_LIST = OUTPOST_ID_LIST.Substring(0, Len(OUTPOST_ID_LIST) - 1)
+                    End If
+
+                    ' Delete all the records in the table if it exists
+                    SQL = "DELETE FROM STATION_FACILITIES"
                     Call ExecuteNonQuerySQL(SQL)
 
                     ' Run the big query
-                    SQL = "CREATE TABLE STATION_FACILITIES AS SELECT * FROM ( "
+                    SQL = "INSERT INTO STATION_FACILITIES SELECT * FROM ( "
                     SQL = SQL & "SELECT FACILITY_ID, FACILITY_NAME, "
                     SQL = SQL & "SOLAR_SYSTEMS.solarSystemID AS SOLAR_SYSTEM_ID, SOLAR_SYSTEMS.solarSystemName AS SOLAR_SYSTEM_NAME, SOLAR_SYSTEMS.security AS SOLAR_SYSTEM_SECURITY, REGIONS.regionID AS REGION_ID, REGIONS.regionName AS REGION_NAME, "
                     SQL = SQL & "FACILITY_TYPE_ID, typeName AS FACILITY_TYPE, RAM_ACTIVITIES.activityID AS ACTIVITY_ID, RAM_ACTIVITIES.activityName AS ACTIVITY_NAME, "
@@ -987,41 +1003,58 @@ Public Class EVECREST
                     SQL = SQL & "AND RAM_INSTALLATION_TYPE_CONTENTS.assemblyLineTypeID = RAM_ASSEMBLY_LINE_TYPES.assemblyLineTypeID "
                     SQL = SQL & "AND RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.categoryID = INVENTORY_CATEGORIES.categoryID "
                     SQL = SQL & ") "
-                    SQL = SQL & "WHERE (GROUP_NAME IS NOT NULL OR CATEGORY_NAME IS NOT NULL)"
+                    SQL = SQL & "WHERE (GROUP_NAME IS NOT NULL OR CATEGORY_NAME IS NOT NULL) "
+                    If OUTPOST_ID_LIST <> "" Then
+                        SQL = SQL & "AND FACILITY_ID NOT IN (" & OUTPOST_ID_LIST & ")"
+                    End If
 
                     Call ExecuteNonQuerySQL(SQL)
+
+                    If OUTPOST_ID_LIST <> "" Then
+                        ' Update the facility name for outposts in the manually updated list
+                        SQL = "SELECT FACILITY_ID, FACILIY_NAME FROM INDUSTRY_FACILITIES WHERE FACILITY_ID IN (" & OUTPOST_ID_LIST & ")"
+                        DBCommand = New SQLiteCommand(SQL, DB)
+                        rsLookup = DBCommand.ExecuteReader
+
+                        ' Build the list
+                        While rsLookup.Read()
+                            SQL = "UPDATE STATION_FACILITIES SET FACILITY_NAME = '" & FormatDBString(rsLookup.GetString(1)) & "' WHERE FACILITY_ID = " & CStr(rsLookup.GetInt64(0))
+                            Call ExecuteNonQuerySQL(SQL)
+                        End While
+
+                    End If
 
                     TempLabel.Text = "Indexing Stations Table..."
                     Application.DoEvents()
 
                     ' Index the table
-                    SQL = "CREATE INDEX IDX_SF_OP_AID_CID_GID ON STATION_FACILITIES (OUTPOST, ACTIVITY_ID, CATEGORY_ID, GROUP_ID, REGION_NAME, SOLAR_SYSTEM_NAME)"
+                    SQL = "REINDEX IDX_SF_OP_AID_CID_GID"
                     Call ExecuteNonQuerySQL(SQL)
 
-                    SQL = "CREATE INDEX IDX_SF_OP_FN_AID_CID_GID ON STATION_FACILITIES (OUTPOST, FACILITY_NAME, ACTIVITY_ID, CATEGORY_ID, GROUP_ID, REGION_NAME, SOLAR_SYSTEM_NAME)"
+                    SQL = "REINDEX IDX_SF_OP_FN_AID_CID_GID"
                     Call ExecuteNonQuerySQL(SQL)
 
-                    SQL = "CREATE INDEX IDX_SF_GID ON STATION_FACILITIES (GROUP_ID)"
+                    SQL = "REINDEX IDX_SF_GID"
                     Call ExecuteNonQuerySQL(SQL)
 
-                    SQL = "CREATE INDEX IDX_SF_CID ON STATION_FACILITIES (CATEGORY_ID)"
+                    SQL = "REINDEX IDX_SF_CID"
                     Call ExecuteNonQuerySQL(SQL)
 
-                    SQL = "CREATE INDEX IDX_SF_FN ON STATION_FACILITIES (FACILITY_NAME)"
+                    SQL = "REINDEX IDX_SF_FN"
                     Call ExecuteNonQuerySQL(SQL)
 
                     ' Finally, make the facility names table for easy look ups
                     ' First drop the table if it exists
-                    SQL = "DROP TABLE IF EXISTS STATIONS"
+                    SQL = "DELETE FROM STATIONS"
                     Call ExecuteNonQuerySQL(SQL)
 
                     ' Create it
-                    SQL = "CREATE TABLE STATIONS AS SELECT DISTINCT FACILITY_ID AS STATION_ID, FACILITY_NAME AS STATION_NAME, FACILITY_TYPE_ID AS STATION_TYPE_ID, "
+                    SQL = "INSERT INTO STATIONS SELECT DISTINCT FACILITY_ID AS STATION_ID, FACILITY_NAME AS STATION_NAME, FACILITY_TYPE_ID AS STATION_TYPE_ID, "
                     SQL = SQL & "SOLAR_SYSTEM_ID, SOLAR_SYSTEM_SECURITY, REGION_ID FROM STATION_FACILITIES "
                     Call ExecuteNonQuerySQL(SQL)
 
                     ' Index the ID
-                    SQL = "CREATE INDEX IDX_FN_FID ON STATIONS (STATION_ID)"
+                    SQL = "REINDEX IDX_S_FID"
                     Call ExecuteNonQuerySQL(SQL)
 
                     ' Set the Cache Date to now plus the length since it's not sent in the file
@@ -1231,7 +1264,8 @@ Public Class EVECREST
 
     ' /market/prices/ (cache: 23 hours)
     ' vnd.ccp.eve.MarketTypePriceCollection-v1
-    ' Returns the list of trade-able types and their average market price, as shown in the inventory UI in the EVE client. Also includes an adjusted market price which is used in industry calculations.
+    ' Returns the list of trade-able types and their average market price, as shown in the inventory UI in the EVE client. 
+    ' Also includes an adjusted market price which is used in industry calculations.
 
     ' Gets the CREST file from CCP for current Market Prices and updates the EVEIPH DB with the values
     Public Function UpdateMarketPrices(Optional ByRef UpdateLabel As Label = Nothing, Optional ByRef PB As ProgressBar = Nothing) As Boolean
