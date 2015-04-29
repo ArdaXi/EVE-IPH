@@ -213,6 +213,7 @@ Public Module Public_Variables
     Public Enum StationType
         Station = 0
         Outpost = 1
+        SavedOutpost = 2
     End Enum
 
     Public Const POSTaxRate = 0.0 ' was 10% tax on pos usage now it's 0
@@ -720,6 +721,7 @@ Public Module Public_Variables
         Dim ShoppingItem As New ShoppingListItem
         Dim ShoppingBuildList As New BuiltItemList
         Dim ShoppingBuyList As New Materials
+        Dim InventionCopyUsage As Double = 0
 
         With ShoppingItem
             If RawMatsCopy Or BuildBuy = True Then ' Either just raw or build buy selected
@@ -786,6 +788,18 @@ Public Module Public_Variables
 
                     ' Remove the data interface though, we will assume they don't want to buy this but this will get listed in the copy output (sent above)
                     ShoppingBuyList.RemoveMaterial(SentBlueprint.GetInventionMaterials.SearchListbyName("Data Interface"))
+
+                    If Not IsNothing(ShoppingBuyList.SearchListbyName("Invention Usage")) Then
+                        InventionCopyUsage = InventionCopyUsage + ShoppingBuyList.SearchListbyName("Invention Usage").GetCostPerItem
+                    End If
+
+                    If Not IsNothing(ShoppingBuyList.SearchListbyName("Copy Usage")) Then
+                        InventionCopyUsage = InventionCopyUsage + ShoppingBuyList.SearchListbyName("Copy Usage").GetCostPerItem
+                    End If
+
+                    ' Remove the usage as well
+                    ShoppingBuyList.RemoveMaterial(SentBlueprint.GetInventionMaterials.SearchListbyName("Invention Usage"))
+                    ShoppingBuyList.RemoveMaterial(SentBlueprint.GetInventionMaterials.SearchListbyName("Copy Usage"))
                 End If
 
                 ' How many runs do we need to invent this?
@@ -806,7 +820,7 @@ Public Module Public_Variables
             ' Taxes and usage
             .ItemTaxes = SentBlueprint.GetBPTaxes
             .ItemBrokerFees = SentBlueprint.GetBPBrokerFees
-            .ItemUsage = SentBlueprint.GetManufacturingFacilityUsage
+            .ItemUsage = SentBlueprint.GetManufacturingFacilityUsage + InventionCopyUsage
 
             ' Volume of the item(s)
             .BuildVolume = SentBlueprint.GetTotalItemVolume

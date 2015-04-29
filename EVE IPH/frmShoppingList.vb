@@ -59,6 +59,8 @@ Public Class frmShoppingList
     Private BuildListHeaderSSV As String = "Build Item;Quantity;ME"
     Private ItemsListHeaderSSV As String = "Item;Quantity;ME;NumBps;Build Type;Decryptor;Relic"
 
+    Private FirstFormLoad As Boolean
+
     Private Structure ItemQuantity
         Dim ItemName As String
         Dim ItemQuantity As Long
@@ -148,6 +150,8 @@ Public Class frmShoppingList
         btnSaveListToFile.Enabled = False
 
         CutPasteUpdate = False
+
+        FirstFormLoad = True
 
         CopyPasteMaterialText = ""
 
@@ -383,8 +387,8 @@ Public Class frmShoppingList
                     End If
 
                     ' Add the minsell/maxbuy for reference
-                    RawmatList.SubItems.Add(CStr(MinSellUnitPrice))
-                    RawmatList.SubItems.Add(CStr(MaxBuyUnitPrice))
+                    RawmatList.SubItems.Add(FormatNumber(MinSellUnitPrice, 2))
+                    RawmatList.SubItems.Add(FormatNumber(MaxBuyUnitPrice, 2))
 
                     ' Finally Add the correct column value for how to buy it
                     RawmatList.SubItems.Add(BuyOrderText) ' Buy or Buy Market flag

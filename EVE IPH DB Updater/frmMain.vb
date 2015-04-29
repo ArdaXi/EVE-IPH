@@ -10,7 +10,7 @@ Imports ComponentAce.Compression.Archiver
 Public Class frmMain
     Inherits System.Windows.Forms.Form
 
-    Public Const DatabaseName As String = "Scylla_1.0_111482" ' also folder name to update YAML and Universe DB stuff
+    Public Const DatabaseName As String = "Mosaic_1.0_112241" ' also folder name to update YAML and Universe DB stuff
 
     ' DB
     Public Const DatabasePath As String = "C:\Users\Brian\EVE Stuff\EVE IPH Project\DataDump Working\"
@@ -4678,6 +4678,7 @@ Public Class frmMain
         msSQL = msSQL & "OR invTypes.typeID IN (3583,3584) " ' 3583	Badly Mangled Components, 3584	True Slave Decryption Node
         msSQL = msSQL & "OR invTypes.typeID IN (3812,3814) " ' 3812 Data Sheets, 3814 Reports
         msSQL = msSQL & "OR invTypes.typeID IN (27274,29203) " ' 27274 Villard Wheel, 29203 Minmatar DNA
+        msSQL = msSQL & "OR invTypes.typeID IN (34575) " ' 34575 Antikythera Element
 
         Execute_msSQL(msSQL)
 

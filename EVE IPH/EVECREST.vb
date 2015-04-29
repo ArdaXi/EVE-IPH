@@ -894,7 +894,7 @@ Public Class EVECREST
                     Application.DoEvents()
 
                     ' Get the list of updated outposts first (these we only want to update the name, and save user MM/TM/Tax)
-                    SQL = "SELECT FACILITY_ID FROM STATION_FACILITIES WHERE OUTPOST = 2"
+                    SQL = "SELECT DISTINCT FACILITY_ID FROM STATION_FACILITIES WHERE OUTPOST = 2"
                     DBCommand = New SQLiteCommand(SQL, DB)
                     rsLookup = DBCommand.ExecuteReader
 
@@ -908,8 +908,11 @@ Public Class EVECREST
                         OUTPOST_ID_LIST = OUTPOST_ID_LIST.Substring(0, Len(OUTPOST_ID_LIST) - 1)
                     End If
 
-                    ' Delete all the records in the table if it exists
-                    SQL = "DELETE FROM STATION_FACILITIES"
+                    ' Delete all the records in the table except any of those in the outpost id list
+                    SQL = "DELETE FROM STATION_FACILITIES "
+                    If OUTPOST_ID_LIST <> "" Then
+                        SQL = SQL & "WHERE FACILITY_ID NOT IN (" & OUTPOST_ID_LIST & ")"
+                    End If
                     Call ExecuteNonQuerySQL(SQL)
 
                     ' Run the big query
@@ -1012,7 +1015,7 @@ Public Class EVECREST
 
                     If OUTPOST_ID_LIST <> "" Then
                         ' Update the facility name for outposts in the manually updated list
-                        SQL = "SELECT FACILITY_ID, FACILIY_NAME FROM INDUSTRY_FACILITIES WHERE FACILITY_ID IN (" & OUTPOST_ID_LIST & ")"
+                        SQL = "SELECT FACILITY_ID, FACILITY_NAME FROM INDUSTRY_FACILITIES WHERE FACILITY_ID IN (" & OUTPOST_ID_LIST & ")"
                         DBCommand = New SQLiteCommand(SQL, DB)
                         rsLookup = DBCommand.ExecuteReader
 
@@ -1043,15 +1046,28 @@ Public Class EVECREST
                     SQL = "REINDEX IDX_SF_FN"
                     Call ExecuteNonQuerySQL(SQL)
 
-                    ' Finally, make the facility names table for easy look ups
-                    ' First drop the table if it exists
-                    SQL = "DELETE FROM STATIONS"
-                    Call ExecuteNonQuerySQL(SQL)
 
-                    ' Create it
-                    SQL = "INSERT INTO STATIONS SELECT DISTINCT FACILITY_ID AS STATION_ID, FACILITY_NAME AS STATION_NAME, FACILITY_TYPE_ID AS STATION_TYPE_ID, "
-                    SQL = SQL & "SOLAR_SYSTEM_ID, SOLAR_SYSTEM_SECURITY, REGION_ID FROM STATION_FACILITIES "
-                    Call ExecuteNonQuerySQL(SQL)
+                    TempLabel.Text = "Finalizing..."
+                    Application.DoEvents()
+
+                    ' Finally, update the stations table for easy look ups in assets
+                    ' note some stations may not be in the CREST update since it's just industry facilities, but this contains all outposts
+                    SQL = "SELECT FACILITY_ID, FACILITY_NAME, FACILITY_TYPE_ID, SOLAR_SYSTEM_ID, SOLAR_SYSTEM_SECURITY, REGION_ID "
+                    SQL = SQL & "FROM STATION_FACILITIES WHERE FACILITY_ID NOT IN (SELECT STATION_ID AS FACILITY_ID FROM STATIONS)"
+                    DBCommand = New SQLiteCommand(SQL, DB)
+                    rsLookup = DBCommand.ExecuteReader
+
+                    ' insert the new data
+                    While rsLookup.Read()
+                        SQL = "INSERT INTO STATIONS VALUES (" & CStr(rsLookup.GetInt64(0)) & ","
+                        SQL = SQL & "'" & FormatDBString(rsLookup.GetString(1)) & "',"
+                        SQL = SQL & CStr(rsLookup.GetInt64(2)) & ","
+                        SQL = SQL & CStr(rsLookup.GetInt64(3)) & ","
+                        SQL = SQL & CStr(rsLookup.GetFloat(4)) & ","
+                        SQL = SQL & CStr(rsLookup.GetInt64(5)) & ")"
+
+                        Call ExecuteNonQuerySQL(SQL)
+                    End While
 
                     ' Index the ID
                     SQL = "REINDEX IDX_S_FID"

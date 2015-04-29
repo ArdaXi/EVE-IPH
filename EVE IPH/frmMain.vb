@@ -1885,28 +1885,28 @@ NoBonus:
 
             Case OutpostFacility, StationFacility
 
-                SQL = "SELECT DISTINCT REGION_NAME FROM STATION_FACILITIES WHERE OUTPOST = "
+                SQL = "SELECT DISTINCT REGION_NAME FROM STATION_FACILITIES WHERE OUTPOST "
 
                 ' Set flag for outpost just to delineate
                 If FacilityTypeCombo.Text = StationFacility Then
-                    SQL = SQL & StationType.Station & " "
+                    SQL = SQL & " = " & CStr(StationType.Station) & " "
                 Else
-                    SQL = SQL & StationType.Outpost & " "
+                    SQL = SQL & " IN (" & CStr(StationType.Outpost) & "," & CStr(StationType.SavedOutpost) & ") "
                 End If
 
                 Select Case FacilityActivity
                     Case ActivityManufacturing
-                        SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Manufacturing & " "
+                        SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Manufacturing) & " "
                         ' Add only regions with stations that can make what we sent
                         SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID)
                     Case ActivityComponentManufacturing, ActivityCapComponentManufacturing
-                        SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Manufacturing & " "
+                        SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Manufacturing) & " "
                         ' Add category for components - All types can be built in stations
                         SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ComponentCategoryID, -1)
                     Case ActivityCopying
-                        SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Copying & " "
+                        SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Copying) & " "
                     Case ActivityInvention
-                        SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Invention & " "
+                        SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Invention) & " "
                         ' For T3 stuff, need to make sure we only show facilities that can do T3 invention (Caldari Outposts)
                         ' T3 stuff doesn't have a group ID in stations table
                         If ItemGroupID = StrategicCruiserGroupID Then
@@ -2007,27 +2007,27 @@ NoBonus:
 
             Case OutpostFacility, StationFacility
 
-                SQL = "SELECT DISTINCT SOLAR_SYSTEM_NAME FROM STATION_FACILITIES WHERE OUTPOST = "
+                SQL = "SELECT DISTINCT SOLAR_SYSTEM_NAME FROM STATION_FACILITIES WHERE OUTPOST "
 
                 ' Set flag for outpost just to delineate
                 If FacilityTypeCombo.Text = StationFacility Then
-                    SQL = SQL & StationType.Station & " "
+                    SQL = SQL & " = " & CStr(StationType.Station) & " "
                 Else
-                    SQL = SQL & StationType.Outpost & " "
+                    SQL = SQL & " IN (" & CStr(StationType.Outpost) & "," & CStr(StationType.SavedOutpost) & ") "
                 End If
 
                 Select Case FacilityActivity
                     Case ActivityManufacturing
-                        SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Manufacturing & " "
+                        SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Manufacturing) & " "
                         SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID)
                     Case ActivityComponentManufacturing
-                        SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Manufacturing & " "
+                        SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Manufacturing) & " "
                         ' Add category for components - All types can be built in stations
                         SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ComponentCategoryID, -1)
                     Case ActivityCopying
-                        SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Copying & " "
+                        SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Copying) & " "
                     Case ActivityInvention
-                        SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Invention & " "
+                        SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Invention) & " "
                         ' For T3 stuff, need to make sure we only show facilities that can do T3 invention (Caldari Outposts)
                         ' T3 stuff doesn't have a group ID in stations table
                         If ItemGroupID = StrategicCruiserGroupID Then
@@ -2132,28 +2132,28 @@ NoBonus:
 
             Case StationFacility, OutpostFacility
                 ' Load the Stations in system for the activity we are doing
-                SQL = "SELECT DISTINCT FACILITY_NAME FROM STATION_FACILITIES WHERE OUTPOST = "
+                SQL = "SELECT DISTINCT FACILITY_NAME FROM STATION_FACILITIES WHERE OUTPOST "
 
                 ' Set flag for outpost just to delineate
                 If FacilityTypeCombo.Text = StationFacility Then
-                    SQL = SQL & StationType.Station & " "
+                    SQL = SQL & " = " & CStr(StationType.Station) & " "
                 Else
-                    SQL = SQL & StationType.Outpost & " "
+                    SQL = SQL & " IN (" & CStr(StationType.Outpost) & "," & CStr(StationType.SavedOutpost) & ") "
                 End If
 
                 Select Case FacilityActivity
                     Case ActivityManufacturing
-                        SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Manufacturing & " "
+                        SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Manufacturing) & " "
                         ' Check groups and categories
                         SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID)
                     Case ActivityComponentManufacturing, ActivityCapComponentManufacturing
-                        SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Manufacturing & " "
+                        SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Manufacturing) & " "
                         ' Add category for components - All types can be built in stations
                         SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ComponentCategoryID, -1)
                     Case ActivityCopying
-                        SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Copying & " "
+                        SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Copying) & " "
                     Case ActivityInvention
-                        SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Invention & " "
+                        SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Invention) & " "
                         ' For T3 stuff, need to make sure we only show facilities that can do T3 invention (Caldari Outposts)
                         ' T3 stuff doesn't have a group ID in stations table
                         If ItemGroupID = StrategicCruiserGroupID Then
@@ -2182,7 +2182,7 @@ NoBonus:
                         ' Check groups and categories
                         SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID)
                     Case ActivityComponentManufacturing, ActivityCapComponentManufacturing
-                        SQL = SQL & IndustryActivities.Manufacturing & " "
+                        SQL = SQL & CStr(IndustryActivities.Manufacturing) & " "
                         ' Add category for component
                         Select Case ItemGroupID
                             Case TitanGroupID, SupercarrierGroupID, DreadnoughtGroupID, CarrierGroupID, _
@@ -2338,13 +2338,13 @@ NoBonus:
                     SQL = "SELECT FACILITY_ID, FACILITY_TYPE_ID, BASE_MM * ADDITIONAL_MM AS MATERIAL_MULTIPLIER, "
                     SQL = SQL & "BASE_TM * ADDITIONAL_TM AS TIME_MULTIPLIER, "
                     SQL = SQL & "BASE_CM & ADDITIONAL_CM AS COST_MULTIPLIER, "
-                    SQL = SQL & "FACILITY_TAX FROM STATION_FACILITIES WHERE OUTPOST = "
+                    SQL = SQL & "FACILITY_TAX FROM STATION_FACILITIES WHERE OUTPOST  "
 
                     ' Set flag for outpost just to delineate
                     If FacilityType = StationFacility Then
-                        SQL = SQL & StationType.Station & " "
+                        SQL = SQL & " = " & CStr(StationType.Station) & " "
                     Else
-                        SQL = SQL & StationType.Outpost & " "
+                        SQL = SQL & " IN (" & CStr(StationType.Outpost) & "," & CStr(StationType.SavedOutpost) & ") "
                     End If
 
                     SQL = SQL & "AND FACILITY_NAME = '" & FormatDBString(FacilityName) & "' "
@@ -2359,10 +2359,10 @@ NoBonus:
 
             Select Case Activity
                 Case ActivityManufacturing
-                    SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Manufacturing & " "
+                    SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Manufacturing) & " "
                     SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID)
                 Case ActivityComponentManufacturing, ActivityCapComponentManufacturing
-                    SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Manufacturing & " "
+                    SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Manufacturing) & " "
                     ' Add category for component
                     Select Case ItemGroupID
                         Case TitanGroupID, SupercarrierGroupID, DreadnoughtGroupID, CarrierGroupID, _
@@ -2373,9 +2373,9 @@ NoBonus:
                             SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ComponentCategoryID, ConstructionComponentsGroupID)
                     End Select
                 Case ActivityCopying
-                    SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Copying & " "
+                    SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Copying) & " "
                 Case ActivityInvention
-                    SQL = SQL & "AND ACTIVITY_ID = " & IndustryActivities.Invention & " "
+                    SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Invention) & " "
             End Select
 
             DBCommand = New SQLiteCommand(SQL, DB)
@@ -3000,83 +3000,91 @@ NoBonus:
     End Sub
 
     ' Returns the facility with sent indytype of facilities
-    Private Function GetManufacturingFacility(IndyType As IndustryType, Tab As String) As IndustryFacility
+    Private Function GetManufacturingFacility(IndyType As IndustryType, Tab As String, Optional Clone As Boolean = True) As IndustryFacility
+        Dim FacilityReference As IndustryFacility
 
         If Tab = BPTab Then
             Select Case IndyType
                 Case IndustryType.Manufacturing
-                    Return CType(SelectedBPManufacturingFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedBPManufacturingFacility
                 Case IndustryType.BoosterManufacturing
-                    Return CType(SelectedBPBoosterManufacturingFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedBPBoosterManufacturingFacility
                 Case IndustryType.CapitalManufacturing
-                    Return CType(SelectedBPCapitalManufacturingFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedBPCapitalManufacturingFacility
                 Case IndustryType.CapitalComponentManufacturing
-                    Return CType(SelectedBPComponentManufacturingFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedBPComponentManufacturingFacility
                 Case IndustryType.ComponentManufacturing
-                    Return CType(SelectedBPComponentManufacturingFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedBPComponentManufacturingFacility
                 Case IndustryType.SubsystemManufacturing
-                    Return CType(SelectedBPSubsystemManufacturingFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedBPSubsystemManufacturingFacility
                 Case IndustryType.SuperManufacturing
-                    Return CType(SelectedBPSuperManufacturingFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedBPSuperManufacturingFacility
                 Case IndustryType.T3CruiserManufacturing
-                    Return CType(SelectedBPT3CruiserManufacturingFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedBPT3CruiserManufacturingFacility
                 Case IndustryType.T3DestroyerManufacturing
-                    Return CType(SelectedBPT3DestroyerManufacturingFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedBPT3DestroyerManufacturingFacility
                 Case IndustryType.POSFuelBlockManufacturing
-                    Return CType(SelectedBPPOSFuelBlockFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedBPPOSFuelBlockFacility
                 Case IndustryType.POSLargeShipManufacturing
-                    Return CType(SelectedBPPOSLargeShipFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedBPPOSLargeShipFacility
                 Case IndustryType.POSModuleManufacturing
-                    Return CType(SelectedBPPOSModuleFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedBPPOSModuleFacility
                 Case IndustryType.NoPOSManufacturing
-                    Return CType(SelectedBPNoPOSFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedBPNoPOSFacility
                 Case IndustryType.Invention
-                    Return CType(SelectedBPInventionFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedBPInventionFacility
                 Case IndustryType.T3Invention
-                    Return CType(SelectedBPT3InventionFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedBPT3InventionFacility
                 Case IndustryType.Copying
-                    Return CType(SelectedBPCopyFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedBPCopyFacility
                 Case Else
-                    Return CType(SelectedBPManufacturingFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedBPManufacturingFacility
             End Select
         Else
             Select Case IndyType
                 Case IndustryType.Manufacturing
-                    Return CType(SelectedCalcBaseManufacturingFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedCalcBaseManufacturingFacility
                 Case IndustryType.BoosterManufacturing
-                    Return CType(SelectedCalcBoosterManufacturingFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedCalcBoosterManufacturingFacility
                 Case IndustryType.CapitalManufacturing
-                    Return CType(SelectedCalcCapitalManufacturingFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedCalcCapitalManufacturingFacility
                 Case IndustryType.ComponentManufacturing
-                    Return CType(SelectedCalcComponentManufacturingFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedCalcComponentManufacturingFacility
                 Case IndustryType.CapitalComponentManufacturing
-                    Return CType(SelectedCalcComponentManufacturingFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedCalcComponentManufacturingFacility
                 Case IndustryType.SubsystemManufacturing
-                    Return CType(SelectedCalcSubsystemManufacturingFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedCalcSubsystemManufacturingFacility
                 Case IndustryType.SuperManufacturing
-                    Return CType(SelectedCalcSuperManufacturingFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedCalcSuperManufacturingFacility
                 Case IndustryType.T3DestroyerManufacturing
-                    Return CType(SelectedCalcT3DestroyerManufacturingFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedCalcT3DestroyerManufacturingFacility
                 Case IndustryType.T3CruiserManufacturing
-                    Return CType(SelectedCalcT3CruiserManufacturingFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedCalcT3CruiserManufacturingFacility
                 Case IndustryType.POSFuelBlockManufacturing
-                    Return CType(SelectedCalcPOSFuelBlockFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedCalcPOSFuelBlockFacility
                 Case IndustryType.POSLargeShipManufacturing
-                    Return CType(SelectedCalcPOSLargeShipFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedCalcPOSLargeShipFacility
                 Case IndustryType.POSModuleManufacturing
-                    Return CType(SelectedCalcPOSModuleFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedCalcPOSModuleFacility
                 Case IndustryType.NoPOSManufacturing
-                    Return CType(SelectedCalcNoPOSFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedCalcNoPOSFacility
                 Case IndustryType.Invention
-                    Return CType(SelectedCalcInventionFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedCalcInventionFacility
                 Case IndustryType.T3Invention
-                    Return CType(SelectedCalcT3InventionFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedCalcT3InventionFacility
                 Case IndustryType.Copying
-                    Return CType(SelectedCalcCopyFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedCalcCopyFacility
                 Case Else
-                    Return CType(SelectedCalcBaseManufacturingFacility.Clone(), IndustryFacility)
+                    FacilityReference = SelectedCalcBaseManufacturingFacility
             End Select
         End If
+
+        If Clone Then
+            Return CType(FacilityReference.Clone(), IndustryFacility)
+        Else
+            Return FacilityReference ' Only return the reference
+        End If
+
     End Function
 
     ' Sets the default based on the cost check change
@@ -3235,7 +3243,8 @@ NoBonus:
 
     End Sub
 
-    Private Sub OutpostMETETaxText_LostFocus(ByRef ManualTextBox As TextBox, ByRef FacilityTypeCombo As ComboBox, ByRef MaterialMultiplier As Double)
+    Private Sub OutpostMETETaxText_LostFocus(ByRef ManualTextBox As TextBox, ByRef FacilityTypeCombo As ComboBox, _
+                                             ByRef MaterialMultiplier As Double, ByVal BPTab As Boolean)
         If Trim(Replace(ManualTextBox.Text, "%", "")) = "" And FacilityTypeCombo.Text = OutpostFacility Then
             ManualTextBox.Text = FormatPercent(MaterialMultiplier, 1)
         End If
@@ -3243,6 +3252,10 @@ NoBonus:
         If Not ManualTextBox.Text.Contains("%") Then
             ' Format with percent sign
             ManualTextBox.Text = FormatPercent(CDbl(ManualTextBox.Text) / 100, 1)
+        End If
+
+        If BPTab Then
+            Call RefreshBP(True)
         End If
     End Sub
 
@@ -5582,27 +5595,27 @@ Tabs:
                     Case SuperCarrierGroupID, TitanGroupID
                         SelectedBPManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                         Call SelectedBPSuperManufacturingFacility.SaveFacility(BPTab)
-                        Call UpdateMMTMTaxDataforOutpost(SelectedBPSuperManufacturingFacility)
+                        Call UpdateMMTMTaxDataforOutpost(SelectedBPSuperManufacturingFacility, IndustryActivities.Manufacturing)
                         DefaultBPSuperManufacturingFacility = CType(SelectedBPSuperManufacturingFacility.Clone, IndustryFacility)
                     Case BoosterGroupID
                         SelectedBPBoosterManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                         Call SelectedBPBoosterManufacturingFacility.SaveFacility(BPTab)
-                        Call UpdateMMTMTaxDataforOutpost(SelectedBPBoosterManufacturingFacility)
+                        Call UpdateMMTMTaxDataforOutpost(SelectedBPBoosterManufacturingFacility, IndustryActivities.Manufacturing)
                         DefaultBPBoosterManufacturingFacility = CType(SelectedBPBoosterManufacturingFacility.Clone, IndustryFacility)
                     Case CarrierGroupID, DreadnoughtGroupID, CapitalIndustrialShipGroupID
                         SelectedBPCapitalManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                         Call SelectedBPCapitalManufacturingFacility.SaveFacility(BPTab)
-                        Call UpdateMMTMTaxDataforOutpost(SelectedBPCapitalManufacturingFacility)
+                        Call UpdateMMTMTaxDataforOutpost(SelectedBPCapitalManufacturingFacility, IndustryActivities.Manufacturing)
                         DefaultBPCapitalManufacturingFacility = CType(SelectedBPCapitalManufacturingFacility.Clone, IndustryFacility)
                     Case StrategicCruiserGroupID
                         SelectedBPT3CruiserManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                         Call SelectedBPT3CruiserManufacturingFacility.SaveFacility(BPTab)
-                        Call UpdateMMTMTaxDataforOutpost(SelectedBPT3CruiserManufacturingFacility)
+                        Call UpdateMMTMTaxDataforOutpost(SelectedBPT3CruiserManufacturingFacility, IndustryActivities.Manufacturing)
                         DefaultBPT3CruiserManufacturingFacility = CType(SelectedBPT3CruiserManufacturingFacility.Clone, IndustryFacility)
                     Case TacticalDestroyerGroupID
                         SelectedBPT3DestroyerManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                         Call SelectedBPT3DestroyerManufacturingFacility.SaveFacility(BPTab)
-                        Call UpdateMMTMTaxDataforOutpost(SelectedBPT3DestroyerManufacturingFacility)
+                        Call UpdateMMTMTaxDataforOutpost(SelectedBPT3DestroyerManufacturingFacility, IndustryActivities.Manufacturing)
                         DefaultBPT3DestroyerManufacturingFacility = CType(SelectedBPT3DestroyerManufacturingFacility.Clone, IndustryFacility)
                     Case Else
                         If cmbBPFacilityType.Text = POSFacility Then
@@ -5660,24 +5673,24 @@ Tabs:
                             If BPCategoryID = SubsystemCategoryID Then
                                 SelectedBPSubsystemManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                                 Call SelectedBPSubsystemManufacturingFacility.SaveFacility(BPTab)
-                                Call UpdateMMTMTaxDataforOutpost(SelectedBPSubsystemManufacturingFacility)
+                                Call UpdateMMTMTaxDataforOutpost(SelectedBPSubsystemManufacturingFacility, IndustryActivities.Manufacturing)
                                 DefaultBPSubsystemManufacturingFacility = CType(SelectedBPSubsystemManufacturingFacility.Clone, IndustryFacility)
                             ElseIf BPCategoryID = ComponentCategoryID Then
                                 If BPGroupID = AdvCapitalComponentGroupID Or BPGroupID = CapitalComponentGroupID Then
                                     SelectedBPCapitalComponentManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                                     Call SelectedBPCapitalComponentManufacturingFacility.SaveFacility(BPTab)
-                                    Call UpdateMMTMTaxDataforOutpost(SelectedBPCapitalComponentManufacturingFacility)
+                                    Call UpdateMMTMTaxDataforOutpost(SelectedBPCapitalComponentManufacturingFacility, IndustryActivities.Manufacturing)
                                     DefaultBPCapitalComponentManufacturingFacility = CType(SelectedBPCapitalComponentManufacturingFacility.Clone, IndustryFacility)
                                 Else
                                     SelectedBPComponentManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                                     Call SelectedBPComponentManufacturingFacility.SaveFacility(BPTab)
-                                    Call UpdateMMTMTaxDataforOutpost(SelectedBPComponentManufacturingFacility)
+                                    Call UpdateMMTMTaxDataforOutpost(SelectedBPComponentManufacturingFacility, IndustryActivities.Manufacturing)
                                     DefaultBPComponentManufacturingFacility = CType(SelectedBPComponentManufacturingFacility.Clone, IndustryFacility)
                                 End If
                             Else
                                 SelectedBPManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                                 Call SelectedBPManufacturingFacility.SaveFacility(BPTab)
-                                Call UpdateMMTMTaxDataforOutpost(SelectedBPManufacturingFacility)
+                                Call UpdateMMTMTaxDataforOutpost(SelectedBPManufacturingFacility, IndustryActivities.Manufacturing)
                                 DefaultBPManufacturingFacility = CType(SelectedBPManufacturingFacility.Clone, IndustryFacility)
                             End If
                         End If
@@ -5685,28 +5698,28 @@ Tabs:
             Case ActivityComponentManufacturing
                 SelectedBPComponentManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                 Call SelectedBPComponentManufacturingFacility.SaveFacility(BPTab)
-                Call UpdateMMTMTaxDataforOutpost(SelectedBPComponentManufacturingFacility)
+                Call UpdateMMTMTaxDataforOutpost(SelectedBPComponentManufacturingFacility, IndustryActivities.Manufacturing)
                 DefaultBPComponentManufacturingFacility = CType(SelectedBPComponentManufacturingFacility.Clone, IndustryFacility)
             Case ActivityCapComponentManufacturing
                 SelectedBPCapitalComponentManufacturingFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                 Call SelectedBPCapitalComponentManufacturingFacility.SaveFacility(BPTab)
-                Call UpdateMMTMTaxDataforOutpost(SelectedBPCapitalComponentManufacturingFacility)
+                Call UpdateMMTMTaxDataforOutpost(SelectedBPCapitalComponentManufacturingFacility, IndustryActivities.Manufacturing)
                 DefaultBPCapitalComponentManufacturingFacility = CType(SelectedBPCapitalComponentManufacturingFacility.Clone, IndustryFacility)
             Case ActivityCopying
                 SelectedBPCopyFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                 Call SelectedBPCopyFacility.SaveFacility(BPTab)
-                Call UpdateMMTMTaxDataforOutpost(SelectedBPCopyFacility)
+                Call UpdateMMTMTaxDataforOutpost(SelectedBPCopyFacility, IndustryActivities.Copying)
                 DefaultBPCopyFacility = CType(SelectedBPCopyFacility.Clone, IndustryFacility)
             Case ActivityInvention
                 If SelectedBlueprint.GetItemGroupID = StrategicCruiserGroupID Or SelectedBlueprint.GetItemCategoryID = SubsystemCategoryID Then
                     SelectedBPT3InventionFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                     Call SelectedBPT3InventionFacility.SaveFacility(BPTab)
-                    Call UpdateMMTMTaxDataforOutpost(SelectedBPT3InventionFacility)
+                    Call UpdateMMTMTaxDataforOutpost(SelectedBPT3InventionFacility, IndustryActivities.Invention)
                     DefaultBPT3InventionFacility = CType(SelectedBPT3InventionFacility.Clone, IndustryFacility)
                 Else
                     SelectedBPInventionFacility.IncludeActivityUsage = chkBPFacilityIncludeUsage.Checked
                     Call SelectedBPInventionFacility.SaveFacility(BPTab)
-                    Call UpdateMMTMTaxDataforOutpost(SelectedBPInventionFacility)
+                    Call UpdateMMTMTaxDataforOutpost(SelectedBPInventionFacility, IndustryActivities.Invention)
                     DefaultBPInventionFacility = CType(SelectedBPInventionFacility.Clone, IndustryFacility)
                 End If
         End Select
@@ -5720,7 +5733,7 @@ Tabs:
     End Sub
 
     ' For outposts, save the ME/TE/Tax data since this is specific to the user's input
-    Private Sub UpdateMMTMTaxDataforOutpost(ByRef SentFacility As IndustryFacility)
+    Private Sub UpdateMMTMTaxDataforOutpost(ByRef SentFacility As IndustryFacility, Activity As IndustryActivities)
         Dim SQL As String
 
         If IsNothing(SentFacility) Then
@@ -5736,11 +5749,16 @@ Tabs:
         SQL = "UPDATE STATION_FACILITIES SET BASE_MM = " & CStr(SentFacility.MaterialMultiplier)
         SQL = SQL & ", BASE_TM = " & CStr(SentFacility.TimeMultiplier)
         SQL = SQL & ", FACILITY_TAX = " & CStr(SentFacility.TaxRate)
-        SQL = SQL & ", OUTPOST = 2 "
-        SQL = SQL & "WHERE FACILITY_ID = " & CStr(SentFacility.FacilityID)
+        SQL = SQL & ", OUTPOST = " & CStr(StationType.SavedOutpost) & " "
+        SQL = SQL & "WHERE FACILITY_NAME = '" & SentFacility.FacilityName & "' "
+        SQL = SQL & "AND ACTIVITY_ID = " & CStr(Activity)
 
         Call ExecuteNonQuerySQL(SQL)
 
+    End Sub
+
+    Private Sub txtBPFacilityManualME_KeyDown(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtBPFacilityManualME.KeyDown
+        Call EnterKeyRunBP(e)
     End Sub
 
     Private Sub txtBPFacilityManualME_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtBPFacilityManualME.KeyPress
@@ -5748,25 +5766,42 @@ Tabs:
     End Sub
 
     Private Sub txtBPFacilityManualME_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtBPFacilityManualME.KeyUp
-        Call OutpostMETETaxText_KeyUp("ME", txtBPFacilityManualME, SelectedBPManufacturingFacility, _
+        Call OutpostMETETaxText_KeyUp("ME", txtBPFacilityManualME, _
+                                      GetManufacturingFacility(GetProductionType(cmbBPFacilityActivities.Text, SelectedBlueprint.GetItemGroupID, _
+                                                                                 SelectedBlueprint.GetItemCategoryID, cmbBPFacilityType.Text), BPTab, False), _
                                       cmbBPFacilityType, btnBPFacilitySave, lblBPFacilityDefault)
     End Sub
 
     Private Sub txtBPFacilityManualME_LostFocus(sender As Object, e As System.EventArgs) Handles txtBPFacilityManualME.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtBPFacilityManualME, cmbBPFacilityType, SelectedBPManufacturingFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtBPFacilityManualME, cmbBPFacilityType, _
+                                      GetManufacturingFacility(GetProductionType(cmbBPFacilityActivities.Text, SelectedBlueprint.GetItemGroupID, _
+                                                                                 SelectedBlueprint.GetItemCategoryID, cmbBPFacilityType.Text), BPTab, False).MaterialMultiplier, True)
+    End Sub
+
+    Private Sub txtBPFacilityManualTE_KeyDown(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtBPFacilityManualTE.KeyDown
+        Call EnterKeyRunBP(e)
     End Sub
 
     Private Sub txtBPFacilityManualTE_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtBPFacilityManualTE.KeyPress
         Call OutpostMETETaxText_KeyPress(e)
     End Sub
 
+
     Private Sub txtBPFacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtBPFacilityManualTE.KeyUp
-        Call OutpostMETETaxText_KeyUp("TE", txtBPFacilityManualTE, SelectedBPManufacturingFacility, _
+        Call OutpostMETETaxText_KeyUp("TE", txtBPFacilityManualTE, _
+                                      GetManufacturingFacility(GetProductionType(cmbBPFacilityActivities.Text, SelectedBlueprint.GetItemGroupID, _
+                                                                                 SelectedBlueprint.GetItemCategoryID, cmbBPFacilityType.Text), BPTab, False), _
                                       cmbBPFacilityType, btnBPFacilitySave, lblBPFacilityDefault)
     End Sub
 
     Private Sub txtBPFacilityManualTE_LostFocus(sender As Object, e As System.EventArgs) Handles txtBPFacilityManualTE.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtBPFacilityManualTE, cmbBPFacilityType, SelectedBPManufacturingFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtBPFacilityManualTE, cmbBPFacilityType, _
+                                      GetManufacturingFacility(GetProductionType(cmbBPFacilityActivities.Text, SelectedBlueprint.GetItemGroupID, _
+                                                                                 SelectedBlueprint.GetItemCategoryID, cmbBPFacilityType.Text), BPTab, False).MaterialMultiplier, True)
+    End Sub
+
+    Private Sub txtBPFacilityManualTax_KeyDown(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtBPFacilityManualTax.KeyDown
+        Call EnterKeyRunBP(e)
     End Sub
 
     Private Sub txtBPFacilityManualTax_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtBPFacilityManualTax.KeyPress
@@ -5774,12 +5809,16 @@ Tabs:
     End Sub
 
     Private Sub txtBPFacilityManualTax_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtBPFacilityManualTax.KeyUp
-        Call OutpostMETETaxText_KeyUp("Tax", txtBPFacilityManualTax, SelectedBPManufacturingFacility, _
+        Call OutpostMETETaxText_KeyUp("Tax", txtBPFacilityManualTax, _
+                                      GetManufacturingFacility(GetProductionType(cmbBPFacilityActivities.Text, SelectedBlueprint.GetItemGroupID, _
+                                                                                 SelectedBlueprint.GetItemCategoryID, cmbBPFacilityType.Text), BPTab, False), _
                                       cmbBPFacilityType, btnBPFacilitySave, lblBPFacilityDefault)
     End Sub
 
     Private Sub txtBPFacilityManualTax_LostFocus(sender As Object, e As System.EventArgs) Handles txtBPFacilityManualTax.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtBPFacilityManualTax, cmbBPFacilityType, SelectedBPManufacturingFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtBPFacilityManualTax, cmbBPFacilityType, _
+                                      GetManufacturingFacility(GetProductionType(cmbBPFacilityActivities.Text, SelectedBlueprint.GetItemGroupID, _
+                                                                                 SelectedBlueprint.GetItemCategoryID, cmbBPFacilityType.Text), BPTab, False).MaterialMultiplier, True)
     End Sub
 
     ' Team functions
@@ -8016,7 +8055,7 @@ ExitForm:
             ElseIf .rbtnBPDeployableBlueprints.Checked Then
                 SQL = SQL & "AND ITEM_CATEGORY = 'Deployable' "
             ElseIf .rbtnBPCelestialsBlueprints.Checked Then
-                SQL = SQL & "AND ITEM_CATEGORY IN ('Celestial','Orbitals','Sovereignty Structures', 'Station', 'Accessories') "
+                SQL = SQL & "AND ITEM_CATEGORY IN ('Celestial','Orbitals','Sovereignty Structures', 'Station', 'Accessories', 'Infrastructure Upgrades') "
             ElseIf .rbtnBPStructureBlueprints.Checked Then
                 SQL = SQL & "AND ITEM_CATEGORY = 'Structure' "
             ElseIf .rbtnBPStationPartsBlueprints.Checked Then
@@ -10734,7 +10773,7 @@ ExitSub:
             ItemChecked = True
         End If
         If chkCelestials.Checked Then
-            SQL = SQL & "(ITEM_CATEGORY IN ('Celestial','Orbitals','Sovereignty Structures', 'Station','Accessories') AND ITEM_GROUP <> 'Harvestable Cloud') OR "
+            SQL = SQL & "(ITEM_CATEGORY IN ('Celestial','Orbitals','Sovereignty Structures', 'Station','Accessories', 'Infrastructure Upgrades') AND ITEM_GROUP <> 'Harvestable Cloud') OR "
             ItemChecked = True
         End If
 
@@ -11273,7 +11312,7 @@ ExitSub:
 
         SelectedCalcBaseManufacturingFacility.IncludeActivityUsage = chkCalcBaseFacilityIncludeUsage.Checked
         Call SelectedCalcBaseManufacturingFacility.SaveFacility(CalcTab)
-        Call UpdateMMTMTaxDataforOutpost(SelectedCalcBaseManufacturingFacility)
+        Call UpdateMMTMTaxDataforOutpost(SelectedCalcBaseManufacturingFacility, IndustryActivities.Manufacturing)
         DefaultCalcBaseManufacturingFacility = CType(SelectedCalcBaseManufacturingFacility.Clone, IndustryFacility)
 
         If cmbCalcPOSFuelBlocks.Visible Then
@@ -11314,7 +11353,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcBaseFacilityManualME_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcBaseFacilityManualME.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcBaseFacilityManualME, cmbCalcBaseFacilityType, SelectedCalcBaseManufacturingFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcBaseFacilityManualME, cmbCalcBaseFacilityType, SelectedCalcBaseManufacturingFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub txtCalcBaseFacilityManualTE_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcBaseFacilityManualTE.KeyPress
@@ -11327,7 +11366,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcBaseFacilityManualTE_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcBaseFacilityManualTE.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcBaseFacilityManualTE, cmbCalcBaseFacilityType, SelectedCalcBaseManufacturingFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcBaseFacilityManualTE, cmbCalcBaseFacilityType, SelectedCalcBaseManufacturingFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub txtCalcBaseFacilityManualTax_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcBaseFacilityManualTax.KeyPress
@@ -11340,7 +11379,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcBaseFacilityManualTax_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcBaseFacilityManualTax.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcBaseFacilityManualTax, cmbCalcBaseFacilityType, SelectedCalcBaseManufacturingFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcBaseFacilityManualTax, cmbCalcBaseFacilityType, SelectedCalcBaseManufacturingFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub chkCalcBaseFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcBaseFacilityIncludeUsage.CheckedChanged
@@ -11554,12 +11593,12 @@ ExitSub:
         If chkCalcCapComponentsFacility.Checked Then
             SelectedCalcCapitalComponentManufacturingFacility.IncludeActivityUsage = chkCalcComponentFacilityIncludeUsage.Checked
             Call SelectedCalcCapitalComponentManufacturingFacility.SaveFacility(CalcTab)
-            Call UpdateMMTMTaxDataforOutpost(SelectedCalcCapitalComponentManufacturingFacility)
+            Call UpdateMMTMTaxDataforOutpost(SelectedCalcCapitalComponentManufacturingFacility, IndustryActivities.Manufacturing)
             DefaultCalcCapitalComponentManufacturingFacility = CType(SelectedCalcCapitalComponentManufacturingFacility.Clone, IndustryFacility)
         Else
             SelectedCalcComponentManufacturingFacility.IncludeActivityUsage = chkCalcComponentFacilityIncludeUsage.Checked
             Call SelectedCalcComponentManufacturingFacility.SaveFacility(CalcTab)
-            Call UpdateMMTMTaxDataforOutpost(SelectedCalcComponentManufacturingFacility)
+            Call UpdateMMTMTaxDataforOutpost(SelectedCalcComponentManufacturingFacility, IndustryActivities.Manufacturing)
             DefaultCalcComponentManufacturingFacility = CType(SelectedCalcComponentManufacturingFacility.Clone, IndustryFacility)
         End If
 
@@ -11579,7 +11618,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcComponentFacilityManualME_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcComponentFacilityManualME.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcComponentFacilityManualME, cmbCalcComponentFacilityType, SelectedCalcComponentManufacturingFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcComponentFacilityManualME, cmbCalcComponentFacilityType, SelectedCalcComponentManufacturingFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub txtCalcComponentFacilityManualTE_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcComponentFacilityManualTE.KeyPress
@@ -11592,7 +11631,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcComponentFacilityManualTE_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcComponentFacilityManualTE.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcComponentFacilityManualTE, cmbCalcComponentFacilityType, SelectedCalcComponentManufacturingFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcComponentFacilityManualTE, cmbCalcComponentFacilityType, SelectedCalcComponentManufacturingFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub txtCalcComponentFacilityManualTax_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcComponentFacilityManualTax.KeyPress
@@ -11605,7 +11644,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcComponentFacilityManualTax_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcComponentFacilityManualTax.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcComponentFacilityManualTax, cmbCalcComponentFacilityType, SelectedCalcComponentManufacturingFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcComponentFacilityManualTax, cmbCalcComponentFacilityType, SelectedCalcComponentManufacturingFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub chkCalcComponentFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcComponentFacilityIncludeUsage.CheckedChanged
@@ -11807,7 +11846,7 @@ ExitSub:
         SelectedCalcInventionFacility.IncludeActivityUsage = chkCalcInventionFacilityIncludeUsage.Checked
         SelectedCalcInventionFacility.IncludeActivityTime = chkCalcInventionFacilityIncludeTime.Checked
         Call SelectedCalcInventionFacility.SaveFacility(CalcTab)
-        Call UpdateMMTMTaxDataforOutpost(SelectedCalcInventionFacility)
+        Call UpdateMMTMTaxDataforOutpost(SelectedCalcInventionFacility, IndustryActivities.Invention)
         DefaultCalcInventionFacility = CType(SelectedCalcInventionFacility.Clone, IndustryFacility)
 
         lblCalcInventionFacilityDefault.Visible = True
@@ -11826,7 +11865,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcInventionFacilityManualME_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcInventionFacilityManualME.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcInventionFacilityManualME, cmbCalcInventionFacilityType, SelectedCalcInventionFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcInventionFacilityManualME, cmbCalcInventionFacilityType, SelectedCalcInventionFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub txtCalcInventionFacilityManualTE_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcInventionFacilityManualTE.KeyPress
@@ -11839,7 +11878,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcInventionFacilityManualTE_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcInventionFacilityManualTE.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcInventionFacilityManualTE, cmbCalcInventionFacilityType, SelectedCalcInventionFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcInventionFacilityManualTE, cmbCalcInventionFacilityType, SelectedCalcInventionFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub txtCalcInventionFacilityManualTax_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcInventionFacilityManualTax.KeyPress
@@ -11852,7 +11891,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcInventionFacilityManualTax_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcInventionFacilityManualTax.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcInventionFacilityManualTax, cmbCalcInventionFacilityType, SelectedCalcInventionFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcInventionFacilityManualTax, cmbCalcInventionFacilityType, SelectedCalcInventionFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub chkCalcInventionFacilityIncludeCost_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcInventionFacilityIncludeCost.CheckedChanged
@@ -12079,7 +12118,7 @@ ExitSub:
         SelectedCalcT3InventionFacility.IncludeActivityCost = chkCalcT3InventionFacilityIncludeCost.Checked
         SelectedCalcT3InventionFacility.IncludeActivityTime = chkCalcT3InventionFacilityIncludeTime.Checked
         Call SelectedCalcT3InventionFacility.SaveFacility(CalcTab)
-        Call UpdateMMTMTaxDataforOutpost(SelectedCalcT3InventionFacility)
+        Call UpdateMMTMTaxDataforOutpost(SelectedCalcT3InventionFacility, IndustryActivities.Invention)
         DefaultCalcT3InventionFacility = CType(SelectedCalcT3InventionFacility.Clone, IndustryFacility)
 
         lblCalcT3InventionFacilityDefault.Visible = True
@@ -12098,7 +12137,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcT3InventionFacilityManualME_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcT3InventionFacilityManualME.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcT3InventionFacilityManualME, cmbCalcT3InventionFacilityType, SelectedCalcT3InventionFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcT3InventionFacilityManualME, cmbCalcT3InventionFacilityType, SelectedCalcT3InventionFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub txtCalcT3InventionFacilityManualTE_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcT3InventionFacilityManualTE.KeyPress
@@ -12111,7 +12150,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcT3InventionFacilityManualTE_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcT3InventionFacilityManualTE.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcT3InventionFacilityManualTE, cmbCalcT3InventionFacilityType, SelectedCalcT3InventionFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcT3InventionFacilityManualTE, cmbCalcT3InventionFacilityType, SelectedCalcT3InventionFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub txtCalcT3InventionFacilityManualTax_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcT3InventionFacilityManualTax.KeyPress
@@ -12124,7 +12163,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcT3InventionFacilityManualTax_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcT3InventionFacilityManualTax.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcT3InventionFacilityManualTax, cmbCalcT3InventionFacilityType, SelectedCalcT3InventionFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcT3InventionFacilityManualTax, cmbCalcT3InventionFacilityType, SelectedCalcT3InventionFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub chkCalcT3InventionFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcT3InventionFacilityIncludeCost.CheckedChanged
@@ -12352,7 +12391,7 @@ ExitSub:
         SelectedCalcCopyFacility.IncludeActivityCost = chkCalcCopyFacilityIncludeCost.Checked
         SelectedCalcCopyFacility.IncludeActivityTime = chkCalcCopyFacilityIncludeTime.Checked
         Call SelectedCalcCopyFacility.SaveFacility(CalcTab)
-        Call UpdateMMTMTaxDataforOutpost(SelectedCalcCopyFacility)
+        Call UpdateMMTMTaxDataforOutpost(SelectedCalcCopyFacility, IndustryActivities.Copying)
         DefaultCalcCopyFacility = CType(SelectedCalcCopyFacility.Clone, IndustryFacility)
 
         lblCalcCopyFacilityDefault.Visible = True
@@ -12371,7 +12410,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcCopyFacilityManualME_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcCopyFacilityManualME.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcCopyFacilityManualME, cmbCalcCopyFacilityType, SelectedCalcCopyFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcCopyFacilityManualME, cmbCalcCopyFacilityType, SelectedCalcCopyFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub txtCalcCopyFacilityManualTE_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcCopyFacilityManualTE.KeyPress
@@ -12384,7 +12423,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcCopyFacilityManualTE_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcCopyFacilityManualTE.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcCopyFacilityManualTE, cmbCalcCopyFacilityType, SelectedCalcCopyFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcCopyFacilityManualTE, cmbCalcCopyFacilityType, SelectedCalcCopyFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub txtCalcCopyFacilityManualTax_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcCopyFacilityManualTax.KeyPress
@@ -12397,7 +12436,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcCopyFacilityManualTax_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcCopyFacilityManualTax.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcCopyFacilityManualTax, cmbCalcCopyFacilityType, SelectedCalcCopyFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcCopyFacilityManualTax, cmbCalcCopyFacilityType, SelectedCalcCopyFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub chkCalcCopyFacilityIncludeCost_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcCopyFacilityIncludeCost.CheckedChanged
@@ -12594,7 +12633,7 @@ ExitSub:
 
         SelectedCalcNoPOSFacility.IncludeActivityUsage = chkCalcNoPOSFacilityIncludeUsage.Checked
         Call SelectedCalcNoPOSFacility.SaveFacility(CalcTab)
-        Call UpdateMMTMTaxDataforOutpost(SelectedCalcNoPOSFacility)
+        Call UpdateMMTMTaxDataforOutpost(SelectedCalcNoPOSFacility, IndustryActivities.Manufacturing)
         DefaultCalcNoPOSFacility = CType(SelectedCalcNoPOSFacility.Clone, IndustryFacility)
 
         lblCalcNoPOSFacilityDefault.Visible = True
@@ -12613,7 +12652,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcNoPOSFacilityManualME_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcNoPOSFacilityManualME.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcNoPOSFacilityManualME, cmbCalcNoPOSFacilityType, SelectedCalcNoPOSFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcNoPOSFacilityManualME, cmbCalcNoPOSFacilityType, SelectedCalcNoPOSFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub txtCalcNoPOSFacilityManualTE_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcNoPOSFacilityManualTE.KeyPress
@@ -12626,7 +12665,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcNoPOSFacilityManualTE_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcNoPOSFacilityManualTE.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcNoPOSFacilityManualTE, cmbCalcNoPOSFacilityType, SelectedCalcNoPOSFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcNoPOSFacilityManualTE, cmbCalcNoPOSFacilityType, SelectedCalcNoPOSFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub txtCalcNoPOSFacilityManualTax_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcNoPOSFacilityManualTax.KeyPress
@@ -12639,7 +12678,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcNoPOSFacilityManualTax_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcNoPOSFacilityManualTax.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcNoPOSFacilityManualTax, cmbCalcNoPOSFacilityType, SelectedCalcNoPOSFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcNoPOSFacilityManualTax, cmbCalcNoPOSFacilityType, SelectedCalcNoPOSFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub chkCalcNoPOSFacilityIncludeCost_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcNoPOSFacilityIncludeUsage.CheckedChanged
@@ -12811,7 +12850,7 @@ ExitSub:
 
         SelectedCalcSuperManufacturingFacility.IncludeActivityUsage = chkCalcSuperFacilityIncludeUsage.Checked
         Call SelectedCalcSuperManufacturingFacility.SaveFacility(CalcTab)
-        Call UpdateMMTMTaxDataforOutpost(SelectedCalcSuperManufacturingFacility)
+        Call UpdateMMTMTaxDataforOutpost(SelectedCalcSuperManufacturingFacility, IndustryActivities.Manufacturing)
         DefaultCalcSuperManufacturingFacility = CType(SelectedCalcSuperManufacturingFacility.Clone, IndustryFacility)
 
         lblCalcSuperFacilityDefault.Visible = True
@@ -12830,7 +12869,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcSuperFacilityManualME_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcSuperFacilityManualME.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcSuperFacilityManualME, cmbCalcSuperFacilityType, SelectedCalcSuperManufacturingFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcSuperFacilityManualME, cmbCalcSuperFacilityType, SelectedCalcSuperManufacturingFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub txtCalcSuperFacilityManualTE_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcSuperFacilityManualTE.KeyPress
@@ -12843,7 +12882,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcSuperFacilityManualTE_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcSuperFacilityManualTE.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcSuperFacilityManualTE, cmbCalcSuperFacilityType, SelectedCalcSuperManufacturingFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcSuperFacilityManualTE, cmbCalcSuperFacilityType, SelectedCalcSuperManufacturingFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub txtCalcSuperFacilityManualTax_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcSuperFacilityManualTax.KeyPress
@@ -12856,7 +12895,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcSuperFacilityManualTax_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcSuperFacilityManualTax.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcSuperFacilityManualTax, cmbCalcSuperFacilityType, SelectedCalcSuperManufacturingFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcSuperFacilityManualTax, cmbCalcSuperFacilityType, SelectedCalcSuperManufacturingFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub chkCalcSuperFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcSuperFacilityIncludeUsage.CheckedChanged
@@ -13027,7 +13066,7 @@ ExitSub:
 
         SelectedCalcCapitalManufacturingFacility.IncludeActivityUsage = chkCalcCapitalFacilityIncludeUsage.Checked
         Call SelectedCalcCapitalManufacturingFacility.SaveFacility(CalcTab)
-        Call UpdateMMTMTaxDataforOutpost(SelectedCalcCapitalManufacturingFacility)
+        Call UpdateMMTMTaxDataforOutpost(SelectedCalcCapitalManufacturingFacility, IndustryActivities.Manufacturing)
         DefaultCalcCapitalManufacturingFacility = CType(SelectedCalcCapitalManufacturingFacility.Clone, IndustryFacility)
 
         lblCalcCapitalFacilityDefault.Visible = True
@@ -13046,7 +13085,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcCapitalFacilityManualME_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcCapitalFacilityManualME.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcCapitalFacilityManualME, cmbCalcCapitalFacilityType, SelectedCalcCapitalManufacturingFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcCapitalFacilityManualME, cmbCalcCapitalFacilityType, SelectedCalcCapitalManufacturingFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub txtCalcCapitalFacilityManualTE_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcCapitalFacilityManualTE.KeyPress
@@ -13059,7 +13098,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcCapitalFacilityManualTE_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcCapitalFacilityManualTE.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcCapitalFacilityManualTE, cmbCalcCapitalFacilityType, SelectedCalcCapitalManufacturingFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcCapitalFacilityManualTE, cmbCalcCapitalFacilityType, SelectedCalcCapitalManufacturingFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub txtCalcCapitalFacilityManualTax_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcCapitalFacilityManualTax.KeyPress
@@ -13072,7 +13111,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcCapitalFacilityManualTax_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcCapitalFacilityManualTax.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcCapitalFacilityManualTax, cmbCalcCapitalFacilityType, SelectedCalcCapitalManufacturingFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcCapitalFacilityManualTax, cmbCalcCapitalFacilityType, SelectedCalcCapitalManufacturingFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub chkCalcCapitalFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcCapitalFacilityIncludeUsage.CheckedChanged
@@ -13266,12 +13305,12 @@ ExitSub:
         If chkCalcT3DestroyersFacility.Checked Then
             SelectedCalcT3DestroyerManufacturingFacility.IncludeActivityUsage = chkCalcT3FacilityIncludeUsage.Checked
             Call SelectedCalcT3DestroyerManufacturingFacility.SaveFacility(CalcTab)
-            Call UpdateMMTMTaxDataforOutpost(SelectedCalcT3DestroyerManufacturingFacility)
+            Call UpdateMMTMTaxDataforOutpost(SelectedCalcT3DestroyerManufacturingFacility, IndustryActivities.Manufacturing)
             DefaultCalcT3DestroyerManufacturingFacility = CType(SelectedCalcT3DestroyerManufacturingFacility.Clone, IndustryFacility)
         Else
             SelectedCalcT3CruiserManufacturingFacility.IncludeActivityUsage = chkCalcT3FacilityIncludeUsage.Checked
             Call SelectedCalcT3CruiserManufacturingFacility.SaveFacility(CalcTab)
-            Call UpdateMMTMTaxDataforOutpost(SelectedCalcT3CruiserManufacturingFacility)
+            Call UpdateMMTMTaxDataforOutpost(SelectedCalcT3CruiserManufacturingFacility, IndustryActivities.Manufacturing)
             DefaultCalcT3CruiserManufacturingFacility = CType(SelectedCalcT3CruiserManufacturingFacility.Clone, IndustryFacility)
         End If
 
@@ -13297,9 +13336,9 @@ ExitSub:
 
     Private Sub txtCalcT3FacilityManualME_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcT3FacilityManualME.LostFocus
         If chkCalcT3DestroyersFacility.Checked Then
-            Call OutpostMETETaxText_LostFocus(txtCalcT3FacilityManualME, cmbCalcT3FacilityType, SelectedCalcT3DestroyerManufacturingFacility.MaterialMultiplier)
+            Call OutpostMETETaxText_LostFocus(txtCalcT3FacilityManualME, cmbCalcT3FacilityType, SelectedCalcT3DestroyerManufacturingFacility.MaterialMultiplier, False)
         Else
-            Call OutpostMETETaxText_LostFocus(txtCalcT3FacilityManualME, cmbCalcT3FacilityType, SelectedCalcT3CruiserManufacturingFacility.MaterialMultiplier)
+            Call OutpostMETETaxText_LostFocus(txtCalcT3FacilityManualME, cmbCalcT3FacilityType, SelectedCalcT3CruiserManufacturingFacility.MaterialMultiplier, False)
         End If
     End Sub
 
@@ -13319,9 +13358,9 @@ ExitSub:
 
     Private Sub txtCalcT3FacilityManualTE_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcT3FacilityManualTE.LostFocus
         If chkCalcT3DestroyersFacility.Checked Then
-            Call OutpostMETETaxText_LostFocus(txtCalcT3FacilityManualTE, cmbCalcT3FacilityType, SelectedCalcT3DestroyerManufacturingFacility.MaterialMultiplier)
+            Call OutpostMETETaxText_LostFocus(txtCalcT3FacilityManualTE, cmbCalcT3FacilityType, SelectedCalcT3DestroyerManufacturingFacility.MaterialMultiplier, False)
         Else
-            Call OutpostMETETaxText_LostFocus(txtCalcT3FacilityManualTE, cmbCalcT3FacilityType, SelectedCalcT3CruiserManufacturingFacility.MaterialMultiplier)
+            Call OutpostMETETaxText_LostFocus(txtCalcT3FacilityManualTE, cmbCalcT3FacilityType, SelectedCalcT3CruiserManufacturingFacility.MaterialMultiplier, False)
         End If
     End Sub
 
@@ -13341,9 +13380,9 @@ ExitSub:
 
     Private Sub txtCalcT3FacilityManualTax_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcT3FacilityManualTax.LostFocus
         If chkCalcT3DestroyersFacility.Checked Then
-            Call OutpostMETETaxText_LostFocus(txtCalcT3FacilityManualTax, cmbCalcT3FacilityType, SelectedCalcT3DestroyerManufacturingFacility.MaterialMultiplier)
+            Call OutpostMETETaxText_LostFocus(txtCalcT3FacilityManualTax, cmbCalcT3FacilityType, SelectedCalcT3DestroyerManufacturingFacility.MaterialMultiplier, False)
         Else
-            Call OutpostMETETaxText_LostFocus(txtCalcT3FacilityManualTax, cmbCalcT3FacilityType, SelectedCalcT3CruiserManufacturingFacility.MaterialMultiplier)
+            Call OutpostMETETaxText_LostFocus(txtCalcT3FacilityManualTax, cmbCalcT3FacilityType, SelectedCalcT3CruiserManufacturingFacility.MaterialMultiplier, False)
         End If
     End Sub
 
@@ -13516,7 +13555,7 @@ ExitSub:
 
         SelectedCalcSubsystemManufacturingFacility.IncludeActivityUsage = chkCalcSubsystemFacilityIncludeUsage.Checked
         Call SelectedCalcSubsystemManufacturingFacility.SaveFacility(CalcTab)
-        Call UpdateMMTMTaxDataforOutpost(SelectedCalcSubsystemManufacturingFacility)
+        Call UpdateMMTMTaxDataforOutpost(SelectedCalcSubsystemManufacturingFacility, IndustryActivities.Manufacturing)
         DefaultCalcSubsystemManufacturingFacility = CType(SelectedCalcSubsystemManufacturingFacility.Clone, IndustryFacility)
 
         lblCalcSubsystemFacilityDefault.Visible = True
@@ -13535,7 +13574,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcSubsystemFacilityManualME_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcSubsystemFacilityManualME.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcSubsystemFacilityManualME, cmbCalcSubsystemFacilityType, SelectedCalcSubsystemManufacturingFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcSubsystemFacilityManualME, cmbCalcSubsystemFacilityType, SelectedCalcSubsystemManufacturingFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub txtCalcSubsystemFacilityManualTE_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcSubsystemFacilityManualTE.KeyPress
@@ -13548,7 +13587,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcSubsystemFacilityManualTE_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcSubsystemFacilityManualTE.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcSubsystemFacilityManualTE, cmbCalcSubsystemFacilityType, SelectedCalcSubsystemManufacturingFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcSubsystemFacilityManualTE, cmbCalcSubsystemFacilityType, SelectedCalcSubsystemManufacturingFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub txtCalcSubsystemFacilityManualTax_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcSubsystemFacilityManualTax.KeyPress
@@ -13561,7 +13600,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcSubsystemFacilityManualTax_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcSubsystemFacilityManualTax.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcSubsystemFacilityManualTax, cmbCalcSubsystemFacilityType, SelectedCalcSubsystemManufacturingFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcSubsystemFacilityManualTax, cmbCalcSubsystemFacilityType, SelectedCalcSubsystemManufacturingFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub chkCalcSubsystemFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcSubsystemFacilityIncludeUsage.CheckedChanged
@@ -13732,7 +13771,7 @@ ExitSub:
 
         SelectedCalcBoosterManufacturingFacility.IncludeActivityUsage = chkCalcBoosterFacilityIncludeUsage.Checked
         Call SelectedCalcBoosterManufacturingFacility.SaveFacility(CalcTab)
-        Call UpdateMMTMTaxDataforOutpost(SelectedCalcBoosterManufacturingFacility)
+        Call UpdateMMTMTaxDataforOutpost(SelectedCalcBoosterManufacturingFacility, IndustryActivities.Manufacturing)
         DefaultCalcBoosterManufacturingFacility = CType(SelectedCalcBoosterManufacturingFacility.Clone, IndustryFacility)
 
         lblCalcBoosterFacilityDefault.Visible = True
@@ -13751,7 +13790,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcBoosterFacilityManualME_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcBoosterFacilityManualME.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcBoosterFacilityManualME, cmbCalcBoosterFacilityType, SelectedCalcBoosterManufacturingFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcBoosterFacilityManualME, cmbCalcBoosterFacilityType, SelectedCalcBoosterManufacturingFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub txtCalcBoosterFacilityManualTE_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcBoosterFacilityManualTE.KeyPress
@@ -13764,7 +13803,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcBoosterFacilityManualTE_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcBoosterFacilityManualTE.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcBoosterFacilityManualTE, cmbCalcBoosterFacilityType, SelectedCalcBoosterManufacturingFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcBoosterFacilityManualTE, cmbCalcBoosterFacilityType, SelectedCalcBoosterManufacturingFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub txtCalcBoosterFacilityManualTax_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtCalcBoosterFacilityManualTax.KeyPress
@@ -13777,7 +13816,7 @@ ExitSub:
     End Sub
 
     Private Sub txtCalcBoosterFacilityManualTax_LostFocus(sender As Object, e As System.EventArgs) Handles txtCalcBoosterFacilityManualTax.LostFocus
-        Call OutpostMETETaxText_LostFocus(txtCalcBoosterFacilityManualTax, cmbCalcBoosterFacilityType, SelectedCalcBoosterManufacturingFacility.MaterialMultiplier)
+        Call OutpostMETETaxText_LostFocus(txtCalcBoosterFacilityManualTax, cmbCalcBoosterFacilityType, SelectedCalcBoosterManufacturingFacility.MaterialMultiplier, False)
     End Sub
 
     Private Sub chkCalcBoosterFacilityIncludeCosts_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcBoosterFacilityIncludeUsage.CheckedChanged

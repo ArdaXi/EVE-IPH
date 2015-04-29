@@ -627,7 +627,7 @@ Public Class frmAssetsViewer
                 ItemChecked = True
             End If
             If chkCelestials.Checked Then
-                SQL = SQL & "(ITEM_CATEGORY IN ('Celestial','Orbitals','Sovereignty Structures', 'Station','Accessories') AND ITEM_GROUP <> 'Harvestable Cloud') OR "
+                SQL = SQL & "(ITEM_CATEGORY IN ('Celestial','Orbitals','Sovereignty Structures', 'Station','Accessories','Infrastructure Upgrades') AND ITEM_GROUP <> 'Harvestable Cloud') OR "
                 ItemChecked = True
             End If
 
