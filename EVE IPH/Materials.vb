@@ -82,7 +82,8 @@ Public Class Materials
 
         If Not IsNothing(SentList) Then
             For i = 0 To (SentList.Count - 1)
-                Call InsertMaterial(SentList(i))
+                ' clone each or it inserts a reference, which will link to others like it when searched
+                Call InsertMaterial(CType(SentList(i).Clone, Material))
             Next
         End If
 
