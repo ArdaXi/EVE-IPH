@@ -8,7 +8,7 @@ Imports System.Xml
 ' Place to store all public variables and functions
 Public Module Public_Variables
     ' DB name and version
-    Public Const DataDumpVersion As String = "Scylla_1.0_111482"
+    Public Const DataDumpVersion As String = "Mosaic_1.2_112318"
     Public Const VersionNumber As String = "3.1.*"
 
     Public TestingVersion As Boolean ' This flag will test the test downloads from the server for an update

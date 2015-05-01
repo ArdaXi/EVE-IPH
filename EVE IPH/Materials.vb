@@ -83,7 +83,7 @@ Public Class Materials
         If Not IsNothing(SentList) Then
             For i = 0 To (SentList.Count - 1)
                 ' clone each or it inserts a reference, which will link to others like it when searched
-                Call InsertMaterial(CType(SentList(i).Clone, Material))
+                Call InsertMaterial(SentList(i))
             Next
         End If
 
@@ -104,32 +104,35 @@ Public Class Materials
     ' Inserts a Single material into list
     Public Sub InsertMaterial(ByVal SentMaterial As Material)
         Dim TempMat As Material
+        Dim CloneMat As Material
 
         ' Make sure they send a valid material
         If IsNothing(SentMaterial) Then
             Exit Sub
         End If
 
+        CloneMat = CType(SentMaterial.Clone, Material)
+
         ' Find the item
-        MaterialtoFind = SentMaterial
+        MaterialtoFind = CloneMat
         TempMat = MaterialList.Find(AddressOf FindMaterial)
 
         If TempMat IsNot Nothing Then
             ' Remove the mat, and update the temp quantity to save later
             MaterialList.Remove(TempMat)
-            TempMat.AddQuantity(SentMaterial.GetQuantity)
+            TempMat.AddQuantity(CloneMat.GetQuantity)
         Else
-            TempMat = SentMaterial
+            TempMat = CloneMat
         End If
 
         ' Add the material and update totals
         MaterialList.Add(TempMat)
 
         ' Update the total cost of the class
-        TotalMaterialsCost = TotalMaterialsCost + SentMaterial.GetTotalCost
+        TotalMaterialsCost = TotalMaterialsCost + CloneMat.GetTotalCost
 
         ' Update the total material volume for the list
-        TotalMaterialsVolume = TotalMaterialsVolume + SentMaterial.GetTotalVolume
+        TotalMaterialsVolume = TotalMaterialsVolume + CloneMat.GetTotalVolume
 
     End Sub
 

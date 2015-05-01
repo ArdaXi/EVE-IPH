@@ -214,9 +214,9 @@ Public Class ProgramSettings
     Public DefaultBPIgnoreChecks As Boolean = False
     Public DefaultBPPricePerUnit As Boolean = False
     Public DefaultBPIncludeInventionTime As Boolean = False
-    Public DefaultBPIncludeInventionCost As Boolean = False
+    Public DefaultBPIncludeInventionCost As Boolean = True
     Public DefaultBPIncludeCopyTime As Boolean = False
-    Public DefaultBPIncludecopyCost As Boolean = False
+    Public DefaultBPIncludecopyCost As Boolean = True
     Public DefaultBPIncludeT3Cost As Boolean = False
     Public DefaultBPIncludeT3Time As Boolean = False
     Public DefaultBPProductionLines As Integer = 1

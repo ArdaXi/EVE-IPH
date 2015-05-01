@@ -57,7 +57,7 @@ Partial Class frmInventionMats
         Me.lstMats.GridLines = True
         Me.lstMats.Location = New System.Drawing.Point(12, 9)
         Me.lstMats.Name = "lstMats"
-        Me.lstMats.Size = New System.Drawing.Size(539, 129)
+        Me.lstMats.Size = New System.Drawing.Size(539, 130)
         Me.lstMats.TabIndex = 40
         Me.lstMats.TabStop = False
         Me.lstMats.Tag = "20"

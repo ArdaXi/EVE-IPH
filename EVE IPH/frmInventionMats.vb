@@ -39,8 +39,8 @@
         Call MaterialList.SortMaterialListByQuantity()
 
         ' Just load the mats into the list
-        lstMats.Columns.Add("Material", 260, HorizontalAlignment.Left)
-        lstMats.Columns.Add("Cost per Item", 100, HorizontalAlignment.Right)
+        lstMats.Columns.Add("Material", 253, HorizontalAlignment.Left)
+        lstMats.Columns.Add("Cost per Item", 90, HorizontalAlignment.Right)
         lstMats.Columns.Add("Total Cost", 100, HorizontalAlignment.Right)
         lstMats.Columns.Add("Quantity", 75, HorizontalAlignment.Right)
 

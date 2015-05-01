@@ -10,7 +10,7 @@ Imports ComponentAce.Compression.Archiver
 Public Class frmMain
     Inherits System.Windows.Forms.Form
 
-    Public Const DatabaseName As String = "Mosaic_1.0_112241" ' also folder name to update YAML and Universe DB stuff
+    Public Const DatabaseName As String = "Mosaic_1.2_112318" ' also folder name to update YAML and Universe DB stuff
 
     ' DB
     Public Const DatabasePath As String = "C:\Users\Brian\EVE Stuff\EVE IPH Project\DataDump Working\"
