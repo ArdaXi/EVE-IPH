@@ -93,6 +93,8 @@ Public Class frmMain
     ' Same with shopping list
     Public SentFromShoppingList As Boolean
 
+    Private BlueprintBuildFacility As IndustryFacility ' for knowing what facility we used to add to shopping list data
+
     ' BP stats
     Private OwnedBP As Boolean
     ' For T2 BPOs mainly so we can load the stored ME/TE if it changes
@@ -338,8 +340,6 @@ Public Class frmMain
 
     Private IgnoreFocus As Boolean
 
-    Private NoPOSCategoryIDs As List(Of Long)
-
     ' Column width consts - may change depending on Ore, Ice or Gas so change the widths of the columns based on these and use them to add and move
     Private Const MineOreNameColumnWidth As Integer = 120
     Private Const MineRefineYieldColumnWidth As Integer = 70
@@ -361,6 +361,7 @@ Public Class frmMain
 
         FirstLoad = True
         ReloadSettings = True
+        ErrorTracker = ""
 
         ' Set developer flag
         If File.Exists("Developer") Then
@@ -2999,94 +3000,6 @@ NoBonus:
         End If
     End Sub
 
-    ' Returns the facility with sent indytype of facilities
-    Private Function GetManufacturingFacility(IndyType As IndustryType, Tab As String, Optional Clone As Boolean = True) As IndustryFacility
-        Dim FacilityReference As IndustryFacility
-
-        If Tab = BPTab Then
-            Select Case IndyType
-                Case IndustryType.Manufacturing
-                    FacilityReference = SelectedBPManufacturingFacility
-                Case IndustryType.BoosterManufacturing
-                    FacilityReference = SelectedBPBoosterManufacturingFacility
-                Case IndustryType.CapitalManufacturing
-                    FacilityReference = SelectedBPCapitalManufacturingFacility
-                Case IndustryType.CapitalComponentManufacturing
-                    FacilityReference = SelectedBPComponentManufacturingFacility
-                Case IndustryType.ComponentManufacturing
-                    FacilityReference = SelectedBPComponentManufacturingFacility
-                Case IndustryType.SubsystemManufacturing
-                    FacilityReference = SelectedBPSubsystemManufacturingFacility
-                Case IndustryType.SuperManufacturing
-                    FacilityReference = SelectedBPSuperManufacturingFacility
-                Case IndustryType.T3CruiserManufacturing
-                    FacilityReference = SelectedBPT3CruiserManufacturingFacility
-                Case IndustryType.T3DestroyerManufacturing
-                    FacilityReference = SelectedBPT3DestroyerManufacturingFacility
-                Case IndustryType.POSFuelBlockManufacturing
-                    FacilityReference = SelectedBPPOSFuelBlockFacility
-                Case IndustryType.POSLargeShipManufacturing
-                    FacilityReference = SelectedBPPOSLargeShipFacility
-                Case IndustryType.POSModuleManufacturing
-                    FacilityReference = SelectedBPPOSModuleFacility
-                Case IndustryType.NoPOSManufacturing
-                    FacilityReference = SelectedBPNoPOSFacility
-                Case IndustryType.Invention
-                    FacilityReference = SelectedBPInventionFacility
-                Case IndustryType.T3Invention
-                    FacilityReference = SelectedBPT3InventionFacility
-                Case IndustryType.Copying
-                    FacilityReference = SelectedBPCopyFacility
-                Case Else
-                    FacilityReference = SelectedBPManufacturingFacility
-            End Select
-        Else
-            Select Case IndyType
-                Case IndustryType.Manufacturing
-                    FacilityReference = SelectedCalcBaseManufacturingFacility
-                Case IndustryType.BoosterManufacturing
-                    FacilityReference = SelectedCalcBoosterManufacturingFacility
-                Case IndustryType.CapitalManufacturing
-                    FacilityReference = SelectedCalcCapitalManufacturingFacility
-                Case IndustryType.ComponentManufacturing
-                    FacilityReference = SelectedCalcComponentManufacturingFacility
-                Case IndustryType.CapitalComponentManufacturing
-                    FacilityReference = SelectedCalcComponentManufacturingFacility
-                Case IndustryType.SubsystemManufacturing
-                    FacilityReference = SelectedCalcSubsystemManufacturingFacility
-                Case IndustryType.SuperManufacturing
-                    FacilityReference = SelectedCalcSuperManufacturingFacility
-                Case IndustryType.T3DestroyerManufacturing
-                    FacilityReference = SelectedCalcT3DestroyerManufacturingFacility
-                Case IndustryType.T3CruiserManufacturing
-                    FacilityReference = SelectedCalcT3CruiserManufacturingFacility
-                Case IndustryType.POSFuelBlockManufacturing
-                    FacilityReference = SelectedCalcPOSFuelBlockFacility
-                Case IndustryType.POSLargeShipManufacturing
-                    FacilityReference = SelectedCalcPOSLargeShipFacility
-                Case IndustryType.POSModuleManufacturing
-                    FacilityReference = SelectedCalcPOSModuleFacility
-                Case IndustryType.NoPOSManufacturing
-                    FacilityReference = SelectedCalcNoPOSFacility
-                Case IndustryType.Invention
-                    FacilityReference = SelectedCalcInventionFacility
-                Case IndustryType.T3Invention
-                    FacilityReference = SelectedCalcT3InventionFacility
-                Case IndustryType.Copying
-                    FacilityReference = SelectedCalcCopyFacility
-                Case Else
-                    FacilityReference = SelectedCalcBaseManufacturingFacility
-            End Select
-        End If
-
-        If Clone Then
-            Return CType(FacilityReference.Clone(), IndustryFacility)
-        Else
-            Return FacilityReference ' Only return the reference
-        End If
-
-    End Function
-
     ' Sets the default based on the cost check change
     Private Sub SetDefaultFacilitybyCheck(ProductionType As IndustryType, IncludeUsageCheck As CheckBox, Tab As String, _
                                           FacilityType As String, FacilityArrayCombo As ComboBox, FacilityDefaultLabel As Label, _
@@ -3520,76 +3433,6 @@ NoBonus:
                     Return SentFacility
             End Select
         End If
-
-    End Function
-
-    ' Returns the type of production done for the activity and bp data sent
-    Private Function GetProductionType(Activity As String, ItemGroupID As Long, ItemCategoryID As Long, FacilityType As String) As IndustryType
-        Dim SelectedIndyType As IndustryType
-
-        ' Determine if it's a fuel block, module, or big ship that can use a multi-use array
-        If FacilityType = POSFacility And (ItemGroupID = 1136 _
-                                           Or ItemCategoryID = 7 Or ItemCategoryID = 20 Or ItemCategoryID = 22 Or ItemCategoryID = 23 _
-                                           Or ItemGroupID = 27 Or ItemGroupID = 513 Or ItemGroupID = 941 _
-                                           Or ItemGroupID = 12 Or ItemGroupID = 340 Or ItemGroupID = 448 Or ItemGroupID = 649 _
-                                           ) And Activity = ActivityManufacturing Then
-            If ItemGroupID = 1136 Then
-                SelectedIndyType = IndustryType.POSFuelBlockManufacturing
-            ElseIf ItemGroupID = 27 Or ItemGroupID = 513 Or ItemGroupID = 941 Then
-                SelectedIndyType = IndustryType.POSLargeShipManufacturing
-            ElseIf ItemCategoryID = 7 Or ItemCategoryID = 20 Or ItemCategoryID = 22 Or ItemCategoryID = 23 _
-                Or ItemGroupID = 12 Or ItemGroupID = 340 Or ItemGroupID = 448 Or ItemGroupID = 649 Then
-                SelectedIndyType = IndustryType.POSModuleManufacturing
-            End If
-        Else
-            Select Case Activity
-                Case ActivityManufacturing
-                    ' Need to load selected manufacturing facility
-                    Select Case ItemGroupID
-                        Case SuperCarrierGroupID, TitanGroupID
-                            SelectedIndyType = IndustryType.SuperManufacturing
-                        Case BoosterGroupID
-                            SelectedIndyType = IndustryType.BoosterManufacturing
-                        Case CarrierGroupID, DreadnoughtGroupID, CapitalIndustrialShipGroupID
-                            SelectedIndyType = IndustryType.CapitalManufacturing
-                        Case StrategicCruiserGroupID
-                            SelectedIndyType = IndustryType.T3CruiserManufacturing
-                        Case TacticalDestroyerGroupID
-                            SelectedIndyType = IndustryType.T3DestroyerManufacturing
-                        Case Else
-                            SelectedIndyType = IndustryType.Manufacturing
-
-                            If ItemCategoryID = SubsystemCategoryID Then
-                                SelectedIndyType = IndustryType.SubsystemManufacturing
-                            ElseIf ItemCategoryID = ComponentCategoryID And ItemGroupID <> StationPartsGroupID Then
-                                ' Add category for component
-                                If ItemGroupID = CapitalComponentGroupID Or ItemGroupID = AdvCapitalComponentGroupID Then
-                                    SelectedIndyType = IndustryType.CapitalComponentManufacturing ' These all use cap components
-                                Else
-                                    SelectedIndyType = IndustryType.ComponentManufacturing
-                                End If
-                                SelectedIndyType = IndustryType.ComponentManufacturing
-                            ElseIf NoPOSCategoryIDs.Contains(ItemCategoryID) Or ItemGroupID = StationEggGroupID Or ItemGroupID = StationPartsGroupID Then
-                                SelectedIndyType = IndustryType.NoPOSManufacturing
-                            End If
-                    End Select
-                Case ActivityComponentManufacturing
-                    SelectedIndyType = IndustryType.ComponentManufacturing
-                Case ActivityCapComponentManufacturing
-                    SelectedIndyType = IndustryType.CapitalComponentManufacturing
-                Case ActivityCopying
-                    SelectedIndyType = IndustryType.Copying
-                Case ActivityInvention
-                    If ItemCategoryID = SubsystemCategoryID Or ItemGroupID = StrategicCruiserGroupID Then
-                        ' Need to invent this at a station or pos
-                        SelectedIndyType = IndustryType.T3Invention
-                    Else
-                        SelectedIndyType = IndustryType.Invention
-                    End If
-            End Select
-        End If
-
-        Return SelectedIndyType
 
     End Function
 
@@ -4038,7 +3881,7 @@ NoBonus:
         f1.Show()
     End Sub
 
-    ' Grand daddy reset - will delete all data downloaded, updated, or otherwise set by the user - Full reset TODO - Add updates to CREST Cache dates
+    ' Full reset - will delete all data downloaded, updated, or otherwise set by the user
     Private Sub mnuResetAllData_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles mnuResetAllData.Click
         Dim Response As MsgBoxResult
         Dim SQL As String
@@ -4083,8 +3926,7 @@ NoBonus:
             ExecuteNonQuerySQL(SQL)
 
             ' Reset all the cache dates
-            SQL = "DELETE FROM EVEIPH_DATA"
-            ExecuteNonQuerySQL(SQL)
+            Call ResetCRESTDates()
 
             CharactersLoaded = False ' Just deleted all the data
             FirstLoad = True ' Temporarily just to get screen to show correctly
@@ -4149,9 +3991,13 @@ NoBonus:
     End Sub
 
     Private Sub mnuResetCRESTDates_Click(sender As System.Object, e As System.EventArgs) Handles mnuResetCRESTDates.Click
+        Call ResetCRESTDates()
+    End Sub
+
+    Private Sub ResetCRESTDates()
         Dim SQL As String
 
-        ' Simple update, just set all the CREST cache dates to null (or delete all records - should rename this table)
+        ' Simple update, just set all the CREST cache dates to null
         SQL = "DELETE FROM EVEIPH_DATA"
         ExecuteNonQuerySQL(SQL)
 
@@ -5785,7 +5631,6 @@ Tabs:
     Private Sub txtBPFacilityManualTE_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtBPFacilityManualTE.KeyPress
         Call OutpostMETETaxText_KeyPress(e)
     End Sub
-
 
     Private Sub txtBPFacilityManualTE_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtBPFacilityManualTE.KeyUp
         Call OutpostMETETaxText_KeyUp("TE", txtBPFacilityManualTE, _
@@ -7487,7 +7332,6 @@ Tabs:
         Dim SelectedRuns As Integer
         Dim ZeroCostToolTipText As String = ""
 
-        Dim BlueprintBuildFacility As IndustryFacility
         Dim InventionFacility As IndustryFacility
         Dim IndyType As IndustryType
 
@@ -8513,9 +8357,18 @@ ExitForm:
 
     ' Adds item to shopping list
     Private Sub btnAddBPMatstoShoppingList_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnBPAddBPMatstoShoppingList.Click
+        Dim POSFlag As Boolean
+
+        If BlueprintBuildFacility.FacilityType = POSFacility Then
+            POSFlag = True
+        Else
+            POSFlag = False
+        End If
 
         ' Just add it to shopping list with options
-        Call AddToShoppingList(SelectedBlueprint, chkBPBuildBuy.Checked, rbtnBPRawmatCopy.Checked, rbtnBPComponentCopy.Checked, False, rbtnBPCopyInvREMats.Checked)
+        Call AddToShoppingList(SelectedBlueprint, chkBPBuildBuy.Checked, rbtnBPRawmatCopy.Checked, rbtnBPComponentCopy.Checked, _
+                               BlueprintBuildFacility.MaterialMultiplier,  _
+                               POSFlag, False, rbtnBPCopyInvREMats.Checked)
 
         If TotalShoppingList.GetNumShoppingItems > 0 Then
             ' Add the final item and mark as items in list
@@ -16348,6 +16201,8 @@ CheckTechs:
         ' Number of blueprints used
         Dim NumberofBlueprints As Integer
 
+        Dim TaxesFeesUsage As Double
+
         ' If they entered an ME/TE value make sure it's ok
         If Not CorrectMETE(txtCalcTempME.Text, txtCalcTempTE.Text, txtCalcTempME, txtCalcTempTE) Then
             Exit Sub
@@ -17165,7 +17020,7 @@ CheckTechs:
                                        InsertItem.ComponentTeam, InsertItem.ComponentManufacturingFacility, InsertItem.CapComponentManufacturingFacility)
                     End If
 
-                    ' Get the list of materials
+                    ' Build the blueprint(s)
                     Call ManufacturingBlueprint.BuildItems(chkCalcTaxes.Checked, chkCalcFees.Checked, chkCalcBaseFacilityIncludeUsage.Checked)
 
                     ' If checked, Add the values to the array only if we can Build, Invent, or RE it
@@ -17206,14 +17061,14 @@ CheckTechs:
                                 InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourComponents
                                 InsertItem.CalcType = "Components"
                                 InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetProductionTime, ManufacturingBlueprint.GetTotalUnits)
-                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalComponentCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetManufacturingFacilityUsage
+                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalComponentCost + TaxesFeesUsage
                                 InsertItem.Taxes = ManufacturingBlueprint.GetBPTaxes
                                 InsertItem.BrokerFees = ManufacturingBlueprint.GetBPBrokerFees
 
                                 InsertItem.SingleInventedBPCRunsperBPC = ManufacturingBlueprint.GetInventedRuns
 
                                 InsertItem.BPProductionTime = FormatIPHTime(ManufacturingBlueprint.GetProductionTime)
-                                InsertItem.TotalProductionTime = FormatIPHTime(ManufacturingBlueprint.GetTotalProductionTime)
+                                InsertItem.TotalProductionTime = FormatIPHTime(ManufacturingBlueprint.GetProductionTime) ' Total production time for components only is always the bp production time
                                 InsertItem.CopyTime = FormatIPHTime(ManufacturingBlueprint.GetBPCCopyTime)
                                 InsertItem.InventionTime = FormatIPHTime(ManufacturingBlueprint.GetBPInventionTime)
 
@@ -17295,7 +17150,6 @@ CheckTechs:
                             InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetBPCCopyUsage
                             InsertItem.InventionFacilityUsage = ManufacturingBlueprint.GetBPInventionUsage
 
-
                             ' Insert Raw Mats item
                             Call InsertManufacturingItem(InsertItem, SVRThresholdValue, chkCalcSVRIncludeNull.Checked, ManufacturingList)
 
@@ -17325,6 +17179,8 @@ CheckTechs:
                             ' Get the list of materials
                             Call ManufacturingBlueprint.BuildItems(chkCalcTaxes.Checked, chkCalcFees.Checked, chkCalcBaseFacilityIncludeUsage.Checked)
 
+                            TaxesFeesUsage = ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetManufacturingFacilityUsage
+
                             ' Build/Buy (add only if it has components we build)
                             If ManufacturingBlueprint.HasComponents Then
                                 InsertItem.ItemMarketPrice = ManufacturingBlueprint.GetItemMarketPrice
@@ -17333,7 +17189,7 @@ CheckTechs:
                                 InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourRaw
                                 InsertItem.CalcType = "Build/Buy"
                                 InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetTotalProductionTime, ManufacturingBlueprint.GetTotalUnits)
-                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetManufacturingFacilityUsage
+                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost + TaxesFeesUsage
                                 InsertItem.Taxes = ManufacturingBlueprint.GetBPTaxes
                                 InsertItem.BrokerFees = ManufacturingBlueprint.GetBPBrokerFees
 
@@ -17372,7 +17228,6 @@ CheckTechs:
                                 InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetBPCCopyUsage
                                 InsertItem.InventionFacilityUsage = ManufacturingBlueprint.GetBPInventionUsage
 
-
                                 ' Insert Build/Buy item
                                 Call InsertManufacturingItem(InsertItem, SVRThresholdValue, chkCalcSVRIncludeNull.Checked, ManufacturingList)
 
@@ -17386,7 +17241,7 @@ CheckTechs:
                                 InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourComponents
                                 InsertItem.CalcType = "Components"
                                 InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetProductionTime, ManufacturingBlueprint.GetTotalUnits)
-                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalComponentCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetManufacturingFacilityUsage
+                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalComponentCost + TaxesFeesUsage
                             ElseIf rbtnCalcCompareRawMats.Checked Then
                                 ' Use the Raw values 
                                 InsertItem.ProfitPercent = ManufacturingBlueprint.GetTotalRawProfitPercent
@@ -17394,7 +17249,7 @@ CheckTechs:
                                 InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourRaw
                                 InsertItem.CalcType = "Raw Materials"
                                 InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetTotalProductionTime, ManufacturingBlueprint.GetTotalUnits)
-                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetManufacturingFacilityUsage
+                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost + TaxesFeesUsage
                             ElseIf rbtnCalcCompareBuildBuy.Checked Then
                                 ' Use the Build/Buy best rate values (the blueprint was set to get these values above)
                                 InsertItem.ProfitPercent = ManufacturingBlueprint.GetTotalRawProfitPercent
@@ -17402,7 +17257,7 @@ CheckTechs:
                                 InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourRaw
                                 InsertItem.CalcType = "Build/Buy"
                                 InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetTotalProductionTime, ManufacturingBlueprint.GetTotalUnits)
-                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost + ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetManufacturingFacilityUsage
+                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost + TaxesFeesUsage
                             End If
 
                             InsertItem.ItemMarketPrice = ManufacturingBlueprint.GetItemMarketPrice
@@ -17413,7 +17268,13 @@ CheckTechs:
                             InsertItem.SingleInventedBPCRunsperBPC = ManufacturingBlueprint.GetInventedRuns
 
                             InsertItem.BPProductionTime = FormatIPHTime(ManufacturingBlueprint.GetProductionTime)
-                            InsertItem.TotalProductionTime = FormatIPHTime(ManufacturingBlueprint.GetTotalProductionTime)
+                            If rbtnCalcCompareComponents.Checked Then
+                                ' Total production time for components only is always the bp production time
+                                InsertItem.TotalProductionTime = FormatIPHTime(ManufacturingBlueprint.GetProductionTime)
+                            Else
+                                InsertItem.TotalProductionTime = FormatIPHTime(ManufacturingBlueprint.GetTotalProductionTime)
+                            End If
+
                             InsertItem.CopyTime = FormatIPHTime(ManufacturingBlueprint.GetBPCCopyTime)
                             InsertItem.InventionTime = FormatIPHTime(ManufacturingBlueprint.GetBPInventionTime)
 
@@ -17444,7 +17305,6 @@ CheckTechs:
                             InsertItem.CapComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetCapComponentFacilityUsage
                             InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetBPCCopyUsage
                             InsertItem.InventionFacilityUsage = ManufacturingBlueprint.GetBPInventionUsage
-
 
                             ' Insert the chosen item
                             Call InsertManufacturingItem(InsertItem, SVRThresholdValue, chkCalcSVRIncludeNull.Checked, ManufacturingList)
@@ -21561,24 +21421,17 @@ Leave:
         End If
     End Sub
 
-    'Private Sub chkMineRefineOre_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkMineRefinedOre.CheckedChanged
+    Private Sub chkMineRefinedOre_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkMineRefinedOre.CheckedChanged
+        Call SetOreRefineChecks()
+    End Sub
 
-    '    If cmbMineOreType.Text <> "Gas" Then
-    '        gbMineBaseRefineSkills.Enabled = True
-    '        gbMineStationYield.Enabled = True
-    '        If chkMineIncludeJumpCosts.Checked Then
-    '            rbtnMineJumpMinerals.Enabled = True
-    '        End If
-    '        Call UpdateProcessingSkills()
-    '    Else
-    '        gbMineBaseRefineSkills.Enabled = False
-    '        gbMineStationYield.Enabled = False
+    Private Sub chkMineUnrefinedOre_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkMineUnrefinedOre.CheckedChanged
+        Call SetOreRefineChecks()
+    End Sub
 
-    '        rbtnMineJumpMinerals.Enabled = False
-    '        rbtnMineJumpCompress.Checked = True
-    '    End If
-
-    'End Sub
+    Private Sub chkMineCompressedOre_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkMineCompressedOre.CheckedChanged
+        Call SetOreRefineChecks()
+    End Sub
 
     Private Sub chkMineForemanLaserRangeBoost_Click(sender As Object, e As System.EventArgs) Handles chkMineForemanLaserRangeBoost.Click
         Call UpdateMiningBoosterObjects()
@@ -21824,26 +21677,7 @@ Leave:
             chkMineUnrefinedOre.Checked = .UnrefinedOre
             chkMineCompressedOre.Checked = .CompressedOre
 
-            If .OreType <> "Gas" Then
-                If chkMineRefinedOre.Checked Then
-                    gbMineBaseRefineSkills.Enabled = True
-                    gbMineStationYield.Enabled = True
-                Else
-                    gbMineBaseRefineSkills.Enabled = False
-                    gbMineStationYield.Enabled = False
-                End If
-                gbMineRefining.Enabled = True
-            Else
-                gbMineBaseRefineSkills.Enabled = False
-                gbMineStationYield.Enabled = False
-                gbMineRefining.Enabled = False
-                If .OreType = "Gas" Then
-                    ' Can't refine gas
-                    chkMineRefinedOre.Checked = False
-                    chkMineUnrefinedOre.Checked = False
-                    chkMineCompressedOre.Checked = False
-                End If
-            End If
+            Call SetOreRefineChecks()
 
             ' Station numbers
             cmbMineStationEff.Text = FormatPercent(UserApplicationSettings.RefiningEfficiency, 0)
@@ -22242,6 +22076,30 @@ Leave:
 
         MsgBox("Settings Saved", vbInformation, Application.ProductName)
 
+    End Sub
+
+    ' Sets the screen settings for ore type selected
+    Private Sub SetOreRefineChecks()
+        If cmbMineOreType.Text <> "Gas" Then
+            If chkMineRefinedOre.Checked Then
+                gbMineBaseRefineSkills.Enabled = True
+                gbMineStationYield.Enabled = True
+            Else
+                gbMineBaseRefineSkills.Enabled = False
+                gbMineStationYield.Enabled = False
+            End If
+            gbMineRefining.Enabled = True
+        Else
+            gbMineBaseRefineSkills.Enabled = False
+            gbMineStationYield.Enabled = False
+            gbMineRefining.Enabled = False
+            If cmbMineOreType.Text = "Gas" Then
+                ' Can't refine gas
+                chkMineRefinedOre.Checked = False
+                chkMineUnrefinedOre.Checked = False
+                chkMineCompressedOre.Checked = False
+            End If
+        End If
     End Sub
 
     ' Loads the Fleet Boost Ship image
@@ -23515,6 +23373,14 @@ Leave:
                 txtMineTotalJumpM3.Focus()
                 Return False
             End If
+        End If
+
+        ' Make sure a refine type is selected
+        If chkMineRefinedOre.Checked = False And chkMineCompressedOre.Checked = False And chkMineUnrefinedOre.Checked = False Then
+            ' Can't calculate nothing
+            MsgBox("You must select one ore type to calculate.", vbExclamation, Application.ProductName)
+            chkMineRefinedOre.Focus()
+            Return False
         End If
 
         ' Check the refine values

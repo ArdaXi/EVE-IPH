@@ -261,7 +261,6 @@ Public Class DoubleTrackBar
     End Function
 
     Private Function GetTrackRectangle(ByVal border As Integer) As Rectangle
-        'TODO: Select Case for hor/ver
         Return New Rectangle(border, CInt(Me.Height / 2) - 3, Me.Width - 2 * border - 1, 4)
     End Function
 

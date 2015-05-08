@@ -176,7 +176,7 @@ Public Class ShoppingList
                             End If
                         End If
 
-                        ' Update the quantity of the material in the total list too, but needs to be for each individual material
+                        ' Update the quantity of the material in the total list too, but needs to be for each individual material - TODO-MESL check this after ME update in get updatedquantity function
                         Call .GetMaterialList(i).SetQuantity(CLng(.GetMaterialList(i).GetQuantity / FoundItem.Quantity) * UpdateItemQuantity)
 
                     Next
@@ -262,7 +262,7 @@ Public Class ShoppingList
 
         Application.DoEvents()
 
-        ' Task: Update build list with correct quantity, and then the buy list with the correct material quantities
+        ' Task here: Update build list with correct quantity, and then the buy list with the correct material quantities
 
         ' First look up the item and the mats used to build it in the saved list
         Call TotalBuildList.SetItemToFind(SentItem)
@@ -280,12 +280,26 @@ Public Class ShoppingList
                         ' Get the quantity that is in the list now
                         Dim BuildListQuantity As Long = TotalBuyList.SearchListbyName(.GetMaterialList(i).GetMaterialName).GetQuantity
 
+                        ' Set up the ME bonus and then calculate the new material quantity
+                        Dim MEBonus As Double = (1 - (SentItem.BuildME / 100)) * FoundItem.FacilityMEModifier
+                        Dim NewMatQuantity As Long = CLng(Math.Max(BuildMatQuantity, Math.Ceiling(Math.Round(BuildMatQuantity * UpdateItemQuantity * MEBonus, 2))))
+
+                        If UpdateItemQuantity <= 0 Or UpdateItemQuantity < SentItem.ItemQuantity Then
+                            ' Remove all or decrement update amount, if we add just keep the same
+                            NewMatQuantity = NewMatQuantity * -1
+                        End If
+                        ' TODO need to get the quantity for the ME produced value
+
+
+
+
+
                         If UpdateItemQuantity = 0 Then
                             ' We want to remove all the materials to make this item. However, other items could be in the list
                             ' using the same materials so we don't want to remove them all. Use what is in the main list now and adust
                             UpdatedQuantity = BuildListQuantity - BuildMatQuantity
                         Else
-                            ' Get single run number
+                            ' Get single run number 
                             SingleItemQuantity = CLng(BuildMatQuantity / FoundItem.ItemQuantity)
 
                             If FoundItem.ItemQuantity > UpdateItemQuantity Then
@@ -297,6 +311,12 @@ Public Class ShoppingList
                                 ' Take what is in list and add the difference
                                 UpdatedQuantity = BuildListQuantity + (SingleItemQuantity * (UpdateItemQuantity - FoundItem.ItemQuantity))
                             End If
+
+
+
+
+
+
 
                             ' If entered, use this as the quantity to update to reflect that the user already entered a updated value
                             Dim OnHandMats As Long = GetOnHandMaterialQuantity(.GetMaterialList(i).GetMaterialName)
@@ -379,24 +399,28 @@ Public Class ShoppingList
 
     ' Calculates the updated quantity for updating lists
     Private Function GetUpdatedQuantity(ByVal QuantityType As String, ByVal UpdateItemQuantity As Long, _
-                                        ByVal UpdateMaterial As Material, ByVal FoundItem As ShoppingListItem, _
-                                        Optional ListQuantity As Long = 0) As Long
+                                        ByVal UpdateMaterial As Material, ByVal FoundItem As ShoppingListItem) As Long
         Dim UpdatedQuantity As Long
-        Dim SingleBuildMatQuantity As Long
         Dim OnHandMats As Long
-        Dim BuyMatQuantity As Long
-        Dim BuildMatQuantity As Long
+        Dim ListMatQuantity As Long
 
-        SingleBuildMatQuantity = CLng(UpdateMaterial.GetQuantity / FoundItem.Quantity)
+        ' Set up the ME bonus and then calculate the new material quantity
+        Dim MEBonus As Double = (1 - (FoundItem.ItemME / 100)) * FoundItem.FacilityMEModifier
+        Dim NewMatQuantity As Long = CLng(Math.Max(UpdateMaterial.GetQuantity, Math.Ceiling(Math.Round(UpdateMaterial.GetQuantity * UpdateItemQuantity * MEBonus, 2))))
+
+        If UpdateItemQuantity <= 0 Or UpdateItemQuantity < FoundItem.Quantity Then
+            ' Remove all or decrement update amount, if we add just keep the same
+            NewMatQuantity = NewMatQuantity * -1
+        End If
 
         If QuantityType = "Invention" Or QuantityType = "RE" Then
 
-            BuyMatQuantity = TotalBuyList.SearchListbyName(UpdateMaterial.GetMaterialName).GetQuantity
+            ListMatQuantity = TotalBuyList.SearchListbyName(UpdateMaterial.GetMaterialName).GetQuantity
 
             ' For invention materials, find out how many mats we need by calcuating the new value from the item runs and invention jobs per item
             If UpdateItemQuantity <= 0 Then
-                ' Easy case, just remove the update material quantity
-                UpdatedQuantity = BuyMatQuantity - UpdateMaterial.GetQuantity
+                ' Easy case, just remove the update material quantity (add the negative)
+                UpdatedQuantity = ListMatQuantity + NewMatQuantity
             Else
                 ' Here, we need to figure out how many items per run to remove (3 inv mats per job, and remove 2 items, then remove 6 invention mats)
                 Dim NumInventionJobs As Integer = 0
@@ -407,49 +431,25 @@ Public Class ShoppingList
                     NumInventionJobs += CInt(Math.Ceiling(FoundItem.AvgInvRunsforSuccess * Math.Ceiling(RunsPerBP / FoundItem.InventedRuns)))
                 Next
 
+                ' Update quantity based on invention calculations
                 UpdatedQuantity = NumInventionJobs * MatsperItem
+
             End If
 
-        ElseIf QuantityType = "Buy" Then
-
-            BuyMatQuantity = TotalBuyList.SearchListbyName(UpdateMaterial.GetMaterialName).GetQuantity
+        ElseIf QuantityType = "Buy" Or QuantityType = "Build" Then
+            ' Get the quantity from the correct list
+            If QuantityType = "Buy" Then
+                ListMatQuantity = TotalBuyList.SearchListbyName(UpdateMaterial.GetMaterialName).GetQuantity
+            ElseIf QuantityType = "Build" Then
+                ListMatQuantity = TotalBuildList.GetBuiltItemList.Find(AddressOf TotalBuildList.FindBuiltItem).ItemQuantity
+            End If
 
             ' Calculate the number of materials to update the main list with
-            If UpdateItemQuantity = 0 Then
-                ' If this is 0, then we want to remove all buy items equal to the number for the item list quantity
-                UpdatedQuantity = BuyMatQuantity - (SingleBuildMatQuantity * FoundItem.Quantity)
-            Else
-                If FoundItem.Quantity > UpdateItemQuantity Then
-                    ' Decrement materials
-                    ' Take what is in list, and remove the difference between what I needed before and what I need now
-                    UpdatedQuantity = BuyMatQuantity - (SingleBuildMatQuantity * (FoundItem.Quantity - UpdateItemQuantity))
-                Else
-                    ' Increment materials
-                    ' Take what is in list and add the difference
-                    UpdatedQuantity = BuyMatQuantity + (SingleBuildMatQuantity * (UpdateItemQuantity - FoundItem.Quantity))
-                End If
-            End If
-        ElseIf QuantityType = "Build" Then
+            UpdatedQuantity = ListMatQuantity + NewMatQuantity
 
-            BuildMatQuantity = TotalBuildList.GetBuiltItemList.Find(AddressOf TotalBuildList.FindBuiltItem).ItemQuantity
-
-            ' Calculate the number of materials to update the main list with
-            If UpdateItemQuantity = 0 Then
-                ' If this is 0, then we want to remove all built items equal to the number for the item list quantity
-                UpdatedQuantity = BuildMatQuantity - (SingleBuildMatQuantity * FoundItem.Quantity)
-            Else
-                If FoundItem.Quantity > UpdateItemQuantity Then
-                    ' Decrement materials
-                    ' Take what is in list, and remove the difference between what I needed before and what I need now
-                    UpdatedQuantity = BuildMatQuantity - (SingleBuildMatQuantity * (FoundItem.Quantity - UpdateItemQuantity))
-                Else
-                    ' Increment materials
-                    ' Take what is in list and add the difference
-                    UpdatedQuantity = BuildMatQuantity + (SingleBuildMatQuantity * (UpdateItemQuantity - FoundItem.Quantity))
-                End If
-            End If
         End If
 
+        ' Update with onhand mats functionality
         If UpdateMaterial.GetBuildItem Then ' Building
             ' If entered, use this as the quantity to update to reflect that the user already entered a updated value
             OnHandMats = GetOnHandComponentQuantity(UpdateMaterial.GetMaterialName)
@@ -662,7 +662,7 @@ Public Class ShoppingList
         Dim IncludeREMats As Boolean = False
 
         ' Full output lists
-        FullBuildList = GetFullBuildList()
+        FullBuildList = GetFullBuildList() ' GetFullBuildList uses BuildItem for built in pos, and Volume for the facility ME value
         FullBuyList = CType(TotalBuyList.Clone, Materials)
         FullItemList = GetFullItemList()
 
@@ -846,8 +846,8 @@ Public Class ShoppingList
         For j = 0 To TotalBuildList.GetBuiltItemList.Count - 1
             If Not IsNothing(TotalBuildList.GetBuiltItemList(j)) Then
                 TempBuiltItem = TotalBuildList.GetBuiltItemList(j)
-
-                TempMat = New Material(TempBuiltItem.ItemTypeID, TempBuiltItem.ItemName, "Built Item", TempBuiltItem.ItemQuantity, TempBuiltItem.ItemVolume, 0, CStr(TempBuiltItem.BuildME), True)
+                ' Use the BuildItem for built in pos (since we are always setting this to true here anyway - built items), and use  Volume for the facility ME value, since this isn't used (also ignore total volume)
+                TempMat = New Material(TempBuiltItem.ItemTypeID, TempBuiltItem.ItemName, "Built Item", TempBuiltItem.ItemQuantity, TempBuiltItem.FacilityMEModifier, 0, CStr(TempBuiltItem.BuildME), TempBuiltItem.BuiltInPOS)
 
                 Call ReturnBuildItems.InsertMaterial(TempMat)
 
@@ -1247,6 +1247,10 @@ Public Class ShoppingList
 
     End Function
 
+    Private Function ManufacturingFacility() As Object
+        Throw New NotImplementedException
+    End Function
+
 End Class
 
 Public Class ShoppingListItem
@@ -1278,6 +1282,11 @@ Public Class ShoppingListItem
     Public ItemUsage As Double ' How much usage to build the item
     Public ItemMarketCost As Double
     Public ItemBuildTime As Double
+
+    ' For ME values to update with add/subtract in shopping list, item is either cap component, component, or anything else we are building
+    Public FacilityMEModifier As Double
+    ' Flag to tell if the item is built in a POS or not
+    Public BuiltInPOS As Boolean
 
     Public Sub New()
 
@@ -1466,6 +1475,9 @@ Public Class BuiltItem
     Public ItemVolume As Double
     Public BuildME As Double
     Public BuildMaterials As Materials
+    ' These two fields are for shopping list update functions
+    Public FacilityMEModifier As Double
+    Public BuiltInPOS As Boolean
 
     Public Sub New()
         ItemTypeID = 0
@@ -1485,6 +1497,8 @@ Public Class BuiltItem
         CopyOfMe.ItemVolume = Me.ItemVolume
         CopyOfMe.BuildME = Me.BuildME
         CopyOfMe.BuildMaterials = Me.BuildMaterials
+        CopyOfMe.FacilityMEModifier = Me.FacilityMEModifier
+        CopyOfMe.BuiltInPOS = Me.BuiltInPOS
         Return CopyOfMe
     End Function
 

@@ -250,7 +250,7 @@ Public Class frmAssetsViewer
 
         FirstLoad = False
 
-        ' Everything will be just normal at first - add to settings for the format they save? Also, check the locations they have checked only TODO!
+        ' Everything will be just normal at first - add to settings for the format they save? Also, check the locations they have checked only TODO-AV!
         ToggleAllOpen = False
 
         ' Load what we have to start

@@ -313,7 +313,7 @@ Public Class Materials
                 If IncludeME Then
                     OutputME = MaterialList(i).GetItemME
                     ' If we are including an ME, then we are building something
-                    ' If no numbp sent then set to 1 for now - TODO will affect multiple bps
+                    ' If no numbp sent then set to 1 for now - TODO-MBPS will affect multiple bps
                     If NumBps = "-" Then
                         NumBps = "1"
                     End If

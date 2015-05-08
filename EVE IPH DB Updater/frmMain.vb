@@ -63,6 +63,7 @@ Public Class frmMain
         Dim SQL As String
         Dim readerBPs As SQLite.SQLiteDataReader
         Dim DBCommand As SQLiteCommand
+        Dim MissingImages As Boolean
 
         Call ConnectToDBs()
 
@@ -88,6 +89,7 @@ Public Class frmMain
 
         Dim OutputFile As New StreamWriter(MissingImagesFilePath)
         OutputFile.WriteLine("Blueprint ID - Blueprint Name")
+        MissingImages = False
 
         ' Get the count first
         SQL = "SELECT COUNT(*) FROM ALL_BLUEPRINTS"
@@ -118,8 +120,6 @@ Public Class frmMain
                 ' To my Working Directory
                 File.Copy(NewImageFolder & "\" & readerBPs(0).ToString & "_64.png", WorkingImageFolder & "\" & CStr(readerBPs.GetValue(0)) & "_64.png")
             Catch
-                ' Build a file with the BP ID's and Names that do not have a image
-                OutputFile.WriteLine(readerBPs(0).ToString & " - " & readerBPs(1).ToString)
                 ' Try to get from last folder
                 Try
                     File.Copy(OldImageFolder & "\" & readerBPs(0).ToString & "_64.png", EVEIPHImageFolder & "\" & CStr(readerBPs.GetValue(0)) & "_64.png")
@@ -142,7 +142,9 @@ Public Class frmMain
                                 File.Copy(NewImageFolder & "\2890_64.png", WorkingImageFolder & "\" & CStr(readerBPs.GetValue(0)) & "_64.png")
                         End Select
                     Catch
-
+                        ' Build a file with the BP ID's and Names that do not have a image
+                        OutputFile.WriteLine(readerBPs(0).ToString & " - " & readerBPs(1).ToString)
+                        MissingImages = True
                     End Try
                 End Try
             End Try
@@ -201,6 +203,11 @@ Public Class frmMain
 
         OutputFile.Close()
         pgMain.Visible = False
+
+        ' If we didn't output any missing images, delete the output fille
+        If Not MissingImages Then
+            File.Delete(MissingImagesFilePath)
+        End If
 
         Call CloseDBs()
 

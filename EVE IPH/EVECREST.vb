@@ -862,7 +862,7 @@ Public Class EVECREST
                                 SQL = SQL & "REGION_ID = " & CStr(.region.id) & ","
                                 SQL = SQL & "OWNER_ID = " & CStr(.owner.id) & " "
                                 SQL = SQL & "WHERE FACILITY_ID = " & CStr(.facilityID)
-
+                                ErrorTracker = SQL
                             Else ' New record, insert
                                 SQL = "INSERT INTO INDUSTRY_FACILITIES VALUES ("
                                 SQL = SQL & CStr(.facilityID) & ",'"
@@ -872,6 +872,7 @@ Public Class EVECREST
                                 SQL = SQL & CStr(.solarSystem.id) & ","
                                 SQL = SQL & CStr(.region.id) & ","
                                 SQL = SQL & CStr(.owner.id) & ")"
+                                ErrorTracker = SQL
                             End If
 
                             Call ExecuteNonQuerySQL(SQL)
@@ -884,7 +885,7 @@ Public Class EVECREST
                         TempPB.Value = i
                         Application.DoEvents()
                     Next
-
+                    ErrorTracker = "Rebuilding indexes on industry_facilities"
                     ' Rebuild indexes on INDUSTRY_FACILITIES
                     Call ExecuteNonQuerySQL("REINDEX IDX_IF_MAIN")
                     Call ExecuteNonQuerySQL("REINDEX IDX_IF_SSID")
@@ -913,6 +914,7 @@ Public Class EVECREST
                     If OUTPOST_ID_LIST <> "" Then
                         SQL = SQL & "WHERE FACILITY_ID NOT IN (" & OUTPOST_ID_LIST & ")"
                     End If
+                    ErrorTracker = SQL
                     Call ExecuteNonQuerySQL(SQL)
 
                     ' Run the big query
@@ -1011,6 +1013,7 @@ Public Class EVECREST
                         SQL = SQL & "AND FACILITY_ID NOT IN (" & OUTPOST_ID_LIST & ")"
                     End If
 
+                    ErrorTracker = SQL
                     Call ExecuteNonQuerySQL(SQL)
 
                     If OUTPOST_ID_LIST <> "" Then
@@ -1022,6 +1025,7 @@ Public Class EVECREST
                         ' Build the list
                         While rsLookup.Read()
                             SQL = "UPDATE STATION_FACILITIES SET FACILITY_NAME = '" & FormatDBString(rsLookup.GetString(1)) & "' WHERE FACILITY_ID = " & CStr(rsLookup.GetInt64(0))
+                            ErrorTracker = SQL
                             Call ExecuteNonQuerySQL(SQL)
                         End While
 
@@ -1030,6 +1034,7 @@ Public Class EVECREST
                     TempLabel.Text = "Indexing Stations Table..."
                     Application.DoEvents()
 
+                    ErrorTracker = "Reindexing Station_facilities"
                     ' Index the table
                     SQL = "REINDEX IDX_SF_OP_AID_CID_GID"
                     Call ExecuteNonQuerySQL(SQL)
@@ -1045,7 +1050,6 @@ Public Class EVECREST
 
                     SQL = "REINDEX IDX_SF_FN"
                     Call ExecuteNonQuerySQL(SQL)
-
 
                     TempLabel.Text = "Finalizing..."
                     Application.DoEvents()
@@ -1065,10 +1069,11 @@ Public Class EVECREST
                         SQL = SQL & CStr(rsLookup.GetInt64(3)) & ","
                         SQL = SQL & CStr(rsLookup.GetFloat(4)) & ","
                         SQL = SQL & CStr(rsLookup.GetInt64(5)) & ")"
-
+                        ErrorTracker = SQL
                         Call ExecuteNonQuerySQL(SQL)
                     End While
 
+                    ErrorTracker = "Reindexing stations"
                     ' Index the ID
                     SQL = "REINDEX IDX_S_FID"
                     Call ExecuteNonQuerySQL(SQL)
@@ -1077,7 +1082,7 @@ Public Class EVECREST
                     Call SetCRESTCacheDate(IndustryFacilitiesField, CacheDate)
 
                     Call CommitSQLiteTransaction()
-
+                    ErrorTracker = ""
                     Return True
 
                 End If
@@ -1487,6 +1492,7 @@ Public Class EVECREST
 
         readerData.Close()
         readerData = Nothing
+        DBCommand = Nothing
 
         Return RefreshDate
 

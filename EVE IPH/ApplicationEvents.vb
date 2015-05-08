@@ -11,7 +11,11 @@
 
         Private Sub MyApplication_UnhandledException(ByVal sender As Object, ByVal e As Microsoft.VisualBasic.ApplicationServices.UnhandledExceptionEventArgs) Handles Me.UnhandledException
 
-            Call WriteMsgToLog(e.Exception.ToString)
+            If ErrorTracker <> "" Then
+                Call WriteMsgToLog(e.Exception.ToString & vbCrLf & "Error Tracking: " & ErrorTracker)
+            Else
+                Call WriteMsgToLog(e.Exception.ToString)
+            End If
 
             Dim f2 = New frmError
             frmErrorText = "An Unhandled Exception has occured and EVE Isk per Hour will now close."
@@ -23,7 +27,6 @@
             frmErrorText = frmErrorText & Environment.NewLine & "In addition to a screenshot, copy the data below for sending to developer."
             frmErrorText = frmErrorText & Environment.NewLine & Environment.NewLine & "Source: " & e.Exception.Source
             frmErrorText = frmErrorText & Environment.NewLine & "Message: " & e.Exception.Message
-
 
             f2.ShowDialog()
 

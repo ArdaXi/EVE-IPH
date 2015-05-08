@@ -48,16 +48,16 @@ Public Class frmShoppingList
     Private ItemQuantityToFind As ItemQuantity
 
     Private BuyListHeaderCSV As String = "Material,Quantity,Cost Per Item,Min Sell,Max Buy,Buy Type,Total m3,Isk/m3,TotalCost"
-    Private BuildListHeaderCSV As String = "Build Item,Quantity,ME"
-    Private ItemsListHeaderCSV As String = "Item,Quantity,ME,NumBps,Build Type,Decryptor,Relic"
+    Private BuildListHeaderCSV As String = "Build Item,Quantity,ME,POS Build"
+    Private ItemsListHeaderCSV As String = "Item,Quantity,ME,NumBps,Build Type,Decryptor,Relic,POS Build"
 
     Private BuyListHeaderTXT As String = "Material|Quantity|Cost Per Item|Min Sell|Max Buy|Buy Type|Total m3|Isk/m3|TotalCost"
-    Private BuildListHeaderTXT As String = "Build Item|Quantity|ME"
-    Private ItemsListHeaderTXT As String = "Item|Quantity|ME|NumBps|Build Type|Decryptor|Relic"
+    Private BuildListHeaderTXT As String = "Build Item|Quantity|ME|POS Build"
+    Private ItemsListHeaderTXT As String = "Item|Quantity|ME|NumBps|Build Type|Decryptor|Relic|POS Build"
 
     Private BuyListHeaderSSV As String = "Material;Quantity;Cost Per Item;Min Sell;Max Buy;Buy Type;Total m3;Isk/m3;TotalCost"
-    Private BuildListHeaderSSV As String = "Build Item;Quantity;ME"
-    Private ItemsListHeaderSSV As String = "Item;Quantity;ME;NumBps;Build Type;Decryptor;Relic"
+    Private BuildListHeaderSSV As String = "Build Item;Quantity;ME;POS Build"
+    Private ItemsListHeaderSSV As String = "Item;Quantity;ME;NumBps;Build Type;Decryptor;Relic;POS Build"
 
     Private FirstFormLoad As Boolean
 
@@ -76,7 +76,7 @@ Public Class frmShoppingList
     End Function
 
     Private Structure BPItem
-        'Item List Format: Item, Quantity, ME, NumBPs Build Type, Decryptor
+        'Item List Format: Item, Quantity, ME, NumBPs Build Type, Decryptor, Relic (in file, in grid it is put with item name)
         Dim ItemName As String
         Dim ItemQuantity As Long
         Dim ItemME As Integer
@@ -84,6 +84,7 @@ Public Class frmShoppingList
         Dim BuildType As String
         Dim Decryptor As String
         Dim Relic As String
+        Dim BuiltInPOS As Boolean
     End Structure
 
     Public Sub New()
@@ -110,6 +111,7 @@ Public Class frmShoppingList
         lstBuild.Columns.Add("Build Item", 237, HorizontalAlignment.Left)
         lstBuild.Columns.Add("Quantity", 80, HorizontalAlignment.Right)
         lstBuild.Columns.Add("ME", 30, HorizontalAlignment.Right)
+        lstBuild.Columns.Add("BuildInPOS", 0, HorizontalAlignment.Left) 'Hidden flag for pos building
 
         ' Item List - What we are building - width = 479 (21 for verticle scroll bar)
         lstItems.Columns.Add("TypeID", 0, HorizontalAlignment.Center) ' always left allignment this column for some reason, so add a dummy, store bpID here though
@@ -119,6 +121,7 @@ Public Class frmShoppingList
         lstItems.Columns.Add("Num BPs", 60, HorizontalAlignment.Left) ' 60 min text
         lstItems.Columns.Add("Build Type", 71, HorizontalAlignment.Left) ' 71 min text
         lstItems.Columns.Add("Decryptor", 105, HorizontalAlignment.Left) '105 min text
+        lstItems.Columns.Add("BuildInPOS", 0, HorizontalAlignment.Left) 'Hidden flag for pos building
 
         If UserApplicationSettings.ShowToolTips Then
             ttMain.SetToolTip(btnShowAssets, "Show Assets")
@@ -444,6 +447,7 @@ Public Class frmShoppingList
                 lstItem.SubItems.Add(CStr(ItemList(i).NumBPs))
                 lstItem.SubItems.Add(ItemList(i).BuildType)
                 lstItem.SubItems.Add(ItemList(i).Decryptor)
+                lstItem.SubItems.Add(CStr(CInt(ItemList(i).BuiltInPOS)))
             End With
         Next
 
@@ -493,6 +497,7 @@ Public Class frmShoppingList
         lstBuild.BeginUpdate()
         lstBuild.Items.Clear()
 
+        ' TotalShoppingList.GetFullBuildList uses BuildItem for built in pos, and Volume for the facility ME value
         BuildItems = TotalShoppingList.GetFullBuildList
 
         ' Now load the grid with all the mats
@@ -512,6 +517,7 @@ Public Class frmShoppingList
                     lstBuildItem.SubItems.Add(BuildItems.GetMaterialList(i).GetMaterialName)
                     lstBuildItem.SubItems.Add(CStr(FormatNumber(BuildItems.GetMaterialList(i).GetQuantity, 0)))
                     lstBuildItem.SubItems.Add(BuildItems.GetMaterialList(i).GetItemME)
+                    lstBuildItem.SubItems.Add(CStr(CInt(BuildItems.GetMaterialList(i).GetBuildItem)))
 
                     readerBP.Close()
                     readerBP = Nothing
@@ -544,6 +550,7 @@ Public Class frmShoppingList
         ' Loop through the lists, starting with the build list first and find quantities in hanger to build
         For i = 0 To 3 ' 4 lists
             Application.DoEvents()
+            ' TotalShoppingList.GetFullBuildList.Clone uses BuildItem for built in pos, and Volume for the facility ME value
             Select Case i
                 Case 0
                     ProcessList = CType(TotalShoppingList.GetFullBuildList.Clone, Materials)
@@ -905,7 +912,7 @@ Public Class frmShoppingList
                         For Each ListItem In Items
                             Application.DoEvents()
 
-                            ' Build the output text for checked items
+                            ' Build the output text 
                             If ExportTypeString = SSVDataExport Then
                                 ' Format to EU
                                 OutputText = ListItem.SubItems(1).Text & Separator
@@ -953,14 +960,15 @@ Public Class frmShoppingList
                             Application.DoEvents()
 
                             ' Build the output text for checked items
-                            OutputText = ListItem.SubItems(1).Text & ","
+                            OutputText = ListItem.SubItems(1).Text & Separator
                             If ExportTypeString = SSVDataExport Then
                                 OutputText = OutputText & ConvertUStoEUDecimal(ListItem.SubItems(2).Text) & Separator
                             Else
                                 OutputText = OutputText & Format(ListItem.SubItems(2).Text, "Fixed") & Separator
                             End If
 
-                            OutputText = OutputText & ListItem.SubItems(3).Text
+                            OutputText = OutputText & ListItem.SubItems(3).Text & Separator
+                            OutputText = OutputText & ListItem.SubItems(4).Text ' POS Flag
 
                             MyStream.Write(OutputText & Environment.NewLine)
                         Next
@@ -1006,7 +1014,8 @@ Public Class frmShoppingList
                             OutputText = OutputText & ListItem.SubItems(4).Text & Separator
                             OutputText = OutputText & ListItem.SubItems(5).Text & Separator
                             OutputText = OutputText & ListItem.SubItems(6).Text & Separator
-                            OutputText = OutputText & TempRelic
+                            OutputText = OutputText & TempRelic & Separator
+                            OutputText = OutputText & ListItem.SubItems(7).Text & Separator
                             MyStream.Write(OutputText & Environment.NewLine)
                         Next
 
@@ -1123,6 +1132,16 @@ Public Class frmShoppingList
 
                             ' Set the split records
                             If Separator = ";" Then
+                                ' To properly process, need to replace swap all the commas and periods
+                                ' For R.A.M.'s, special processing
+                                If Line.Substring(0, 6) = "R.A.M." Then
+                                    Line = "R.A.M." & Line.Substring(6).Replace(".", "") ' Just replace the periods as they are commas for numbers, which aren't needed, after the R.A.M.
+                                ElseIf Line.Substring(0, 4) = "R.Db" Then
+                                    Line = "R.Db" & Line.Substring(3).Replace(".", "") ' Just replace the periods as they are commas for numbers, which aren't needed, after the R.Db
+                                Else
+                                    Line = Line.Replace(".", "") ' Just replace the periods as they are commas for numbers, which aren't needed
+                                End If
+                                Line = Line.Replace(",", ".")
                                 Record = Line.Split(New Char() {";"c})
                             ElseIf Separator = "," Then
                                 Record = Line.Split(New Char() {","c})
@@ -1155,7 +1174,7 @@ Public Class frmShoppingList
                                         End If
                                         Call BuildList.Add(TempItem)
                                     Case ItemsListLabel
-                                        ' Item List Format: Item, Quantity, ME, NumBPs, Build Type, Decryptor
+                                        ' Item List Format: Item, Quantity, ME, NumBPs, Build Type, Decryptor, Facility ME Modifier
                                         ' Save all the fields
                                         TempBPItem.ItemName = Record(0)
                                         If Trim(Record(1)) = "" Then
@@ -1199,14 +1218,19 @@ Public Class frmShoppingList
                             BuildBuy = False
                         End If
 
+                        ' Determine the facility 
+                        Dim TempBuildFacility As IndustryFacility
+                        Dim TempIndyType As IndustryType = GetProductionType(ActivityManufacturing, readerBP.GetInt64(2), readerBP.GetInt64(3), "Facility Type")
+                        TempBuildFacility = GetManufacturingFacility(TempIndyType, BPTab, True)
+
                         ' Build the BP - use settings from BP tab
                         If readerBP.GetInt32(1) = 1 Then
                             TempBP = New Blueprint(CLng(readerBP.GetValue(0)), ItemList(i).ItemQuantity, ItemList(i).ItemME, 0, ItemList(i).NumBPs, 1, _
-                                                   SelectedCharacter, UserApplicationSettings, False, 0, NoTeam, SelectedBPManufacturingFacility, _
+                                                   SelectedCharacter, UserApplicationSettings, False, 0, NoTeam, TempBuildFacility, _
                                                    NoTeam, SelectedBPComponentManufacturingFacility, SelectedBPCapitalComponentManufacturingFacility)
                         ElseIf readerBP.GetInt32(1) = 2 Or readerBP.GetInt32(1) = 3 Then
                             TempBP = New Blueprint(CLng(readerBP.GetValue(0)), ItemList(i).ItemQuantity, ItemList(i).ItemME, 0, ItemList(i).NumBPs, 1, 1, _
-                                                   SelectedCharacter, UserApplicationSettings, 0, NoTeam, SelectedBPManufacturingFacility, _
+                                                   SelectedCharacter, UserApplicationSettings, 0, NoTeam, TempBuildFacility, _
                                                    NoTeam, SelectedBPComponentManufacturingFacility, SelectedBPCapitalComponentManufacturingFacility, BuildBuy, TempDecryptor, _
                                                    SelectedBPInventionFacility, SelectedBPInventionTeam, _
                                                    SelectedBPCopyFacility, SelectedBPCopyTeam, GetInventItemTypeID(CLng(readerBP.GetValue(0)), ItemList(i).Relic))
@@ -1216,7 +1240,8 @@ Public Class frmShoppingList
                         Call TempBP.BuildItems(frmMain.chkBPTaxes.Checked, frmMain.chkBPTaxes.Checked, frmMain.chkBPFacilityIncludeUsage.Checked)
 
                         ' Add to shopping list but use BP tab settings
-                        Call AddToShoppingList(TempBP, BuildBuy, frmMain.rbtnBPRawmatCopy.Checked, frmMain.rbtnBPComponentCopy.Checked, True)
+                        Call AddToShoppingList(TempBP, BuildBuy, frmMain.rbtnBPRawmatCopy.Checked, frmMain.rbtnBPComponentCopy.Checked, _
+                                               TempBuildFacility.MaterialMultiplier, True, True)
 
                     Next
 

@@ -467,19 +467,20 @@ Public Class Blueprint
                     RawMaterials.InsertMaterialList(.GetRawMaterials.GetMaterialList)
 
                     If Not IsNothing(.GetComponentMaterials.GetMaterialList) Then
-                        ComponentMaterials.InsertMaterialList(.GetComponentMaterials.GetMaterialList)
+                        Call ComponentMaterials.InsertMaterialList(.GetComponentMaterials.GetMaterialList)
                     End If
 
                     If Not IsNothing(.GetInventionMaterials.GetMaterialList) Then
-                        InventionMaterials.InsertMaterialList(.GetInventionMaterials.GetMaterialList)
+                        Call InventionMaterials.InsertMaterialList(.GetInventionMaterials.GetMaterialList)
                     End If
 
                     If Not IsNothing(.GetBPCCopyMaterials.GetMaterialList) Then
-                        CopyMaterials.InsertMaterialList(.GetBPCCopyMaterials.GetMaterialList)
+                        Call CopyMaterials.InsertMaterialList(.GetBPCCopyMaterials.GetMaterialList)
                     End If
 
+                    ' Add all new components to the blueprint list
                     For Each BI In .GetBPComponentsList.GetBuiltItemList
-                        BuiltComponentList.AddBuiltItem(BI)
+                        Call BuiltComponentList.AddBuiltItem(CType(BI.Clone, BuiltItem))
                     Next
 
                     BPProductionTime += .GetProductionTime
@@ -677,7 +678,15 @@ Public Class Blueprint
                             TempBuiltItem.ItemName = CurrentMaterial.GetMaterialName
                             TempBuiltItem.ItemQuantity = CurrentMaterial.GetQuantity
                             TempBuiltItem.BuildME = TempME
+                            TempBuiltItem.ItemVolume = CurrentMaterial.GetVolume
                             TempBuiltItem.BuildMaterials = ComponentBlueprint.GetRawMaterials
+                            TempBuiltItem.FacilityMEModifier = ComponentBlueprint.ManufacturingFacility.MaterialMultiplier ' Save MM used on component
+
+                            If ComponentBlueprint.ManufacturingFacility.FacilityType = POSFacility Then
+                                TempBuiltItem.BuiltInPOS = True
+                            Else
+                                TempBuiltItem.BuiltInPOS = False
+                            End If
 
                             BuiltComponentList.AddBuiltItem(TempBuiltItem)
 
@@ -725,7 +734,15 @@ Public Class Blueprint
                         TempBuiltItem.ItemName = CurrentMaterial.GetMaterialName
                         TempBuiltItem.ItemQuantity = CurrentMaterial.GetQuantity
                         TempBuiltItem.BuildME = TempME
+                        TempBuiltItem.ItemVolume = CurrentMaterial.GetVolume
                         TempBuiltItem.BuildMaterials = ComponentBlueprint.GetRawMaterials
+                        TempBuiltItem.FacilityMEModifier = ComponentBlueprint.ManufacturingFacility.MaterialMultiplier ' Save MM used on component
+
+                        If ComponentBlueprint.ManufacturingFacility.FacilityType = POSFacility Then
+                            TempBuiltItem.BuiltInPOS = True
+                        Else
+                            TempBuiltItem.BuiltInPOS = False
+                        End If
 
                         BuiltComponentList.AddBuiltItem(TempBuiltItem)
 
@@ -743,7 +760,6 @@ Public Class Blueprint
                             CanBuildAll = False
                         End If
                     End If
-
 
                 Else ' Just raw material or T2 drone for augmented drones, ORE Mack and Polarized weapons, insert into list
 
@@ -943,7 +959,7 @@ Public Class Blueprint
         ' Easy case - NOT WORKING RIGHT - LOOK AT FENRIR
         If NumberofProductionLines = 1 Then
             ' Nothing simpler than this, it's just the total time to make components back to back
-            For i = 0 To SentTimes.Count - 2
+            For i = 0 To SentTimes.Count - 1
                 RemainingTimeSum = RemainingTimeSum + SentTimes(i)
             Next
 
@@ -2027,7 +2043,7 @@ Public Class Blueprint
 
     ' Returns the component lists used to build this item, with materials
     Public Function GetBPComponentsList() As BuiltItemList
-        Return CType(BuiltComponentList.Clone, BuiltItemList)
+        Return BuiltComponentList
     End Function
 
     ' Returns the required skills to build all the components for this bp

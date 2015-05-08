@@ -22,6 +22,9 @@ Public Module Public_Variables
     Public SelectedCharacter As New Character
     Public SelectedBlueprint As Blueprint
 
+    ' Variable to hold error tracking data when the error is hard to find - used for debugging only but mostly this is set to empty string
+    Public ErrorTracker As String
+
     Public DefaultCharSelected As Boolean
     Public CharactersLoaded As Boolean
     Public FirstLoad As Boolean ' If the program just opened
@@ -209,6 +212,8 @@ Public Module Public_Variables
     Public RareandShipSkinBPs As New List(Of Long)
 
     Public MiningUpgradesCollection As New List(Of String)
+
+    Public NoPOSCategoryIDs As List(Of Long) ' For facilities
 
     Public Enum StationType
         Station = 0
@@ -569,6 +574,167 @@ Public Module Public_Variables
 
 #End Region
 
+#Region "Facility Functions"
+
+    ' Returns the type of production done for the activity and bp data sent
+    Public Function GetProductionType(Activity As String, ItemGroupID As Long, ItemCategoryID As Long, FacilityType As String) As IndustryType
+        Dim SelectedIndyType As IndustryType
+
+        ' Determine if it's a fuel block, module, or big ship that can use a multi-use array
+        If FacilityType = POSFacility And (ItemGroupID = 1136 _
+                                           Or ItemCategoryID = 7 Or ItemCategoryID = 20 Or ItemCategoryID = 22 Or ItemCategoryID = 23 _
+                                           Or ItemGroupID = 27 Or ItemGroupID = 513 Or ItemGroupID = 941 _
+                                           Or ItemGroupID = 12 Or ItemGroupID = 340 Or ItemGroupID = 448 Or ItemGroupID = 649 _
+                                           ) And Activity = ActivityManufacturing Then
+            If ItemGroupID = 1136 Then
+                SelectedIndyType = IndustryType.POSFuelBlockManufacturing
+            ElseIf ItemGroupID = 27 Or ItemGroupID = 513 Or ItemGroupID = 941 Then
+                SelectedIndyType = IndustryType.POSLargeShipManufacturing
+            ElseIf ItemCategoryID = 7 Or ItemCategoryID = 20 Or ItemCategoryID = 22 Or ItemCategoryID = 23 _
+                Or ItemGroupID = 12 Or ItemGroupID = 340 Or ItemGroupID = 448 Or ItemGroupID = 649 Then
+                SelectedIndyType = IndustryType.POSModuleManufacturing
+            End If
+        Else
+            Select Case Activity
+                Case ActivityManufacturing
+                    ' Need to load selected manufacturing facility
+                    Select Case ItemGroupID
+                        Case SupercarrierGroupID, TitanGroupID
+                            SelectedIndyType = IndustryType.SuperManufacturing
+                        Case BoosterGroupID
+                            SelectedIndyType = IndustryType.BoosterManufacturing
+                        Case CarrierGroupID, DreadnoughtGroupID, CapitalIndustrialShipGroupID
+                            SelectedIndyType = IndustryType.CapitalManufacturing
+                        Case StrategicCruiserGroupID
+                            SelectedIndyType = IndustryType.T3CruiserManufacturing
+                        Case TacticalDestroyerGroupID
+                            SelectedIndyType = IndustryType.T3DestroyerManufacturing
+                        Case Else
+                            SelectedIndyType = IndustryType.Manufacturing
+
+                            If ItemCategoryID = SubsystemCategoryID Then
+                                SelectedIndyType = IndustryType.SubsystemManufacturing
+                            ElseIf ItemCategoryID = ComponentCategoryID And ItemGroupID <> StationPartsGroupID Then
+                                ' Add category for component
+                                If ItemGroupID = CapitalComponentGroupID Or ItemGroupID = AdvCapitalComponentGroupID Then
+                                    SelectedIndyType = IndustryType.CapitalComponentManufacturing ' These all use cap components
+                                Else
+                                    SelectedIndyType = IndustryType.ComponentManufacturing
+                                End If
+                                SelectedIndyType = IndustryType.ComponentManufacturing
+                            ElseIf NoPOSCategoryIDs.Contains(ItemCategoryID) Or ItemGroupID = StationEggGroupID Or ItemGroupID = StationPartsGroupID Then
+                                SelectedIndyType = IndustryType.NoPOSManufacturing
+                            End If
+                    End Select
+                Case ActivityComponentManufacturing
+                    SelectedIndyType = IndustryType.ComponentManufacturing
+                Case ActivityCapComponentManufacturing
+                    SelectedIndyType = IndustryType.CapitalComponentManufacturing
+                Case ActivityCopying
+                    SelectedIndyType = IndustryType.Copying
+                Case ActivityInvention
+                    If ItemCategoryID = SubsystemCategoryID Or ItemGroupID = StrategicCruiserGroupID Then
+                        ' Need to invent this at a station or pos
+                        SelectedIndyType = IndustryType.T3Invention
+                    Else
+                        SelectedIndyType = IndustryType.Invention
+                    End If
+            End Select
+        End If
+
+        Return SelectedIndyType
+
+    End Function
+
+    ' Returns the facility with sent indytype of facilities
+    Public Function GetManufacturingFacility(IndyType As IndustryType, Tab As String, Optional Clone As Boolean = True) As IndustryFacility
+        Dim FacilityReference As IndustryFacility
+
+        If Tab = BPTab Then
+            Select Case IndyType
+                Case IndustryType.Manufacturing
+                    FacilityReference = SelectedBPManufacturingFacility
+                Case IndustryType.BoosterManufacturing
+                    FacilityReference = SelectedBPBoosterManufacturingFacility
+                Case IndustryType.CapitalManufacturing
+                    FacilityReference = SelectedBPCapitalManufacturingFacility
+                Case IndustryType.CapitalComponentManufacturing
+                    FacilityReference = SelectedBPComponentManufacturingFacility
+                Case IndustryType.ComponentManufacturing
+                    FacilityReference = SelectedBPComponentManufacturingFacility
+                Case IndustryType.SubsystemManufacturing
+                    FacilityReference = SelectedBPSubsystemManufacturingFacility
+                Case IndustryType.SuperManufacturing
+                    FacilityReference = SelectedBPSuperManufacturingFacility
+                Case IndustryType.T3CruiserManufacturing
+                    FacilityReference = SelectedBPT3CruiserManufacturingFacility
+                Case IndustryType.T3DestroyerManufacturing
+                    FacilityReference = SelectedBPT3DestroyerManufacturingFacility
+                Case IndustryType.POSFuelBlockManufacturing
+                    FacilityReference = SelectedBPPOSFuelBlockFacility
+                Case IndustryType.POSLargeShipManufacturing
+                    FacilityReference = SelectedBPPOSLargeShipFacility
+                Case IndustryType.POSModuleManufacturing
+                    FacilityReference = SelectedBPPOSModuleFacility
+                Case IndustryType.NoPOSManufacturing
+                    FacilityReference = SelectedBPNoPOSFacility
+                Case IndustryType.Invention
+                    FacilityReference = SelectedBPInventionFacility
+                Case IndustryType.T3Invention
+                    FacilityReference = SelectedBPT3InventionFacility
+                Case IndustryType.Copying
+                    FacilityReference = SelectedBPCopyFacility
+                Case Else
+                    FacilityReference = SelectedBPManufacturingFacility
+            End Select
+        Else
+            Select Case IndyType
+                Case IndustryType.Manufacturing
+                    FacilityReference = SelectedCalcBaseManufacturingFacility
+                Case IndustryType.BoosterManufacturing
+                    FacilityReference = SelectedCalcBoosterManufacturingFacility
+                Case IndustryType.CapitalManufacturing
+                    FacilityReference = SelectedCalcCapitalManufacturingFacility
+                Case IndustryType.ComponentManufacturing
+                    FacilityReference = SelectedCalcComponentManufacturingFacility
+                Case IndustryType.CapitalComponentManufacturing
+                    FacilityReference = SelectedCalcComponentManufacturingFacility
+                Case IndustryType.SubsystemManufacturing
+                    FacilityReference = SelectedCalcSubsystemManufacturingFacility
+                Case IndustryType.SuperManufacturing
+                    FacilityReference = SelectedCalcSuperManufacturingFacility
+                Case IndustryType.T3DestroyerManufacturing
+                    FacilityReference = SelectedCalcT3DestroyerManufacturingFacility
+                Case IndustryType.T3CruiserManufacturing
+                    FacilityReference = SelectedCalcT3CruiserManufacturingFacility
+                Case IndustryType.POSFuelBlockManufacturing
+                    FacilityReference = SelectedCalcPOSFuelBlockFacility
+                Case IndustryType.POSLargeShipManufacturing
+                    FacilityReference = SelectedCalcPOSLargeShipFacility
+                Case IndustryType.POSModuleManufacturing
+                    FacilityReference = SelectedCalcPOSModuleFacility
+                Case IndustryType.NoPOSManufacturing
+                    FacilityReference = SelectedCalcNoPOSFacility
+                Case IndustryType.Invention
+                    FacilityReference = SelectedCalcInventionFacility
+                Case IndustryType.T3Invention
+                    FacilityReference = SelectedCalcT3InventionFacility
+                Case IndustryType.Copying
+                    FacilityReference = SelectedCalcCopyFacility
+                Case Else
+                    FacilityReference = SelectedCalcBaseManufacturingFacility
+            End Select
+        End If
+
+        If Clone Then
+            Return CType(FacilityReference.Clone(), IndustryFacility)
+        Else
+            Return FacilityReference ' Only return the reference
+        End If
+
+    End Function
+
+#End Region
     ' Get the rare ship id's and ship skins to weed out in the bps
     Public Sub SetRareandShipSkinBPs()
         Dim rsBP As SQLiteDataReader
@@ -716,7 +882,12 @@ Public Module Public_Variables
     End Function
 
     ' Imports sent blueprint to shopping list
-    Public Sub AddToShoppingList(SentBlueprint As Blueprint, BuildBuy As Boolean, RawMatsCopy As Boolean, ComponentCopy As Boolean, Optional IgnoreRefresh As Boolean = False, Optional CopyInventionMatsOnly As Boolean = False)
+    Public Sub AddToShoppingList(SentBlueprint As Blueprint, BuildBuy As Boolean, RawMatsCopy As Boolean, _
+                                 ComponentCopy As Boolean, _
+                                 FacilityMEModifier As Double, _
+                                 BuiltInPOS As Boolean, _
+                                 Optional IgnoreRefresh As Boolean = False, _
+                                 Optional CopyInventionMatsOnly As Boolean = False)
         Dim TempMats As New Materials
         Dim ShoppingItem As New ShoppingListItem
         Dim ShoppingBuildList As New BuiltItemList
@@ -736,6 +907,8 @@ Public Module Public_Variables
                     .ItemME = SentBlueprint.GetME
                     .TotalMarketCost = SentBlueprint.GetItemMarketPrice
                     .TotalBuildTime = SentBlueprint.GetTotalProductionTime
+
+                    .FacilityMEModifier = FacilityMEModifier ' For full item, components will be saved in blueprint class for ComponentList
 
                     If BuildBuy Then
                         .BuildType = "Build/Buy"
@@ -765,6 +938,8 @@ Public Module Public_Variables
                     .ItemME = SentBlueprint.GetME
                     .TotalMarketCost = SentBlueprint.GetItemMarketPrice
                     .TotalBuildTime = SentBlueprint.GetProductionTime
+
+                    .FacilityMEModifier = FacilityMEModifier
 
                     .NumBPs = SentBlueprint.GetNumBPs
 
@@ -1365,14 +1540,14 @@ InvalidDate:
 
         ' What is the item we are using to invent?
         SQL = "SELECT blueprintTypeID from INDUSTRY_ACTIVITY_PRODUCTS, INVENTORY_TYPES WHERE productTypeID = " & BlueprintTypeID & " "
-        Sql = Sql & "AND typeID = blueprintTypeID "
+        SQL = SQL & "AND typeID = blueprintTypeID "
 
         If RelicName <> "" Then
             ' Need to add the relic variant to the query for just one item
             SQL = SQL & " AND typeName LIKE '%" & RelicName & "%'"
         End If
 
-        DBCommand = New SQLiteCommand(Sql, DB)
+        DBCommand = New SQLiteCommand(SQL, DB)
         rsCheck = DBCommand.ExecuteReader
 
         If rsCheck.Read Then
