@@ -373,10 +373,10 @@ Public Class frmUpdaterMain
                 ' ASSET_LOCATIONS
                 ' CHARACTER_SKILLS
                 ' CHARACTER_STANDINGS
-                '' CURRENT_RESEARCH_AGENTS
+                ' CURRENT_RESEARCH_AGENTS
                 ' EMD_ITEM_PRICE_HISTORY
                 ' EMD_UPDATE_HISTORY
-                ' EVEIPH_DATA
+                ' CREST_CACHE_DATES
                 ' INDUSTRY_JOBS
                 ' ITEM_PRICES
                 ' ITEM_PRICES_CACHE
@@ -744,14 +744,14 @@ Public Class frmUpdaterMain
                     readerUpdate = Nothing
                     DBCommand = Nothing
 
-                    ' EVEIPH_DATA
+                    ' CREST_CACHE_DATES
                     On Error Resume Next
-                    ProgramErrorLocation = "Cannot copy EVEIPH Data table"
+                    ProgramErrorLocation = "Cannot copy CREST_CACHE_DATES table"
 
                     ' See if they have the new fields for CREST updates first
                     SQL = "SELECT CREST_INDUSTRY_SPECIALIZATIONS_CACHED_UNTIL, CREST_INDUSTRY_TEAMS_CACHED_UNTIL, "
                     SQL = SQL & "CREST_INDUSTRY_TEAM_AUCTIONS_CACHED_UNTIL, CREST_INDUSTRY_SYSTEMS_CACHED_UNTIL, "
-                    SQL = SQL & "CREST_INDUSTRY_FACILITIES_CACHED_UNTIL, CREST_MARKET_PRICES_CACHED_UNTIL FROM EVEIPH_DATA"
+                    SQL = SQL & "CREST_INDUSTRY_FACILITIES_CACHED_UNTIL, CREST_MARKET_PRICES_CACHED_UNTIL FROM CREST_CACHE_DATES"
                     DBCommand = New SQLiteCommand(SQL, DBOLD)
                     readerUpdate = DBCommand.ExecuteReader
 
@@ -769,7 +769,7 @@ Public Class frmUpdaterMain
                     ' If they have the fields, then insert
                     If HaveNewEVEIPHFields Then
                         While readerUpdate.Read
-                            SQL = "INSERT INTO EVEIPH_DATA VALUES ("
+                            SQL = "INSERT INTO CREST_CACHE_DATES VALUES ("
                             SQL = SQL & BuildInsertFieldString(readerUpdate.Item(0)) & ","
                             SQL = SQL & BuildInsertFieldString(readerUpdate.Item(1)) & ","
                             SQL = SQL & BuildInsertFieldString(readerUpdate.Item(2)) & ","
@@ -785,7 +785,7 @@ Public Class frmUpdaterMain
                         readerUpdate = Nothing
                         DBCommand = Nothing
                     Else
-                        SQL = "INSERT INTO EVEIPH_DATA VALUES (NULL,NULL,NULL,NULL,NULL,NULL)"
+                        SQL = "INSERT INTO CREST_CACHE_DATES VALUES (NULL,NULL,NULL,NULL,NULL,NULL)"
                         Call ExecuteNonQuerySQL(SQL, DBNEW)
                     End If
 
