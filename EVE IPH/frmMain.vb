@@ -172,8 +172,8 @@ Public Class frmMain
     Private PreviousFacilityEquipment As String
     Private PreviousActivity As String
     Private CurrentIndustryType As IndustryType
-    Private CurrentBPGroupID As Long
-    Private CurrentBPCategoryID As Long
+    Private CurrentBPGroupID As Integer
+    Private CurrentBPCategoryID As Integer
 
     Private PreviousCalcBaseIndustryType As IndustryType
     Private PreviousCalcBaseFacilityType As String
@@ -446,13 +446,14 @@ Public Class frmMain
         ' CREST Facilities
         If UserApplicationSettings.LoadCRESTFacilityDataonStartup Then
             ' Always do cost indicies first
+            Application.UseWaitCursor = True
             Timecheck = Now
             Call SetProgress("Updating Industry Systems Cost Indicies...")
             Call CREST.UpdateIndustrySystemsCostIndex()
             Debug.Print("System Indicies " & CStr(DateDiff(DateInterval.Second, Timecheck, Now)))
             Timecheck = Now
             Call SetProgress("Updating Industry Facilities...")
-            Call CREST.UpdateIndustryFacilties()
+            Call CREST.UpdateIndustryFacilties(Nothing, Nothing, True)
             Debug.Print("Facilities " & CStr(DateDiff(DateInterval.Second, Timecheck, Now)))
             Timecheck = Now
             Application.UseWaitCursor = False
@@ -856,17 +857,6 @@ Public Class frmMain
         On Error Resume Next
         DB.Close()
         On Error GoTo 0
-    End Sub
-
-    ' For updating the splash screen with what is going on
-    Private Delegate Sub ProgressSetter(ByVal progress As String)
-
-    Private Sub SetProgress(ByVal progress As String)
-        'Get a reference to the application's splash screen.
-        Dim splash As SplashScreen = DirectCast(My.Application.SplashScreen, SplashScreen)
-
-        'Invoke the spalsh screen's SetProgress method on the thread that owns it.
-        splash.Invoke(New ProgressSetter(AddressOf splash.SetProgress), progress)
     End Sub
 
     Public ReadOnly Property MyControls() As Collection
@@ -1367,7 +1357,7 @@ NoBonus:
                              ByRef FacilityActivityCostCheck As CheckBox, ByRef FacilityActivityTimeCheck As CheckBox, _
                              ByRef FacilityLoaded As Boolean, _
                              Optional ByRef FacilityActivityCombo As ComboBox = Nothing, Optional BPTech As Integer = 1, _
-                             Optional ItemGroupID As Long = 0, Optional ItemCategoryID As Long = 0, _
+                             Optional ItemGroupID As Integer = 0, Optional ItemCategoryID As Integer = 0, _
                              Optional LoadActivites As Boolean = True, Optional RefreshBP As Boolean = True, Optional ByRef FacilityUsageLabel As Label = Nothing)
 
         Dim SelectedFacility As New IndustryFacility
@@ -1863,7 +1853,7 @@ NoBonus:
     End Sub
 
     ' Based on the selections, load the region combo
-    Private Sub LoadFacilityRegions(ItemGroupID As Long, ItemCategoryID As Long, NewFacility As Boolean, _
+    Private Sub LoadFacilityRegions(ItemGroupID As Integer, ItemCategoryID As Integer, NewFacility As Boolean, _
                                     ByRef FacilityActivity As String, ByRef FacilityTypeCombo As ComboBox, _
                                     ByRef FacilityRegionCombo As ComboBox, ByRef FacilitySystemCombo As ComboBox, ByRef FacilityCombo As ComboBox, _
                                     ByRef FacilityBonusLabel As Label, ByRef FacilityDefaultLabel As Label, _
@@ -1899,26 +1889,18 @@ NoBonus:
                     Case ActivityManufacturing
                         SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Manufacturing) & " "
                         ' Add only regions with stations that can make what we sent
-                        SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID)
+                        SQL = SQL & GetFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID, IndustryActivities.Manufacturing)
                     Case ActivityComponentManufacturing, ActivityCapComponentManufacturing
                         SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Manufacturing) & " "
                         ' Add category for components - All types can be built in stations
-                        SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ComponentCategoryID, -1)
+                        SQL = SQL & GetFacilityCatGroupIDSQL(ComponentCategoryID, -1, IndustryActivities.Manufacturing)
                     Case ActivityCopying
                         SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Copying) & " "
+                        SQL = SQL & GetFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID, IndustryActivities.Copying)
                     Case ActivityInvention
                         SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Invention) & " "
                         ' For T3 stuff, need to make sure we only show facilities that can do T3 invention (Caldari Outposts)
-                        ' T3 stuff doesn't have a group ID in stations table
-                        If ItemGroupID = StrategicCruiserGroupID Then
-                            SQL = SQL & " AND GROUP_ID = " & CStr(StrategicCrusierBlueprintID) & " "
-                        ElseIf ItemGroupID = TacticalDestroyerGroupID Then
-                            SQL = SQL & " AND GROUP_ID = " & CStr(TacticalDestroyerBlueprintID) & " "
-                        ElseIf ItemCategoryID = SubsystemCategoryID Then
-                            SQL = SQL & " AND GROUP_ID = " & CStr(SubsystemBlueprintID) & " "
-                        Else
-                            SQL = SQL & " AND GROUP_ID = 0  AND CATEGORY_ID = " & CStr(BlueprintCategoryID) & " "
-                        End If
+                        SQL = SQL & GetFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID, IndustryActivities.Invention)
                 End Select
 
             Case POSFacility
@@ -1963,7 +1945,7 @@ NoBonus:
             FacilitySaveButton.Enabled = False
             FacilityUsageCheck.Enabled = False
             Call HideFacilityBonusBoxes(FacilityBonusLabel, FacilityTaxRateLabel, FacilityManualMELabel, FacilityManualTELabel, _
-                                        FacilityManualMETextBox, FacilityManualTETextBox, FacilityManualTaxLabel, FacilityManualTaxtextbox, FacilityUsageLabel)
+                                        FacilityManualMETextBox, FacilityManualTETextBox, FacilityManualTaxLabel, FacilityManualTaxTextBox, FacilityUsageLabel)
         End If
 
         ' Only reset the region if the current selected region is not in list, also if it is in list, enable solarsystem
@@ -1986,7 +1968,7 @@ NoBonus:
     End Sub
 
     ' Based on the selections, load the systems combo
-    Private Sub LoadFacilitySystems(ItemGroupID As Long, ItemCategoryID As Long, NewFacility As Boolean, _
+    Private Sub LoadFacilitySystems(ItemGroupID As Integer, ItemCategoryID As Integer, NewFacility As Boolean, _
                                ByRef FacilityActivity As String, ByRef FacilityTypeCombo As ComboBox, _
                                ByRef FacilityRegionCombo As ComboBox, ByRef FacilitySystemCombo As ComboBox, ByRef FacilityCombo As ComboBox, _
                                ByRef FacilityBonusLabel As Label, ByRef FacilityTaxRateLabel As Label, _
@@ -2020,26 +2002,28 @@ NoBonus:
                 Select Case FacilityActivity
                     Case ActivityManufacturing
                         SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Manufacturing) & " "
-                        SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID)
+                        SQL = SQL & GetFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID, IndustryActivities.Manufacturing)
                     Case ActivityComponentManufacturing
                         SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Manufacturing) & " "
                         ' Add category for components - All types can be built in stations
-                        SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ComponentCategoryID, -1)
+                        SQL = SQL & GetFacilityCatGroupIDSQL(ComponentCategoryID, -1, IndustryActivities.Manufacturing)
                     Case ActivityCopying
                         SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Copying) & " "
+                        SQL = SQL & GetFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID, IndustryActivities.Copying)
                     Case ActivityInvention
                         SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Invention) & " "
                         ' For T3 stuff, need to make sure we only show facilities that can do T3 invention (Caldari Outposts)
-                        ' T3 stuff doesn't have a group ID in stations table
-                        If ItemGroupID = StrategicCruiserGroupID Then
-                            SQL = SQL & " AND GROUP_ID = " & CStr(StrategicCrusierBlueprintID) & " "
-                        ElseIf ItemGroupID = TacticalDestroyerGroupID Then
-                            SQL = SQL & " AND GROUP_ID = " & CStr(TacticalDestroyerBlueprintID) & " "
-                        ElseIf ItemCategoryID = SubsystemCategoryID Then
-                            SQL = SQL & " AND GROUP_ID = " & CStr(SubsystemBlueprintID) & " "
-                        Else
-                            SQL = SQL & " AND GROUP_ID = 0  AND CATEGORY_ID = " & CStr(BlueprintCategoryID) & " "
-                        End If
+                        SQL = SQL & GetFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID, IndustryActivities.Invention)
+                        '' T3 stuff doesn't have a group ID in stations table
+                        'If ItemGroupID = StrategicCruiserGroupID Then
+                        '    SQL = SQL & " AND GROUP_ID = " & CStr(StrategicCruiserGroupID) & " "
+                        'ElseIf ItemGroupID = TacticalDestroyerGroupID Then
+                        '    SQL = SQL & " AND GROUP_ID = " & CStr(TacticalDestroyerBlueprintID) & " "
+                        'ElseIf ItemCategoryID = SubsystemCategoryID Then
+                        '    SQL = SQL & " AND GROUP_ID = " & CStr(SubsystemBlueprintID) & " "
+                        'Else
+                        '    SQL = SQL & " AND GROUP_ID = 0  AND CATEGORY_ID = " & CStr(BlueprintCategoryID) & " "
+                        'End If
                 End Select
 
                 SQL = SQL & "AND REGION_NAME = '" & FormatDBString(FacilityRegionCombo.Text) & "'"
@@ -2112,7 +2096,7 @@ NoBonus:
     End Sub
 
     ' Based on the selections, load the facilities/arrays combo - an itemcategory or itemgroup id of -1 means to ignore it when filling arrays
-    Private Sub LoadFacilities(ItemGroupID As Long, ItemCategoryID As Long, NewFacility As Boolean, _
+    Private Sub LoadFacilities(ItemGroupID As Integer, ItemCategoryID As Integer, NewFacility As Boolean, _
                                ByRef FacilityActivity As String, ByRef FacilityTypeCombo As ComboBox, _
                                ByRef FacilityRegionCombo As ComboBox, ByRef FacilitySystemCombo As ComboBox, ByRef FacilityCombo As ComboBox, _
                                ByRef FacilityBonusLabel As Label, ByRef FacilityDefaultLabel As Label, _
@@ -2146,26 +2130,18 @@ NoBonus:
                     Case ActivityManufacturing
                         SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Manufacturing) & " "
                         ' Check groups and categories
-                        SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID)
+                        SQL = SQL & GetFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID, IndustryActivities.Manufacturing)
                     Case ActivityComponentManufacturing, ActivityCapComponentManufacturing
                         SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Manufacturing) & " "
                         ' Add category for components - All types can be built in stations
-                        SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ComponentCategoryID, -1)
+                        SQL = SQL & GetFacilityCatGroupIDSQL(ComponentCategoryID, -1, IndustryActivities.Manufacturing)
                     Case ActivityCopying
                         SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Copying) & " "
+                        SQL = SQL & GetFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID, IndustryActivities.Copying)
                     Case ActivityInvention
                         SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Invention) & " "
                         ' For T3 stuff, need to make sure we only show facilities that can do T3 invention (Caldari Outposts)
-                        ' T3 stuff doesn't have a group ID in stations table
-                        If ItemGroupID = StrategicCruiserGroupID Then
-                            SQL = SQL & " AND GROUP_ID = " & CStr(StrategicCrusierBlueprintID) & " "
-                        ElseIf ItemGroupID = TacticalDestroyerGroupID Then
-                            SQL = SQL & " AND GROUP_ID = " & CStr(TacticalDestroyerBlueprintID) & " "
-                        ElseIf ItemCategoryID = SubsystemCategoryID Then
-                            SQL = SQL & " AND GROUP_ID = " & CStr(SubsystemBlueprintID) & " "
-                        Else
-                            SQL = SQL & " AND GROUP_ID = 0  AND CATEGORY_ID = " & CStr(BlueprintCategoryID) & " "
-                        End If
+                        SQL = SQL & GetFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID, IndustryActivities.Invention)
                 End Select
 
                 SQL = SQL & "AND REGION_NAME = '" & FormatDBString(FacilityRegionCombo.Text) & "' "
@@ -2181,7 +2157,7 @@ NoBonus:
                     Case ActivityManufacturing
                         SQL = SQL & CStr(IndustryActivities.Manufacturing) & " "
                         ' Check groups and categories
-                        SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID)
+                        SQL = SQL & GetFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID, IndustryActivities.Manufacturing)
                     Case ActivityComponentManufacturing, ActivityCapComponentManufacturing
                         SQL = SQL & CStr(IndustryActivities.Manufacturing) & " "
                         ' Add category for component
@@ -2189,21 +2165,17 @@ NoBonus:
                             Case TitanGroupID, SupercarrierGroupID, DreadnoughtGroupID, CarrierGroupID, _
                                 CapitalIndustrialShipGroupID, IndustrialCommandShipGroupID, FreighterGroupID, JumpFreighterGroupID, _
                                 AdvCapitalComponentGroupID, CapitalComponentGroupID
-                                SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ComponentCategoryID, CapitalComponentGroupID) ' These all use cap components
+                                SQL = SQL & GetFacilityCatGroupIDSQL(ComponentCategoryID, CapitalComponentGroupID, IndustryActivities.Manufacturing) ' These all use cap components
                             Case Else
-                                SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ComponentCategoryID, ConstructionComponentsGroupID)
+                                SQL = SQL & GetFacilityCatGroupIDSQL(ComponentCategoryID, ConstructionComponentsGroupID, IndustryActivities.Manufacturing)
                         End Select
                     Case ActivityCopying
                         SQL = SQL & CStr(IndustryActivities.Copying) & " "
+                        SQL = SQL & GetFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID, IndustryActivities.Invention)
                     Case ActivityInvention
                         ' POS invention you can only do T3 in certain arrays
-                        If ItemGroupID = StrategicCrusierBlueprintID Or ItemGroupID = TacticalDestroyerBlueprintID Or ItemGroupID = SubsystemBlueprintID Then
-                            SQL = SQL & CStr(IndustryActivities.Invention) & " AND GROUP_ID = " & CStr(ItemGroupID)
-                        Else
-                            ' T2 has no group ID
-                            SQL = SQL & CStr(IndustryActivities.Invention) & " AND GROUP_ID = 0 "
-                        End If
-                        SQL = SQL & " AND CATEGORY_ID = " & CStr(BlueprintCategoryID)
+                        SQL = SQL & CStr(IndustryActivities.Invention) & " "
+                        SQL = SQL & GetFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID, IndustryActivities.Invention)
                 End Select
 
         End Select
@@ -2302,7 +2274,7 @@ NoBonus:
 
     ' Displays the bonus for the facility selected in the facility or array combo
     Private Sub DisplayFacilityBonus(ProductionType As IndustryType, SentMM As Double, SentTM As Double, SentTax As Double, _
-                                     ItemGroupID As Long, ItemCategoryID As Long, _
+                                     ItemGroupID As Integer, ItemCategoryID As Integer, _
                                      Activity As String, FacilityType As String, FacilityName As String, _
                                      ByRef FacilityRegionCombo As ComboBox, ByRef FacilitySystemCombo As ComboBox, ByRef FacilityCombo As ComboBox,
                                      ByRef FacilityBonusLabel As Label, ByRef FacilityDefaultLabel As Label, _
@@ -2336,9 +2308,8 @@ NoBonus:
                 Case OutpostFacility, StationFacility
 
                     ' Load the Stations in system for the activity we are doing
-                    SQL = "SELECT FACILITY_ID, FACILITY_TYPE_ID, BASE_MM * ADDITIONAL_MM AS MATERIAL_MULTIPLIER, "
-                    SQL = SQL & "BASE_TM * ADDITIONAL_TM AS TIME_MULTIPLIER, "
-                    SQL = SQL & "BASE_CM & ADDITIONAL_CM AS COST_MULTIPLIER, "
+                    SQL = "SELECT FACILITY_ID, FACILITY_TYPE_ID, MATERIAL_MULTIPLIER, "
+                    SQL = SQL & "TIME_MULTIPLIER, COST_MULTIPLIER, "
                     SQL = SQL & "FACILITY_TAX FROM STATION_FACILITIES WHERE OUTPOST  "
 
                     ' Set flag for outpost just to delineate
@@ -2361,7 +2332,7 @@ NoBonus:
             Select Case Activity
                 Case ActivityManufacturing
                     SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Manufacturing) & " "
-                    SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID)
+                    SQL = SQL & GetFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID, IndustryActivities.Manufacturing)
                 Case ActivityComponentManufacturing, ActivityCapComponentManufacturing
                     SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Manufacturing) & " "
                     ' Add category for component
@@ -2369,14 +2340,16 @@ NoBonus:
                         Case TitanGroupID, SupercarrierGroupID, DreadnoughtGroupID, CarrierGroupID, _
                             CapitalIndustrialShipGroupID, IndustrialCommandShipGroupID, FreighterGroupID, JumpFreighterGroupID, _
                                 AdvCapitalComponentGroupID, CapitalComponentGroupID
-                            SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ComponentCategoryID, CapitalComponentGroupID) ' These all use cap components
+                            SQL = SQL & GetFacilityCatGroupIDSQL(ComponentCategoryID, CapitalComponentGroupID, IndustryActivities.Manufacturing) ' These all use cap components
                         Case Else
-                            SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(ComponentCategoryID, ConstructionComponentsGroupID)
+                            SQL = SQL & GetFacilityCatGroupIDSQL(ComponentCategoryID, ConstructionComponentsGroupID, IndustryActivities.Manufacturing)
                     End Select
                 Case ActivityCopying
                     SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Copying) & " "
+                    SQL = SQL & GetFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID, IndustryActivities.Copying)
                 Case ActivityInvention
                     SQL = SQL & "AND ACTIVITY_ID = " & CStr(IndustryActivities.Invention) & " "
+                    SQL = SQL & GetFacilityCatGroupIDSQL(ItemCategoryID, ItemGroupID, IndustryActivities.Invention)
             End Select
 
             DBCommand = New SQLiteCommand(SQL, DB)
@@ -2934,21 +2907,33 @@ NoBonus:
 
     End Sub
 
-    ' Returns the SQL string for querying manufacturing by category or group id's - Sending -1 will ignore that ID, 0's returns blank
-    Private Function GetManufacturingFacilityCatGroupIDSQL(ByVal CategoryID As Long, ByVal GroupID As Long) As String
+    ' Returns the SQL string for querying by category or group id's 
+    Private Function GetFacilityCatGroupIDSQL(ByVal CategoryID As Integer, ByVal GroupID As Integer, ByVal Activity As IndustryActivities) As String
         Dim SQL As String = ""
+        Dim TempGroupID As Integer
+        Dim TempCategoryID As Integer
 
-        ' Check groups and categories
-        If CategoryID = -1 And GroupID <> -1 Then
-            SQL = "AND GROUP_ID = " & CStr(GroupID) & " "
-        ElseIf CategoryID <> -1 And GroupID = -1 Then
-            SQL = "AND CATEGORY_ID = " & CStr(CategoryID) & " "
-        ElseIf CategoryID <> 0 And GroupID <> 0 Then
-            ' For now one is zero while the other one has a value for stations/outposts, could be both for pos
-            SQL = "AND ((CATEGORY_ID = 0 AND GROUP_ID = " & CStr(GroupID) & ") "
-            SQL = SQL & "OR (CATEGORY_ID = " & CStr(CategoryID) & " AND GROUP_ID = 0) "
-            SQL = SQL & "OR (CATEGORY_ID = " & CStr(CategoryID) & " AND GROUP_ID = " & CStr(GroupID) & ")) "
+        ' If the categoryID or groupID is for T3 invention, then switch the item ID's to the blueprint groupID for that item to match CCP's logic in table
+        If Activity = IndustryActivities.Invention Then
+            If CategoryID = SubsystemCategoryID Then
+                TempGroupID = SubsystemBPGroupID
+                TempCategoryID = 0
+            ElseIf GroupID = StrategicCruiserGroupID Then
+                TempGroupID = StrategicCruiserBPGroupID
+                TempCategoryID = 0
+            ElseIf GroupID = TacticalDestroyerGroupID Then
+                TempGroupID = TacticalDestroyerBPGroupID
+                TempCategoryID = 0
+            Else
+                TempGroupID = GroupID
+                TempCategoryID = CategoryID
+            End If
+        Else
+            TempGroupID = GroupID
+            TempCategoryID = CategoryID
         End If
+
+        SQL = "AND (GROUP_ID = " & CStr(TempGroupID) & " OR (GROUP_ID = 0 AND CATEGORY_ID = " & CStr(TempCategoryID) & ")) "
 
         Return SQL
 
@@ -3585,8 +3570,8 @@ NoBonus:
             End If
 
             ' Reset the current bp selection to override what is there
-            CurrentBPCategoryID = readerBP.GetInt64(3)
-            CurrentBPGroupID = readerBP.GetInt64(2)
+            CurrentBPCategoryID = readerBP.GetInt32(3)
+            CurrentBPGroupID = readerBP.GetInt32(2)
 
             Dim SelectedIndyType As IndustryType = GetProductionType(ActivityManufacturing, CurrentBPGroupID, CurrentBPCategoryID, BuildFacility.FacilityType)
 
@@ -3998,7 +3983,7 @@ NoBonus:
         Dim SQL As String
 
         ' Simple update, just set all the CREST cache dates to null
-        SQL = "DELETE FROM EVEIPH_DATA"
+        SQL = "DELETE FROM CREST_CACHE_DATES"
         ExecuteNonQuerySQL(SQL)
 
         MsgBox("CREST cache dates reset", vbInformation, Application.ProductName)
@@ -7028,8 +7013,8 @@ Tabs:
         Dim BPTypeID As Long
         Dim TempTech As Integer
         Dim ItemType As Integer
-        Dim ItemGroupID As Long
-        Dim ItemCategoryID As Long
+        Dim ItemGroupID As Integer
+        Dim ItemCategoryID As Integer
         Dim AddlCost As Double
 
         Dim SelectedIndyType As IndustryType
@@ -7091,8 +7076,8 @@ Tabs:
             BPTypeID = readerBP.GetInt64(0)
             TempTech = readerBP.GetInt32(1)
             ItemType = readerBP.GetInt32(2)
-            ItemGroupID = readerBP.GetInt64(3)
-            ItemCategoryID = readerBP.GetInt64(4)
+            ItemGroupID = readerBP.GetInt32(3)
+            ItemCategoryID = readerBP.GetInt32(4)
         Else
             Exit Sub
         End If
@@ -7318,7 +7303,8 @@ Tabs:
     End Sub
 
     ' Updates the lists with the correct materials for the selected item
-    Private Sub UpdateBPGrids(ByVal BPID As Long, ByVal BPTech As Integer, ByVal NewBPSelection As Boolean, BPGroupID As Long, BPCategoryID As Long, Optional UpdateTeamBonusLabel As Boolean = True)
+    Private Sub UpdateBPGrids(ByVal BPID As Long, ByVal BPTech As Integer, ByVal NewBPSelection As Boolean, _
+                              BPGroupID As Integer, BPCategoryID As Integer, Optional UpdateTeamBonusLabel As Boolean = True)
         Dim IndustrySkill As Integer = 0
         Dim i As Integer = 0
         Dim BPRawMats As List(Of Material)
@@ -8350,7 +8336,18 @@ ExitForm:
             ' Set the num bps off of the calculated amount
             Return CInt(Math.Ceiling(SentRuns / MaxProductionRuns))
         Else
-            Return 1 ' Assume just one bp for T1 if sent
+            Dim NumBPs As Integer = CInt(txtBPNumBPs.Text)
+            Dim BPRuns As Integer = CInt(txtBPRuns.Text)
+
+            ' Process based on what they entered, if it's larger than runs, then reset to match runs
+            If NumBPs > BPRuns Then
+                Return BPRuns
+            ElseIf NumBPs > 1 Then
+                Return (NumBPs)
+            Else
+                Return 1 ' Assume just one bp for T1 if sent
+            End If
+
         End If
 
     End Function
@@ -11901,7 +11898,7 @@ ExitSub:
         If Not LoadingFacilitySystems And Not FirstLoad And PreviousFacilitySystem <> cmbCalcT3InventionFacilitySystem.Text Then
 
             ' Load the facility
-            Call LoadFacilities(StrategicCrusierBlueprintID, SubsystemBlueprintID, False, _
+            Call LoadFacilities(StrategicCruiserGroupID, SubsystemCategoryID, False, _
                                 ActivityInvention, cmbCalcT3InventionFacilityType, cmbCalcT3InventionFacilityRegion, cmbCalcT3InventionFacilitySystem, cmbCalcT3InventionFacilityorArray, _
                                 lblCalcT3InventionFacilityBonus, lblCalcT3InventionFacilityDefault, _
                                 lblCalcT3InventionFacilityManualME, txtCalcT3InventionFacilityManualME, _
@@ -16541,9 +16538,9 @@ CheckTechs:
 
                 ' Save the items before adding
                 InsertItem.BPID = CLng(readerBPs.GetValue(0)) ' Hidden
-                InsertItem.ItemGroupID = readerBPs.GetInt64(3)
+                InsertItem.ItemGroupID = readerBPs.GetInt32(3)
                 InsertItem.ItemGroup = readerBPs.GetString(4)
-                InsertItem.ItemCategoryID = readerBPs.GetInt64(5)
+                InsertItem.ItemCategoryID = readerBPs.GetInt32(5)
                 InsertItem.ItemCategory = readerBPs.GetString(6)
                 InsertItem.ItemTypeID = CLng(readerBPs.GetValue(7))
                 InsertItem.ItemName = readerBPs.GetString(8)
@@ -16552,7 +16549,6 @@ CheckTechs:
                 ' 3 is Storyline
                 ' 15 is Pirate Faction
                 ' 16 is Navy Faction
-
                 TempItemType = CInt(readerBPs.GetValue(12))
 
                 Select Case TempItemType ' For Tech
@@ -16703,7 +16699,7 @@ CheckTechs:
                         SQL = SQL & "WHERE ACTIVITY_ID = "
                         SQL = SQL & CStr(IndustryActivities.Manufacturing) & " "
                         ' Check groups and categories
-                        SQL = SQL & GetManufacturingFacilityCatGroupIDSQL(InsertItem.ItemCategoryID, InsertItem.ItemGroupID) & " "
+                        SQL = SQL & GetFacilityCatGroupIDSQL(InsertItem.ItemCategoryID, InsertItem.ItemGroupID, IndustryActivities.Manufacturing) & " "
                         If ArrayName <> "" Then
                             SQL = SQL & "AND ARRAY_NAME = '" & ArrayName & "'"
                         End If
@@ -18518,9 +18514,9 @@ ExitCalc:
 
         Public BPID As Long
         Public ItemGroup As String
-        Public ItemGroupID As Long
+        Public ItemGroupID As Integer
         Public ItemCategory As String
-        Public ItemCategoryID As Long
+        Public ItemCategoryID As Integer
         Public ItemTypeID As Long
         Public ItemName As String
         Public TechLevel As String
@@ -18884,7 +18880,7 @@ ExitCalc:
             readerRegion.Close()
             DBCommand = Nothing
 
-            If TempCrest.UpdateMarketHistory(FoundItem.ItemTypeID, RegionID, True) Then
+            If TempCrest.UpdateMarketHistory(FoundItem.ItemTypeID, RegionID) Then
                 ' Now open the window for that item after updated
             End If
 

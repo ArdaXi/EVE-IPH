@@ -184,14 +184,14 @@ Public Class IndustryFacility
                         ' They didn't set a value, so load the default for each type
                         SQL = SQL & CStr(.MaterialMultiplier) & " AS MATERIAL_MULTIPLIER, "
                     Else
-                        SQL = SQL & "BASE_MM * ADDITIONAL_MM AS MATERIAL_MULTIPLIER, "
+                        SQL = SQL & "MATERIAL_MULTIPLIER, "
                     End If
 
                     If .TimeMultiplier <> Defaults.FacilityDefaultMM Then
                         ' They didn't set a value, so load the default for each type
                         SQL = SQL & CStr(.TimeMultiplier) & " AS TIME_MULTIPLIER, "
                     Else
-                        SQL = SQL & "BASE_TM * ADDITIONAL_TM AS TIME_MULTIPLIER, "
+                        SQL = SQL & "TIME_MULTIPLIER, "
                     End If
                     SQL = SQL & "ACTIVITY_ID AS AID, ACTIVITY_NAME AS AN, FACILITY_TYPE_ID, GROUP_ID, CATEGORY_ID "
                     SQL = SQL & "FROM STATION_FACILITIES "
@@ -199,7 +199,7 @@ Public Class IndustryFacility
                 Case StationFacility
                     SQL = "SELECT FACILITY_NAME, REGION_NAME, REGION_ID, "
                     SQL = SQL & "SOLAR_SYSTEM_NAME, SOLAR_SYSTEM_ID, FACILITY_TAX, COST_INDEX, "
-                    SQL = SQL & "BASE_MM * ADDITIONAL_MM AS MATERIAL_MULTIPLIER, BASE_TM * ADDITIONAL_TM AS TIME_MULTIPLIER, "
+                    SQL = SQL & "MATERIAL_MULTIPLIER, TIME_MULTIPLIER, "
                     SQL = SQL & "ACTIVITY_ID AS AID, ACTIVITY_NAME AS AN, FACILITY_TYPE_ID, GROUP_ID, CATEGORY_ID "
                     SQL = SQL & "FROM STATION_FACILITIES "
                     SQL = SQL & "WHERE OUTPOST = " & CStr(StationType.Station) & " "

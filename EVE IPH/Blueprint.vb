@@ -11,9 +11,9 @@ Public Class Blueprint
     Private ItemID As Long
     Private ItemName As String
     Private ItemCategory As String
-    Private ItemCategoryID As Long
+    Private ItemCategoryID As Integer
     Private ItemGroup As String
-    Private ItemGroupID As Long
+    Private ItemGroupID As Integer
     Private TechLevel As Integer
     Private PortionSize As Long ' Number of items produced by one run of blueprint
     Private BaseProductionTime As Long ' In seconds
@@ -250,9 +250,9 @@ Public Class Blueprint
             BlueprintGroup = readerBP.GetString(2)
             ItemID = readerBP.GetInt64(3)
             ItemName = readerBP.GetString(4)
-            ItemCategoryID = readerBP.GetInt64(5)
+            ItemCategoryID = readerBP.GetInt32(5)
             ItemCategory = readerBP.GetString(6)
-            ItemGroupID = readerBP.GetInt64(7)
+            ItemGroupID = readerBP.GetInt32(7)
             ItemGroup = readerBP.GetString(8)
             TechLevel = readerBP.GetInt32(9)
             PortionSize = readerBP.GetInt64(10)
@@ -1962,7 +1962,7 @@ Public Class Blueprint
     End Function
 
     ' Returns the category id for the item this BP builds
-    Public Function GetItemCategoryID() As Long
+    Public Function GetItemCategoryID() As Integer
         Return ItemCategoryID
     End Function
 
@@ -2027,7 +2027,7 @@ Public Class Blueprint
     End Function
 
     ' Gets the Item's GroupID of the blueprint
-    Public Function GetItemGroupID() As Long
+    Public Function GetItemGroupID() As Integer
         Return ItemGroupID
     End Function
 

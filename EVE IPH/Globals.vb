@@ -177,14 +177,15 @@ Public Module Public_Variables
     Public Const TitanGroupID As Integer = 30
 
     Public Const BoosterGroupID As Integer = 303
+
     Public Const StrategicCruiserGroupID As Integer = 963
     Public Const TacticalDestroyerGroupID As Integer = 1305
     Public Const SubsystemCategoryID As Integer = 32
 
-    Public Const StrategicCrusierBlueprintID As Integer = 996
-    Public Const TacticalDestroyerBlueprintID As Integer = 1309
-    Public Const SubsystemBlueprintID As Integer = 973
-    Public Const BlueprintCategoryID As Integer = 9
+    ' T3 Bps for facility updates
+    Public Const StrategicCruiserBPGroupID As Integer = 996
+    Public Const TacticalDestroyerBPGroupID As Integer = 1309
+    Public Const SubsystemBPGroupID As Integer = 973
 
     Public Const ConstructionComponentsGroupID As Integer = 334 ' Use this for all non-capital components
     Public Const ComponentCategoryID As Integer = 17
@@ -346,6 +347,17 @@ Public Module Public_Variables
         Dim ItemName As String
         Dim BuyType As String
     End Structure
+
+    ' For updating the splash screen with what is going on
+    Private Delegate Sub ProgressSetter(ByVal progress As String)
+
+    Public Sub SetProgress(ByVal progress As String)
+        'Get a reference to the application's splash screen.
+        Dim splash As SplashScreen = DirectCast(My.Application.SplashScreen, SplashScreen)
+
+        'Invoke the spalsh screen's SetProgress method on the thread that owns it.
+        splash.Invoke(New ProgressSetter(AddressOf splash.SetProgress), progress)
+    End Sub
 
 #Region "DataBase"
 
