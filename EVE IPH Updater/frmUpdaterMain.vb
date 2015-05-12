@@ -381,7 +381,7 @@ Public Class frmUpdaterMain
                 ' ITEM_PRICES
                 ' ITEM_PRICES_CACHE
                 ' OWNED_BLUEPRINTS
-                ' STATIONS - has outpost data stored
+                ' STATIONS
 
                 ' NEW CREST TABLES
                 ' INDUSTRY_CATEGORY_SPECIALTIES
@@ -391,7 +391,7 @@ Public Class frmUpdaterMain
                 ' INDUSTRY_TEAMS
                 ' INDUSTRY_TEAMS_AUCTIONS
                 ' INDUSTRY_TEAMS_BONUSES
-                ' STATION_FACILITIES - If it exists, this is built within IPH
+                ' STATION_FACILITIES - Copy this data so we don't have to build it later
 
                 ' Open databases, if no database file, so just exit and use downloaded one
                 If File.Exists(ROOT_FOLDER & UpdateFileList(i).Name) Then
@@ -1246,7 +1246,7 @@ Public Class frmUpdaterMain
                     If Not IsNothing(readerUpdate) Then
                         Call BeginSQLiteTransaction(DBNEW)
 
-                        ' Delete all the station records first, then reload
+                        ' Delete all the records first, then reload (if any)
                         SQL = "DELETE FROM INDUSTRY_SYSTEMS_COST_INDICIES"
                         Call ExecuteNonQuerySQL(SQL, DBNEW)
 
@@ -1487,34 +1487,65 @@ Public Class frmUpdaterMain
                     ' They might not have this table yet.
                     If Not IsNothing(readerUpdate) Then
                         Call BeginSQLiteTransaction(DBNEW)
-
+                        ' They have the new table, but whatever is in the new database needs to be updated or inserted (if not there)
                         While readerUpdate.Read
-                            SQL = "INSERT INTO STATION_FACILITIES VALUES ("
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(0)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(1)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(2)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(3)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(4)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(5)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(6)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(7)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(8)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(9)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(10)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(11)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(12)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(13)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(14)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(15)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(16)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(17)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(18)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(19)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(20)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(21)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(22)) & ","
-                            SQL = SQL & BuildInsertFieldString(readerUpdate.Item(23))
-                            SQL = SQL & ")"
+                            Dim TempID As String = CStr(readerUpdate.GetInt64(0))
+                            Dim TempSQL As String = "SELECT 'X' FROM STATION_FACILITIES WHERE FACILITY_ID = " & TempID
+                            DBCommand = New SQLiteCommand(SQL, DBNEW)
+                            readerCheck = DBCommand.ExecuteReader
+
+                            If readerCheck.Read Then
+                                SQL = "UPDATE STATION_FACILITIES SET "
+                                SQL = SQL & "FACILITY_NAME = " & BuildInsertFieldString(readerUpdate.GetString(1)) & ","
+                                SQL = SQL & "SOLAR_SYSTEM_ID = " & BuildInsertFieldString(readerUpdate.GetInt64(2)) & ","
+                                SQL = SQL & "SOLAR_SYSTEM_NAME = " & BuildInsertFieldString(readerUpdate.GetString(3)) & ","
+                                SQL = SQL & "SOLAR_SYSTEM_SECURITY = " & BuildInsertFieldString(readerUpdate.GetDouble(4)) & ","
+                                SQL = SQL & "REGION_ID = " & BuildInsertFieldString(readerUpdate.GetInt64(5)) & ","
+                                SQL = SQL & "REGION_NAME = " & BuildInsertFieldString(readerUpdate.GetString(6)) & ","
+                                SQL = SQL & "FACILITY_TYPE_ID = " & BuildInsertFieldString(readerUpdate.GetInt64(7)) & ","
+                                SQL = SQL & "FACILITY_TYPE = " & BuildInsertFieldString(readerUpdate.GetString(8)) & ","
+                                SQL = SQL & "ACTIVITY_ID = " & BuildInsertFieldString(readerUpdate.GetInt64(9)) & ","
+                                SQL = SQL & "ACTIVITY_NAME = " & BuildInsertFieldString(readerUpdate.GetString(10)) & ","
+                                SQL = SQL & "FACILITY_TAX = " & BuildInsertFieldString(readerUpdate.GetDouble(11)) & ","
+                                SQL = SQL & "MATERIAL_MULTIPLIER = " & BuildInsertFieldString(readerUpdate.GetDouble(12)) & ","
+                                SQL = SQL & "TIME_MULTIPLIER = " & BuildInsertFieldString(readerUpdate.GetDouble(13)) & ","
+                                SQL = SQL & "COST_MULTIPLIER = " & BuildInsertFieldString(readerUpdate.GetDouble(14)) & ","
+                                SQL = SQL & "GROUP_ID = " & BuildInsertFieldString(readerUpdate.GetInt64(15)) & ","
+                                SQL = SQL & "GROUP_NAME = " & BuildInsertFieldString(readerUpdate.GetString(16)) & ","
+                                SQL = SQL & "CATEGORY_ID = " & BuildInsertFieldString(readerUpdate.GetInt64(17)) & ","
+                                SQL = SQL & "CATEGORY_NAME = " & BuildInsertFieldString(readerUpdate.GetString(18)) & ","
+                                SQL = SQL & "COST_INDEX = " & BuildInsertFieldString(readerUpdate.GetDouble(19)) & ","
+                                SQL = SQL & "OUTPOST = " & BuildInsertFieldString(readerUpdate.GetInt32(20)) & " "
+                                SQL = SQL & "WHERE FACILITY_ID = " & TempID
+                            Else
+                                ' Insert
+                                SQL = "INSERT INTO STATION_FACILITIES VALUES ("
+                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(0)) & ","
+                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(1)) & ","
+                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(2)) & ","
+                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(3)) & ","
+                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(4)) & ","
+                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(5)) & ","
+                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(6)) & ","
+                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(7)) & ","
+                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(8)) & ","
+                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(9)) & ","
+                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(10)) & ","
+                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(11)) & ","
+                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(12)) & ","
+                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(13)) & ","
+                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(14)) & ","
+                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(15)) & ","
+                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(16)) & ","
+                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(17)) & ","
+                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(18)) & ","
+                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(19)) & ","
+                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(20)) & ","
+                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(21)) & ","
+                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(22)) & ","
+                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(23))
+                                SQL = SQL & ")"
+                            End If
 
                             Call ExecuteNonQuerySQL(SQL, DBNEW)
 
