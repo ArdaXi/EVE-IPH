@@ -158,7 +158,7 @@ Public Class Blueprint
 
     ' BP numbers
     Private RunsPerBP As Integer
-    Private NumBPs As Integer
+    Private BPBatches As Integer
 
     ' T1 Constructor
     Public Sub New(ByVal BlueprintID As Long, ByVal BPRuns As Long, ByVal BPME As Double, ByVal BPTE As Double,
@@ -385,25 +385,33 @@ Public Class Blueprint
 
         ' Need to check for the number of BPs sent and run multiple batches if necessary. Also, look at the number of lines per batch
         If NumberofBPs = 1 Then
+            BPBatches = NumberofBPs
             'Just run the normal function and it will set everything
             Call BuildItem(SetTaxes, SetBrokerFees, SetProductionCosts)
         Else
             ' Need to figure out the number of batches - treat any item that is built with more than one blueprint differently
             ' Assumptions - They want the most effcient way to build. Ie, 96 runs, 9 bps, then do 6 batches of 11, and 3 of 10. 
             ' So max the number of runs per BP to equally distribute batches
-
-            Dim BPBatches As Integer = NumberofBPs ' Number of bps is the number of batches unless greater than user runs
             Dim ExtraRuns As Integer
             Dim RunsperBP As Integer
             Dim AdjRunsperBP As Integer
 
             Dim BatchBlueprint As Blueprint
 
-            ' Divide the runs by number of bps - take whole amount first.
-            If UserRuns >= NumberofBPs Then
-                RunsperBP = CInt(Math.Floor(UserRuns / NumberofBPs))
-                ExtraRuns = CInt(UserRuns - (RunsperBP * NumberofBPs))
+            ' Number of bps is the number of batches if we have enough lines to run them
+            If NumberofBPs <= NumberofProductionLines Then
+                BPBatches = NumberofBPs
             Else
+                ' We can't run more bps than the lines entered
+                BPBatches = NumberofProductionLines
+            End If
+
+            ' Firgure out runs per bp if we are greater than the number of batches (lines or bps) we will run
+            If UserRuns >= BPBatches Then
+                ' Divide the runs by number of bps - take whole amount first.
+                RunsperBP = CInt(Math.Floor(UserRuns / BPBatches))
+                ExtraRuns = CInt(UserRuns - (RunsperBP * BPBatches))
+            Else ' Can't run more bps than runs, so reset to the runs - 1 batch (bp) per run
                 ' bp batches = number of runs
                 BPBatches = CInt(UserRuns)
                 ' Reset num bps for this
@@ -483,8 +491,14 @@ Public Class Blueprint
                         Call BuiltComponentList.AddBuiltItem(CType(BI.Clone, BuiltItem))
                     Next
 
-                    BPProductionTime += .GetProductionTime
-                    TotalProductionTime += .GetTotalProductionTime
+                    ' Don't add these, it's only the largest time from the batches
+                    If .GetProductionTime > BPProductionTime Then
+                        BPProductionTime = .GetProductionTime
+                    End If
+
+                    If .GetTotalProductionTime > TotalProductionTime Then
+                        TotalProductionTime = .GetTotalProductionTime
+                    End If
 
                     ' Skills required to make it
                     ReqBuildSkills = .GetReqBPSkills
@@ -2089,6 +2103,11 @@ Public Class Blueprint
     ' Returns the blueprint name
     Public Function GetBPName() As String
         Return BlueprintName
+    End Function
+
+    ' Returns the number of batches we ran for this blueprint
+    Public Function GetBPBatches() As Integer
+        Return BPBatches
     End Function
 
     ' Returns the number of blueprints used

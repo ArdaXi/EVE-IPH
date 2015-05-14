@@ -765,6 +765,33 @@ Public Module Public_Variables
 
     End Sub
 
+    ' Function takes a recordset reference and processes it to return the cache date from the query
+    ' Assumes the first field is the cache date
+    Public Function ProcessCacheDate(ByRef rsCache As SQLiteDataReader) As Date
+        Dim CacheDate As Date
+
+        Try
+            If rsCache.Read Then
+                If Not IsDBNull(rsCache.GetValue(0)) Then
+                    If rsCache.GetString(0) = "" Then
+                        CacheDate = NoDate
+                    Else
+                        CacheDate = CDate(rsCache.GetString(0))
+                    End If
+                Else
+                    CacheDate = NoDate
+                End If
+            Else
+                CacheDate = NoDate
+            End If
+        Catch ex As Exception
+            CacheDate = NoDate
+        End Try
+
+        Return CacheDate
+
+    End Function
+
     ' Converts a time in d h m s to a long of seconds
     Public Function ConvertDHMSTimetoSeconds(ByVal SentTime As String) As Long
         Dim Days As Integer = 0

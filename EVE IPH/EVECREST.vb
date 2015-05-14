@@ -59,7 +59,10 @@ Public Class EVECREST
 
     ' Gets the CREST file from CCP for current Market History and updates the EVEIPH DB with the values
     ' Open transaction will open an SQL transaction here instead of the calling function
-    Public Function UpdateMarketHistory(ByVal TypeID As Long, RegionID As Long, Optional OpenTransaction As Boolean = True) As Boolean
+    ' Returns boolean if the history was updated or not
+    Public Function UpdateMarketHistory(ByVal TypeID As Long, RegionID As Long, _
+                                        Optional OpenTransaction As Boolean = True, _
+                                        Optional IgnoreCacheLookup As Boolean = False) As Boolean
         Dim MarketPricesOutput As MarketHistory
         Dim SQL As String
         Dim rsCache As SQLiteDataReader
@@ -67,28 +70,20 @@ Public Class EVECREST
         Dim CacheDate As Date
         Dim MaxRecordDate As Date
 
-        ' First look up the cache date to see if it's time to run the update
-        SQL = "SELECT CACHE_DATE FROM MARKET_HISTORY_UPDATE_CACHE WHERE TYPE_ID = " & CStr(TypeID) & " AND REGION_ID = " & CStr(RegionID)
-        DBCommand = New SQLiteCommand(SQL, DB)
-        rsCache = DBCommand.ExecuteReader
+        If Not IgnoreCacheLookup Then
+            ' First look up the cache date to see if it's time to run the update
+            SQL = "SELECT CACHE_DATE FROM MARKET_HISTORY_UPDATE_CACHE WHERE TYPE_ID = " & CStr(TypeID) & " AND REGION_ID = " & CStr(RegionID)
+            DBCommand = New SQLiteCommand(SQL, DB)
+            rsCache = DBCommand.ExecuteReader
 
-        If rsCache.Read Then
-            If Not IsDBNull(rsCache.GetValue(0)) Then
-                If rsCache.GetString(0) = "" Then
-                    CacheDate = NoDate
-                Else
-                    CacheDate = CDate(rsCache.GetString(0))
-                End If
-            Else
-                CacheDate = NoDate
-            End If
+            CacheDate = ProcessCacheDate(rsCache)
+
+            rsCache.Close()
+            rsCache = Nothing
+            DBCommand = Nothing
         Else
             CacheDate = NoDate
         End If
-
-        rsCache.Close()
-        rsCache = Nothing
-        DBCommand = Nothing
 
         ' If it's later than now, update
         If CacheDate <= Now Then
@@ -101,10 +96,12 @@ Public Class EVECREST
 
             ' Read in the data
             If Not IsNothing(MarketPricesOutput) Then
+                ' Always open here incase we update below
+                If OpenTransaction Then
+                    Call BeginSQLiteTransaction()
+                End If
+
                 If MarketPricesOutput.items.Count > 0 Then
-                    If OpenTransaction Then
-                        Call BeginSQLiteTransaction()
-                    End If
 
                     ' See what the last cache date we have on the records first - any records after or equal to this date we want to update
                     SQL = "SELECT CACHE_DATE FROM MARKET_HISTORY_UPDATE_CACHE WHERE TYPE_ID = " & CStr(TypeID) & " AND REGION_ID = " & CStr(RegionID)
@@ -112,7 +109,9 @@ Public Class EVECREST
                     rsCheck = DBCommand.ExecuteReader
 
                     If rsCheck.Read And Not IsDBNull(rsCheck.GetValue(0)) Then
-                        MaxRecordDate = CDate(rsCheck.GetString(0))
+                        ' The cache date is the date when we run the next update, so minus one day to take into account that we 
+                        ' don't get the current day's data
+                        MaxRecordDate = DateAdd(DateInterval.Day, -1, CDate(rsCheck.GetString(0)))
                     Else
                         MaxRecordDate = NoDate
                     End If
@@ -135,19 +134,22 @@ Public Class EVECREST
                         Application.DoEvents()
                     Next
 
-                    ' Set the Cache Date 
-                    Call ExecuteNonQuerySQL("DELETE FROM MARKET_HISTORY_UPDATE_CACHE WHERE TYPE_ID = " & CStr(TypeID) & " AND REGION_ID = " & CStr(RegionID))
-                    Call ExecuteNonQuerySQL("INSERT INTO MARKET_HISTORY_UPDATE_CACHE VALUES (" & CStr(TypeID) & "," & CStr(RegionID) & "," & "'" & Format(CacheDate, SQLiteDateFormat) & "')")
-
-                    ' Done updating
-                    If OpenTransaction Then
-                        Call CommitSQLiteTransaction()
-                    End If
-                    Return True
-
                 End If
+
+                ' Set the Cache Date for everything queried 
+                Call ExecuteNonQuerySQL("DELETE FROM MARKET_HISTORY_UPDATE_CACHE WHERE TYPE_ID = " & CStr(TypeID) & " AND REGION_ID = " & CStr(RegionID))
+                Call ExecuteNonQuerySQL("INSERT INTO MARKET_HISTORY_UPDATE_CACHE VALUES (" & CStr(TypeID) & "," & CStr(RegionID) & "," & "'" & Format(CacheDate, SQLiteDateFormat) & "')")
+
+                ' Done updating
+                If OpenTransaction Then
+                    Call CommitSQLiteTransaction()
+                End If
+                Return True
+
             End If
             ' Json file didn't download
+            Return False
+        Else
             Return False
         End If
 

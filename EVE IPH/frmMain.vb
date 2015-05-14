@@ -7598,6 +7598,9 @@ Tabs:
             lblBPProductionTime.Enabled = True
         End If
 
+        ' Reset the number of bps to what we used in batches, not what was entered
+        txtBPNumBPs.Text = CStr(SelectedBlueprint.GetBPBatches)
+
         ' Show and update labels for T2 if selected
         If SelectedBlueprint.GetTechLevel = BlueprintTechLevel.T2 Then
             If OwnedBP And NewBPSelection Then
@@ -9881,6 +9884,7 @@ ExitForm:
         Dim SystemChecked As Boolean
         Dim readerRegions As SQLiteDataReader
         Dim readerSystems As SQLiteDataReader
+        Dim readerLookup As SQLiteDataReader
         Dim SQL As String
 
         Dim RegionName As String = ""
@@ -10009,7 +10013,6 @@ ExitForm:
 
         ' See if they want to load historical prices from CREST
         If chkUpdatePricesCRESTHistory.Checked Then
-
             ' See what they want and process accordingly
             If SystemChecked Then
                 ' Need to look up region ID since we can only price history for regions
@@ -10051,25 +10054,43 @@ ExitForm:
             Application.DoEvents()
 
             ' Set the DB up for speed
-            Call ExecuteNonQuerySQL("PRAGMA synchronous = OFF; PRAGMA locking_mode = EXCLUSIVE; PRAGMA temp_store = MEMORY;")
+            ' Call ExecuteNonQuerySQL("PRAGMA synchronous = OFF; PRAGMA locking_mode = EXCLUSIVE; PRAGMA temp_store = MEMORY;")
 
             ' Start a transaction here to speed up processing in the updates
-            Call ExecuteNonQuerySQL("BEGIN EXCLUSIVE;")
+            Call BeginSQLiteTransaction()
 
-            ' Build the list of regions and items
+            ' Build the list of regions and items for market history
             Dim Pairs As New List(Of ItemRegionPairs)
+            Dim CacheDate As Date
+
             For i = 0 To SearchRegions.Count - 1
                 For j = 0 To Items.Count - 1
                     Dim TempPair As ItemRegionPairs
                     TempPair.ItemID = Items(j).TypeID
                     TempPair.RegionID = CLng(SearchRegions(i))
-                    Pairs.Add(TempPair)
+
+                    ' Look up the cache date of each and only add it to the list to look up if it's cache is up
+                    SQL = "SELECT CACHE_DATE FROM MARKET_HISTORY_UPDATE_CACHE WHERE TYPE_ID = " & CStr(TempPair.ItemID) & " AND REGION_ID = " & CStr(TempPair.RegionID)
+                    DBCommand = New SQLiteCommand(SQL, DB)
+                    readerLookup = DBCommand.ExecuteReader
+
+                    CacheDate = ProcessCacheDate(readerLookup)
+
+                    readerLookup.Close()
+                    readerLookup = Nothing
+                    DBCommand = Nothing
+
+                    ' Only add if it's time to update
+                    If CacheDate <= Now Then
+                        Pairs.Add(TempPair)
+                    End If
                 Next
             Next
 
             Dim BatchStart As DateTime = Now
             Dim BatchEnd As DateTime
             Dim BatchCounter As Integer = 0
+            Dim PricesUpdated As Boolean
             Const MaxBatches As Integer = 30
 
             Dim CRESTHistory As New EVECREST
@@ -10081,37 +10102,39 @@ ExitForm:
                 Application.DoEvents()
 
                 ' Add limiting if needed here - only wait if we go over the per request limit and only for the time left
-                Call CRESTHistory.UpdateMarketHistory(Pairs(i).ItemID, Pairs(i).RegionID, False)
+                PricesUpdated = CRESTHistory.UpdateMarketHistory(Pairs(i).ItemID, Pairs(i).RegionID, False)
 
-                BatchCounter += 1
+                ' Only do limiting if we actually update something 
+                If PricesUpdated Then
+                    BatchCounter += 1
 
-                If BatchCounter = MaxBatches Then
-                    ' Need to see if we are over the time limit and sleep
-                    BatchEnd = Now
+                    If BatchCounter = MaxBatches Then
+                        ' Need to see if we are over the time limit and sleep
+                        BatchEnd = Now
 
-                    ' Figure out the difference between the max time for 30 requests and our 30 requests
-                    Dim Difference As Integer = CInt((1000 / MaxRequestsperSecond * MaxBatches) - ((BatchEnd.Ticks - BatchStart.Ticks) / 10000))
-                    If Difference > 0 Then
-                        Threading.Thread.Sleep(Difference)
+                        ' Figure out the difference between the max time for 30 requests and our 30 requests
+                        Dim Difference As Integer = CInt((1000 / MaxRequestsperSecond * MaxBatches) - ((BatchEnd.Ticks - BatchStart.Ticks) / 10000))
+                        If Difference > 0 Then
+                            Threading.Thread.Sleep(Difference)
+                        End If
+                        ' Reset
+                        BatchCounter = 0
+                        BatchStart = Now
                     End If
-                    ' Reset
-                    BatchCounter = 0
-                    BatchStart = Now
-                End If
 
-                If CRESTHistory.RecordsInserted >= 50000 Then
-                    Call CommitSQLiteTransaction()
-                    Call ExecuteNonQuerySQL("BEGIN EXCLUSIVE;")
-                    CRESTHistory.RecordsInserted = 0
+                    If CRESTHistory.RecordsInserted >= 50000 Then
+                        Call CommitSQLiteTransaction()
+                        Call BeginSQLiteTransaction()
+                        CRESTHistory.RecordsInserted = 0
+                    End If
                 End If
-
             Next
 
             ' Finish updating the DB
             Call CommitSQLiteTransaction()
 
             ' Reset DB variables
-            Call ExecuteNonQuerySQL("PRAGMA synchronous = NORMAL; PRAGMA locking_mode = NORMAL; PRAGMA temp_store = DEFAULT")
+            'Call ExecuteNonQuerySQL("PRAGMA synchronous = NORMAL; PRAGMA locking_mode = NORMAL; PRAGMA temp_store = DEFAULT")
 
             ' Done updating, hide the progress bar
             pnlProgressBar.Visible = False
