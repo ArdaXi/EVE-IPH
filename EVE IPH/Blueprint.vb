@@ -91,6 +91,9 @@ Public Class Blueprint
     ' Saving all the materials for each built component
     Private BuiltComponentList As BuiltItemList
 
+    ' Saves all the raw materials on the bp that are not components
+    Private BPRawMats As Materials
+
     ' Skills required to make it
     Private ReqBuildSkills As New EVESkillList ' Just this BP
     Private ReqBuildComponentSkills As New EVESkillList ' All the skills to build just the components
@@ -371,6 +374,7 @@ Public Class Blueprint
         ItemMarketCost = ItemCost * UserRuns * PortionSize
 
         BuiltComponentList = New BuiltItemList
+        BPRawMats = New Materials
 
         readerCost.Close()
         readerCost = Nothing
@@ -389,14 +393,17 @@ Public Class Blueprint
             'Just run the normal function and it will set everything
             Call BuildItem(SetTaxes, SetBrokerFees, SetProductionCosts)
         Else
+
+            Dim BatchBlueprint As Blueprint
+            Dim ComponentBlueprint As Blueprint
+            Dim BatchList As New List(Of Integer)
+
+            ' Get the batch list
             ' Need to figure out the number of batches - treat any item that is built with more than one blueprint differently
             ' Assumptions - They want the most effcient way to build. Ie, 96 runs, 9 bps, then do 6 batches of 11, and 3 of 10. 
             ' So max the number of runs per BP to equally distribute batches
             Dim ExtraRuns As Integer
-            Dim RunsperBP As Integer
             Dim AdjRunsperBP As Integer
-
-            Dim BatchBlueprint As Blueprint
 
             ' Number of bps is the number of batches if we have enough lines to run them
             If NumberofBPs <= NumberofProductionLines Then
@@ -421,8 +428,6 @@ Public Class Blueprint
             End If
 
             ' Fill a list of runs per bp
-            Dim BatchList As New List(Of Integer)
-
             For i = 0 To BPBatches - 1
                 ' As we add the runs, adjust with extra runs proportionally until they are gone
                 If ExtraRuns <> 0 Then
@@ -438,6 +443,7 @@ Public Class Blueprint
             Next
 
             ' Now we just build each BP for the runs in the batch and total up all the variables - apply additional costs per batch
+            ' Need to revisit for efficiency
             For i = 0 To BatchList.Count - 1
                 If TechLevel = 1 Then
                     BatchBlueprint = New Blueprint(BlueprintID, BatchList(i), iME, iTE, 1, NumberofProductionLines, BPCharacter, UserSettings, BuildBuy, _
@@ -452,7 +458,9 @@ Public Class Blueprint
 
                 Call BatchBlueprint.BuildItem(SetTaxes, SetBrokerFees, SetProductionCosts)
 
+                ' Sum up all the stuff that is batch dependent
                 With BatchBlueprint
+
                     ' Save all the variables
                     If BatchBlueprint.HasBuildableComponents And HasBuildableComponents = False Then
                         HasBuildableComponents = True
@@ -471,13 +479,22 @@ Public Class Blueprint
                         CanBuildAll = False
                     End If
 
-                    ' Material lists
-                    RawMaterials.InsertMaterialList(.GetRawMaterials.GetMaterialList)
-
+                    ' Material lists - don't copy the raw mats yet, will be rebuilt below
                     If Not IsNothing(.GetComponentMaterials.GetMaterialList) Then
                         Call ComponentMaterials.InsertMaterialList(.GetComponentMaterials.GetMaterialList)
                     End If
 
+                    ' Add all new components to the blueprint list to rebuild later
+                    For Each BI In .GetBPComponentsList.GetBuiltItemList
+                        Call BuiltComponentList.AddBuiltItem(BI)
+                    Next
+
+                    ' Save the raw mats on the bp only
+                    If Not IsNothing(.GetBPRawMaterials.GetMaterialList) Then
+                        Call BPRawMats.InsertMaterialList(.GetBPRawMaterials.GetMaterialList)
+                    End If
+
+                    ' Copy and invention materials should always correspond to the blueprint invented
                     If Not IsNothing(.GetInventionMaterials.GetMaterialList) Then
                         Call InventionMaterials.InsertMaterialList(.GetInventionMaterials.GetMaterialList)
                     End If
@@ -486,25 +503,11 @@ Public Class Blueprint
                         Call CopyMaterials.InsertMaterialList(.GetBPCCopyMaterials.GetMaterialList)
                     End If
 
-                    ' Add all new components to the blueprint list
-                    For Each BI In .GetBPComponentsList.GetBuiltItemList
-                        Call BuiltComponentList.AddBuiltItem(CType(BI.Clone, BuiltItem))
-                    Next
-
-                    ' Don't add these, it's only the largest time from the batches
+                    '*** FIX ***
+                    ' Don't add this, it's only the largest time from the batches - TODO need to multiply by the number of batches per line for T2
                     If .GetProductionTime > BPProductionTime Then
                         BPProductionTime = .GetProductionTime
                     End If
-
-                    If .GetTotalProductionTime > TotalProductionTime Then
-                        TotalProductionTime = .GetTotalProductionTime
-                    End If
-
-                    ' Skills required to make it
-                    ReqBuildSkills = .GetReqBPSkills
-                    ReqBuildComponentSkills = .GetReqComponentSkills
-                    ReqCopySkills = .ReqCopySkills
-                    ReqInventionSkills = .ReqInventionSkills
 
                     CopyCost += .GetBPCCopyCost()
                     CopyTime += .GetBPCCopyTime()
@@ -542,11 +545,51 @@ Public Class Blueprint
                     InventionTeamFee = 0 ' No invention teams
                     CopyTeamFee += .CopyTeamFee
 
-                    ' Just run the update price function for all other prices since we have the mat lists
-                    Call SetPriceData(SetTaxes, SetBrokerFees)
-
                 End With
             Next
+
+            ' Finally we need to calculate each component again as 1 bp and 1 batch so that the numbers line up
+            ' We assume that we will build all the components first before doing batches - this makes shopping list updates easier
+            ' Will revisit but the number of components is set by the blueprint
+
+            ' First copy in all the raw mats from the blueprint
+            For i = 0 To BPRawMats.GetMaterialList.Count - 1
+                Call RawMaterials.InsertMaterial(BPRawMats.GetMaterialList(i))
+            Next
+
+            ' Reset the production times
+            ComponentProductionTimes = New List(Of Double)
+
+            ' Now build the components as x runs, with 1 bp
+            For i = 0 To BuiltComponentList.GetBuiltItemList.Count - 1
+                With BuiltComponentList.GetBuiltItemList(i)
+
+                    ComponentBlueprint = New Blueprint(.BPTypeID, .ItemQuantity, .BuildME, .BuildTE, 1, _
+                                                   NumberofProductionLines, BPCharacter, UserSettings, False, _
+                                                   0, ManufacturingTeam, ManufacturingFacility, ComponentManufacturingTeam, _
+                                                   ComponentManufacturingFacility, CapitalComponentManufacturingFacility)
+
+                    Call ComponentBlueprint.BuildItem(SetTaxes, SetBrokerFees, SetProductionCosts)
+
+                    ' Now add all the raw materials from this bp
+                    Call RawMaterials.InsertMaterialList(ComponentBlueprint.GetBPRawMaterials.GetMaterialList)
+
+                    ' Reset the component's material list
+                    BuiltComponentList.GetBuiltItemList(i).BuildMaterials = CType(ComponentBlueprint.RawMaterials, Materials)
+
+                End With
+
+                ' Add the production time of this component to the total production time
+                Call ComponentProductionTimes.Add(ComponentBlueprint.GetProductionTime)
+            Next
+
+            ' Set the total production time
+            If Not IsNothing(ComponentProductionTimes) Then
+                TotalProductionTime = BPProductionTime + GetComponentProductionTime(ComponentProductionTimes)
+            End If
+
+            ' Finally recalculate our prices
+            Call SetPriceData(SetTaxes, SetBrokerFees)
 
         End If
 
@@ -648,7 +691,7 @@ Public Class Blueprint
                               0, ComponentManufacturingTeam, TempComponentFacility, _
                               ComponentManufacturingTeam, ComponentManufacturingFacility, CapitalComponentManufacturingFacility)
 
-                    ' Set this blueprint with the quantity needed and get it's mats *** Recursive Call *** - Changed Recyle to use varible instead of False - 3/16/2014
+                    ' Set this blueprint with the quantity needed and get it's mats
                     Call ComponentBlueprint.BuildItem(SetTaxes, SetBrokerFees, SetProductionCosts)
 
                     ' Determine if the component should be bought, or we should build it and add to the correct list
@@ -688,10 +731,12 @@ Public Class Blueprint
 
                             ' Save the item built, it's ME and the materials it used
                             Dim TempBuiltItem As New BuiltItem
+                            TempBuiltItem.BPTypeID = readerME.GetInt64(0)
                             TempBuiltItem.ItemTypeID = CurrentMaterial.GetMaterialTypeID
                             TempBuiltItem.ItemName = CurrentMaterial.GetMaterialName
                             TempBuiltItem.ItemQuantity = CurrentMaterial.GetQuantity
                             TempBuiltItem.BuildME = TempME
+                            TempBuiltItem.BuildTE = TempTE
                             TempBuiltItem.ItemVolume = CurrentMaterial.GetVolume
                             TempBuiltItem.BuildMaterials = ComponentBlueprint.GetRawMaterials
                             TempBuiltItem.FacilityMEModifier = ComponentBlueprint.ManufacturingFacility.MaterialMultiplier ' Save MM used on component
@@ -702,7 +747,7 @@ Public Class Blueprint
                                 TempBuiltItem.BuiltInPOS = False
                             End If
 
-                            BuiltComponentList.AddBuiltItem(TempBuiltItem)
+                            BuiltComponentList.AddBuiltItem(CType(TempBuiltItem.Clone, BuiltItem))
 
                         Else ' *** BUY ***
                             ' We want to buy this item, don't add raw mats but add the component to the buy list (raw mats)
@@ -744,10 +789,12 @@ Public Class Blueprint
 
                         ' Save the item built, it's ME and the materials it used
                         Dim TempBuiltItem As New BuiltItem
+                        TempBuiltItem.BPTypeID = readerME.GetInt64(0)
                         TempBuiltItem.ItemTypeID = CurrentMaterial.GetMaterialTypeID
                         TempBuiltItem.ItemName = CurrentMaterial.GetMaterialName
                         TempBuiltItem.ItemQuantity = CurrentMaterial.GetQuantity
                         TempBuiltItem.BuildME = TempME
+                        TempBuiltItem.BuildTE = TempTE
                         TempBuiltItem.ItemVolume = CurrentMaterial.GetVolume
                         TempBuiltItem.BuildMaterials = ComponentBlueprint.GetRawMaterials
                         TempBuiltItem.FacilityMEModifier = ComponentBlueprint.ManufacturingFacility.MaterialMultiplier ' Save MM used on component
@@ -758,7 +805,7 @@ Public Class Blueprint
                             TempBuiltItem.BuiltInPOS = False
                         End If
 
-                        BuiltComponentList.AddBuiltItem(TempBuiltItem)
+                        BuiltComponentList.AddBuiltItem(CType(TempBuiltItem.Clone, BuiltItem))
 
                     End If
 
@@ -775,7 +822,7 @@ Public Class Blueprint
                         End If
                     End If
 
-                Else ' Just raw material or T2 drone for augmented drones, ORE Mack and Polarized weapons, insert into list
+                Else ' Just raw material or T2 drone for augmented drones, and Polarized weapons, insert into list
 
                     If readerME.HasRows And ((BlueprintName.Contains("'Augmented'") Or CurrentMaterial.GetMaterialGroup = "Drone") _
                     Or Not BlueprintName.Contains("Edition") Or Not BlueprintName.Contains("Polarized")) Then
@@ -792,6 +839,8 @@ Public Class Blueprint
                     RawMaterials.InsertMaterial(CurrentMaterial)
                     ' Also insert into component list
                     ComponentMaterials.InsertMaterial(CurrentMaterial)
+                    ' These are from the bp and not a component
+                    BPRawMats.InsertMaterial(CurrentMaterial)
 
                 End If
 
@@ -2055,11 +2104,6 @@ Public Class Blueprint
         Return ItemVolume * UserRuns
     End Function
 
-    ' Returns the component lists used to build this item, with materials
-    Public Function GetBPComponentsList() As BuiltItemList
-        Return BuiltComponentList
-    End Function
-
     ' Returns the required skills to build all the components for this bp
     Public Function GetReqComponentSkills() As EVESkillList
         Return ReqBuildComponentSkills
@@ -2083,6 +2127,15 @@ Public Class Blueprint
     ' Returns the Components and other mats for the Blueprint
     Public Function GetComponentMaterials() As Materials
         Return ComponentMaterials
+    End Function
+
+    Private Function GetBPRawMaterials() As Materials
+        Return BPRawMats
+    End Function
+
+    ' Returns the component lists used to build this item, with materials
+    Public Function GetBPComponentsList() As BuiltItemList
+        Return BuiltComponentList
     End Function
 
     ' Returns information on the item that this BP makes, For now, name, runs and the type id

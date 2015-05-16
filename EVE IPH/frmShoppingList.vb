@@ -1534,7 +1534,7 @@ Public Class frmShoppingList
         Call frmMain.LoadBPfromDoubleClick(rsBPLookup.GetInt64(0), "Raw", None, "Shopping List", _
                                            Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, _
                                            chkTotalItemTax.Checked, chkTotalItemFees.Checked, chkUsage.Checked, _
-                                           lstBuild.SelectedItems(0).SubItems(3).Text, lstBuild.SelectedItems(0).SubItems(2).Text)
+                                           lstBuild.SelectedItems(0).SubItems(3).Text, lstBuild.SelectedItems(0).SubItems(2).Text, "1") ' Any buildable component here is one 1 bp
     End Sub
 
     Private Sub lstItems_ColumnClick(sender As Object, e As System.Windows.Forms.ColumnClickEventArgs) Handles lstItems.ColumnClick
@@ -1586,7 +1586,8 @@ Public Class frmShoppingList
         Call frmMain.LoadBPfromDoubleClick(CLng(rsBPLookup.GetValue(0)), lstItems.SelectedItems(0).SubItems(5).Text, Inputs, "Shopping List", _
                                            Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, _
                                            chkTotalItemTax.Checked, chkTotalItemFees.Checked, chkUsage.Checked, _
-                                           lstItems.SelectedItems(0).SubItems(3).Text, lstItems.SelectedItems(0).SubItems(2).Text)
+                                           lstItems.SelectedItems(0).SubItems(3).Text, lstItems.SelectedItems(0).SubItems(2).Text, _
+                                           lstItems.SelectedItems(0).SubItems(4).Text)
     End Sub
 
     Private Sub lstBuy_ColumnClick(sender As Object, e As System.Windows.Forms.ColumnClickEventArgs) Handles lstBuy.ColumnClick
@@ -1828,9 +1829,9 @@ Public Class frmShoppingList
                     UpdatePrice = False
             End Select
 
-        Else ' Just Quantity updates in the other two grids - Temp disable till we can fix the num bps issue in the items box
+        Else ' Just Quantity updates in the other two grids
             ' Set the columns that can be edited, just Price
-            If iSubIndex = 2 And ListRef.Name = lstBuild.Name Then
+            If iSubIndex = 2 Then
                 UpdateQuantity = True
                 UpdatePrice = False
                 Call ShowUpdateTextBox(ListRef)

@@ -1674,6 +1674,11 @@ Public Class EVECREST
         Dim MaxAge As String
         Dim CallStatus As String
 
+        Dim Output As String = ""
+
+        Debug.Print(URL)
+        Debug.Print(FormatDateTime(Now))
+
         Try
 
             ' Create the web request  
@@ -1704,14 +1709,18 @@ Public Class EVECREST
                 CacheDate = DateAdd(DateInterval.Second, Seconds, CDate(response.Headers.Get("Date")))
             End If
 
-            Return reader.ReadToEnd
+            Output = reader.ReadToEnd
 
         Catch ex As Exception
             MsgBox("Unable to download CREST data for " & UpdateType & vbCrLf & "Error: " & ex.Message, vbInformation, Application.ProductName)
-            Return ""
+            Output = ""
         Finally
             If Not response Is Nothing Then response.Close()
         End Try
+
+        Debug.Print(FormatDateTime(Now))
+
+        Return Output
 
     End Function
 

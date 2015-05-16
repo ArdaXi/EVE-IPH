@@ -3456,7 +3456,7 @@ NoBonus:
                                      BuildFacility As IndustryFacility, ComponentFacility As IndustryFacility, _
                                      InventionFacility As IndustryFacility, CopyFacility As IndustryFacility, _
                                      IncludeTaxes As Boolean, IncludeFees As Boolean, _
-                                     IncludeUsage As Boolean, MEValue As String, SentRuns As String)
+                                     IncludeUsage As Boolean, MEValue As String, SentRuns As String, NumBPs As String)
         Dim BPTech As Integer
         Dim BPDecryptor As Decryptor = NoDecryptor
         Dim DecryptorName As String = None
@@ -3519,12 +3519,20 @@ NoBonus:
                 cmbBPRelic.Text = readerRelic.GetString(0)
                 LoadingRelics = False
                 RelicsLoaded = False ' Allow reload on drop down
+
             Else
                 LoadingInventionDecryptors = True
                 cmbBPInventionDecryptor.Text = BPDecryptor.Name
                 LoadingInventionDecryptors = False
             End If
 
+            ' Need to calculate the number of bps based on the bp
+            If chkCalcAutoCalcT2NumBPs.Checked Then
+                txtBPNumBPs.Text = CStr(GetNumBPs(BPID, BPTech, CInt(SentRuns), BPDecryptor.RunMod))
+            End If
+        Else
+            ' T1
+            txtBPNumBPs.Text = NumBPs
         End If
 
         ' We are always going to load up manufacturing first
@@ -3541,12 +3549,6 @@ NoBonus:
             txtBPAddlCosts.Text = "0.00"
             txtBPRuns.Text = SentRuns
             txtBPLines.Text = txtCalcProdLines.Text
-            ' Need to calculate the number of bps based on the bp
-            If chkCalcAutoCalcT2NumBPs.Checked Then
-                txtBPNumBPs.Text = CStr(GetNumBPs(BPID, BPTech, CInt(SentRuns), BPDecryptor.RunMod))
-            Else
-                txtBPNumBPs.Text = txtCalcNumBPs.Text
-            End If
 
             txtBPInventionLines.Text = txtCalcLabLines.Text
             txtBPRelicLines.Text = txtCalcLabLines.Text
@@ -5132,7 +5134,7 @@ Tabs:
                                        SelectedBPManufacturingTeam, SelectedBPComponentManufacturingTeam, SelectedBPCopyTeam, _
                                        BuildFacility, SelectedBPComponentManufacturingFacility, SelectedBPInventionFacility, SelectedBPCopyFacility,
                                        chkBPTaxes.Checked, chkBPBrokerFees.Checked, chkBPFacilityIncludeUsage.Checked, _
-                                       lstBPComponentMats.SelectedItems(0).SubItems(2).Text, lstBPComponentMats.SelectedItems(0).SubItems(1).Text)
+                                       lstBPComponentMats.SelectedItems(0).SubItems(2).Text, lstBPComponentMats.SelectedItems(0).SubItems(1).Text, "1") ' Use 1 bp for now
         End If
 
     End Sub
@@ -18306,7 +18308,7 @@ ExitCalc:
                                            .ManufacturingTeam, .ComponentTeam, .CopyTeam, _
                                            .ManufacturingFacility, .ComponentManufacturingFacility, .InventionFacility, .CopyFacility, _
                                            chkCalcTaxes.Checked, chkCalcFees.Checked, _
-                                           chkCalcBaseFacilityIncludeUsage.Checked, CStr(.BPME), txtCalcRuns.Text)
+                                           chkCalcBaseFacilityIncludeUsage.Checked, CStr(.BPME), txtCalcRuns.Text, txtCalcNumBPs.Text)
             End With
         End If
 
