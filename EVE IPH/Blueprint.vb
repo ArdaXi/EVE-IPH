@@ -99,6 +99,7 @@ Public Class Blueprint
     Private ReqBuildComponentSkills As New EVESkillList ' All the skills to build just the components
 
     ' Invention variables
+    Private InventingBlueprint As Boolean ' Whether we are inventing or not
     Private ReqInventionSkills As New EVESkillList ' For inventing this BP
     Private ReqCopySkills As New EVESkillList ' For copying the BPC
     Private InventionMaterials As Materials
@@ -159,10 +160,6 @@ Public Class Blueprint
     Private CopyFacility As IndustryFacility
     Private InventionFacility As IndustryFacility
 
-    ' BP numbers
-    Private RunsPerBP As Integer
-    Private BPBatches As Integer
-
     ' T1 Constructor
     Public Sub New(ByVal BlueprintID As Long, ByVal BPRuns As Long, ByVal BPME As Double, ByVal BPTE As Double,
                    ByVal NumBlueprints As Integer, ByVal NumProductionLines As Integer, ByVal BPCharacter As Character, _
@@ -207,14 +204,63 @@ Public Class Blueprint
         ' Set the Decryptor data
         InventionDecryptor = BPDecryptor
 
-        ' Invention and Copy costs/times are set after getting the full base job materials
-        IncludeInventionCosts = InventionFacility.IncludeActivityCost
-        IncludeInventionTime = InventionFacility.IncludeActivityTime
-        IncludeInventionUsage = InventionFacility.IncludeActivityUsage
+        ' See if they want to do invention
+        InventingBlueprint = True
 
-        IncludeCopyCosts = CopyFacility.IncludeActivityCost
-        IncludeCopyTime = CopyFacility.IncludeActivityTime
-        IncludeCopyUsage = CopyFacility.IncludeActivityUsage
+        ' Invention and Copy costs/times are set after getting the full base job materials
+        If InventingBlueprint Then
+            IncludeInventionCosts = InventionFacility.IncludeActivityCost
+            IncludeInventionTime = InventionFacility.IncludeActivityTime
+            IncludeInventionUsage = InventionFacility.IncludeActivityUsage
+
+            IncludeCopyCosts = CopyFacility.IncludeActivityCost
+            IncludeCopyTime = CopyFacility.IncludeActivityTime
+            IncludeCopyUsage = CopyFacility.IncludeActivityUsage
+
+            ' Set the invention data 
+            If Not BlueprintName.Contains("Edition") And Not BlueprintName.Contains("Polarized") And Not BlueprintName.Contains("Augmented") Then
+                ' Set the T2/T3 skills to invent from the T1 version
+                Call SetInventionSkills()
+
+                ' Set the T2/T3 skills to copy from the T1 BPC
+                Call SetCopySkills()
+
+                ' Set the invention flag
+                CanInventRE = UserHasReqSkills(BPCharacter.Skills, ReqInventionSkills)
+
+                ' Use typical invention costs to invent this
+                Call InventREBlueprint(Not CanInventRE)
+
+            End If
+
+        Else
+            IncludeInventionCosts = False
+            IncludeInventionTime = False
+            IncludeInventionUsage = False
+
+            IncludeCopyCosts = False
+            IncludeCopyTime = False
+            IncludeCopyUsage = False
+
+            TotalInventionCost = 0
+            InventionChance = 0
+
+            TotalInventedRuns = 0
+            SingleInventedBPCRuns = 0
+            NumInventionJobs = 0
+
+            CopyCost = 0
+            CopyTime = 0
+            CopyUsage = 0
+
+            InventionCosts = 0
+            InventionTime = 0
+            InventionUsage = 0
+
+            InventionDecryptor = NoDecryptor
+            Relic = ""
+
+        End If
 
         ' Save teams
         InventionTeam = BPInventionTeam
@@ -387,169 +433,181 @@ Public Class Blueprint
     ' Base build function that takes a look at the number of blueprints the user wants to use and then builts each blueprint batch
     Public Sub BuildItems(ByVal SetTaxes As Boolean, ByVal SetBrokerFees As Boolean, ByVal SetProductionCosts As Boolean)
 
-        ' Need to check for the number of BPs sent and run multiple batches if necessary. Also, look at the number of lines per batch
+        ' Need to check for the number of BPs sent and run multiple Sessions if necessary. Also, look at the number of lines per batch
         If NumberofBPs = 1 Then
-            BPBatches = NumberofBPs
             'Just run the normal function and it will set everything
             Call BuildItem(SetTaxes, SetBrokerFees, SetProductionCosts)
-        Else
-
+        Else ' Multi bps
             Dim BatchBlueprint As Blueprint
             Dim ComponentBlueprint As Blueprint
-            Dim BatchList As New List(Of Integer)
 
-            ' Get the batch list
-            ' Need to figure out the number of batches - treat any item that is built with more than one blueprint differently
-            ' Assumptions - They want the most effcient way to build. Ie, 96 runs, 9 bps, then do 6 batches of 11, and 3 of 10. 
-            ' So max the number of runs per BP to equally distribute batches
+            Dim RunsPerLine As Integer
             Dim ExtraRuns As Integer
             Dim AdjRunsperBP As Integer
 
-            ' Number of bps is the number of batches if we have enough lines to run them
-            If NumberofBPs <= NumberofProductionLines Then
-                BPBatches = NumberofBPs
-            Else
-                ' We can't run more bps than the lines entered
-                BPBatches = NumberofProductionLines
-            End If
+            Dim BatchList As New List(Of Integer)
+            Dim Batches As Integer ' How many times do we run the batch list?
 
-            ' Firgure out runs per bp if we are greater than the number of batches (lines or bps) we will run
-            If UserRuns >= BPBatches Then
-                ' Divide the runs by number of bps - take whole amount first.
-                RunsperBP = CInt(Math.Floor(UserRuns / BPBatches))
-                ExtraRuns = CInt(UserRuns - (RunsperBP * BPBatches))
-            Else ' Can't run more bps than runs, so reset to the runs - 1 batch (bp) per run
-                ' bp batches = number of runs
-                BPBatches = CInt(UserRuns)
-                ' Reset num bps for this
+            If UserRuns > NumberofBPs Then
+                ' Can't run more bps than runs, so reset to the runs - 1 batch (bp) per run
                 NumberofBPs = CInt(UserRuns)
-                RunsperBP = 1
-                ExtraRuns = 0
             End If
 
-            ' Fill a list of runs per bp
-            For i = 0 To BPBatches - 1
-                ' As we add the runs, adjust with extra runs proportionally until they are gone
-                If ExtraRuns <> 0 Then
-                    ' Since it's a fraction of a total batch run, this will always just be one until gone
-                    AdjRunsperBP = RunsperBP + 1
-                    ExtraRuns = ExtraRuns - 1 ' Adjust extra
-                Else
-                    ' No extra runs, so just add the original runs now
-                    AdjRunsperBP = RunsperBP
+            ' Need to figure out the number of Sessions - treat any item that is built with more than one blueprint differently
+            ' Assumptions - They want the most effcient way to build. Ie, 96 runs, 9 bps, then do 6 Sessions of 11, and 3 of 10. 
+
+            ' For T1, assume that the most efficient is to run max runs on each line in one batch, so reset if bps are greater than lines
+            If TechLevel = 1 Then
+                If NumberofBPs > NumberofProductionLines Then
+                    ' We can't run more bps than the lines entered, so reset this
+                    NumberofBPs = NumberofProductionLines
                 End If
 
-                BatchList.Add(AdjRunsperBP)
-            Next
+                ' Divide the runs by number of bps - take whole amount first.
+                RunsPerLine = CInt(Math.Floor(UserRuns / NumberofBPs))
+                ExtraRuns = CInt(UserRuns - (RunsPerLine * NumberofBPs))
+                Batches = 1 ' T1 is always just one batch over the lines they have
+
+                ' Fill a list of runs per bp
+                For i = 0 To NumberofProductionLines - 1
+                    ' As we add the runs, adjust with extra runs proportionally until they are gone
+                    If ExtraRuns <> 0 Then
+                        ' Since it's a fraction of a total batch run, this will always just be one until gone
+                        AdjRunsperBP = RunsPerLine + 1
+                        ExtraRuns = ExtraRuns - 1 ' Adjust extra
+                    Else
+                        ' No extra runs, so just add the original runs now
+                        AdjRunsperBP = RunsPerLine
+                    End If
+
+                    BatchList.Add(AdjRunsperBP)
+                Next
+
+            Else ' T2 and T3
+
+                RunsPerLine = CInt(Math.Floor(UserRuns / NumberofBPs))
+                ExtraRuns = CInt(UserRuns - (RunsPerLine * NumberofBPs))
+
+
+
+
+
+
+
+
+
+            End If
 
             ' Now we just build each BP for the runs in the batch and total up all the variables - apply additional costs per batch
             ' Need to revisit for efficiency
-            For i = 0 To BatchList.Count - 1
-                If TechLevel = 1 Then
-                    BatchBlueprint = New Blueprint(BlueprintID, BatchList(i), iME, iTE, 1, NumberofProductionLines, BPCharacter, UserSettings, BuildBuy, _
-                                                   CDbl(AdditionalCosts / BatchList.Count), ManufacturingTeam, ManufacturingFacility, ComponentManufacturingTeam, _
-                                                   ComponentManufacturingFacility, CapitalComponentManufacturingFacility)
-                Else
-                    BatchBlueprint = New Blueprint(BlueprintID, BatchList(i), iME, iTE, 1, NumberofProductionLines, NumberofLaboratoryLines, BPCharacter, UserSettings, _
-                                                   CDbl(AdditionalCosts / BatchList.Count), ManufacturingTeam, ManufacturingFacility, ComponentManufacturingTeam, _
-                                                   ComponentManufacturingFacility, CapitalComponentManufacturingFacility, BuildBuy, InventionDecryptor, InventionFacility, _
-                                                   InventionTeam, CopyFacility, CopyTeam, InventionT3BPCTypeID)
-                End If
-
-                Call BatchBlueprint.BuildItem(SetTaxes, SetBrokerFees, SetProductionCosts)
-
-                ' Sum up all the stuff that is batch dependent
-                With BatchBlueprint
-
-                    ' Save all the variables
-                    If BatchBlueprint.HasBuildableComponents And HasBuildableComponents = False Then
-                        HasBuildableComponents = True
+            For i = 0 To Batches - 1
+                For j = 0 To BatchList.Count - 1
+                    If TechLevel = 1 Then
+                        BatchBlueprint = New Blueprint(BlueprintID, BatchList(j), iME, iTE, 1, NumberofProductionLines, BPCharacter, UserSettings, BuildBuy, _
+                                                       CDbl(AdditionalCosts / BatchList.Count), ManufacturingTeam, ManufacturingFacility, ComponentManufacturingTeam, _
+                                                       ComponentManufacturingFacility, CapitalComponentManufacturingFacility)
+                    Else
+                        BatchBlueprint = New Blueprint(BlueprintID, BatchList(j), iME, iTE, 1, NumberofProductionLines, NumberofLaboratoryLines, BPCharacter, UserSettings, _
+                                                       CDbl(AdditionalCosts / BatchList.Count), ManufacturingTeam, ManufacturingFacility, ComponentManufacturingTeam, _
+                                                       ComponentManufacturingFacility, CapitalComponentManufacturingFacility, BuildBuy, InventionDecryptor, InventionFacility, _
+                                                       InventionTeam, CopyFacility, CopyTeam, InventionT3BPCTypeID)
                     End If
 
-                    If BatchBlueprint.CanInventRE And CanInventRE = False Then
-                        CanInventRE = True
-                    End If
+                    Call BatchBlueprint.BuildItem(SetTaxes, SetBrokerFees, SetProductionCosts)
 
-                    ' Assumption is that we can build the bp
-                    If Not BatchBlueprint.CanBuildBP And CanBuildBP = True Then
-                        CanBuildBP = False
-                    End If
+                    ' Sum up all the stuff that is batch dependent
+                    With BatchBlueprint
 
-                    If Not BatchBlueprint.CanBuildAll And CanBuildAll = True Then
-                        CanBuildAll = False
-                    End If
+                        ' Save all the variables
+                        If BatchBlueprint.HasBuildableComponents And HasBuildableComponents = False Then
+                            HasBuildableComponents = True
+                        End If
 
-                    ' Material lists - don't copy the raw mats yet, will be rebuilt below
-                    If Not IsNothing(.GetComponentMaterials.GetMaterialList) Then
-                        Call ComponentMaterials.InsertMaterialList(.GetComponentMaterials.GetMaterialList)
-                    End If
+                        If BatchBlueprint.CanInventRE And CanInventRE = False Then
+                            CanInventRE = True
+                        End If
 
-                    ' Add all new components to the blueprint list to rebuild later
-                    For Each BI In .GetBPComponentsList.GetBuiltItemList
-                        Call BuiltComponentList.AddBuiltItem(BI)
-                    Next
+                        ' Assumption is that we can build the bp
+                        If Not BatchBlueprint.CanBuildBP And CanBuildBP = True Then
+                            CanBuildBP = False
+                        End If
 
-                    ' Save the raw mats on the bp only
-                    If Not IsNothing(.GetBPRawMaterials.GetMaterialList) Then
-                        Call BPRawMats.InsertMaterialList(.GetBPRawMaterials.GetMaterialList)
-                    End If
+                        If Not BatchBlueprint.CanBuildAll And CanBuildAll = True Then
+                            CanBuildAll = False
+                        End If
 
-                    ' Copy and invention materials should always correspond to the blueprint invented
-                    If Not IsNothing(.GetInventionMaterials.GetMaterialList) Then
-                        Call InventionMaterials.InsertMaterialList(.GetInventionMaterials.GetMaterialList)
-                    End If
+                        ' Material lists - don't copy the raw mats yet, will be rebuilt below
+                        If Not IsNothing(.GetComponentMaterials.GetMaterialList) Then
+                            Call ComponentMaterials.InsertMaterialList(.GetComponentMaterials.GetMaterialList)
+                        End If
 
-                    If Not IsNothing(.GetBPCCopyMaterials.GetMaterialList) Then
-                        Call CopyMaterials.InsertMaterialList(.GetBPCCopyMaterials.GetMaterialList)
-                    End If
+                        ' Add all new components to the blueprint list to rebuild later
+                        For Each BI In .GetBPComponentsList.GetBuiltItemList
+                            Call BuiltComponentList.AddBuiltItem(BI)
+                        Next
 
-                    '*** FIX ***
-                    ' Don't add this, it's only the largest time from the batches - TODO need to multiply by the number of batches per line for T2
-                    If .GetProductionTime > BPProductionTime Then
-                        BPProductionTime = .GetProductionTime
-                    End If
+                        ' Save the raw mats on the bp only
+                        If Not IsNothing(.GetBPRawMaterials.GetMaterialList) Then
+                            Call BPRawMats.InsertMaterialList(.GetBPRawMaterials.GetMaterialList)
+                        End If
 
-                    CopyCost += .GetBPCCopyCost()
-                    CopyTime += .GetBPCCopyTime()
-                    CopyUsage += .GetBPCCopyUsage()
+                        ' Copy and invention materials should always correspond to the blueprint invented
+                        If Not IsNothing(.GetInventionMaterials.GetMaterialList) Then
+                            Call InventionMaterials.InsertMaterialList(.GetInventionMaterials.GetMaterialList)
+                        End If
 
-                    InventionUsage += .GetBPInventionUsage()
-                    InventionCosts += .GetBPInventionCost()
-                    InventionTime += .GetBPInventionTime()
+                        If Not IsNothing(.GetBPCCopyMaterials.GetMaterialList) Then
+                            Call CopyMaterials.InsertMaterialList(.GetBPCCopyMaterials.GetMaterialList)
+                        End If
 
-                    TotalInventionCost += .GetBPTotalInventionCosts
+                        '*** FIX ***
+                        ' Don't add this, it's only the largest time from the Sessions - TODO need to multiply by the number of Sessions per line for T2
+                        If .GetProductionTime > BPProductionTime Then
+                            BPProductionTime = .GetProductionTime
+                        End If
 
-                    InventionChance = .GetInventionChance
-                    InventionDecryptor = .GetDecryptor
-                    Relic = .GetRelic()
-                    SingleInventedBPCRuns = .GetInventedRuns
-                    NumInventionJobs += .GetInventionJobs
+                        CopyCost += .GetBPCCopyCost()
+                        CopyTime += .GetBPCCopyTime()
+                        CopyUsage += .GetBPCCopyUsage()
 
-                    Taxes += .GetBPTaxes
-                    BrokerFees += .GetBPBrokerFees
+                        InventionUsage += .GetBPInventionUsage()
+                        InventionCosts += .GetBPInventionCost()
+                        InventionTime += .GetBPInventionTime()
 
-                    ' New cost variables
-                    BaseJobCost += .GetBaseJobCost
+                        TotalInventionCost += .GetBPTotalInventionCosts
 
-                    ' Base Fees for activity
-                    JobFee += .GetJobFee
+                        InventionChance = .GetInventionChance
+                        InventionDecryptor = .GetDecryptor
+                        Relic = .GetRelic()
+                        SingleInventedBPCRuns = .GetInventedRuns
+                        NumInventionJobs += .GetInventionJobs
 
-                    ' How much it costs to use each facility to manufacture items and parts
-                    ManufacturingFacilityUsage += .GetManufacturingFacilityUsage
-                    ComponentFacilityUsage += .GetComponentFacilityUsage
-                    CapComponentFacilityUsage += .GetCapComponentFacilityUsage
+                        Taxes += .GetBPTaxes
+                        BrokerFees += .GetBPBrokerFees
 
-                    ' Team costs
-                    ManufacturingTeamFee += .GetManufacturingTeamFee
-                    ComponentTeamFee += .GetComponentTeamFee
-                    InventionTeamFee = 0 ' No invention teams
-                    CopyTeamFee += .CopyTeamFee
+                        ' New cost variables
+                        BaseJobCost += .GetBaseJobCost
 
-                End With
+                        ' Base Fees for activity
+                        JobFee += .GetJobFee
+
+                        ' How much it costs to use each facility to manufacture items and parts
+                        ManufacturingFacilityUsage += .GetManufacturingFacilityUsage
+                        ComponentFacilityUsage += .GetComponentFacilityUsage
+                        CapComponentFacilityUsage += .GetCapComponentFacilityUsage
+
+                        ' Team costs
+                        ManufacturingTeamFee += .GetManufacturingTeamFee
+                        ComponentTeamFee += .GetComponentTeamFee
+                        InventionTeamFee = 0 ' No invention teams
+                        CopyTeamFee += .CopyTeamFee
+
+                    End With
+                Next
             Next
 
             ' Finally we need to calculate each component again as 1 bp and 1 batch so that the numbers line up
-            ' We assume that we will build all the components first before doing batches - this makes shopping list updates easier
+            ' We assume that we will build all the components first before doing Sessions - this makes shopping list updates easier
             ' Will revisit but the number of components is set by the blueprint
 
             ' First copy in all the raw mats from the blueprint
@@ -864,23 +922,6 @@ Public Class Blueprint
 
         ' Set the Advanced Skill levels to build this item for later application of Production Time
         AdvManufacturingSkillLevelBonus = SetAdvManufacturingSkillLevels(ReqBuildSkills)
-
-        ' Set the invention data if this is a T2
-        If (TechLevel = BlueprintTechLevel.T2 Or TechLevel = BlueprintTechLevel.T3) _
-            And (Not BlueprintName.Contains("Edition") And Not BlueprintName.Contains("Polarized") And Not BlueprintName.Contains("Augmented")) Then
-            ' Set the T2/T3 skills to invent from the T1 version
-            Call SetInventionSkills()
-
-            ' Set the T2/T3 skills to copy from the T1 BPC
-            Call SetCopySkills()
-
-            ' Set the invention flag
-            CanInventRE = UserHasReqSkills(BPCharacter.Skills, ReqInventionSkills)
-
-            ' Use typical invention costs to invent this
-            Call InventREBlueprint(Not CanInventRE)
-
-        End If
 
         ' Set the production time
         Call SetProductionTime()
@@ -2158,10 +2199,10 @@ Public Class Blueprint
         Return BlueprintName
     End Function
 
-    ' Returns the number of batches we ran for this blueprint
-    Public Function GetBPBatches() As Integer
-        Return BPBatches
-    End Function
+    '' Returns the number of batches we ran for this blueprint
+    'Public Function GetBPBatches() As Integer
+    '    Return BPBatches
+    'End Function
 
     ' Returns the number of blueprints used
     Public Function GetNumBPs() As Integer

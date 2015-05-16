@@ -7601,7 +7601,7 @@ Tabs:
         End If
 
         ' Reset the number of bps to what we used in batches, not what was entered
-        txtBPNumBPs.Text = CStr(SelectedBlueprint.GetBPBatches)
+        ' txtBPNumBPs.Text = CStr(SelectedBlueprint.GetBPBatches)
 
         ' Show and update labels for T2 if selected
         If SelectedBlueprint.GetTechLevel = BlueprintTechLevel.T2 Then
