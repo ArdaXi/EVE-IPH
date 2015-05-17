@@ -627,8 +627,8 @@ Public Class frmMain
 
         ' Tool Tips
         If UserApplicationSettings.ShowToolTips Then
-            ttMain.SetToolTip(lblBPInventionCost, "Invention Cost for Runs entered = (Datacores + Decryptors + Usage) / Invented Runs * Runs" & vbCrLf & "Double-Click for material list needed for enough successful BPCs for runs entered")
-            ttMain.SetToolTip(lblBPRECost, "Invention Cost for Runs entered = (Datacores + Decryptors + Relics + Usage) / Invented Runs * Runs" & vbCrLf & "Double-Click for material list needed for enough successful BPCs for runs entered")
+            ttMain.SetToolTip(lblBPInventionCost, "Invention Cost for Runs entered = (Datacores + Decryptors) / Invented Runs * Runs" & vbCrLf & "Double-Click for material list needed for enough successful BPCs for runs entered")
+            ttMain.SetToolTip(lblBPRECost, "Invention Cost for Runs entered = (Datacores + Decryptors + Relics) / Invented Runs * Runs" & vbCrLf & "Double-Click for material list needed for enough successful BPCs for runs entered")
             ttMain.SetToolTip(lblBPCopyCosts, "Total Cost of materials to make enough BPCs for the number of invention jobs needed" & vbCrLf & "Double-Click for material list needed for enough successful BPCs for runs entered")
             ttMain.SetToolTip(lblBPFacilityUsage, "") ' Set when loaded with data
             ttMain.SetToolTip(lblBPRuns, "Total number of items to produce. I.e. If you have 5 blueprints with 4 runs each, then enter 20")
@@ -3528,7 +3528,7 @@ NoBonus:
 
             ' Need to calculate the number of bps based on the bp
             If chkCalcAutoCalcT2NumBPs.Checked Then
-                txtBPNumBPs.Text = CStr(GetNumBPs(BPID, BPTech, CInt(SentRuns), BPDecryptor.RunMod))
+                txtBPNumBPs.Text = CStr(GetUsedNumBPs(BPID, BPTech, CInt(SentRuns), BPDecryptor.RunMod))
             End If
         Else
             ' T1
@@ -6132,7 +6132,7 @@ Tabs:
 
     Private Sub txtBPNumBPs_DoubleClick(sender As Object, e As System.EventArgs) Handles txtBPNumBPs.DoubleClick
         If Not IsNothing(SelectedBlueprint) Then
-            txtBPNumBPs.Text = CStr(GetNumBPs(SelectedBlueprint.GetBPTypeID, SelectedBlueprint.GetTechLevel, CInt(txtBPRuns.Text), SelectedDecryptor.RunMod))
+            txtBPNumBPs.Text = CStr(GetUsedNumBPs(SelectedBlueprint.GetBPTypeID, SelectedBlueprint.GetTechLevel, CInt(txtBPRuns.Text), SelectedDecryptor.RunMod))
         End If
     End Sub
 
@@ -7601,7 +7601,7 @@ Tabs:
         End If
 
         ' Reset the number of bps to what we used in batches, not what was entered
-        ' txtBPNumBPs.Text = CStr(SelectedBlueprint.GetBPBatches)
+        txtBPNumBPs.Text = CStr(SelectedBlueprint.GetUsedNumBPs)
 
         ' Show and update labels for T2 if selected
         If SelectedBlueprint.GetTechLevel = BlueprintTechLevel.T2 Then
@@ -7620,7 +7620,7 @@ Tabs:
                 End If
 
                 ' Invention cost to get enough success for the runs entered
-                lblBPInventionCost.Text = FormatNumber(SelectedBlueprint.GetBPTotalInventionCosts(), 2)
+                lblBPInventionCost.Text = FormatNumber(SelectedBlueprint.GetBPInventionCost(), 2)
 
                 ' Invention Chance
                 lblBPInventionChance.Text = FormatPercent(SelectedBlueprint.GetInventionChance(), 2)
@@ -7628,14 +7628,14 @@ Tabs:
                 ' Update the decryptor stats box ME: -4, TE: -3, Runs: +9
                 lblBPDecryptorStats.Text = "ME: " & CStr(SelectedDecryptor.MEMod) & ", TE: " & CStr(SelectedDecryptor.TEMod) & vbCrLf & "BP Runs: " & CStr(SelectedBlueprint.GetInventedRuns)
 
+                ' Add copy costs
+                lblBPCopyCosts.Text = FormatNumber(SelectedBlueprint.GetBPCCopyCost)
+
                 ' Show the copy time if they want it
                 lblBPCopyTime.Text = FormatIPHTime(SelectedBlueprint.GetBPCCopyTime)
 
                 ' Show the invention time if they want it
                 lblBPInventionTime.Text = FormatIPHTime(SelectedBlueprint.GetBPInventionTime)
-
-                ' Add copy costs
-                lblBPCopyCosts.Text = FormatNumber(SelectedBlueprint.GetBPCCopyCost)
 
                 ' Finally check the invention materials and make sure that if any have 0.00 for price,
                 ' we update the invention label and add a tooltip for what has a price of 0
@@ -7683,7 +7683,7 @@ Tabs:
             tabBPInventionEquip.SelectTab(SelectedBPTabIndex)
 
             ' RE Cost and time
-            lblBPRECost.Text = FormatNumber(SelectedBlueprint.GetBPTotalInventionCosts(), 2)
+            lblBPRECost.Text = FormatNumber(SelectedBlueprint.GetBPInventionCost(), 2)
             lblBPRETime.Text = FormatIPHTime(SelectedBlueprint.GetBPInventionTime())
 
             ' Update the decryptor stats box ME: -4, TE: -3, Runs: +9
@@ -8285,14 +8285,14 @@ ExitForm:
 
         If Not IsNothing(SelectedBlueprint) Then
             If Trim(txtBPRuns.Text) <> "" Then
-                txtBPNumBPs.Text = CStr(GetNumBPs(SelectedBlueprint.GetBPTypeID, SelectedBlueprint.GetTechLevel, CInt(txtBPRuns.Text), SelectedDecryptor.RunMod))
+                txtBPNumBPs.Text = CStr(GetUsedNumBPs(SelectedBlueprint.GetBPTypeID, SelectedBlueprint.GetTechLevel, CInt(txtBPRuns.Text), SelectedDecryptor.RunMod))
             End If
         End If
 
     End Sub
 
     ' Returns the number of BPs to use for item type and runs sent
-    Private Function GetNumBPs(ByVal BlueprintTypeID As Long, ByVal SentTechLevel As Integer, ByVal SentRuns As Integer, ByVal DecryptorMod As Integer) As Integer
+    Private Function GetUsedNumBPs(ByVal BlueprintTypeID As Long, ByVal SentTechLevel As Integer, ByVal SentRuns As Integer, ByVal DecryptorMod As Integer) As Integer
         Dim readerOwned As SQLiteDataReader
         Dim SQL As String
         Dim MaxProductionRuns As Long
@@ -17001,7 +17001,7 @@ CheckTechs:
                             NumberofBlueprints = CInt(txtCalcNumBPs.Text)
                         ElseIf .TechLevel = "T3" Or (.TechLevel = "T2" And chkCalcAutoCalcT2NumBPs.Checked = True) Then
                             ' For T3 or if they have calc checked, we will never have a BPO so determine the number of BPs
-                            NumberofBlueprints = GetNumBPs(.BPID, CInt(.TechLevel.Substring(1, 1)), .Runs, .Decryptor.RunMod)
+                            NumberofBlueprints = GetUsedNumBPs(.BPID, CInt(.TechLevel.Substring(1, 1)), .Runs, .Decryptor.RunMod)
                         Else
                             NumberofBlueprints = CInt(txtCalcNumBPs.Text)
                         End If
@@ -17096,7 +17096,7 @@ CheckTechs:
                                 InsertItem.BaseJobCost = ManufacturingBlueprint.GetBaseJobCost
                                 InsertItem.JobFee = ManufacturingBlueprint.GetJobFee
 
-                                InsertItem.NumBPs = ManufacturingBlueprint.GetNumBPs
+                                InsertItem.NumBPs = ManufacturingBlueprint.GetUsedNumBPs
                                 InsertItem.InventionChance = ManufacturingBlueprint.GetInventionChance
                                 InsertItem.Race = GetRace(ManufacturingBlueprint.GetRaceID)
                                 InsertItem.VolumeperItem = ManufacturingBlueprint.GetItemVolume
@@ -17146,7 +17146,7 @@ CheckTechs:
                             InsertItem.BaseJobCost = ManufacturingBlueprint.GetBaseJobCost
                             InsertItem.JobFee = ManufacturingBlueprint.GetJobFee
 
-                            InsertItem.NumBPs = ManufacturingBlueprint.GetNumBPs
+                            InsertItem.NumBPs = ManufacturingBlueprint.GetUsedNumBPs
                             InsertItem.InventionChance = ManufacturingBlueprint.GetInventionChance
                             InsertItem.Race = GetRace(ManufacturingBlueprint.GetRaceID)
                             InsertItem.VolumeperItem = ManufacturingBlueprint.GetItemVolume
@@ -17224,7 +17224,7 @@ CheckTechs:
                                 InsertItem.BaseJobCost = ManufacturingBlueprint.GetBaseJobCost
                                 InsertItem.JobFee = ManufacturingBlueprint.GetJobFee
 
-                                InsertItem.NumBPs = ManufacturingBlueprint.GetNumBPs
+                                InsertItem.NumBPs = ManufacturingBlueprint.GetUsedNumBPs
                                 InsertItem.InventionChance = ManufacturingBlueprint.GetInventionChance
                                 InsertItem.Race = GetRace(ManufacturingBlueprint.GetRaceID)
                                 InsertItem.VolumeperItem = ManufacturingBlueprint.GetItemVolume
@@ -17302,7 +17302,7 @@ CheckTechs:
                             InsertItem.BaseJobCost = ManufacturingBlueprint.GetBaseJobCost
                             InsertItem.JobFee = ManufacturingBlueprint.GetJobFee
 
-                            InsertItem.NumBPs = ManufacturingBlueprint.GetNumBPs
+                            InsertItem.NumBPs = ManufacturingBlueprint.GetUsedNumBPs
                             InsertItem.InventionChance = ManufacturingBlueprint.GetInventionChance
                             InsertItem.Race = GetRace(ManufacturingBlueprint.GetRaceID)
                             InsertItem.VolumeperItem = ManufacturingBlueprint.GetItemVolume
