@@ -943,7 +943,6 @@ Public Class EVECREST
 
                     While rsLookup.Read
                         Call SetStationFacilityData(rsLookup.GetInt64(0))
-                        Call UpdateNullCategoryStationFacilities(rsLookup.GetInt64(0))
 
                         ' Add some updates to the splash screen if it takes longer than 30 seconds to update
                         ' After the first time, this all should be relatively fast to update
@@ -979,13 +978,6 @@ Public Class EVECREST
                     rsLookup.Close()
                     DBCommand = Nothing
 
-                    ' Update the ID numbers for use in the program since we just added a bunch potentially
-                    SQL = "UPDATE STATION_FACILITIES SET GROUP_ID = 0 WHERE GROUP_ID IS NULL"
-                    Call ExecuteNonQuerySQL(SQL)
-
-                    SQL = "UPDATE STATION_FACILITIES SET CATEGORY_ID = 0 WHERE CATEGORY_ID IS NULL"
-                    Call ExecuteNonQuerySQL(SQL)
-
                     '' Update Tax rates - might want to ignore this until they actually could change, NPC is set by CCP and outposts don't get set through CREST
                     'SQL = "SELECT DISTINCT FACILITY_ID, FACILITY_TAX FROM STATION_FACILITIES WHERE OUTPOST <> 2" ' 2 for outposts means the user has set the data
                     'DBCommand = New SQLiteCommand(SQL, DB)
@@ -1006,7 +998,7 @@ Public Class EVECREST
                         TempLabel.Text = StatusText
                     End If
 
-                    ' Update the cost indicies for the solar system of the statinos
+                    ' Update the cost indicies for the solar system of the stations
                     SQL = "SELECT DISTINCT SOLAR_SYSTEM_ID, ACTIVITY_ID, COST_INDEX FROM INDUSTRY_SYSTEMS_COST_INDICIES"
                     DBCommand = New SQLiteCommand(SQL, DB)
                     rsLookup = DBCommand.ExecuteReader
@@ -1059,6 +1051,12 @@ Public Class EVECREST
                     SQL = "REINDEX IDX_SF_FN"
                     Call ExecuteNonQuerySQL(SQL)
 
+                    SQL = "REINDEX IDX_SF_FID" ' not sure if I still need these
+                    Call ExecuteNonQuerySQL(SQL)
+
+                    SQL = "REINDEX IDX_SF_SSID_AID" ' not sure if I still need these
+                    Call ExecuteNonQuerySQL(SQL)
+
                     ' Finally, update the stations table for easy look ups in assets
                     ' note some stations may not be in the CREST update since those are just industry facilities but contains all outposts, which we want
                     SQL = "SELECT FACILITY_ID, FACILITY_NAME, FACILITY_TYPE_ID, SOLAR_SYSTEM_ID, SOLAR_SYSTEM_SECURITY, REGION_ID "
@@ -1109,21 +1107,18 @@ Public Class EVECREST
         SQL = SQL & "SOLAR_SYSTEMS.solarSystemID AS SOLAR_SYSTEM_ID, SOLAR_SYSTEMS.solarSystemName AS SOLAR_SYSTEM_NAME, "
         SQL = SQL & "SOLAR_SYSTEMS.security AS SOLAR_SYSTEM_SECURITY, REGIONS.regionID AS REGION_ID, REGIONS.regionName AS REGION_NAME, "
         SQL = SQL & "FACILITY_TYPE_ID, typeName AS FACILITY_TYPE, RAM_ACTIVITIES.activityID AS ACTIVITY_ID, RAM_ACTIVITIES.activityName AS ACTIVITY_NAME, FACILITY_TAX,"
-        SQL = SQL & "baseMaterialMultiplier * (CASE WHEN RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP.materialMultiplier IS NOT NULL THEN "
-        SQL = SQL & "RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP.materialMultiplier ELSE 1 END) AS MATERIAL_MULTIPLIER, "
-        SQL = SQL & "baseTimeMultiplier * (CASE WHEN RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP.timeMultiplier IS NOT NULL THEN "
-        SQL = SQL & "RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP.timeMultiplier ELSE 1 END) AS TIME_MULTIPLIER, "
-        SQL = SQL & "baseCostMultiplier * (CASE WHEN RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP.costMultiplier IS NOT NULL THEN "
-        SQL = SQL & "RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP.costMultiplier ELSE 1 END) AS COST_MULTIPLIER, "
-        SQL = SQL & "INVENTORY_GROUPS.groupID AS GROUP_ID, INVENTORY_GROUPS.groupName AS GROUP_NAME, NULL AS CATEGORY_ID, NULL AS CATEGORY_NAME, INDUSTRY_SYSTEMS_COST_INDICIES.COST_INDEX, 0 AS OUTPOST "
+        SQL = SQL & "baseMaterialMultiplier * RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP.materialMultiplier AS MATERIAL_MULTIPLIER, "
+        SQL = SQL & "baseTimeMultiplier * RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP.timeMultiplier AS TIME_MULTIPLIER, "
+        SQL = SQL & "baseCostMultiplier * RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP.costMultiplier AS COST_MULTIPLIER, "
+        SQL = SQL & "INVENTORY_GROUPS.groupID AS GROUP_ID, INVENTORY_GROUPS.groupName AS GROUP_NAME, 0 AS CATEGORY_ID, NULL AS CATEGORY_NAME, INDUSTRY_SYSTEMS_COST_INDICIES.COST_INDEX, 0 AS OUTPOST "
         SQL = SQL & "FROM INDUSTRY_FACILITIES, INVENTORY_TYPES, RAM_ASSEMBLY_LINE_STATIONS, REGIONS, SOLAR_SYSTEMS, INDUSTRY_SYSTEMS_COST_INDICIES, "
-        SQL = SQL & "RAM_ACTIVITIES, RAM_ASSEMBLY_LINE_TYPES "
-        SQL = SQL & "LEFT JOIN RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP ON RAM_ASSEMBLY_LINE_TYPES.assemblyLineTypeID = RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP.assemblyLineTypeID  "
-        SQL = SQL & "LEFT JOIN INVENTORY_GROUPS ON RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP.groupID = INVENTORY_GROUPS.groupID "
+        SQL = SQL & "RAM_ACTIVITIES, RAM_ASSEMBLY_LINE_TYPES, RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP, INVENTORY_GROUPS "
         SQL = SQL & "WHERE INDUSTRY_FACILITIES.FACILITY_ID = " & CStr(FacilityID) & " "
         SQL = SQL & "AND INDUSTRY_FACILITIES.FACILITY_TYPE_ID = INVENTORY_TYPES.typeID "
         SQL = SQL & "AND INDUSTRY_FACILITIES.REGION_ID = REGIONS.regionID "
         SQL = SQL & "AND INDUSTRY_FACILITIES.SOLAR_SYSTEM_ID = SOLAR_SYSTEMS.solarSystemID "
+        SQL = SQL & "AND RAM_ASSEMBLY_LINE_TYPES.assemblyLineTypeID = RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP.assemblyLineTypeID "
+        SQL = SQL & "AND RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP.groupID = INVENTORY_GROUPS.groupID "
         SQL = SQL & "AND INDUSTRY_FACILITIES.FACILITY_ID = RAM_ASSEMBLY_LINE_STATIONS.stationID "
         SQL = SQL & "AND RAM_ASSEMBLY_LINE_TYPES.activityID = RAM_ACTIVITIES.activityID "
         SQL = SQL & "AND INDUSTRY_SYSTEMS_COST_INDICIES.SOLAR_SYSTEM_ID = INDUSTRY_FACILITIES.SOLAR_SYSTEM_ID "
@@ -1134,21 +1129,18 @@ Public Class EVECREST
         SQL = SQL & "SOLAR_SYSTEMS.solarSystemID AS SOLAR_SYSTEM_ID, SOLAR_SYSTEMS.solarSystemName AS SOLAR_SYSTEM_NAME, "
         SQL = SQL & "SOLAR_SYSTEMS.security AS SOLAR_SYSTEM_SECURITY, REGIONS.regionID AS REGION_ID, REGIONS.regionName AS REGION_NAME, "
         SQL = SQL & "FACILITY_TYPE_ID, typeName AS FACILITY_TYPE, RAM_ACTIVITIES.activityID AS ACTIVITY_ID, RAM_ACTIVITIES.activityName AS ACTIVITY_NAME, FACILITY_TAX,"
-        SQL = SQL & "baseMaterialMultiplier * (CASE WHEN RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.materialMultiplier IS NOT NULL THEN "
-        SQL = SQL & "RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.materialMultiplier ELSE 1 END) AS MATERIAL_MULTIPLIER, "
-        SQL = SQL & "baseTimeMultiplier * (CASE WHEN RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.timeMultiplier IS NOT NULL THEN "
-        SQL = SQL & "RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.timeMultiplier ELSE 1 END) AS TIME_MULTIPLIER, "
-        SQL = SQL & "baseCostMultiplier * (CASE WHEN RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.costMultiplier IS NOT NULL THEN "
-        SQL = SQL & "RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.costMultiplier ELSE 1 END) AS COST_MULTIPLIER, "
-        SQL = SQL & "NULL AS GROUP_ID, NULL AS GROUP_NAME, INVENTORY_CATEGORIES.categoryID AS CATEGORY_ID, INVENTORY_CATEGORIES.categoryName AS CATEGORY_NAME, COST_INDEX, 0 AS OUTPOST "
+        SQL = SQL & "baseMaterialMultiplier * RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.materialMultiplier AS MATERIAL_MULTIPLIER, "
+        SQL = SQL & "baseTimeMultiplier * RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.timeMultiplier AS TIME_MULTIPLIER, "
+        SQL = SQL & "baseCostMultiplier * RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.costMultiplier AS COST_MULTIPLIER, "
+        SQL = SQL & "0 AS GROUP_ID, NULL AS GROUP_NAME, INVENTORY_CATEGORIES.categoryID AS CATEGORY_ID, INVENTORY_CATEGORIES.categoryName AS CATEGORY_NAME, COST_INDEX, 0 AS OUTPOST "
         SQL = SQL & "FROM INDUSTRY_FACILITIES, INVENTORY_TYPES, RAM_ASSEMBLY_LINE_STATIONS, REGIONS, SOLAR_SYSTEMS, INDUSTRY_SYSTEMS_COST_INDICIES, "
-        SQL = SQL & "RAM_ACTIVITIES, RAM_ASSEMBLY_LINE_TYPES "
-        SQL = SQL & "LEFT JOIN RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY ON RAM_ASSEMBLY_LINE_TYPES.assemblyLineTypeID = RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.assemblyLineTypeID  "
-        SQL = SQL & "LEFT JOIN INVENTORY_CATEGORIES ON RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.categoryID = INVENTORY_CATEGORIES.categoryID "
+        SQL = SQL & "RAM_ACTIVITIES, RAM_ASSEMBLY_LINE_TYPES, RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY, INVENTORY_CATEGORIES "
         SQL = SQL & "WHERE INDUSTRY_FACILITIES.FACILITY_ID = " & CStr(FacilityID) & " "
         SQL = SQL & "AND INDUSTRY_FACILITIES.FACILITY_TYPE_ID = INVENTORY_TYPES.typeID "
         SQL = SQL & "AND INDUSTRY_FACILITIES.REGION_ID = REGIONS.regionID "
         SQL = SQL & "AND INDUSTRY_FACILITIES.SOLAR_SYSTEM_ID = SOLAR_SYSTEMS.solarSystemID "
+        SQL = SQL & "AND RAM_ASSEMBLY_LINE_TYPES.assemblyLineTypeID = RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.assemblyLineTypeID "
+        SQL = SQL & "AND RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.categoryID = INVENTORY_CATEGORIES.categoryID "
         SQL = SQL & "AND INDUSTRY_FACILITIES.FACILITY_ID = RAM_ASSEMBLY_LINE_STATIONS.stationID "
         SQL = SQL & "AND RAM_ASSEMBLY_LINE_TYPES.activityID = RAM_ACTIVITIES.activityID "
         SQL = SQL & "AND INDUSTRY_SYSTEMS_COST_INDICIES.SOLAR_SYSTEM_ID = INDUSTRY_FACILITIES.SOLAR_SYSTEM_ID "
@@ -1159,23 +1151,20 @@ Public Class EVECREST
         SQL = SQL & "SOLAR_SYSTEMS.solarSystemID AS SOLAR_SYSTEM_ID, SOLAR_SYSTEMS.solarSystemName AS SOLAR_SYSTEM_NAME, "
         SQL = SQL & "SOLAR_SYSTEMS.security AS SOLAR_SYSTEM_SECURITY, REGIONS.regionID AS REGION_ID, REGIONS.regionName AS REGION_NAME, "
         SQL = SQL & "FACILITY_TYPE_ID, typeName AS FACILITY_TYPE, RAM_ACTIVITIES.activityID AS ACTIVITY_ID, RAM_ACTIVITIES.activityName AS ACTIVITY_NAME, FACILITY_TAX,"
-        SQL = SQL & "baseMaterialMultiplier * (CASE WHEN RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP.materialMultiplier IS NOT NULL THEN "
-        SQL = SQL & "RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP.materialMultiplier ELSE 1 END) AS MATERIAL_MULTIPLIER, "
-        SQL = SQL & "baseTimeMultiplier * (CASE WHEN RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP.timeMultiplier IS NOT NULL THEN "
-        SQL = SQL & "RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP.timeMultiplier ELSE 1 END) AS TIME_MULTIPLIER, "
-        SQL = SQL & "baseCostMultiplier * (CASE WHEN RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP.costMultiplier IS NOT NULL THEN "
-        SQL = SQL & "RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP.costMultiplier ELSE 1 END) AS COST_MULTIPLIER,  "
-        SQL = SQL & "INVENTORY_GROUPS.groupID AS GROUP_ID, INVENTORY_GROUPS.groupName AS GROUP_NAME, NULL AS CATEGORY_ID, NULL AS CATEGORY_NAME, COST_INDEX, 1 AS OUTPOST "
+        SQL = SQL & "baseMaterialMultiplier * RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP.materialMultiplier AS MATERIAL_MULTIPLIER, "
+        SQL = SQL & "baseTimeMultiplier * RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP.timeMultiplier AS TIME_MULTIPLIER, "
+        SQL = SQL & "baseCostMultiplier * RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP.costMultiplier AS COST_MULTIPLIER, "
+        SQL = SQL & "INVENTORY_GROUPS.groupID AS GROUP_ID, INVENTORY_GROUPS.groupName AS GROUP_NAME, 0 AS CATEGORY_ID, NULL AS CATEGORY_NAME, COST_INDEX, 1 AS OUTPOST "
         SQL = SQL & "FROM INDUSTRY_FACILITIES, INVENTORY_TYPES, RAM_INSTALLATION_TYPE_CONTENTS, REGIONS, SOLAR_SYSTEMS, INDUSTRY_SYSTEMS_COST_INDICIES, "
-        SQL = SQL & "RAM_ACTIVITIES, RAM_ASSEMBLY_LINE_TYPES "
-        SQL = SQL & "LEFT JOIN RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP ON RAM_ASSEMBLY_LINE_TYPES.assemblyLineTypeID = RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP.assemblyLineTypeID  "
-        SQL = SQL & "LEFT JOIN INVENTORY_GROUPS ON RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP.groupID = INVENTORY_GROUPS.groupID "
+        SQL = SQL & "RAM_ACTIVITIES, RAM_ASSEMBLY_LINE_TYPES, RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP, INVENTORY_GROUPS "
         SQL = SQL & "WHERE INDUSTRY_FACILITIES.FACILITY_ID = " & CStr(FacilityID) & " "
         SQL = SQL & "AND FACILITY_TYPE_ID IN (21642,21644,21645,21646) "
         SQL = SQL & "AND INDUSTRY_FACILITIES.FACILITY_TYPE_ID = INVENTORY_TYPES.typeID "
         SQL = SQL & "AND INDUSTRY_FACILITIES.FACILITY_TYPE_ID = RAM_INSTALLATION_TYPE_CONTENTS.installationTypeID "
         SQL = SQL & "AND INDUSTRY_FACILITIES.REGION_ID = REGIONS.regionID "
         SQL = SQL & "AND INDUSTRY_FACILITIES.SOLAR_SYSTEM_ID = SOLAR_SYSTEMS.solarSystemID "
+        SQL = SQL & "AND RAM_ASSEMBLY_LINE_TYPES.assemblyLineTypeID = RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP.assemblyLineTypeID "
+        SQL = SQL & "AND RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_GROUP.groupID = INVENTORY_GROUPS.groupID "
         SQL = SQL & "AND RAM_ASSEMBLY_LINE_TYPES.activityID = RAM_ACTIVITIES.activityID "
         SQL = SQL & "AND INDUSTRY_SYSTEMS_COST_INDICIES.SOLAR_SYSTEM_ID = INDUSTRY_FACILITIES.SOLAR_SYSTEM_ID "
         SQL = SQL & "AND INDUSTRY_SYSTEMS_COST_INDICIES.ACTIVITY_ID = RAM_ASSEMBLY_LINE_TYPES.activityID "
@@ -1185,23 +1174,20 @@ Public Class EVECREST
         SQL = SQL & "SOLAR_SYSTEMS.solarSystemID AS SOLAR_SYSTEM_ID, SOLAR_SYSTEMS.solarSystemName AS SOLAR_SYSTEM_NAME, "
         SQL = SQL & "SOLAR_SYSTEMS.security AS SOLAR_SYSTEM_SECURITY, REGIONS.regionID AS REGION_ID, REGIONS.regionName AS REGION_NAME, "
         SQL = SQL & "FACILITY_TYPE_ID, typeName AS FACILITY_TYPE, RAM_ACTIVITIES.activityID AS ACTIVITY_ID, RAM_ACTIVITIES.activityName AS ACTIVITY_NAME, FACILITY_TAX,"
-        SQL = SQL & "baseMaterialMultiplier * (CASE WHEN RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.materialMultiplier IS NOT NULL THEN "
-        SQL = SQL & "RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.materialMultiplier ELSE 1 END) AS MATERIAL_MULTIPLIER, "
-        SQL = SQL & "baseTimeMultiplier * (CASE WHEN RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.timeMultiplier IS NOT NULL THEN "
-        SQL = SQL & "RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.timeMultiplier ELSE 1 END) AS TIME_MULTIPLIER, "
-        SQL = SQL & "baseCostMultiplier * (CASE WHEN RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.costMultiplier IS NOT NULL THEN "
-        SQL = SQL & "RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.costMultiplier ELSE 1 END) AS COST_MULTIPLIER,  "
-        SQL = SQL & "NULL AS GROUP_ID, NULL AS GROUP_NAME, INVENTORY_CATEGORIES.categoryID AS CATEGORY_ID, INVENTORY_CATEGORIES.categoryName AS CATEGORY_NAME, COST_INDEX, 1 AS OUTPOST "
+        SQL = SQL & "baseMaterialMultiplier * RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.materialMultiplier AS MATERIAL_MULTIPLIER, "
+        SQL = SQL & "baseTimeMultiplier * RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.timeMultiplier AS TIME_MULTIPLIER, "
+        SQL = SQL & "baseCostMultiplier * RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.costMultiplier AS COST_MULTIPLIER, "
+        SQL = SQL & "0 AS GROUP_ID, NULL AS GROUP_NAME, INVENTORY_CATEGORIES.categoryID AS CATEGORY_ID, INVENTORY_CATEGORIES.categoryName AS CATEGORY_NAME, COST_INDEX, 1 AS OUTPOST "
         SQL = SQL & "FROM INDUSTRY_FACILITIES, INVENTORY_TYPES, RAM_INSTALLATION_TYPE_CONTENTS, REGIONS, SOLAR_SYSTEMS, INDUSTRY_SYSTEMS_COST_INDICIES, "
-        SQL = SQL & "RAM_ACTIVITIES, RAM_ASSEMBLY_LINE_TYPES "
-        SQL = SQL & "LEFT JOIN RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY ON RAM_ASSEMBLY_LINE_TYPES.assemblyLineTypeID = RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.assemblyLineTypeID "
-        SQL = SQL & "LEFT JOIN INVENTORY_CATEGORIES ON RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.categoryID = INVENTORY_CATEGORIES.categoryID "
+        SQL = SQL & "RAM_ACTIVITIES, RAM_ASSEMBLY_LINE_TYPES, RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY, INVENTORY_CATEGORIES "
         SQL = SQL & "WHERE INDUSTRY_FACILITIES.FACILITY_ID = " & CStr(FacilityID) & " "
         SQL = SQL & "AND FACILITY_TYPE_ID IN (21642,21644,21645,21646) "
         SQL = SQL & "AND INDUSTRY_FACILITIES.FACILITY_TYPE_ID = INVENTORY_TYPES.typeID "
         SQL = SQL & "AND INDUSTRY_FACILITIES.FACILITY_TYPE_ID = RAM_INSTALLATION_TYPE_CONTENTS.installationTypeID "
         SQL = SQL & "AND INDUSTRY_FACILITIES.REGION_ID = REGIONS.regionID "
         SQL = SQL & "AND INDUSTRY_FACILITIES.SOLAR_SYSTEM_ID = SOLAR_SYSTEMS.solarSystemID "
+        SQL = SQL & "AND RAM_ASSEMBLY_LINE_TYPES.assemblyLineTypeID = RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.assemblyLineTypeID "
+        SQL = SQL & "AND RAM_ASSEMBLY_LINE_TYPE_DETAIL_PER_CATEGORY.categoryID = INVENTORY_CATEGORIES.categoryID "
         SQL = SQL & "AND RAM_ASSEMBLY_LINE_TYPES.activityID = RAM_ACTIVITIES.activityID "
         SQL = SQL & "AND INDUSTRY_SYSTEMS_COST_INDICIES.SOLAR_SYSTEM_ID = INDUSTRY_FACILITIES.SOLAR_SYSTEM_ID "
         SQL = SQL & "AND INDUSTRY_SYSTEMS_COST_INDICIES.ACTIVITY_ID = RAM_ASSEMBLY_LINE_TYPES.activityID "
@@ -1227,23 +1213,13 @@ Public Class EVECREST
             SQL = SQL & CStr(rsFacility.GetDouble(12)) & ", " ' Material Multiplier
             SQL = SQL & CStr(rsFacility.GetDouble(13)) & ", " ' Time Multiplier
             SQL = SQL & CStr(rsFacility.GetDouble(14)) & ", " ' Cost Multiplier
-            If Not IsDBNull(rsFacility.GetValue(15)) Then
-                SQL = SQL & CStr(rsFacility.GetInt64(15)) & ", " ' Group ID
-            Else
-                SQL = SQL & "NULL, " ' Group ID
-            End If
-
+            SQL = SQL & CStr(rsFacility.GetInt64(15)) & ", " ' Group ID
             If Not IsDBNull(rsFacility.GetValue(16)) Then
                 SQL = SQL & "'" & FormatDBString(rsFacility.GetString(16)) & "', "  ' Group Name
             Else
                 SQL = SQL & "NULL, " ' Group Name
             End If
-            If Not IsDBNull(rsFacility.GetValue(17)) Then
-                SQL = SQL & CStr(rsFacility.GetInt64(17)) & ", " ' Category ID
-            Else
-                SQL = SQL & "NULL, " ' Category ID
-            End If
-
+            SQL = SQL & CStr(rsFacility.GetInt64(17)) & ", " ' Category ID
             If Not IsDBNull(rsFacility.GetValue(18)) Then
                 SQL = SQL & "'" & FormatDBString(rsFacility.GetString(18)) & "', "  ' Category Name
             Else
@@ -1256,90 +1232,6 @@ Public Class EVECREST
             Call ExecuteNonQuerySQL(SQL)
             Application.DoEvents()
         End While
-
-    End Sub
-
-    ' Does final updates to the STATION_FACILITIES table 
-    Private Sub UpdateNullCategoryStationFacilities(ByVal FacilityID As Long)
-        Dim SQL As String
-        Dim SQLiteReader As SQLiteDataReader
-        Dim SQLiteReader2 As SQLiteDataReader
-        Dim FacilityIDStr As String = CStr(FacilityID)
-
-        ' We need to update the data and delete records where they have categories or groups and duplicate null values
-        ' Then update the records with only null values to include categories or groups of all items that can be built with a blueprint 
-        ' (since null values mean all blueprints - ie. copying)
-        SQL = "SELECT ACTIVITY_ID FROM STATION_FACILITIES WHERE FACILITY_ID = " & FacilityIDStr & " AND (GROUP_ID IS NOT NULL OR CATEGORY_ID IS NOT NULL) GROUP BY FACILITY_ID, ACTIVITY_ID"
-        DBCommand = New SQLiteCommand(SQL, DB)
-        SQLiteReader = DBCommand.ExecuteReader
-
-        While SQLiteReader.Read
-            ' Since these records have data already, delete any with null/null in group/category
-            SQL = "DELETE FROM STATION_FACILITIES WHERE FACILITY_ID = " & FacilityIDStr & " "
-            SQL = SQL & "AND ACTIVITY_ID = " & SQLiteReader.GetInt32(0)
-            SQL = SQL & " AND GROUP_ID IS NULL AND CATEGORY_ID IS NULL "
-
-            Call ExecuteNonQuerySQL(SQL)
-            Application.DoEvents()
-        End While
-
-        SQLiteReader.Close()
-
-        SQL = "SELECT * FROM STATION_FACILITIES WHERE GROUP_ID IS NULL AND CATEGORY_ID IS NULL AND FACILITY_ID = " & FacilityIDStr
-        DBCommand = New SQLiteCommand(SQL, DB)
-        SQLiteReader = DBCommand.ExecuteReader
-
-        While SQLiteReader.Read
-            ' Now for all the null/null group/category left, add all the blueprint(categories)
-            SQL = "SELECT ITEM_CATEGORY_ID, ITEM_CATEGORY "
-            SQL = SQL & "FROM ALL_BLUEPRINTS, INDUSTRY_ACTIVITY_PRODUCTS "
-            SQL = SQL & "WHERE ALL_BLUEPRINTS.BLUEPRINT_ID = INDUSTRY_ACTIVITY_PRODUCTS.blueprintTypeID "
-            SQL = SQL & "AND activityID = " & CStr(SQLiteReader.GetInt64(9)) & " "
-            SQL = SQL & "GROUP BY ITEM_CATEGORY_ID, ITEM_CATEGORY"
-            DBCommand = New SQLiteCommand(SQL, DB)
-            SQLiteReader2 = DBCommand.ExecuteReader
-
-            ' Read through each activity and insert new records with these categories and ids for all found that were both null
-            While SQLiteReader2.Read
-
-                SQL = "INSERT INTO STATION_FACILITIES VALUES ("
-                SQL = SQL & CStr(SQLiteReader.GetInt64(0)) & ", " ' Facility ID
-                SQL = SQL & "'" & FormatDBString(SQLiteReader.GetString(1)) & "', " ' Facility Name
-                SQL = SQL & CStr(SQLiteReader.GetInt64(2)) & ", " ' Solar System ID
-                SQL = SQL & "'" & FormatDBString(SQLiteReader.GetString(3)) & "', " ' Solar System Name
-                SQL = SQL & CStr(SQLiteReader.GetDouble(4)) & ", " ' Solar System Security
-                SQL = SQL & CStr(SQLiteReader.GetInt64(5)) & ", " ' Region ID
-                SQL = SQL & "'" & FormatDBString(SQLiteReader.GetString(6)) & "', " ' Region Name
-                SQL = SQL & CStr(SQLiteReader.GetInt64(7)) & ", " ' Facility Type ID
-                SQL = SQL & "'" & FormatDBString(SQLiteReader.GetString(8)) & "', " ' Facility Type
-                SQL = SQL & CStr(SQLiteReader.GetInt64(9)) & ", " ' Activity ID
-                SQL = SQL & "'" & FormatDBString(SQLiteReader.GetString(10)) & "', " ' Activity Name
-                SQL = SQL & CStr(SQLiteReader.GetDouble(11)) & ", " ' Facility Tax
-                SQL = SQL & CStr(SQLiteReader.GetDouble(12)) & ", " ' Material Multiplier
-                SQL = SQL & CStr(SQLiteReader.GetDouble(13)) & ", " ' Time Multiplier
-                SQL = SQL & CStr(SQLiteReader.GetDouble(14)) & ", " ' Cost Multiplier
-                SQL = SQL & "NULL, " ' Group ID
-                SQL = SQL & "NULL, " ' Group Name
-                ' New data
-                SQL = SQL & CStr(SQLiteReader2.GetInt32(0)) & ", " ' Category ID
-                SQL = SQL & "'" & FormatDBString(SQLiteReader2.GetString(1)) & "', "  ' Category Name
-                SQL = SQL & CStr(SQLiteReader.GetDouble(19)) & ", " ' Cost Index
-                SQL = SQL & CStr(SQLiteReader.GetInt32(20)) & ")" ' Outpost
-
-                Call ExecuteNonQuerySQL(SQL)
-                Application.DoEvents()
-
-            End While
-
-            Application.DoEvents()
-            SQLiteReader2.Close()
-        End While
-
-        SQLiteReader.Close()
-
-        ' Delete all the null records for this facility now that we finished the updates
-        SQL = "DELETE FROM STATION_FACILITIES WHERE FACILITY_ID = " & FacilityIDStr & " AND GROUP_ID IS NULL AND CATEGORY_ID IS NULL"
-        Call ExecuteNonQuerySQL(SQL)
 
     End Sub
 

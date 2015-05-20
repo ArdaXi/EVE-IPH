@@ -121,7 +121,7 @@ Class RefiningReprocessing
 
             End If
 
-            If IsNothing(RecursionMaterials.GetMaterialList) Then
+            If RecursionMaterials.GetMaterialList.Count = 0 Then
                 ' Add the base material if not inserted as recusive mat
                 TempMaterial = New Material(RefinedMatId, readerBP.GetString(1), readerBP.GetString(2), _
                                                 NewMaterialQuantity, readerBP.GetDouble(3), If(readerBP.IsDBNull(5), 0, readerBP.GetDouble(5)), "")

@@ -369,7 +369,7 @@ Public Class frmInventionMonitor
         TempBlueprint = New Blueprint(CLng(lstInventionItems.SelectedItems(0).SubItems(0).Text), 1, 0, 0, 1, 1, 1, SelectedCharacter, _
                                         UserApplicationSettings, 0, NoTeam, SelectedBPManufacturingFacility, NoTeam, _
                                         SelectedBPComponentManufacturingFacility, SelectedBPCapitalComponentManufacturingFacility, _
-                                        False, SelectedDecryptor, SelectedBPInventionFacility, NoTeam, SelectedBPCopyFacility, NoTeam, 0)
+                                        False, SelectedDecryptor, SelectedBPInventionFacility, NoTeam, SelectedBPCopyFacility, NoTeam, 0, True)
 
         Call TempBlueprint.BuildItems(False, False, False)
 

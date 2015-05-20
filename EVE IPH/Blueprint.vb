@@ -185,8 +185,8 @@ Public Class Blueprint
                    ByVal BPComponentProductionTeam As IndustryTeam, ByVal BPComponentProductionFacility As IndustryFacility, _
                    ByVal BPCapComponentProductionFacility As IndustryFacility, _
                    ByVal BPBuildBuy As Boolean, ByVal BPDecryptor As Decryptor, _
-                   ByVal BPInventionFacility As IndustryFacility, BPInventionTeam As IndustryTeam, _
-                   ByVal BPCopyFacility As IndustryFacility, BPCopyTeam As IndustryTeam, InventionItemTypeID As Long)
+                   ByVal BPInventionFacility As IndustryFacility, ByVal BPInventionTeam As IndustryTeam, _
+                   ByVal BPCopyFacility As IndustryFacility, ByVal BPCopyTeam As IndustryTeam, ByVal InventionItemTypeID As Long, ByVal InventBlueprint As Boolean)
 
         Dim SQL As String = ""
 
@@ -216,7 +216,7 @@ Public Class Blueprint
         InventionDecryptor = BPDecryptor
 
         ' See if they want to do invention
-        InventingBlueprint = True
+        InventingBlueprint = InventBlueprint
 
         ' Invention and Copy costs/times are set after getting the full base job materials
         If InventingBlueprint Then
@@ -516,7 +516,7 @@ Public Class Blueprint
                         BatchBlueprint = New Blueprint(BlueprintID, ProductionChain(i)(j), iME, iTE, 1, NumberofProductionLines, NumberofLaboratoryLines, BPCharacter, UserSettings, _
                                                            CDbl(AdditionalCosts / ProductionChain.Count), ManufacturingTeam, ManufacturingFacility, ComponentManufacturingTeam, _
                                                            ComponentManufacturingFacility, CapitalComponentManufacturingFacility, BuildBuy, InventionDecryptor, InventionFacility, _
-                                                           InventionTeam, CopyFacility, CopyTeam, InventionT3BPCTypeID)
+                                                           InventionTeam, CopyFacility, CopyTeam, InventionT3BPCTypeID, InventingBlueprint)
                     End If
 
                     Call BatchBlueprint.BuildItem(SetTaxes, SetBrokerFees, SetProductionCosts)

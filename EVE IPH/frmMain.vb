@@ -467,7 +467,7 @@ Public Class frmMain
             Application.UseWaitCursor = True
             Application.DoEvents()
             Timecheck = Now
-            Call SetProgress("Updating Market Prices...")
+            Call SetProgress("Updating Avg/Adj Market Prices...")
             Call CREST.UpdateMarketPrices()
             Debug.Print("Market Prices " & CStr(DateDiff(DateInterval.Second, Timecheck, Now)))
             Application.UseWaitCursor = False
@@ -6259,6 +6259,10 @@ Tabs:
 
     End Sub
 
+    Private Sub chkBPIgnoreInvention_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkBPIgnoreInvention.CheckedChanged
+        Call UpdateInventionObjects(chkBPIgnoreInvention.Checked)
+    End Sub
+
     ' Loads the T3 Relic types into the combo box based on BP Selected
     Private Sub LoadRelicTypes(ByVal BPID As Long)
         Dim SQL As String
@@ -7145,50 +7149,31 @@ Tabs:
             OwnedBPPE = txtBPTE.Text
             OwnedBP = True
             AddlCost = readerBP.GetDouble(2)
-            If TempTech = 2 Then
-                ' Uncheck the invention/copy checks for calcs
-                UpdatingInventionChecks = True
-                chkBPIncludeCopyCosts.Checked = False
-                chkBPIncludeCopyTime.Checked = False
-                chkBPIncludeInventionCosts.Checked = False
-                chkBPIncludeInventionTime.Checked = False
-                If cmbBPFacilityActivities.Text = ActivityInvention Then
-                    chkBPFacilityIncludeUsage.Checked = False
-                End If
-                UpdatingInventionChecks = False
-            ElseIf TempTech = 3 Then
-                UpdatingInventionChecks = True
-                ' Uncheck the invention checks for calcs
-                chkBPIncludeT3Costs.Checked = False
-                chkBPIncludeT3Time.Checked = False
-                ' If the facility is visible, then uncheck
-                If cmbBPFacilityActivities.Text = ActivityInvention Then
-                    chkBPFacilityIncludeUsage.Checked = False
-                End If
-                UpdatingInventionChecks = False
-            End If
         Else
             OwnedBP = False
             AddlCost = 0
-            If TempTech <> 2 And TempTech <> 3 Then
+            If TempTech <> 2 And TempTech <> 3 Then ' All T1
                 If Not SentFromManufacturingTab Then
                     txtBPME.Text = CStr(UserApplicationSettings.DefaultBPME)
                     txtBPTE.Text = CStr(UserApplicationSettings.DefaultBPTE)
+
                 ElseIf SentFromShoppingList Then
                     ' Will be set already or use default
                     If Trim(txtBPME.Text) = "" Then
                         txtBPME.Text = CStr(UserApplicationSettings.DefaultBPME)
                     End If
                     txtBPTE.Text = CStr(UserApplicationSettings.DefaultBPTE)
-                Else ' use the defaults set there instead of settings
+                Else ' use the defaults set there instead of settings (manufacturing tab)
                     txtBPME.Text = txtCalcTempME.Text
                     txtBPTE.Text = txtCalcTempTE.Text
                 End If
+                chkBPIgnoreInvention.Enabled = False ' can't invent t1
             ElseIf TempTech = 2 Or TempTech = 3 Then ' Default T2/T3 BPCs are going to be copies (unless the user has a BPO, which will be set above)
                 If NewBP Then
                     txtBPME.Text = CStr(BaseT2T3ME)
                     txtBPTE.Text = CStr(BaseT2T3TE)
                 End If
+                chkBPIgnoreInvention.Enabled = True
             End If
         End If
 
@@ -7478,7 +7463,7 @@ Tabs:
                                   SelectedBPCapitalComponentManufacturingFacility, _
                                   chkBPBuildBuy.Checked, SelectedDecryptor, _
                                   InventionFacility, SelectedBPInventionTeam, _
-                                  SelectedBPCopyFacility, SelectedBPCopyTeam, GetInventItemTypeID(BPID, RelicName))
+                                  SelectedBPCopyFacility, SelectedBPCopyTeam, GetInventItemTypeID(BPID, RelicName), chkBPIgnoreInvention.Checked)
         Else ' T1
 
             ' Construct our Blueprint
@@ -7737,6 +7722,9 @@ Tabs:
             tabBPInventionEquip.TabPages.Remove(tabT3Calcs)
         End If
 
+        ' Ignore invention option for T2/T3 owned bps
+        Call UpdateInventionObjects(chkBPIgnoreInvention.Checked)
+
         ' If we loaded from the manufacturing tab or shopping list, this is no longer relevant for the next bp tab updates
         SentFromManufacturingTab = False
         SentFromShoppingList = False
@@ -7834,6 +7822,51 @@ ExitForm:
         End If
 
         pictBP.Update()
+
+    End Sub
+
+    ' Updates the invention objects based on an ignore value sent
+    Public Sub UpdateInventionObjects(ByVal IgnoreInvention As Boolean)
+        Dim ShowItem As Boolean
+
+        If IgnoreInvention Then
+            ShowItem = False
+        Else
+            ShowItem = True
+        End If
+
+        UpdatingInventionChecks = True
+        If tabBPInventionEquip.Contains(tabInventionCalcs) Then
+            ' Uncheck the invention/copy checks for calcs
+            chkBPIncludeCopyCosts.Checked = ShowItem
+            chkBPIncludeCopyTime.Checked = ShowItem
+            chkBPIncludeInventionCosts.Checked = ShowItem
+            chkBPIncludeInventionTime.Checked = ShowItem
+            If cmbBPFacilityActivities.Text = ActivityInvention Then
+                chkBPFacilityIncludeUsage.Checked = ShowItem
+            End If
+        ElseIf tabBPInventionEquip.Contains(tabT3Calcs) Then
+            ' Uncheck the invention checks for calcs
+            chkBPIncludeT3Costs.Checked = ShowItem
+            chkBPIncludeT3Time.Checked = ShowItem
+            ' If the facility is visible, then uncheck
+            If cmbBPFacilityActivities.Text = ActivityInvention Then
+                chkBPFacilityIncludeUsage.Checked = ShowItem
+            End If
+            UpdatingInventionChecks = ShowItem
+        End If
+        UpdatingInventionChecks = False
+
+        ' If we are inventing, make sure we add or remove the activity based on the check
+        If tabBPInventionEquip.Contains(tabInventionCalcs) Or tabBPInventionEquip.Contains(tabT3Calcs) Then
+            If chkBPIgnoreInvention.Checked Then
+                ' Remove the invention activity
+                cmbBPFacilityActivities.Items.Remove(ActivityInvention)
+            Else
+                ' Add the invention activity
+                cmbBPFacilityActivities.Items.Remove(ActivityInvention)
+            End If
+        End If
 
     End Sub
 
@@ -17030,7 +17063,7 @@ CheckTechs:
                                                                InsertItem.ComponentTeam, InsertItem.ComponentManufacturingFacility, InsertItem.CapComponentManufacturingFacility, _
                                                                rbtnCalcCompareBuildBuy.Checked, SelectedDecryptor, _
                                                                InsertItem.InventionFacility, InsertItem.InventionTeam, _
-                                                               InsertItem.CopyFacility, InsertItem.CopyTeam, GetInventItemTypeID(InsertItem.BPID, InsertItem.Relic))
+                                                               InsertItem.CopyFacility, InsertItem.CopyTeam, GetInventItemTypeID(InsertItem.BPID, InsertItem.Relic), chkCalcIgnoreInvention.Checked)
 
                     Else ' T1
 
@@ -17193,7 +17226,7 @@ CheckTechs:
                                                                        InsertItem.ComponentTeam, InsertItem.ComponentManufacturingFacility, InsertItem.CapComponentManufacturingFacility, _
                                                                        True, SelectedDecryptor, _
                                                                        InsertItem.InventionFacility, InsertItem.InventionTeam, _
-                                                                       InsertItem.CopyFacility, InsertItem.CopyTeam, GetInventItemTypeID(InsertItem.BPID, InsertItem.Relic))
+                                                                       InsertItem.CopyFacility, InsertItem.CopyTeam, GetInventItemTypeID(InsertItem.BPID, InsertItem.Relic), chkCalcIgnoreInvention.Checked)
 
                             End If
 

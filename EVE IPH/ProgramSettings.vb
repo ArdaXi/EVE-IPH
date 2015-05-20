@@ -224,6 +224,9 @@ Public Class ProgramSettings
     Public DefaultBPRELines As Integer = 1
     Public DefaultBPRelicType As String = "" ' If they want to save and auto load relic types
     Public DefaultBPDecryptorType As String = "" ' if they want to save and auto load decryptors
+    Public DefaultBPIgnoreInvention As Boolean = False
+    Public DefaultBPIgnoreMinerals As Boolean = False
+    Public DefaultBPIgnoreT1Item As Boolean = False
 
     ' Update Prices Default Settings
     Public DefaultPriceChecks As Boolean = False
@@ -300,6 +303,9 @@ Public Class ProgramSettings
     Public DefaultCalcSizeChecks As Boolean = False
     Public DefaultCheckT3Destroyers As Boolean = False
     Public DefaultCheckCapComponents As Boolean = False
+    Public DefaultCalcIgnoreInvention As Boolean = False
+    Public DefaultCalcIgnoreMinerals As Boolean = False
+    Public DefaultCalcIgnoreT1Item As Boolean = False
 
     ' Datacore Default Settings
     Public DefaultDCPricesFrom As String = "Updated Prices"
@@ -1234,6 +1240,9 @@ Public Class ProgramSettings
                     .IncludeFees = CBool(GetSettingValue(BPSettingsFileName, SettingTypes.TypeBoolean, "BPSettings", "IncludeFees", DefaultBPIncludeFees))
                     .RelicType = CStr(GetSettingValue(BPSettingsFileName, SettingTypes.TypeString, "BPSettings", "RelicType", DefaultBPRelicType))
                     .DecryptorType = CStr(GetSettingValue(BPSettingsFileName, SettingTypes.TypeString, "BPSettings", "DecryptorType", DefaultBPDecryptorType))
+                    .IgnoreInvention = CBool(GetSettingValue(BPSettingsFileName, SettingTypes.TypeBoolean, "BPSettings", "IgnoreInvention", DefaultBPIgnoreInvention))
+                    .IgnoreMinerals = CBool(GetSettingValue(BPSettingsFileName, SettingTypes.TypeBoolean, "BPSettings", "IgnoreMinerals", DefaultBPIgnoreMinerals))
+                    .IgnoreT1Item = CBool(GetSettingValue(BPSettingsFileName, SettingTypes.TypeBoolean, "BPSettings", "IgnoreT1Item", DefaultBPIgnoreT1Item))
                 End With
 
             Else
@@ -1256,7 +1265,7 @@ Public Class ProgramSettings
 
     ' Saves the tab settings to XML
     Public Sub SaveBPSettings(SentSettings As BPTabSettings)
-        Dim BPSettingsList(25) As Setting
+        Dim BPSettingsList(28) As Setting
 
         Try
             BPSettingsList(0) = New Setting("BlueprintTypeSelection", CStr(SentSettings.BlueprintTypeSelection))
@@ -1286,6 +1295,10 @@ Public Class ProgramSettings
             BPSettingsList(23) = New Setting("IncludeT3Time", CStr(SentSettings.IncludeT3Time))
             BPSettingsList(24) = New Setting("RelicType", CStr(SentSettings.RelicType))
             BPSettingsList(25) = New Setting("DecryptorType", CStr(SentSettings.DecryptorType))
+
+            BPSettingsList(26) = New Setting("IgnoreInvention", CStr(SentSettings.IgnoreInvention))
+            BPSettingsList(27) = New Setting("IgnoreMinerals", CStr(SentSettings.IgnoreMinerals))
+            BPSettingsList(28) = New Setting("IgnoreT1Item", CStr(SentSettings.IgnoreT1Item))
 
             Call WriteSettingsToFile(BPSettingsFileName, BPSettingsList, "BPSettings")
 
@@ -1332,6 +1345,10 @@ Public Class ProgramSettings
 
         LocalSettings.RelicType = DefaultBPRelicType
         LocalSettings.DecryptorType = DefaultBPDecryptorType
+
+        LocalSettings.IgnoreInvention = DefaultBPIgnoreInvention
+        LocalSettings.IgnoreMinerals = DefaultBPIgnoreMinerals
+        LocalSettings.IgnoreT1Item = DefaultBPIgnoreT1Item
 
         ' Save locally
         BPSettings = LocalSettings
@@ -1675,6 +1692,9 @@ Public Class ProgramSettings
                     .CheckCapitalComponentsFacility = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "CheckCapitalComponentsFacility", DefaultCheckT3Destroyers))
                     .CheckT3DestroyerFacility = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "CheckT3DestroyerFacility", DefaultCheckCapComponents))
                     .CheckAutoCalcNumBPs = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "CheckAutoCalcNumBPs", DefaultCheckAutoCalcNumBPs))
+                    .IgnoreInvention = CBool(GetSettingValue(BPSettingsFileName, SettingTypes.TypeBoolean, "BPSettings", "IgnoreInvention", DefaultCalcIgnoreInvention))
+                    .IgnoreMinerals = CBool(GetSettingValue(BPSettingsFileName, SettingTypes.TypeBoolean, "BPSettings", "IgnoreMinerals", DefaultCalcIgnoreMinerals))
+                    .IgnoreT1Item = CBool(GetSettingValue(BPSettingsFileName, SettingTypes.TypeBoolean, "BPSettings", "IgnoreT1Item", DefaultCalcIgnoreT1Item))
                 End With
 
             Else
@@ -1768,6 +1788,9 @@ Public Class ProgramSettings
             .CheckT3DestroyerFacility = DefaultCheckT3Destroyers
             .CheckCapitalComponentsFacility = DefaultCheckCapComponents
             .CheckAutoCalcNumBPs = DefaultCheckAutoCalcNumBPs
+            .IgnoreInvention = DefaultCalcIgnoreInvention
+            .IgnoreMinerals = DefaultCalcIgnoreMinerals
+            .IgnoreT1Item = DefaultCalcIgnoreT1Item
         End With
 
         ' Save locally
@@ -1778,7 +1801,7 @@ Public Class ProgramSettings
 
     ' Saves the tab settings to XML
     Public Sub SaveManufacturingSettings(SentSettings As ManufacturingTabSettings)
-        Dim ManufacturingSettingsList(67) As Setting
+        Dim ManufacturingSettingsList(70) As Setting
 
         Try
             ManufacturingSettingsList(0) = New Setting("BlueprintType", CStr(SentSettings.BlueprintType))
@@ -1849,6 +1872,9 @@ Public Class ProgramSettings
             ManufacturingSettingsList(65) = New Setting("CheckT3DestroyerFacility", CStr(SentSettings.CheckT3DestroyerFacility))
             ManufacturingSettingsList(66) = New Setting("BPRuns", CStr(SentSettings.BPRuns))
             ManufacturingSettingsList(67) = New Setting("CheckAutoCalcNumBPs", CStr(SentSettings.CheckAutoCalcNumBPs))
+            ManufacturingSettingsList(68) = New Setting("IgnoreInvention", CStr(SentSettings.IgnoreInvention))
+            ManufacturingSettingsList(69) = New Setting("IgnoreMinerals", CStr(SentSettings.IgnoreMinerals))
+            ManufacturingSettingsList(70) = New Setting("IgnoreT1Item", CStr(SentSettings.IgnoreT1Item))
 
             Call WriteSettingsToFile(ManufacturingSettingsFileName, ManufacturingSettingsList, "ManufacturingSettings")
 
@@ -4657,6 +4683,10 @@ Public Structure BPTabSettings
     Dim RelicType As String
     Dim DecryptorType As String
 
+    Dim IgnoreInvention As Boolean
+    Dim IgnoreMinerals As Boolean
+    Dim IgnoreT1Item As Boolean
+
 End Structure
 
 ' For Update Price Settings
@@ -4815,6 +4845,10 @@ Public Structure ManufacturingTabSettings
     Dim CheckMedium As Boolean
     Dim CheckLarge As Boolean
     Dim CheckXL As Boolean
+
+    Dim IgnoreInvention As Boolean
+    Dim IgnoreMinerals As Boolean
+    Dim IgnoreT1Item As Boolean
 
 End Structure
 

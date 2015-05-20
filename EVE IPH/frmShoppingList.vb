@@ -49,15 +49,15 @@ Public Class frmShoppingList
 
     Private BuyListHeaderCSV As String = "Material,Quantity,Cost Per Item,Min Sell,Max Buy,Buy Type,Total m3,Isk/m3,TotalCost"
     Private BuildListHeaderCSV As String = "Build Item,Quantity,ME,POS Build"
-    Private ItemsListHeaderCSV As String = "Item,Quantity,ME,NumBps,Build Type,Decryptor,Relic,POS Build"
+    Private ItemsListHeaderCSV As String = "Item,Quantity,ME,NumBps,Build Type,Decryptor,Relic,POS Build,Invented"
 
     Private BuyListHeaderTXT As String = "Material|Quantity|Cost Per Item|Min Sell|Max Buy|Buy Type|Total m3|Isk/m3|TotalCost"
     Private BuildListHeaderTXT As String = "Build Item|Quantity|ME|POS Build"
-    Private ItemsListHeaderTXT As String = "Item|Quantity|ME|NumBps|Build Type|Decryptor|Relic|POS Build"
+    Private ItemsListHeaderTXT As String = "Item|Quantity|ME|NumBps|Build Type|Decryptor|Relic|POS Build|Invented"
 
     Private BuyListHeaderSSV As String = "Material;Quantity;Cost Per Item;Min Sell;Max Buy;Buy Type;Total m3;Isk/m3;TotalCost"
     Private BuildListHeaderSSV As String = "Build Item;Quantity;ME;POS Build"
-    Private ItemsListHeaderSSV As String = "Item;Quantity;ME;NumBps;Build Type;Decryptor;Relic;POS Build"
+    Private ItemsListHeaderSSV As String = "Item;Quantity;ME;NumBps;Build Type;Decryptor;Relic;POS Build;Invented"
 
     Private FirstFormLoad As Boolean
 
@@ -1233,7 +1233,7 @@ Public Class frmShoppingList
                                                    SelectedCharacter, UserApplicationSettings, 0, NoTeam, TempBuildFacility, _
                                                    NoTeam, SelectedBPComponentManufacturingFacility, SelectedBPCapitalComponentManufacturingFacility, BuildBuy, TempDecryptor, _
                                                    SelectedBPInventionFacility, SelectedBPInventionTeam, _
-                                                   SelectedBPCopyFacility, SelectedBPCopyTeam, GetInventItemTypeID(CLng(readerBP.GetValue(0)), ItemList(i).Relic))
+                                                   SelectedBPCopyFacility, SelectedBPCopyTeam, GetInventItemTypeID(CLng(readerBP.GetValue(0)), ItemList(i).Relic), True) ' Add new flag to the items list
                         End If
 
                         ' Build the item and get the list of materials
