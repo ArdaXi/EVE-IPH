@@ -99,7 +99,7 @@ Public Class Blueprint
     Private ReqBuildComponentSkills As New EVESkillList ' All the skills to build just the components
 
     ' Invention variables
-    Private InventingBlueprint As Boolean ' Whether we are inventing or not
+    Private IgnoreInvention As Boolean ' Whether we are inventing or not
     Private MaxRunsPerBP As Integer ' The max runs for a copy or invented bpc. Zero is unlimited runs
     Private ReqInventionSkills As New EVESkillList ' For inventing this BP
     Private ReqCopySkills As New EVESkillList ' For copying the BPC
@@ -186,7 +186,7 @@ Public Class Blueprint
                    ByVal BPCapComponentProductionFacility As IndustryFacility, _
                    ByVal BPBuildBuy As Boolean, ByVal BPDecryptor As Decryptor, _
                    ByVal BPInventionFacility As IndustryFacility, ByVal BPInventionTeam As IndustryTeam, _
-                   ByVal BPCopyFacility As IndustryFacility, ByVal BPCopyTeam As IndustryTeam, ByVal InventionItemTypeID As Long, ByVal InventBlueprint As Boolean)
+                   ByVal BPCopyFacility As IndustryFacility, ByVal BPCopyTeam As IndustryTeam, ByVal InventionItemTypeID As Long, ByVal BPIgnoreInvention As Boolean)
 
         Dim SQL As String = ""
 
@@ -216,10 +216,10 @@ Public Class Blueprint
         InventionDecryptor = BPDecryptor
 
         ' See if they want to do invention
-        InventingBlueprint = InventBlueprint
+        IgnoreInvention = BPIgnoreInvention
 
         ' Invention and Copy costs/times are set after getting the full base job materials
-        If InventingBlueprint Then
+        If Not IgnoreInvention Then
             IncludeInventionCosts = InventionFacility.IncludeActivityCost
             IncludeInventionTime = InventionFacility.IncludeActivityTime
             IncludeInventionUsage = InventionFacility.IncludeActivityUsage
@@ -516,7 +516,7 @@ Public Class Blueprint
                         BatchBlueprint = New Blueprint(BlueprintID, ProductionChain(i)(j), iME, iTE, 1, NumberofProductionLines, NumberofLaboratoryLines, BPCharacter, UserSettings, _
                                                            CDbl(AdditionalCosts / ProductionChain.Count), ManufacturingTeam, ManufacturingFacility, ComponentManufacturingTeam, _
                                                            ComponentManufacturingFacility, CapitalComponentManufacturingFacility, BuildBuy, InventionDecryptor, InventionFacility, _
-                                                           InventionTeam, CopyFacility, CopyTeam, InventionT3BPCTypeID, InventingBlueprint)
+                                                           InventionTeam, CopyFacility, CopyTeam, InventionT3BPCTypeID, IgnoreInvention)
                     End If
 
                     Call BatchBlueprint.BuildItem(SetTaxes, SetBrokerFees, SetProductionCosts)

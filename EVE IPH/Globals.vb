@@ -219,7 +219,6 @@ Public Module Public_Variables
     Public Enum StationType
         Station = 0
         Outpost = 1
-        SavedOutpost = 2
     End Enum
 
     Public Const POSTaxRate = 0.0 ' was 10% tax on pos usage now it's 0

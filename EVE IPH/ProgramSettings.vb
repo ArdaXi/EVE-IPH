@@ -399,6 +399,7 @@ Public Class ProgramSettings
     Public DefaultMiningUnrefinedOre As Boolean = False
     Public DefaultMiningIndustrialReconfig As Integer = 0
     Public DefaultMiningRig As Boolean = False
+    Public DefaultMiningNumberofMiners As Integer = 1
 
     ' Industry Jobs column settings
     Public DefaultJobState As Integer = 1
@@ -2248,6 +2249,7 @@ Public Class ProgramSettings
                     .CheckSovC4 = CBool(GetSettingValue(MiningSettingsFileName, SettingTypes.TypeBoolean, "MiningSettings", "CheckSovC4", DefaultMiningCheckSovC4))
                     .CheckSovC5 = CBool(GetSettingValue(MiningSettingsFileName, SettingTypes.TypeBoolean, "MiningSettings", "CheckSovC5", DefaultMiningCheckSovC5))
                     .CheckSovC6 = CBool(GetSettingValue(MiningSettingsFileName, SettingTypes.TypeBoolean, "MiningSettings", "CheckSovC6", DefaultMiningCheckSovC6))
+                    .NumberofMiners = CInt(GetSettingValue(MiningSettingsFileName, SettingTypes.TypeInteger, "MiningSettings", "NumberofMiners", DefaultMiningNumberofMiners))
                 End With
 
             Else
@@ -2337,6 +2339,7 @@ Public Class ProgramSettings
             .IndustrialReconfig = DefaultMiningIndustrialReconfig
             .MercoxitMiningRig = DefaultMiningRig
             .IceMiningRig = DefaultMiningRig
+            .NumberofMiners = DefaultNumMiners
         End With
 
         ' Save locally
@@ -2347,7 +2350,7 @@ Public Class ProgramSettings
 
     ' Saves the tab settings to XML
     Public Sub SaveMiningSettings(SentSettings As MiningTabSettings)
-        Dim MiningSettingsList(63) As Setting
+        Dim MiningSettingsList(64) As Setting
 
         Try
             MiningSettingsList(0) = New Setting("OreType", CStr(SentSettings.OreType))
@@ -2414,6 +2417,7 @@ Public Class ProgramSettings
             MiningSettingsList(61) = New Setting("CheckSovC6", CStr(SentSettings.CheckSovC6))
             MiningSettingsList(62) = New Setting("CompressedOre", CStr(SentSettings.CompressedOre))
             MiningSettingsList(63) = New Setting("UnrefinedOre", CStr(SentSettings.UnrefinedOre))
+            MiningSettingsList(64) = New Setting("NumberofMiners", CStr(SentSettings.NumberofMiners))
 
             Call WriteSettingsToFile(MiningSettingsFileName, MiningSettingsList, "MiningSettings")
 
@@ -4974,6 +4978,7 @@ Public Structure MiningTabSettings
     Dim IndustrialReconfig As Integer
 
     Dim MiningDroneM3perHour As Double
+    Dim NumberofMiners As Integer
 
     Dim RefinedOre As Boolean
     Dim UnrefinedOre As Boolean

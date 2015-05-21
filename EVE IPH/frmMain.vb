@@ -1882,7 +1882,7 @@ NoBonus:
                 If FacilityTypeCombo.Text = StationFacility Then
                     SQL = SQL & " = " & CStr(StationType.Station) & " "
                 Else
-                    SQL = SQL & " IN (" & CStr(StationType.Outpost) & "," & CStr(StationType.SavedOutpost) & ") "
+                    SQL = SQL & " = " & CStr(StationType.Outpost) & " "
                 End If
 
                 Select Case FacilityActivity
@@ -1996,7 +1996,7 @@ NoBonus:
                 If FacilityTypeCombo.Text = StationFacility Then
                     SQL = SQL & " = " & CStr(StationType.Station) & " "
                 Else
-                    SQL = SQL & " IN (" & CStr(StationType.Outpost) & "," & CStr(StationType.SavedOutpost) & ") "
+                    SQL = SQL & " = " & CStr(StationType.Outpost) & " "
                 End If
 
                 Select Case FacilityActivity
@@ -2123,7 +2123,7 @@ NoBonus:
                 If FacilityTypeCombo.Text = StationFacility Then
                     SQL = SQL & " = " & CStr(StationType.Station) & " "
                 Else
-                    SQL = SQL & " IN (" & CStr(StationType.Outpost) & "," & CStr(StationType.SavedOutpost) & ") "
+                    SQL = SQL & " = " & CStr(StationType.Outpost) & " "
                 End If
 
                 Select Case FacilityActivity
@@ -2316,9 +2316,8 @@ NoBonus:
                     If FacilityType = StationFacility Then
                         SQL = SQL & " = " & CStr(StationType.Station) & " "
                     Else
-                        SQL = SQL & " IN (" & CStr(StationType.Outpost) & "," & CStr(StationType.SavedOutpost) & ") "
+                        SQL = SQL & " = " & CStr(StationType.Outpost) & " "
                     End If
-
                     SQL = SQL & "AND FACILITY_NAME = '" & FormatDBString(FacilityName) & "' "
 
                 Case POSFacility
@@ -5578,11 +5577,11 @@ Tabs:
             Exit Sub
         End If
 
-        ' Update only the outpost values for the activity type and set the outpost = 2 (updated outpost)
+        ' Update only the outpost values for the activity type 
         SQL = "UPDATE STATION_FACILITIES SET BASE_MM = " & CStr(SentFacility.MaterialMultiplier)
         SQL = SQL & ", BASE_TM = " & CStr(SentFacility.TimeMultiplier)
         SQL = SQL & ", FACILITY_TAX = " & CStr(SentFacility.TaxRate)
-        SQL = SQL & ", OUTPOST = " & CStr(StationType.SavedOutpost) & " "
+        SQL = SQL & ", OUTPOST = " & CStr(StationType.Outpost) & " "
         SQL = SQL & "WHERE FACILITY_NAME = '" & SentFacility.FacilityName & "' "
         SQL = SQL & "AND ACTIVITY_ID = " & CStr(Activity)
 
@@ -6261,6 +6260,7 @@ Tabs:
 
     Private Sub chkBPIgnoreInvention_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkBPIgnoreInvention.CheckedChanged
         Call UpdateInventionObjects(chkBPIgnoreInvention.Checked)
+        Call RefreshBP()
     End Sub
 
     ' Loads the T3 Relic types into the combo box based on BP Selected
@@ -7827,21 +7827,14 @@ ExitForm:
 
     ' Updates the invention objects based on an ignore value sent
     Public Sub UpdateInventionObjects(ByVal IgnoreInvention As Boolean)
-        Dim ShowItem As Boolean
-
-        If IgnoreInvention Then
-            ShowItem = False
-        Else
-            ShowItem = True
-        End If
 
         UpdatingInventionChecks = True
         If tabBPInventionEquip.Contains(tabInventionCalcs) Then
             ' Uncheck the invention/copy checks for calcs
-            chkBPIncludeCopyCosts.Checked = ShowItem
-            chkBPIncludeCopyTime.Checked = ShowItem
-            chkBPIncludeInventionCosts.Checked = ShowItem
-            chkBPIncludeInventionTime.Checked = ShowItem
+            chkBPIncludeCopyCosts.Checked = SelectedBPCopyFacility.IncludeActivityCost
+            chkBPIncludeCopyTime.Checked = SelectedBPCopyFacility.IncludeActivityTime
+            chkBPIncludeInventionCosts.Checked = SelectedBPInventionFacility.IncludeActivityCost
+            chkBPIncludeInventionTime.Checked = SelectedBPInventionFacility.IncludeActivityTime
             If cmbBPFacilityActivities.Text = ActivityInvention Then
                 chkBPFacilityIncludeUsage.Checked = ShowItem
             End If
@@ -21292,6 +21285,16 @@ Leave:
         Call UpdateMiningBoosterObjects()
     End Sub
 
+    Private Sub txtMineNumberMiners_KeyPress(sender As Object, e As System.Windows.Forms.KeyPressEventArgs) Handles txtMineNumberMiners.KeyPress
+        ' Only allow numbers or backspace
+        If e.KeyChar <> ControlChars.Back Then
+            If allowedPriceChars.IndexOf(e.KeyChar) = -1 Then
+                ' Invalid Character
+                e.Handled = True
+            End If
+        End If
+    End Sub
+
     Private Sub txtMineTotalJumpM3_KeyPress(ByVal sender As Object, ByVal e As System.Windows.Forms.KeyPressEventArgs) Handles txtMineTotalJumpM3.KeyPress
         ' Only allow numbers or backspace
         If e.KeyChar <> ControlChars.Back Then
@@ -21784,6 +21787,9 @@ Leave:
             ' Michii
             chkMineMichiImplant.Checked = .MichiiImplant
 
+            ' Number of miners
+            txtMineNumberMiners.Text = CStr(.NumberofMiners)
+
             ' Upgrades and miner types - different for Ice or Ore
             If .OreType = "Ore" Then
                 cmbMineShipType.Text = .OreMiningShip
@@ -22119,6 +22125,9 @@ Leave:
 
             ' Michii
             .MichiiImplant = chkMineMichiImplant.Checked
+
+            ' Number of miners
+            .NumberofMiners = CInt(txtMineNumberMiners.Text)
 
         End With
 
@@ -23346,6 +23355,9 @@ Leave:
                 lstMineGrid.Columns(4).Width = 0 ' Hide
         End Select
 
+        ' Determine multiplier - assume all additional mining ships have the same yield and other costs
+        Dim MinerMultiplier As Integer = CInt(txtMineNumberMiners.Text)
+
         ' Finally load the list
         lstMineGrid.BeginUpdate()
         For i = 0 To OreList.Count - 1
@@ -23361,9 +23373,10 @@ Leave:
                     lstOreRow.SubItems.Add(FormatPercent(OreList(i).RefineYield, 3))
                 End If
                 lstOreRow.SubItems.Add(OreList(i).CrystalType)
-                lstOreRow.SubItems.Add(FormatNumber(OreList(i).OreUnitsPerCycle, 2))
-                lstOreRow.SubItems.Add(FormatNumber(Math.Round(OreList(i).UnitsPerHour), 0))
-                lstOreRow.SubItems.Add(FormatNumber(OreList(i).IPH, 2))
+                ' Modify all three by mining multiplier
+                lstOreRow.SubItems.Add(FormatNumber(OreList(i).OreUnitsPerCycle * MinerMultiplier, 2))
+                lstOreRow.SubItems.Add(FormatNumber(Math.Round(OreList(i).UnitsPerHour * MinerMultiplier), 0))
+                lstOreRow.SubItems.Add(FormatNumber(OreList(i).IPH * MinerMultiplier, 2))
             End If
         Next
 
@@ -23427,6 +23440,19 @@ Leave:
                 txtMineTotalJumpM3.Focus()
                 Return False
             End If
+        End If
+
+        ' Number of miners
+        If Trim(txtMineNumberMiners.Text) = "" Or Trim(txtMineNumberMiners.Text) = "0" Then
+            MsgBox("Invalid number of miners", vbExclamation, Application.ProductName)
+            txtMineNumberMiners.Focus()
+            Return False
+        End If
+
+        If Val(txtMineNumberMiners.Text) > 100 Then
+            MsgBox("You can't select more than 100 miners", vbExclamation, Application.ProductName)
+            txtMineNumberMiners.Focus()
+            Return False
         End If
 
         ' Make sure a refine type is selected

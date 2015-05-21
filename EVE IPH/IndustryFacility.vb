@@ -195,7 +195,7 @@ Public Class IndustryFacility
                     End If
                     SQL = SQL & "ACTIVITY_ID AS AID, ACTIVITY_NAME AS AN, FACILITY_TYPE_ID, GROUP_ID, CATEGORY_ID "
                     SQL = SQL & "FROM STATION_FACILITIES "
-                    SQL = SQL & "WHERE OUTPOST IN (" & CStr(StationType.Outpost) & "," & CStr(StationType.SavedOutpost) & ") "
+                    SQL = SQL & "WHERE OUTPOST = " & CStr(StationType.Outpost) & " "
                 Case StationFacility
                     SQL = "SELECT FACILITY_NAME, REGION_NAME, REGION_ID, "
                     SQL = SQL & "SOLAR_SYSTEM_NAME, SOLAR_SYSTEM_ID, FACILITY_TAX, COST_INDEX, "
