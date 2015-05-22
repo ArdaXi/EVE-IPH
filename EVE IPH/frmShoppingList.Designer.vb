@@ -240,9 +240,9 @@ Partial Class frmShoppingList
         '
         'btnUpdateListwithAssets
         '
-        Me.btnUpdateListwithAssets.Location = New System.Drawing.Point(6, 15)
+        Me.btnUpdateListwithAssets.Location = New System.Drawing.Point(8, 15)
         Me.btnUpdateListwithAssets.Name = "btnUpdateListwithAssets"
-        Me.btnUpdateListwithAssets.Size = New System.Drawing.Size(113, 48)
+        Me.btnUpdateListwithAssets.Size = New System.Drawing.Size(116, 48)
         Me.btnUpdateListwithAssets.TabIndex = 19
         Me.btnUpdateListwithAssets.Text = "Update with Selected Assets"
         Me.btnUpdateListwithAssets.UseVisualStyleBackColor = True
@@ -324,7 +324,7 @@ Partial Class frmShoppingList
         Me.gbOptions.Controls.Add(Me.lblAddlCosts)
         Me.gbOptions.Location = New System.Drawing.Point(214, 538)
         Me.gbOptions.Name = "gbOptions"
-        Me.gbOptions.Size = New System.Drawing.Size(204, 141)
+        Me.gbOptions.Size = New System.Drawing.Size(181, 141)
         Me.gbOptions.TabIndex = 8
         Me.gbOptions.TabStop = False
         Me.gbOptions.Text = "Options:"
@@ -356,7 +356,7 @@ Partial Class frmShoppingList
         Me.lblUsage.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.lblUsage.Location = New System.Drawing.Point(63, 95)
         Me.lblUsage.Name = "lblUsage"
-        Me.lblUsage.Size = New System.Drawing.Size(136, 17)
+        Me.lblUsage.Size = New System.Drawing.Size(112, 17)
         Me.lblUsage.TabIndex = 15
         Me.lblUsage.Text = "0.00"
         Me.lblUsage.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -378,7 +378,7 @@ Partial Class frmShoppingList
         Me.lblFees.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.lblFees.Location = New System.Drawing.Point(62, 55)
         Me.lblFees.Name = "lblFees"
-        Me.lblFees.Size = New System.Drawing.Size(136, 17)
+        Me.lblFees.Size = New System.Drawing.Size(113, 17)
         Me.lblFees.TabIndex = 12
         Me.lblFees.Text = "0.00"
         Me.lblFees.TextAlign = System.Drawing.ContentAlignment.MiddleCenter
@@ -388,7 +388,7 @@ Partial Class frmShoppingList
         Me.txtAddlCosts.Location = New System.Drawing.Point(63, 115)
         Me.txtAddlCosts.MaxLength = 15
         Me.txtAddlCosts.Name = "txtAddlCosts"
-        Me.txtAddlCosts.Size = New System.Drawing.Size(136, 20)
+        Me.txtAddlCosts.Size = New System.Drawing.Size(112, 20)
         Me.txtAddlCosts.TabIndex = 17
         Me.txtAddlCosts.Text = "0.00"
         Me.txtAddlCosts.TextAlign = System.Windows.Forms.HorizontalAlignment.Right
@@ -462,15 +462,15 @@ Partial Class frmShoppingList
         Me.btnCompressOres.Name = "btnCompressOres"
         Me.btnCompressOres.Size = New System.Drawing.Size(94, 32)
         Me.btnCompressOres.TabIndex = 3
-        Me.btnCompressOres.Text = "Compress This!"
+        Me.btnCompressOres.Text = "[Option]"
         Me.btnCompressOres.UseVisualStyleBackColor = True
         Me.btnCompressOres.Visible = False
         '
         'btnCopyPasteAssets
         '
-        Me.btnCopyPasteAssets.Location = New System.Drawing.Point(6, 65)
+        Me.btnCopyPasteAssets.Location = New System.Drawing.Point(8, 65)
         Me.btnCopyPasteAssets.Name = "btnCopyPasteAssets"
-        Me.btnCopyPasteAssets.Size = New System.Drawing.Size(165, 28)
+        Me.btnCopyPasteAssets.Size = New System.Drawing.Size(168, 28)
         Me.btnCopyPasteAssets.TabIndex = 21
         Me.btnCopyPasteAssets.Text = "Copy and Paste Assets"
         Me.btnCopyPasteAssets.UseVisualStyleBackColor = True
@@ -478,7 +478,7 @@ Partial Class frmShoppingList
         'btnShowAssets
         '
         Me.btnShowAssets.Image = CType(resources.GetObject("btnShowAssets.Image"), System.Drawing.Image)
-        Me.btnShowAssets.Location = New System.Drawing.Point(123, 15)
+        Me.btnShowAssets.Location = New System.Drawing.Point(128, 15)
         Me.btnShowAssets.Name = "btnShowAssets"
         Me.btnShowAssets.Size = New System.Drawing.Size(48, 48)
         Me.btnShowAssets.TabIndex = 20
@@ -489,9 +489,9 @@ Partial Class frmShoppingList
         Me.gbUpdateList.Controls.Add(Me.btnCopyPasteAssets)
         Me.gbUpdateList.Controls.Add(Me.btnUpdateListwithAssets)
         Me.gbUpdateList.Controls.Add(Me.btnShowAssets)
-        Me.gbUpdateList.Location = New System.Drawing.Point(424, 538)
+        Me.gbUpdateList.Location = New System.Drawing.Point(401, 538)
         Me.gbUpdateList.Name = "gbUpdateList"
-        Me.gbUpdateList.Size = New System.Drawing.Size(178, 99)
+        Me.gbUpdateList.Size = New System.Drawing.Size(184, 99)
         Me.gbUpdateList.TabIndex = 18
         Me.gbUpdateList.TabStop = False
         Me.gbUpdateList.Text = "Update List Options:"
@@ -583,9 +583,9 @@ Partial Class frmShoppingList
         Me.gbExportOptions.Controls.Add(Me.rbtnExportSSV)
         Me.gbExportOptions.Controls.Add(Me.rbtnExportCSV)
         Me.gbExportOptions.Controls.Add(Me.rbtnExportDefault)
-        Me.gbExportOptions.Location = New System.Drawing.Point(424, 638)
+        Me.gbExportOptions.Location = New System.Drawing.Point(401, 638)
         Me.gbExportOptions.Name = "gbExportOptions"
-        Me.gbExportOptions.Size = New System.Drawing.Size(178, 41)
+        Me.gbExportOptions.Size = New System.Drawing.Size(185, 41)
         Me.gbExportOptions.TabIndex = 74
         Me.gbExportOptions.TabStop = False
         Me.gbExportOptions.Text = "Export Data in:"
@@ -593,7 +593,7 @@ Partial Class frmShoppingList
         'rbtnExportSSV
         '
         Me.rbtnExportSSV.AutoSize = True
-        Me.rbtnExportSSV.Location = New System.Drawing.Point(125, 17)
+        Me.rbtnExportSSV.Location = New System.Drawing.Point(128, 17)
         Me.rbtnExportSSV.Name = "rbtnExportSSV"
         Me.rbtnExportSSV.Size = New System.Drawing.Size(46, 17)
         Me.rbtnExportSSV.TabIndex = 2
@@ -604,7 +604,7 @@ Partial Class frmShoppingList
         'rbtnExportCSV
         '
         Me.rbtnExportCSV.AutoSize = True
-        Me.rbtnExportCSV.Location = New System.Drawing.Point(73, 17)
+        Me.rbtnExportCSV.Location = New System.Drawing.Point(76, 17)
         Me.rbtnExportCSV.Name = "rbtnExportCSV"
         Me.rbtnExportCSV.Size = New System.Drawing.Size(46, 17)
         Me.rbtnExportCSV.TabIndex = 1
@@ -615,7 +615,7 @@ Partial Class frmShoppingList
         'rbtnExportDefault
         '
         Me.rbtnExportDefault.AutoSize = True
-        Me.rbtnExportDefault.Location = New System.Drawing.Point(8, 17)
+        Me.rbtnExportDefault.Location = New System.Drawing.Point(11, 17)
         Me.rbtnExportDefault.Name = "rbtnExportDefault"
         Me.rbtnExportDefault.Size = New System.Drawing.Size(59, 17)
         Me.rbtnExportDefault.TabIndex = 0

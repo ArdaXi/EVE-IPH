@@ -1252,7 +1252,7 @@ Public Class ProgramSettings
             End If
 
         Catch ex As Exception
-            MsgBox("An error occured when loading Application Settings. Error: " & Err.Description & vbCrLf & "Default settings were loaded.", vbExclamation, Application.ProductName)
+            MsgBox("An error occured when loading BP Tab Settings. Error: " & Err.Description & vbCrLf & "Default settings were loaded.", vbExclamation, Application.ProductName)
             ' Load defaults 
             TempSettings = SetDefaultBPSettings()
         End Try

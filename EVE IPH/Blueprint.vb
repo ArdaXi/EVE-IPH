@@ -426,12 +426,13 @@ Public Class Blueprint
     End Function
 
     ' Base build function that takes a look at the number of blueprints the user wants to use and then builts each blueprint batch
-    Public Sub BuildItems(ByVal SetTaxes As Boolean, ByVal SetBrokerFees As Boolean, ByVal SetProductionCosts As Boolean)
+    Public Sub BuildItems(ByVal SetTaxes As Boolean, ByVal SetBrokerFees As Boolean, ByVal SetProductionCosts As Boolean, _
+                          ByVal IgnoreMinerals As Boolean, ByVal IgnoreT1Item As Boolean)
 
         ' Need to check for the number of BPs sent and run multiple Sessions if necessary. Also, look at the number of lines per batch
         If NumberofBPs = 1 Then
             'Just run the normal function and it will set everything
-            Call BuildItem(SetTaxes, SetBrokerFees, SetProductionCosts)
+            Call BuildItem(SetTaxes, SetBrokerFees, SetProductionCosts, IgnoreMinerals, IgnoreT1Item)
         Else ' Multi bps
             Dim BatchBlueprint As Blueprint
             Dim ComponentBlueprint As Blueprint
@@ -465,12 +466,14 @@ Public Class Blueprint
             RunsPerLine = CInt(Math.Floor(UserRuns / NumberofBPs))
             ExtraRuns = CInt(UserRuns - (RunsPerLine * NumberofBPs))
 
+            ' if batches = 1, then easy case - just take all unique runs per bp and group
+
             ' Fill a list of runs per bp
             For i = 0 To Batches - 1
                 For j = 0 To NumberofProductionLines - 1
                     ' As we add the runs, adjust with extra runs proportionally until they are gone
                     If ExtraRuns <> 0 Then
-                        ' Since it's a fraction of a total batch run, this will always just be one until gone
+                        ' Since it's a fraction of a total batch run, this will always just be one until gone ** not right?
                         AdjRunsperBP = RunsPerLine + 1
                         ExtraRuns = ExtraRuns - 1 ' Adjust extra
                     Else
@@ -506,7 +509,7 @@ Public Class Blueprint
                                                            InventionTeam, CopyFacility, CopyTeam, InventionT3BPCTypeID)
                     End If
 
-                    Call BatchBlueprint.BuildItem(SetTaxes, SetBrokerFees, SetProductionCosts)
+                    Call BatchBlueprint.BuildItem(SetTaxes, SetBrokerFees, SetProductionCosts, IgnoreMinerals, IgnoreT1Item)
 
                     ' Sum up all the stuff that is batch dependent
                     With BatchBlueprint
@@ -619,7 +622,7 @@ Public Class Blueprint
                                                    0, ManufacturingTeam, ManufacturingFacility, ComponentManufacturingTeam, _
                                                    ComponentManufacturingFacility, CapitalComponentManufacturingFacility)
 
-                    Call ComponentBlueprint.BuildItem(SetTaxes, SetBrokerFees, SetProductionCosts)
+                    Call ComponentBlueprint.BuildItem(SetTaxes, SetBrokerFees, SetProductionCosts, IgnoreMinerals, IgnoreT1Item)
 
                     ' Now add all the raw materials from this bp
                     Call RawMaterials.InsertMaterialList(ComponentBlueprint.GetBPRawMaterials.GetMaterialList)
@@ -649,7 +652,8 @@ Public Class Blueprint
     End Sub
 
     ' Sets the material versions for our blueprint
-    Private Sub BuildItem(ByVal SetTaxes As Boolean, ByVal SetBrokerFees As Boolean, ByVal SetProductionCosts As Boolean)
+    Private Sub BuildItem(ByVal SetTaxes As Boolean, ByVal SetBrokerFees As Boolean, ByVal SetProductionCosts As Boolean, _
+                          ByVal IgnoreMinerals As Boolean, ByVal IgnoreT1Item As Boolean)
         ' Database stuff
         Dim SQL As String
         Dim readerBP As SQLiteDataReader
@@ -666,7 +670,7 @@ Public Class Blueprint
         ' The current material we are working with
         Dim CurrentMaterial As Material
         Dim CurrentMatQuantity As Long
-        Dim T1BaseItem As Boolean = False
+        Dim CurrentMaterialCategory As String
 
         ' Temp Materials for passing
         Dim TempMaterials As New Materials
@@ -674,7 +678,7 @@ Public Class Blueprint
         Dim TempNumBPs As Integer = 1
 
         ' Select all materials to buid this BP
-        SQL = "SELECT BLUEPRINT_ID, MATERIAL_ID, QUANTITY, MATERIAL, MATERIAL_CATEGORY, ACTIVITY, MATERIAL_VOLUME, PRICE, ADJUSTED_PRICE, groupID "
+        SQL = "SELECT BLUEPRINT_ID, MATERIAL_ID, QUANTITY, MATERIAL, MATERIAL_CATEGORY, ACTIVITY, MATERIAL_VOLUME, PRICE, ADJUSTED_PRICE, groupID, MATERIAL_GROUP "
         SQL = SQL & "FROM ALL_BLUEPRINT_MATERIALS LEFT OUTER JOIN ITEM_PRICES ON ALL_BLUEPRINT_MATERIALS.MATERIAL_ID = ITEM_PRICES.ITEM_ID, INVENTORY_TYPES "
         SQL = SQL & "WHERE ALL_BLUEPRINT_MATERIALS.BLUEPRINT_ID =" & BlueprintID & " AND ACTIVITY = 1 AND MATERIAL_ID = INVENTORY_TYPES.typeID"
 
@@ -684,12 +688,15 @@ Public Class Blueprint
         ' For each material in the blueprint, calculate the total mats
         ' and load them into the list
         While readerBP.Read
-            If readerBP.GetString(4) = "Skill" Then
+            CurrentMaterialCategory = readerBP.GetString(4)
+            If CurrentMaterialCategory = "Skill" Then
                 ' It's a skill, so just add it to the main list of BP skills
                 ReqBuildSkills.InsertSkill(readerBP.GetInt64(1), readerBP.GetInt32(2), 0, False, 0, "", Nothing, True)
-            Else
+
+            ElseIf AddMaterial(CurrentMaterialCategory, readerBP.GetString(10), IgnoreMinerals, IgnoreT1Item) Then
+
                 ' Set the current material
-                CurrentMaterial = New Material(readerBP.GetInt64(1), readerBP.GetString(3), readerBP.GetString(4), readerBP.GetInt64(2), readerBP.GetDouble(6), If(readerBP.IsDBNull(7), 0, readerBP.GetDouble(7)), "")
+                CurrentMaterial = New Material(readerBP.GetInt64(1), readerBP.GetString(3), CurrentMaterialCategory, readerBP.GetInt64(2), readerBP.GetDouble(6), If(readerBP.IsDBNull(7), 0, readerBP.GetDouble(7)), "")
 
                 ' Save the base costs
                 BaseJobCost += CurrentMaterial.GetQuantity * readerBP.GetDouble(8)
@@ -717,22 +724,14 @@ Public Class Blueprint
                     ' Update the current material's ME
                     CurrentMaterial.SetItemME(CStr(TempME))
 
-                    ' We can build it from another BP, See if it's a T1 Item
-                    Select Case readerBP.GetString(4)
-                        Case "Ship", "Drone", "Module", "Charge"
-                            T1BaseItem = True
-                        Case Else
-                            T1BaseItem = False
-                    End Select
-
                     Dim TempComponentFacility As IndustryFacility
 
                     ' Build the T1 component
                     If readerBP.GetDouble(9) = AdvCapitalComponentGroupID Or readerBP.GetDouble(9) = CapitalComponentGroupID Then
                         ' Use capital component facility
                         TempComponentFacility = CapitalComponentManufacturingFacility
-                    ElseIf T1BaseItem Then
-                        ' Want to build this in the manufacturing facility we are using
+                    ElseIf IsT1BaseItemforT2(CurrentMaterialCategory) Then
+                        ' Want to build this in the manufacturing facility we are using for base T1 items used in T2
                         TempComponentFacility = ManufacturingFacility
                     Else ' Components
                         TempComponentFacility = ComponentManufacturingFacility
@@ -745,7 +744,7 @@ Public Class Blueprint
                               ComponentManufacturingTeam, ComponentManufacturingFacility, CapitalComponentManufacturingFacility)
 
                     ' Set this blueprint with the quantity needed and get it's mats
-                    Call ComponentBlueprint.BuildItem(SetTaxes, SetBrokerFees, SetProductionCosts)
+                    Call ComponentBlueprint.BuildItem(SetTaxes, SetBrokerFees, SetProductionCosts, IgnoreMinerals, IgnoreT1Item)
 
                     ' Determine if the component should be bought, or we should build it and add to the correct list
                     If BuildBuy Then
@@ -1251,6 +1250,30 @@ Public Class Blueprint
 
         Return TotalTeamBonus
 
+    End Function
+
+    Private Function AddMaterial(CategoryName As String, GroupName As String, IgnoreMinerals As Boolean, IgnoreT1BaseItem As Boolean) As Boolean
+
+        If IgnoreT1BaseItem And IsT1BaseItemforT2(CategoryName) Then
+            Return False
+        End If
+
+        If IgnoreMinerals And GroupName = "Mineral" Then
+            Return False
+        End If
+
+        Return True
+
+    End Function
+
+    ' Determines if the item category sent is a T1 Base item used to make T2
+    Private Function IsT1BaseItemforT2(CategoryName As String) As Boolean
+        Select Case CategoryName
+            Case "Ship", "Drone", "Module", "Charge"
+                Return True
+            Case Else
+                Return False
+        End Select
     End Function
 
     ' Calculates the total material muliplier for the blueprint based on the bp, facility and team bonuses

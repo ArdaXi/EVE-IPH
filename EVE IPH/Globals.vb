@@ -137,6 +137,8 @@ Public Module Public_Variables
     Public Const MalfunctioningRelic As String = "Malfunctioning"
     Public Const WreckedRelic As String = "Wrecked"
 
+    Public Const MineralGroupID As Integer = 18
+
     ' T2 BPC base ME/TE
     Public Const BaseT2T3ME As Double = 2
     Public Const BaseT2T3TE As Double = 4

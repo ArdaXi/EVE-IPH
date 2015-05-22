@@ -6372,6 +6372,18 @@ Tabs:
 
     End Sub
 
+    Private Sub chkBPIgnoreMinerals_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkBPIgnoreMinerals.CheckedChanged
+        If Not FirstLoad Then
+            Call RefreshBP()
+        End If
+    End Sub
+
+    Private Sub chkBPIgnoreT1Item_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkBPIgnoreT1Item.CheckedChanged
+        If Not FirstLoad Then
+            Call RefreshBP()
+        End If
+    End Sub
+
     ' Loads the T3 Relic types into the combo box based on BP Selected
     Private Sub LoadRelicTypes(ByVal BPID As Long)
         Dim SQL As String
@@ -7083,14 +7095,7 @@ Tabs:
 
         ' Save these here too
         UserApplicationSettings.CheckBuildBuy = chkBPBuildBuy.Checked
-
         Call Settings.SaveApplicationSettings(UserApplicationSettings)
-
-        ' Save the 4 facilities too
-        SelectedBPInventionFacility.SaveFacility(BPTab)
-        SelectedBPCopyFacility.SaveFacility(BPTab)
-        SelectedBPSubsystemManufacturingFacility.SaveFacility(BPTab)
-        SelectedBPT3CruiserManufacturingFacility.SaveFacility(BPTab)
 
         ' Save the data in the XML file
         Call Settings.SaveBPSettings(TempSettings)
@@ -7587,7 +7592,7 @@ Tabs:
         End If
 
         ' Build the item and get the list of materials
-        Call SelectedBlueprint.BuildItems(chkBPTaxes.Checked, chkBPTaxes.Checked, chkBPFacilityIncludeUsage.Checked)
+        Call SelectedBlueprint.BuildItems(chkBPTaxes.Checked, chkBPTaxes.Checked, chkBPFacilityIncludeUsage.Checked, chkBPIgnoreMinerals.Checked, chkBPIgnoreT1Item.Checked)
 
         ' Sort the lists
         SelectedBlueprint.GetRawMaterials.SortMaterialListByQuantity()
@@ -7702,9 +7707,6 @@ Tabs:
         ' Reset the number of bps to what we used in batches, not what was entered
         txtBPNumBPs.Text = CStr(SelectedBlueprint.GetUsedNumBPs)
 
-        ' Remove the options tab temporarily
-        tabBPInventionEquip.TabPages.Remove(tabBPOptions)
-
         ' Show and update labels for T2 if selected
         If SelectedBlueprint.GetTechLevel = BlueprintTechLevel.T2 Then
             If OwnedBP And NewBPSelection Then
@@ -7769,7 +7771,6 @@ Tabs:
             If Not tabBPInventionEquip.TabPages.Contains(tabInventionCalcs) Then
                 tabBPInventionEquip.TabPages.Add(tabInventionCalcs)
             End If
-            tabBPInventionEquip.SelectTab(SelectedBPTabIndex)
 
             ' Enable option
             rbtnBPCopyInvREMats.Enabled = True
@@ -7780,9 +7781,6 @@ Tabs:
             If Not tabBPInventionEquip.TabPages.Contains(tabT3Calcs) Then
                 tabBPInventionEquip.TabPages.Add(tabT3Calcs)
             End If
-
-            ' Now Set the tab correctly
-            tabBPInventionEquip.SelectTab(SelectedBPTabIndex)
 
             ' RE Cost and time
             lblBPRECost.Text = FormatNumber(SelectedBlueprint.GetBPInventionCost(), 2)
@@ -7839,8 +7837,12 @@ Tabs:
             tabBPInventionEquip.TabPages.Remove(tabT3Calcs)
         End If
 
-        ' Add the options tab at the end
-        tabBPInventionEquip.TabPages.Add(tabBPOptions)
+        ' Set the tab to the one selected
+        If SelectedBPTabIndex <= tabBPInventionEquip.TabCount - 1 Then
+            tabBPInventionEquip.SelectTab(SelectedBPTabIndex)
+        Else
+            tabBPInventionEquip.SelectTab(0)
+        End If
 
         ' If we loaded from the manufacturing tab or shopping list, this is no longer relevant for the next bp tab updates
         SentFromManufacturingTab = False
@@ -17141,7 +17143,7 @@ CheckTechs:
                     End If
 
                     ' Build the blueprint(s)
-                    Call ManufacturingBlueprint.BuildItems(chkCalcTaxes.Checked, chkCalcFees.Checked, chkCalcBaseFacilityIncludeUsage.Checked)
+                    Call ManufacturingBlueprint.BuildItems(chkCalcTaxes.Checked, chkCalcFees.Checked, chkCalcBaseFacilityIncludeUsage.Checked, chkCalcIgnoreMinerals.Checked, chkCalcIgnoreT1Item.Checked)
 
                     ' If checked, Add the values to the array only if we can Build, Invent, or RE it
                     AddItem = True
@@ -17289,7 +17291,7 @@ CheckTechs:
                             End If
 
                             ' Get the list of materials
-                            Call ManufacturingBlueprint.BuildItems(chkCalcTaxes.Checked, chkCalcFees.Checked, chkCalcBaseFacilityIncludeUsage.Checked)
+                            Call ManufacturingBlueprint.BuildItems(chkCalcTaxes.Checked, chkCalcFees.Checked, chkCalcBaseFacilityIncludeUsage.Checked, chkCalcIgnoreMinerals.Checked, chkCalcIgnoreT1Item.Checked)
 
                             TaxesFeesUsage = ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetManufacturingFacilityUsage
 

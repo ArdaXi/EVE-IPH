@@ -1223,7 +1223,7 @@ Public Class frmShoppingList
                         Dim TempIndyType As IndustryType = GetProductionType(ActivityManufacturing, readerBP.GetInt64(2), readerBP.GetInt64(3), "Facility Type")
                         TempBuildFacility = GetManufacturingFacility(TempIndyType, BPTab, True)
 
-                        ' Build the BP - use settings from BP tab
+                        ' Build the BP - use settings from BP tab 
                         TempBP = New Blueprint(CLng(readerBP.GetValue(0)), ItemList(i).ItemQuantity, ItemList(i).ItemME, 0, ItemList(i).NumBPs, 1, _
                         SelectedCharacter, UserApplicationSettings, False, 0, NoTeam, TempBuildFacility, _
                         NoTeam, SelectedBPComponentManufacturingFacility, SelectedBPCapitalComponentManufacturingFacility)
@@ -1236,7 +1236,7 @@ Public Class frmShoppingList
                         End If
 
                         ' Build the item and get the list of materials
-                        Call TempBP.BuildItems(frmMain.chkBPTaxes.Checked, frmMain.chkBPTaxes.Checked, frmMain.chkBPFacilityIncludeUsage.Checked)
+                        Call TempBP.BuildItems(frmMain.chkBPTaxes.Checked, frmMain.chkBPTaxes.Checked, frmMain.chkBPFacilityIncludeUsage.Checked, False, False)
 
                         ' Add to shopping list but use BP tab settings
                         Call AddToShoppingList(TempBP, BuildBuy, frmMain.rbtnBPRawmatCopy.Checked, frmMain.rbtnBPComponentCopy.Checked, _
