@@ -99,7 +99,6 @@ Public Class Blueprint
     Private ReqBuildComponentSkills As New EVESkillList ' All the skills to build just the components
 
     ' Invention variables
-    Private IgnoreInvention As Boolean ' Whether we are inventing or not
     Private MaxRunsPerBP As Integer ' The max runs for a copy or invented bpc. Zero is unlimited runs
     Private ReqInventionSkills As New EVESkillList ' For inventing this BP
     Private ReqCopySkills As New EVESkillList ' For copying the BPC
@@ -161,130 +160,12 @@ Public Class Blueprint
     Private CopyFacility As IndustryFacility
     Private InventionFacility As IndustryFacility
 
-    ' T1 Constructor
-    Public Sub New(ByVal BlueprintID As Long, ByVal BPRuns As Long, ByVal BPME As Double, ByVal BPTE As Double,
-                   ByVal NumBlueprints As Integer, ByVal NumProductionLines As Integer, ByVal BPCharacter As Character, _
-                   ByVal UserSettings As ApplicationSettings, ByVal BPBuildBuy As Boolean, ByVal UserAddlCosts As Double, BPTeam As IndustryTeam, _
+    ' BP Constructor
+    Public Sub New(ByVal BPBlueprintID As Long, ByVal BPRuns As Long, ByVal BPME As Double, ByVal BPTE As Double,
+                   ByVal NumBlueprints As Integer, ByVal NumProductionLines As Integer, ByVal UserCharacter As Character, _
+                   ByVal UserSettings As ApplicationSettings, ByVal BPBuildBuy As Boolean, ByVal UserAddlCosts As Double, BPProductionTeam As IndustryTeam, _
                    ByVal BPProductionFacility As IndustryFacility, ByVal BPComponentProductionTeam As IndustryTeam, ByVal BPComponentProductionFacility As IndustryFacility, _
                    ByVal BPCapComponentProductionFacility As IndustryFacility)
-
-        ' Implement passing in the runs per copy later based on user API, right now though this is unlimited
-        MaxRunsPerBP = 0
-
-        Call InitClass(BlueprintID, BPRuns, BPME, BPTE, NumBlueprints, NumProductionLines, BPCharacter, _
-                       UserSettings, BPBuildBuy, UserAddlCosts, BPTeam, _
-                       BPProductionFacility, BPComponentProductionTeam, BPComponentProductionFacility, BPCapComponentProductionFacility)
-
-    End Sub
-
-    ' T2/T3 Constructor
-    Public Sub New(ByVal BlueprintID As Long, ByVal BPRuns As Long, ByVal BPME As Double, ByVal BPTE As Double,
-                   ByVal NumBlueprints As Integer, ByVal NumProductionLines As Integer, ByVal NumLaboratoryLines As Integer, ByVal BPCharacter As Character, _
-                   ByVal UserSettings As ApplicationSettings, ByVal UserAddlCosts As Double, _
-                   ByVal BPProductionTeam As IndustryTeam, ByVal BPProductionFacility As IndustryFacility, _
-                   ByVal BPComponentProductionTeam As IndustryTeam, ByVal BPComponentProductionFacility As IndustryFacility, _
-                   ByVal BPCapComponentProductionFacility As IndustryFacility, _
-                   ByVal BPBuildBuy As Boolean, ByVal BPDecryptor As Decryptor, _
-                   ByVal BPInventionFacility As IndustryFacility, ByVal BPInventionTeam As IndustryTeam, _
-                   ByVal BPCopyFacility As IndustryFacility, ByVal BPCopyTeam As IndustryTeam, ByVal InventionItemTypeID As Long, ByVal BPIgnoreInvention As Boolean)
-
-        Dim SQL As String = ""
-
-        ' Init the class first
-        Call InitClass(BlueprintID, BPRuns, BPME, BPTE, NumBlueprints, NumProductionLines, BPCharacter, _
-               UserSettings, BPBuildBuy, UserAddlCosts, BPProductionTeam, _
-               BPProductionFacility, BPComponentProductionTeam, BPComponentProductionFacility, BPCapComponentProductionFacility)
-
-        ' 3406 laboratory operation and 24624 is adv laboratory operation
-        NumberofLaboratoryLines = NumLaboratoryLines
-
-        ' Save teams
-        InventionTeam = BPInventionTeam
-        CopyTeam = BPCopyTeam
-
-        InventionTeamFee = 0
-        CopyTeamFee = 0
-
-        ' Save copy and invention facility
-        CopyFacility = BPCopyFacility
-        InventionFacility = BPInventionFacility
-
-        ' Invention variable inputs - The BPC or Relic first
-        InventionT3BPCTypeID = InventionItemTypeID
-
-        ' Set the Decryptor data
-        InventionDecryptor = BPDecryptor
-
-        ' See if they want to do invention
-        IgnoreInvention = BPIgnoreInvention
-
-        ' Invention and Copy costs/times are set after getting the full base job materials
-        If Not IgnoreInvention Then
-            IncludeInventionCosts = InventionFacility.IncludeActivityCost
-            IncludeInventionTime = InventionFacility.IncludeActivityTime
-            IncludeInventionUsage = InventionFacility.IncludeActivityUsage
-
-            IncludeCopyCosts = CopyFacility.IncludeActivityCost
-            IncludeCopyTime = CopyFacility.IncludeActivityTime
-            IncludeCopyUsage = CopyFacility.IncludeActivityUsage
-
-            ' Set the invention data 
-            If Not BlueprintName.Contains("Edition") And Not BlueprintName.Contains("Polarized") And Not BlueprintName.Contains("Augmented") Then
-                ' Set the T2/T3 skills to invent from the T1 version
-                Call SetInventionSkills()
-
-                ' Set the T2/T3 skills to copy from the T1 BPC
-                Call SetCopySkills()
-
-                ' Set the invention flag
-                CanInventRE = UserHasReqSkills(BPCharacter.Skills, ReqInventionSkills)
-
-                ' Use typical invention costs to invent this
-                Call InventREBlueprint(Not CanInventRE)
-
-            End If
-
-        Else
-            IncludeInventionCosts = False
-            IncludeInventionTime = False
-            IncludeInventionUsage = False
-
-            IncludeCopyCosts = False
-            IncludeCopyTime = False
-            IncludeCopyUsage = False
-
-            TotalInventionCost = 0
-            InventionChance = 0
-
-            TotalInventedRuns = 0
-            SingleInventedBPCRuns = 0
-            NumInventionJobs = 0
-
-            CopyCost = 0
-            CopyTime = 0
-            CopyUsage = 0
-
-            InventionCosts = 0
-            InventionTime = 0
-            InventionUsage = 0
-
-            InventionDecryptor = NoDecryptor
-            Relic = ""
-
-        End If
-
-        ' Save the max runs per invented bpc
-        MaxRunsPerBP = SingleInventedBPCRuns
-
-    End Sub
-
-    ' Looks up the bae BP data for all constuctors and sets the initial values
-    Private Sub InitClass(ByVal InitBPID As Long, ByVal InitBPRuns As Long, ByVal InitBPME As Double, ByVal InitBPTE As Double,
-                          ByVal NumBlueprints As Integer, ByVal NumProductionLines As Integer, ByVal InitCharacter As Character, _
-                          ByVal InitBPUserSettings As ApplicationSettings, ByVal BPBuildBuy As Boolean, ByVal UserAddlCosts As Double, _
-                          ByVal InitBPProductionTeam As IndustryTeam, ByVal InitProductionFacility As IndustryFacility, _
-                          ByVal InitComponentProductionTeam As IndustryTeam, ByVal InitComponentProductionFacility As IndustryFacility, _
-                          ByVal InitCapComponentProductionFacilty As IndustryFacility)
 
         Dim readerBP As SQLiteDataReader
         Dim readerCost As SQLiteDataReader
@@ -294,7 +175,7 @@ Public Class Blueprint
         SQL = SQL & "ITEM_GROUP_ID, ITEM_GROUP, TECH_LEVEL, PORTION_SIZE, BASE_PRODUCTION_TIME,"
         SQL = SQL & "MAX_PRODUCTION_LIMIT, ITEM_TYPE, RACE_ID, VOLUME "
         SQL = SQL & "FROM ALL_BLUEPRINTS INNER JOIN INVENTORY_TYPES ON ALL_BLUEPRINTS.ITEM_ID = INVENTORY_TYPES.typeID "
-        SQL = SQL & "WHERE BLUEPRINT_ID =" & InitBPID
+        SQL = SQL & "WHERE BLUEPRINT_ID =" & BPBlueprintID
 
         DBCommand = New SQLiteCommand(SQL, DB)
         readerBP = DBCommand.ExecuteReader
@@ -328,7 +209,7 @@ Public Class Blueprint
         readerBP.Close()
 
         ' Settings
-        UserSettings = InitBPUserSettings
+        UserSettings = UserSettings
 
         RawMaterials = New Materials
         ComponentMaterials = New Materials
@@ -362,14 +243,14 @@ Public Class Blueprint
         ' Do build/buy 
         BuildBuy = BPBuildBuy
 
-        iME = InitBPME
-        iTE = InitBPTE
+        iME = BPME
+        iTE = BPTE
 
         Taxes = 0
         BrokerFees = 0
 
         ' See if we want to include the costs
-        IncludeManufacturingUsage = InitProductionFacility.IncludeActivityUsage
+        IncludeManufacturingUsage = BPProductionFacility.IncludeActivityUsage
 
         ' If they send zero lines, then set to the user skills
         If NumProductionLines = 0 Then ' 3387 mass production and 24625 is adv mass production
@@ -382,25 +263,25 @@ Public Class Blueprint
 
         AdditionalCosts = UserAddlCosts
 
-        UserRuns = InitBPRuns
+        UserRuns = BPRuns
 
-        BPCharacter = InitCharacter
+        BPCharacter = UserCharacter
 
         ' Set the skills to use for this blueprint - changed to type ID's due to name changes (1/29/2014)
         AdvancedIndustrySkill = BPCharacter.Skills.GetSkillLevel(3388)
         IndustrySkill = BPCharacter.Skills.GetSkillLevel(3380)
 
         ' Add production implant from settings
-        AIImplantValue = 1 - InitBPUserSettings.ManufacturingImplantValue
+        AIImplantValue = 1 - UserSettings.ManufacturingImplantValue
 
         ' Teams
-        ManufacturingTeam = InitBPProductionTeam
-        ComponentManufacturingTeam = InitComponentProductionTeam
+        ManufacturingTeam = BPProductionTeam
+        ComponentManufacturingTeam = BPComponentProductionTeam
 
         ' Production facilities
-        ManufacturingFacility = InitProductionFacility
-        ComponentManufacturingFacility = InitComponentProductionFacility
-        CapitalComponentManufacturingFacility = InitCapComponentPRoductionFacilty
+        ManufacturingFacility = BPProductionFacility
+        ComponentManufacturingFacility = BPComponentProductionFacility
+        CapitalComponentManufacturingFacility = BPCapComponentProductionFacility
 
         ' Set the flag if the user sent to this blueprint can invent it
         CanInventRE = False ' Can invent T1 BP to this T2 BP
@@ -435,7 +316,114 @@ Public Class Blueprint
         readerBP = Nothing
         DBCommand = Nothing
 
+        ' Set the invention variables to default
+        IncludeInventionCosts = False
+        IncludeInventionTime = False
+        IncludeInventionUsage = False
+
+        IncludeCopyCosts = False
+        IncludeCopyTime = False
+        IncludeCopyUsage = False
+
+        TotalInventionCost = 0
+        InventionChance = 0
+
+        TotalInventedRuns = 0
+        SingleInventedBPCRuns = 0
+        NumInventionJobs = 0
+
+        CopyCost = 0
+        CopyTime = 0
+        CopyUsage = 0
+
+        InventionCosts = 0
+        InventionTime = 0
+        InventionUsage = 0
+
+        InventionDecryptor = NoDecryptor
+        Relic = ""
+
+        ' 3406 laboratory operation and 24624 is adv laboratory operation
+        NumberofLaboratoryLines = 0
+
+        ' Save teams
+        InventionTeam = NoTeam
+        CopyTeam = NoTeam
+
+        InventionTeamFee = 0
+        CopyTeamFee = 0
+
+        ' Save copy and invention facility
+        CopyFacility = NoFacility
+        InventionFacility = NoFacility
+
+        ' Invention variable inputs - The BPC or Relic first
+        InventionT3BPCTypeID = 0
+
+        ' Set the Decryptor data
+        InventionDecryptor = NoDecryptor
+
+        ' Implement passing in the runs per copy later based on user API, right now though this is unlimited
+        MaxRunsPerBP = 0
+
     End Sub
+
+    Public Function InventBlueprint(ByVal NumLaboratoryLines As Integer, ByVal BPDecryptor As Decryptor, _
+                   ByVal BPInventionFacility As IndustryFacility, ByVal BPInventionTeam As IndustryTeam, _
+                   ByVal BPCopyFacility As IndustryFacility, ByVal BPCopyTeam As IndustryTeam, ByVal InventionItemTypeID As Long) As Integer
+
+        ' Don't invent these
+        If BlueprintName.Contains("Edition") Or BlueprintName.Contains("Polarized") Or BlueprintName.Contains("Augmented") Then
+            Return 0
+        End If
+
+        ' 3406 laboratory operation and 24624 is adv laboratory operation
+        NumberofLaboratoryLines = NumLaboratoryLines
+
+        ' Save teams
+        InventionTeam = BPInventionTeam
+        CopyTeam = BPCopyTeam
+
+        InventionTeamFee = 0
+        CopyTeamFee = 0
+
+        ' Save copy and invention facility
+        CopyFacility = BPCopyFacility
+        InventionFacility = BPInventionFacility
+
+        ' Invention variable inputs - The BPC or Relic first
+        InventionT3BPCTypeID = InventionItemTypeID
+
+        ' Set the Decryptor data
+        InventionDecryptor = BPDecryptor
+
+        ' Invention and Copy costs/times are set after getting the full base job materials
+        IncludeInventionCosts = InventionFacility.IncludeActivityCost
+        IncludeInventionTime = InventionFacility.IncludeActivityTime
+        IncludeInventionUsage = InventionFacility.IncludeActivityUsage
+
+        IncludeCopyCosts = CopyFacility.IncludeActivityCost
+        IncludeCopyTime = CopyFacility.IncludeActivityTime
+        IncludeCopyUsage = CopyFacility.IncludeActivityUsage
+
+        ' Set the invention data 
+
+        ' Set the T2/T3 skills to invent from the T1 version
+        Call SetInventionSkills()
+
+        ' Set the T2/T3 skills to copy from the T1 BPC
+        Call SetCopySkills()
+
+        ' Set the invention flag
+        CanInventRE = UserHasReqSkills(BPCharacter.Skills, ReqInventionSkills)
+
+        ' Save the max runs per invented bpc
+        MaxRunsPerBP = SingleInventedBPCRuns
+
+        ' Use typical invention costs to invent this
+        Return InventREBlueprint(Not CanInventRE)
+
+    End Function
 
     ' Base build function that takes a look at the number of blueprints the user wants to use and then builts each blueprint batch
     Public Sub BuildItems(ByVal SetTaxes As Boolean, ByVal SetBrokerFees As Boolean, ByVal SetProductionCosts As Boolean)
@@ -508,15 +496,14 @@ Public Class Blueprint
             ' Need to revisit for efficiency
             For i = 0 To ProductionChain.Count - 1
                 For j = 0 To ProductionChain(i).Count - 1
-                    If TechLevel = 1 Then
-                        BatchBlueprint = New Blueprint(BlueprintID, ProductionChain(i)(j), iME, iTE, 1, NumberofProductionLines, BPCharacter, UserSettings, BuildBuy, _
-                                                           CDbl(AdditionalCosts / ProductionChain.Count), ManufacturingTeam, ManufacturingFacility, ComponentManufacturingTeam, _
-                                                           ComponentManufacturingFacility, CapitalComponentManufacturingFacility)
-                    Else
-                        BatchBlueprint = New Blueprint(BlueprintID, ProductionChain(i)(j), iME, iTE, 1, NumberofProductionLines, NumberofLaboratoryLines, BPCharacter, UserSettings, _
-                                                           CDbl(AdditionalCosts / ProductionChain.Count), ManufacturingTeam, ManufacturingFacility, ComponentManufacturingTeam, _
-                                                           ComponentManufacturingFacility, CapitalComponentManufacturingFacility, BuildBuy, InventionDecryptor, InventionFacility, _
-                                                           InventionTeam, CopyFacility, CopyTeam, InventionT3BPCTypeID, IgnoreInvention)
+
+                    BatchBlueprint = New Blueprint(BlueprintID, ProductionChain(i)(j), iME, iTE, 1, NumberofProductionLines, BPCharacter, UserSettings, BuildBuy, _
+                                                       CDbl(AdditionalCosts / ProductionChain.Count), ManufacturingTeam, ManufacturingFacility, ComponentManufacturingTeam, _
+                                                       ComponentManufacturingFacility, CapitalComponentManufacturingFacility)
+
+                    If TechLevel <> 1 Then
+                        Call BatchBlueprint.InventBlueprint(NumberofLaboratoryLines, InventionDecryptor, InventionFacility, _
+                                                           InventionTeam, CopyFacility, CopyTeam, InventionT3BPCTypeID)
                     End If
 
                     Call BatchBlueprint.BuildItem(SetTaxes, SetBrokerFees, SetProductionCosts)
@@ -1448,7 +1435,7 @@ Public Class Blueprint
 #Region "Invention/RE Functions"
 
     ' Sets the invention cost and materials for this BP
-    Private Sub InventREBlueprint(Optional ByVal UseTypical As Boolean = False)
+    Private Function InventREBlueprint(Optional ByVal UseTypical As Boolean = False) As Integer
         Dim AvgRunsforSuccess As Double
         Dim readerBP As SQLiteDataReader
         Dim readerCost As SQLiteDataReader
@@ -1459,7 +1446,8 @@ Public Class Blueprint
         Dim CopyMat As Material = Nothing
         Dim SingleInventionMats As New Materials
         Dim SingleCopyMats As New Materials
-        Dim NumInventionSessions As Long = 0 ' How many sessions (runs per set of lines) ie. 10 runs 5 lines = 2 sessions
+        Dim NumInventionSessions As Integer = 0 ' How many sessions (runs per set of lines) ie. 10 runs 5 lines = 2 sessions
+        Dim NumberBPsInvented As Integer = -1 ' number of bps needed for runs per bp
 
         ' First select the datacores needed
         SQL = "SELECT MATERIAL_ID, MATERIAL, MATERIAL_CATEGORY, QUANTITY, MATERIAL_VOLUME, PRICE, MATERIAL_GROUP "
@@ -1576,7 +1564,7 @@ Public Class Blueprint
         ' Basically, the number avg number of runs for success times the total runs wanted is the total invention runs needed for single runs. Divide this
         ' by the invented runs, then divide that by how many laboratory lines we are using.  Need to round up each time
         ' Ex. avgruns = 2, user runs = 100, inventedruns = 10, lines = 10 => 200/10 = 20/10 = 2 invention sessions to get enough bps to make 100 runs.
-        NumInventionSessions = CLng(Math.Ceiling(NumInventionJobs / NumberofLaboratoryLines))
+        NumInventionSessions = CInt(Math.Ceiling(NumInventionJobs / NumberofLaboratoryLines))
 
         If IncludeCopyTime And TechLevel <> BlueprintTechLevel.T3 Then
             ' Set the total copy time based on the number of invention sessions we need, divided by the lab lines they have
@@ -1658,7 +1646,9 @@ Public Class Blueprint
 
         End If
 
-    End Sub
+        Return NumberBPsInvented
+
+    End Function
 
     ' Sets the usage for Copying, which is based on the base mats cost
     Private Sub SetCopyUsage()

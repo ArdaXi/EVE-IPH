@@ -366,11 +366,11 @@ Public Class frmInventionMonitor
         gbSkills.Visible = True
 
         ' Build the T2 item as a blueprint and then get stats - CHECK
-        TempBlueprint = New Blueprint(CLng(lstInventionItems.SelectedItems(0).SubItems(0).Text), 1, 0, 0, 1, 1, 1, SelectedCharacter, _
-                                        UserApplicationSettings, 0, NoTeam, SelectedBPManufacturingFacility, NoTeam, _
-                                        SelectedBPComponentManufacturingFacility, SelectedBPCapitalComponentManufacturingFacility, _
-                                        False, SelectedDecryptor, SelectedBPInventionFacility, NoTeam, SelectedBPCopyFacility, NoTeam, 0, True)
-
+        TempBlueprint = New Blueprint(CLng(lstInventionItems.SelectedItems(0).SubItems(0).Text), 1, 0, 0, 1, 1, SelectedCharacter, _
+                                        UserApplicationSettings, False, 0, NoTeam, SelectedBPManufacturingFacility, NoTeam, _
+                                        SelectedBPComponentManufacturingFacility, SelectedBPCapitalComponentManufacturingFacility)
+        ' Invent the bp
+        Call TempBlueprint.InventBlueprint(1, SelectedDecryptor, SelectedBPInventionFacility, NoTeam, SelectedBPCopyFacility, NoTeam, 0)
         Call TempBlueprint.BuildItems(False, False, False)
 
         ' Now get the data from the blueprint

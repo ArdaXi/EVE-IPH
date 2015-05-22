@@ -1224,16 +1224,15 @@ Public Class frmShoppingList
                         TempBuildFacility = GetManufacturingFacility(TempIndyType, BPTab, True)
 
                         ' Build the BP - use settings from BP tab
-                        If readerBP.GetInt32(1) = 1 Then
-                            TempBP = New Blueprint(CLng(readerBP.GetValue(0)), ItemList(i).ItemQuantity, ItemList(i).ItemME, 0, ItemList(i).NumBPs, 1, _
-                                                   SelectedCharacter, UserApplicationSettings, False, 0, NoTeam, TempBuildFacility, _
-                                                   NoTeam, SelectedBPComponentManufacturingFacility, SelectedBPCapitalComponentManufacturingFacility)
-                        ElseIf readerBP.GetInt32(1) = 2 Or readerBP.GetInt32(1) = 3 Then
-                            TempBP = New Blueprint(CLng(readerBP.GetValue(0)), ItemList(i).ItemQuantity, ItemList(i).ItemME, 0, ItemList(i).NumBPs, 1, 1, _
-                                                   SelectedCharacter, UserApplicationSettings, 0, NoTeam, TempBuildFacility, _
-                                                   NoTeam, SelectedBPComponentManufacturingFacility, SelectedBPCapitalComponentManufacturingFacility, BuildBuy, TempDecryptor, _
-                                                   SelectedBPInventionFacility, SelectedBPInventionTeam, _
-                                                   SelectedBPCopyFacility, SelectedBPCopyTeam, GetInventItemTypeID(CLng(readerBP.GetValue(0)), ItemList(i).Relic), True) ' Add new flag to the items list
+                        TempBP = New Blueprint(CLng(readerBP.GetValue(0)), ItemList(i).ItemQuantity, ItemList(i).ItemME, 0, ItemList(i).NumBPs, 1, _
+                        SelectedCharacter, UserApplicationSettings, False, 0, NoTeam, TempBuildFacility, _
+                        NoTeam, SelectedBPComponentManufacturingFacility, SelectedBPCapitalComponentManufacturingFacility)
+
+                        If readerBP.GetInt32(1) <> 1 Then
+                            Dim MaximumLaboratoryLines As Integer = SelectedCharacter.Skills.GetSkillLevel(3406) + SelectedCharacter.Skills.GetSkillLevel(24624) + 1
+
+                            TempBP.InventBlueprint(MaximumLaboratoryLines, TempDecryptor, SelectedBPInventionFacility, SelectedBPInventionTeam, _
+                                                   SelectedBPCopyFacility, SelectedBPCopyTeam, GetInventItemTypeID(CLng(readerBP.GetValue(0)), ItemList(i).Relic))
                         End If
 
                         ' Build the item and get the list of materials

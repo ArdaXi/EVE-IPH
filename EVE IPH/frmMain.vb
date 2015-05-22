@@ -6259,8 +6259,117 @@ Tabs:
     End Sub
 
     Private Sub chkBPIgnoreInvention_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkBPIgnoreInvention.CheckedChanged
-        Call UpdateInventionObjects(chkBPIgnoreInvention.Checked)
-        Call RefreshBP()
+        UpdatingInventionChecks = True
+
+        If chkBPIgnoreInvention.Checked Then
+            If tabBPInventionEquip.Contains(tabInventionCalcs) Then
+                ' Enable all first
+                chkBPIncludeCopyCosts.Enabled = False
+                chkBPIncludeCopyTime.Enabled = False
+                chkBPIncludeInventionCosts.Enabled = False
+                chkBPIncludeInventionTime.Enabled = False
+
+                txtBPInventionLines.Enabled = False
+                cmbBPInventionDecryptor.Enabled = False
+
+                ' Uncheck the invention/copy checks for calcs
+                chkBPIncludeCopyCosts.Checked = False
+                chkBPIncludeCopyTime.Checked = False
+                chkBPIncludeInventionCosts.Checked = False
+                chkBPIncludeInventionTime.Checked = False
+                If cmbBPFacilityActivities.Text = ActivityInvention Then
+                    ' Save the current facility value since we are changing it
+                    Dim TempUsage As Boolean = SelectedBPInventionFacility.IncludeActivityUsage
+                    Dim TempDefault As Boolean = SelectedBPInventionFacility.IsDefault
+                    chkBPFacilityIncludeUsage.Checked = False
+                    SelectedBPInventionFacility.IncludeActivityUsage = TempUsage
+                    SelectedBPInventionFacility.IsDefault = TempDefault
+                End If
+
+            ElseIf tabBPInventionEquip.Contains(tabT3Calcs) Then
+                ' Enable all first
+                chkBPIncludeT3Costs.Enabled = False
+                chkBPIncludeT3Time.Enabled = False
+                txtBPRelicLines.Enabled = False
+                cmbBPT3Decryptor.Enabled = False
+                cmbBPRelic.Enabled = False
+
+                ' Uncheck the invention checks for calcs
+                chkBPIncludeT3Costs.Checked = False
+                chkBPIncludeT3Time.Checked = False
+                ' If the facility is visible, then uncheck
+                If cmbBPFacilityActivities.Text = ActivityInvention Then
+                    ' Save the current facility value since we are changing it
+                    Dim TempUsage As Boolean = SelectedBPInventionFacility.IncludeActivityUsage
+                    Dim TempDefault As Boolean = SelectedBPInventionFacility.IsDefault
+                    chkBPFacilityIncludeUsage.Checked = False
+                    SelectedBPInventionFacility.IncludeActivityUsage = TempUsage
+                    SelectedBPInventionFacility.IsDefault = TempDefault
+                End If
+            End If
+
+        Else ' Set it on the user settings
+            If tabBPInventionEquip.Contains(tabInventionCalcs) Then
+                ' Enable all first
+                chkBPIncludeCopyCosts.Enabled = True
+                chkBPIncludeCopyTime.Enabled = True
+                chkBPIncludeInventionCosts.Enabled = True
+                chkBPIncludeInventionTime.Enabled = True
+
+                txtBPInventionLines.Enabled = True
+                cmbBPInventionDecryptor.Enabled = True
+
+                ' Uncheck the invention/copy checks for calcs
+                chkBPIncludeCopyCosts.Checked = SelectedBPCopyFacility.IncludeActivityCost
+                chkBPIncludeCopyTime.Checked = SelectedBPCopyFacility.IncludeActivityTime
+                chkBPIncludeInventionCosts.Checked = SelectedBPInventionFacility.IncludeActivityCost
+                chkBPIncludeInventionTime.Checked = SelectedBPInventionFacility.IncludeActivityTime
+                If cmbBPFacilityActivities.Text = ActivityInvention Then
+                    chkBPFacilityIncludeUsage.Checked = SelectedBPInventionFacility.IncludeActivityUsage
+                End If
+
+            ElseIf tabBPInventionEquip.Contains(tabT3Calcs) Then
+                ' Enable all first
+                chkBPIncludeT3Costs.Enabled = True
+                chkBPIncludeT3Time.Enabled = True
+
+                txtBPRelicLines.Enabled = True
+                cmbBPT3Decryptor.Enabled = True
+                cmbBPRelic.Enabled = True
+
+                ' Uncheck the invention checks for calcs
+                chkBPIncludeT3Costs.Checked = SelectedBPT3InventionFacility.IncludeActivityCost
+                chkBPIncludeT3Time.Checked = SelectedBPT3InventionFacility.IncludeActivityTime
+                ' If the facility is visible, then uncheck
+                If cmbBPFacilityActivities.Text = ActivityInvention Then
+                    chkBPFacilityIncludeUsage.Checked = SelectedBPT3InventionFacility.IncludeActivityUsage
+                End If
+            End If
+        End If
+
+        UpdatingInventionChecks = False
+
+        ' If we are inventing, make sure we add or remove the activity based on the check
+        If tabBPInventionEquip.Contains(tabInventionCalcs) Or tabBPInventionEquip.Contains(tabT3Calcs) Then
+            If chkBPIgnoreInvention.Checked Then
+                ' Remove the invention and copy activity
+                cmbBPFacilityActivities.Items.Remove(ActivityInvention)
+                cmbBPFacilityActivities.Items.Remove(ActivityCopying)
+            Else
+                ' Add the invention and copy activity
+                If Not cmbBPFacilityActivities.Items.Contains(ActivityInvention) Then
+                    cmbBPFacilityActivities.Items.Add(ActivityInvention)
+                End If
+                If Not cmbBPFacilityActivities.Items.Contains(ActivityCopying) Then
+                    cmbBPFacilityActivities.Items.Add(ActivityCopying)
+                End If
+            End If
+        End If
+
+        If Not FirstLoad Then
+            Call RefreshBP()
+        End If
+
     End Sub
 
     ' Loads the T3 Relic types into the combo box based on BP Selected
@@ -6758,7 +6867,12 @@ Tabs:
         cmbBPFacilityRegion.Enabled = False
         cmbBPFacilityorArray.Enabled = False
 
-        ' Only show the facility tab first
+        ' Ignore settings
+        chkBPIgnoreInvention.Checked = UserBPTabSettings.IgnoreInvention
+        chkBPIgnoreMinerals.Checked = UserBPTabSettings.IgnoreMinerals
+        chkBPIgnoreT1Item.Checked = UserBPTabSettings.IgnoreT1Item
+
+        ' Only show the facility and options tab first
         tabBPInventionEquip.TabPages.Remove(tabInventionCalcs)
         tabBPInventionEquip.TabPages.Remove(tabT3Calcs)
         tabBPInventionEquip.SelectTab(0)
@@ -6939,6 +7053,11 @@ Tabs:
         ' For T3 on the BP tab, save both facility data
         TempSettings.IncludeT3Cost = chkBPIncludeT3Costs.Checked
         TempSettings.IncludeT3Time = chkBPIncludeT3Time.Checked
+
+        ' Ignore settings
+        TempSettings.IgnoreInvention = chkBPIgnoreInvention.Checked
+        TempSettings.IgnoreMinerals = chkBPIgnoreMinerals.Checked
+        TempSettings.IgnoreT1Item = chkBPIgnoreT1Item.Checked
 
         SelectedBPSubsystemManufacturingFacility.IncludeActivityCost = chkBPIncludeT3Costs.Checked
         SelectedBPSubsystemManufacturingFacility.IncludeActivityTime = chkBPIncludeT3Time.Checked
@@ -7444,8 +7563,13 @@ Tabs:
         compBPMatsColumnSorter = New ListViewColumnSorter()
         lstBPComponentMats.ListViewItemSorter = compBPMatsColumnSorter
 
+        ' Construct our Blueprint
+        SelectedBlueprint = New Blueprint(BPID, SelectedRuns, BPME, BPTE, CInt(txtBPNumBPs.Text), CInt(txtBPLines.Text), SelectedCharacter, _
+                                          UserApplicationSettings, chkBPBuildBuy.Checked, AdditionalCosts, SelectedBPManufacturingTeam, BlueprintBuildFacility, _
+                                          SelectedBPComponentManufacturingTeam, SelectedBPComponentManufacturingFacility, SelectedBPCapitalComponentManufacturingFacility)
+
         ' Set the T2 and T3 inputs if necessary
-        If BPTech = BlueprintTechLevel.T2 Or BPTech = BlueprintTechLevel.T3 Then
+        If BPTech <> BlueprintTechLevel.T1 And chkBPIgnoreInvention.Checked = False Then
 
             If BPTech = BlueprintTechLevel.T3 Then
                 ' Need to add the relic variant to the query for just one item
@@ -7457,19 +7581,9 @@ Tabs:
                 InventionFacility = SelectedBPInventionFacility
             End If
 
-            SelectedBlueprint = New Blueprint(BPID, SelectedRuns, BPME, BPTE, CInt(txtBPNumBPs.Text), CInt(txtBPLines.Text), CInt(txtBPInventionLines.Text), SelectedCharacter, _
-                                  UserApplicationSettings, AdditionalCosts, SelectedBPManufacturingTeam, BlueprintBuildFacility, _
-                                  SelectedBPComponentManufacturingTeam, SelectedBPComponentManufacturingFacility, _
-                                  SelectedBPCapitalComponentManufacturingFacility, _
-                                  chkBPBuildBuy.Checked, SelectedDecryptor, _
-                                  InventionFacility, SelectedBPInventionTeam, _
-                                  SelectedBPCopyFacility, SelectedBPCopyTeam, GetInventItemTypeID(BPID, RelicName), chkBPIgnoreInvention.Checked)
-        Else ' T1
-
-            ' Construct our Blueprint
-            SelectedBlueprint = New Blueprint(BPID, SelectedRuns, BPME, BPTE, CInt(txtBPNumBPs.Text), CInt(txtBPLines.Text), SelectedCharacter, _
-                                              UserApplicationSettings, chkBPBuildBuy.Checked, AdditionalCosts, SelectedBPManufacturingTeam, BlueprintBuildFacility, _
-                                              SelectedBPComponentManufacturingTeam, SelectedBPComponentManufacturingFacility, SelectedBPCapitalComponentManufacturingFacility)
+            ' invent this bp
+            Call SelectedBlueprint.InventBlueprint(CInt(txtBPInventionLines.Text), SelectedDecryptor, _
+                                  InventionFacility, SelectedBPInventionTeam, SelectedBPCopyFacility, SelectedBPCopyTeam, GetInventItemTypeID(BPID, RelicName))
         End If
 
         ' Build the item and get the list of materials
@@ -7587,6 +7701,9 @@ Tabs:
 
         ' Reset the number of bps to what we used in batches, not what was entered
         txtBPNumBPs.Text = CStr(SelectedBlueprint.GetUsedNumBPs)
+
+        ' Remove the options tab temporarily
+        tabBPInventionEquip.TabPages.Remove(tabBPOptions)
 
         ' Show and update labels for T2 if selected
         If SelectedBlueprint.GetTechLevel = BlueprintTechLevel.T2 Then
@@ -7722,8 +7839,8 @@ Tabs:
             tabBPInventionEquip.TabPages.Remove(tabT3Calcs)
         End If
 
-        ' Ignore invention option for T2/T3 owned bps
-        Call UpdateInventionObjects(chkBPIgnoreInvention.Checked)
+        ' Add the options tab at the end
+        tabBPInventionEquip.TabPages.Add(tabBPOptions)
 
         ' If we loaded from the manufacturing tab or shopping list, this is no longer relevant for the next bp tab updates
         SentFromManufacturingTab = False
@@ -7822,44 +7939,6 @@ ExitForm:
         End If
 
         pictBP.Update()
-
-    End Sub
-
-    ' Updates the invention objects based on an ignore value sent
-    Public Sub UpdateInventionObjects(ByVal IgnoreInvention As Boolean)
-
-        UpdatingInventionChecks = True
-        If tabBPInventionEquip.Contains(tabInventionCalcs) Then
-            ' Uncheck the invention/copy checks for calcs
-            chkBPIncludeCopyCosts.Checked = SelectedBPCopyFacility.IncludeActivityCost
-            chkBPIncludeCopyTime.Checked = SelectedBPCopyFacility.IncludeActivityTime
-            chkBPIncludeInventionCosts.Checked = SelectedBPInventionFacility.IncludeActivityCost
-            chkBPIncludeInventionTime.Checked = SelectedBPInventionFacility.IncludeActivityTime
-            If cmbBPFacilityActivities.Text = ActivityInvention Then
-                chkBPFacilityIncludeUsage.Checked = ShowItem
-            End If
-        ElseIf tabBPInventionEquip.Contains(tabT3Calcs) Then
-            ' Uncheck the invention checks for calcs
-            chkBPIncludeT3Costs.Checked = ShowItem
-            chkBPIncludeT3Time.Checked = ShowItem
-            ' If the facility is visible, then uncheck
-            If cmbBPFacilityActivities.Text = ActivityInvention Then
-                chkBPFacilityIncludeUsage.Checked = ShowItem
-            End If
-            UpdatingInventionChecks = ShowItem
-        End If
-        UpdatingInventionChecks = False
-
-        ' If we are inventing, make sure we add or remove the activity based on the check
-        If tabBPInventionEquip.Contains(tabInventionCalcs) Or tabBPInventionEquip.Contains(tabT3Calcs) Then
-            If chkBPIgnoreInvention.Checked Then
-                ' Remove the invention activity
-                cmbBPFacilityActivities.Items.Remove(ActivityInvention)
-            Else
-                ' Add the invention activity
-                cmbBPFacilityActivities.Items.Remove(ActivityInvention)
-            End If
-        End If
 
     End Sub
 
@@ -17033,8 +17112,14 @@ CheckTechs:
                         End If
                     End With
 
+                    ' Construct the BP
+                    ManufacturingBlueprint = New Blueprint(InsertItem.BPID, CInt(txtCalcRuns.Text), InsertItem.BPME, InsertItem.BPTE, _
+                                   NumberofBlueprints, CInt(txtCalcProdLines.Text), SelectedCharacter, _
+                                   UserApplicationSettings, rbtnCalcCompareBuildBuy.Checked, 0, InsertItem.ManufacturingTeam, InsertItem.ManufacturingFacility, _
+                                   InsertItem.ComponentTeam, InsertItem.ComponentManufacturingFacility, InsertItem.CapComponentManufacturingFacility)
+
                     ' Set the T2 and T3 inputs if necessary
-                    If InsertItem.TechLevel = "T2" Or InsertItem.TechLevel = "T3" Then
+                    If InsertItem.TechLevel <> "T1" And chkCalcIgnoreInvention.Checked = False Then
 
                         ' Strip off the relic if in here for the decryptor
                         If InsertItem.Inputs.Contains("-") Then
@@ -17050,21 +17135,9 @@ CheckTechs:
                         End If
 
                         ' Construct the T2/T3 BP
-                        ManufacturingBlueprint = New Blueprint(InsertItem.BPID, CInt(txtCalcRuns.Text), InsertItem.BPME, InsertItem.BPTE, _
-                                                               NumberofBlueprints, CInt(txtCalcProdLines.Text), CInt(txtCalcLabLines.Text), SelectedCharacter, _
-                                                               UserApplicationSettings, 0, InsertItem.ManufacturingTeam, InsertItem.ManufacturingFacility, _
-                                                               InsertItem.ComponentTeam, InsertItem.ComponentManufacturingFacility, InsertItem.CapComponentManufacturingFacility, _
-                                                               rbtnCalcCompareBuildBuy.Checked, SelectedDecryptor, _
-                                                               InsertItem.InventionFacility, InsertItem.InventionTeam, _
-                                                               InsertItem.CopyFacility, InsertItem.CopyTeam, GetInventItemTypeID(InsertItem.BPID, InsertItem.Relic), chkCalcIgnoreInvention.Checked)
+                        Call ManufacturingBlueprint.InventBlueprint(CInt(txtCalcLabLines.Text), SelectedDecryptor, InsertItem.InventionFacility, InsertItem.InventionTeam, _
+                                                               InsertItem.CopyFacility, InsertItem.CopyTeam, GetInventItemTypeID(InsertItem.BPID, InsertItem.Relic))
 
-                    Else ' T1
-
-                        ' Construct the T1 BP
-                        ManufacturingBlueprint = New Blueprint(InsertItem.BPID, CInt(txtCalcRuns.Text), InsertItem.BPME, InsertItem.BPTE, _
-                                       NumberofBlueprints, CInt(txtCalcProdLines.Text), SelectedCharacter, _
-                                       UserApplicationSettings, rbtnCalcCompareBuildBuy.Checked, 0, InsertItem.ManufacturingTeam, InsertItem.ManufacturingFacility, _
-                                       InsertItem.ComponentTeam, InsertItem.ComponentManufacturingFacility, InsertItem.CapComponentManufacturingFacility)
                     End If
 
                     ' Build the blueprint(s)
@@ -17201,25 +17274,17 @@ CheckTechs:
                             Call InsertManufacturingItem(InsertItem, SVRThresholdValue, chkCalcSVRIncludeNull.Checked, ManufacturingList)
 
                             ' *** For Build/Buy we need to construct a new BP and add that
-                            If InsertItem.TechLevel = "T1" Then
+                            ' Construct the BP
+                            ManufacturingBlueprint = New Blueprint(InsertItem.BPID, CInt(txtCalcRuns.Text), InsertItem.BPME, InsertItem.BPTE, _
+                                           NumberofBlueprints, CInt(txtCalcProdLines.Text), SelectedCharacter, _
+                                           UserApplicationSettings, True, 0, InsertItem.ManufacturingTeam, _
+                                           InsertItem.ManufacturingFacility, InsertItem.ComponentTeam, _
+                                           InsertItem.ComponentManufacturingFacility, InsertItem.CapComponentManufacturingFacility)
 
-                                ' Construct the T1 BP
-                                ManufacturingBlueprint = New Blueprint(InsertItem.BPID, CInt(txtCalcRuns.Text), InsertItem.BPME, InsertItem.BPTE, _
-                                               NumberofBlueprints, CInt(txtCalcProdLines.Text), SelectedCharacter, _
-                                               UserApplicationSettings, True, 0, InsertItem.ManufacturingTeam, _
-                                               InsertItem.ManufacturingFacility, InsertItem.ComponentTeam, _
-                                               InsertItem.ComponentManufacturingFacility, InsertItem.CapComponentManufacturingFacility)
-
-                            ElseIf InsertItem.TechLevel = "T2" Or InsertItem.TechLevel = "T3" Then
-
+                            If InsertItem.TechLevel <> "T1" And chkCalcIgnoreInvention.Checked Then
                                 ' Construct the T2/T3 BP
-                                ManufacturingBlueprint = New Blueprint(InsertItem.BPID, CInt(txtCalcRuns.Text), InsertItem.BPME, InsertItem.BPTE, _
-                                                                       NumberofBlueprints, CInt(txtCalcProdLines.Text), CInt(txtCalcLabLines.Text), SelectedCharacter, _
-                                                                       UserApplicationSettings, 0, InsertItem.ManufacturingTeam, InsertItem.ManufacturingFacility, _
-                                                                       InsertItem.ComponentTeam, InsertItem.ComponentManufacturingFacility, InsertItem.CapComponentManufacturingFacility, _
-                                                                       True, SelectedDecryptor, _
-                                                                       InsertItem.InventionFacility, InsertItem.InventionTeam, _
-                                                                       InsertItem.CopyFacility, InsertItem.CopyTeam, GetInventItemTypeID(InsertItem.BPID, InsertItem.Relic), chkCalcIgnoreInvention.Checked)
+                                ManufacturingBlueprint.InventBlueprint(CInt(txtCalcLabLines.Text), SelectedDecryptor, InsertItem.InventionFacility, InsertItem.InventionTeam, _
+                                                                       InsertItem.CopyFacility, InsertItem.CopyTeam, GetInventItemTypeID(InsertItem.BPID, InsertItem.Relic))
 
                             End If
 

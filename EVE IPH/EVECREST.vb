@@ -918,7 +918,7 @@ Public Class EVECREST
                     Next
 
                     ErrorTracker = "Rebuilding indexes on industry_facilities"
-                    '' Rebuild indexes on INDUSTRY_FACILITIES
+                    '' Rebuild indexes on INDUSTRY_FACILITIES - might not need to do
                     'Call ExecuteNonQuerySQL("REINDEX IDX_IF_MAIN")
                     'Call ExecuteNonQuerySQL("REINDEX IDX_IF_SSID")
 

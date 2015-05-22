@@ -822,7 +822,6 @@ Partial Class frmMain
         Me.chkSystems5 = New System.Windows.Forms.CheckBox()
         Me.chkSystems3 = New System.Windows.Forms.CheckBox()
         Me.chkSystems1 = New System.Windows.Forms.CheckBox()
-        Me.lstPricesView = New EVE_Isk_per_Hour.MyListView()
         Me.txtPriceItemFilter = New System.Windows.Forms.TextBox()
         Me.chkSplitPrices = New System.Windows.Forms.CheckBox()
         Me.gbSplitPrices = New System.Windows.Forms.GroupBox()
@@ -1003,8 +1002,6 @@ Partial Class frmMain
         Me.rbtnBPShipBlueprints = New System.Windows.Forms.RadioButton()
         Me.rbtnBPDeployableBlueprints = New System.Windows.Forms.RadioButton()
         Me.lblBPSelectBlueprint = New System.Windows.Forms.Label()
-        Me.lstBPComponentMats = New EVE_Isk_per_Hour.MyListView()
-        Me.lstBPRawMats = New EVE_Isk_per_Hour.MyListView()
         Me.gbBPInventionStats = New System.Windows.Forms.GroupBox()
         Me.lblBPTotalUnits = New System.Windows.Forms.Label()
         Me.lblBPTaxes = New System.Windows.Forms.Label()
@@ -1093,7 +1090,7 @@ Partial Class frmMain
         Me.lblT3InventStatus = New System.Windows.Forms.Label()
         Me.chkBPIncludeT3Time = New System.Windows.Forms.CheckBox()
         Me.chkBPIncludeT3Costs = New System.Windows.Forms.CheckBox()
-        Me.tabOptions = New System.Windows.Forms.TabPage()
+        Me.tabBPOptions = New System.Windows.Forms.TabPage()
         Me.gbBPIgnoreinCalcs = New System.Windows.Forms.GroupBox()
         Me.chkBPIgnoreMinerals = New System.Windows.Forms.CheckBox()
         Me.chkBPIgnoreT1Item = New System.Windows.Forms.CheckBox()
@@ -1144,7 +1141,6 @@ Partial Class frmMain
         Me.cmbBPBlueprintSelection = New System.Windows.Forms.ComboBox()
         Me.tabMain = New System.Windows.Forms.TabControl()
         Me.tabPI = New System.Windows.Forms.TabPage()
-        Me.MyListView6 = New EVE_Isk_per_Hour.MyListView()
         Me.btnPISaveSettings = New System.Windows.Forms.Button()
         Me.gbPIPlanets = New System.Windows.Forms.GroupBox()
         Me.chkPILava = New System.Windows.Forms.CheckBox()
@@ -1156,14 +1152,18 @@ Partial Class frmMain
         Me.chkPIStorm = New System.Windows.Forms.CheckBox()
         Me.chkPITemperate = New System.Windows.Forms.CheckBox()
         Me.btnPIReset = New System.Windows.Forms.Button()
+        Me.cmbCalcManufacturingTeamActivity = New System.Windows.Forms.ComboBox()
+        Me.ListOptionsMenu = New System.Windows.Forms.ContextMenuStrip(Me.components)
+        Me.OpenMarketDataToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.lstBPComponentMats = New EVE_Isk_per_Hour.MyListView()
+        Me.lstBPRawMats = New EVE_Isk_per_Hour.MyListView()
+        Me.lstPricesView = New EVE_Isk_per_Hour.MyListView()
+        Me.MyListView6 = New EVE_Isk_per_Hour.MyListView()
         Me.MyListView5 = New EVE_Isk_per_Hour.MyListView()
         Me.MyListView4 = New EVE_Isk_per_Hour.MyListView()
         Me.MyListView3 = New EVE_Isk_per_Hour.MyListView()
         Me.MyListView2 = New EVE_Isk_per_Hour.MyListView()
         Me.MyListView1 = New EVE_Isk_per_Hour.MyListView()
-        Me.cmbCalcManufacturingTeamActivity = New System.Windows.Forms.ComboBox()
-        Me.ListOptionsMenu = New System.Windows.Forms.ContextMenuStrip(Me.components)
-        Me.OpenMarketDataToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.mnuStripMain.SuspendLayout
         Me.pnlMain.SuspendLayout
         Me.tabMining.SuspendLayout
@@ -1272,7 +1272,7 @@ Partial Class frmMain
         Me.tabFacility.SuspendLayout
         Me.tabInventionCalcs.SuspendLayout
         Me.tabT3Calcs.SuspendLayout
-        Me.tabOptions.SuspendLayout
+        Me.tabBPOptions.SuspendLayout
         Me.gbBPIgnoreinCalcs.SuspendLayout
         CType(Me.pictBP,System.ComponentModel.ISupportInitialize).BeginInit
         Me.gbBPTeam.SuspendLayout
@@ -5410,6 +5410,7 @@ Partial Class frmMain
         'chkCalcIgnoreMinerals
         '
         Me.chkCalcIgnoreMinerals.AutoSize = true
+        Me.chkCalcIgnoreMinerals.Enabled = false
         Me.chkCalcIgnoreMinerals.Location = New System.Drawing.Point(9, 35)
         Me.chkCalcIgnoreMinerals.Name = "chkCalcIgnoreMinerals"
         Me.chkCalcIgnoreMinerals.Size = New System.Drawing.Size(65, 17)
@@ -5420,6 +5421,7 @@ Partial Class frmMain
         'chkCalcIgnoreT1Item
         '
         Me.chkCalcIgnoreT1Item.AutoSize = true
+        Me.chkCalcIgnoreT1Item.Enabled = false
         Me.chkCalcIgnoreT1Item.Location = New System.Drawing.Point(9, 52)
         Me.chkCalcIgnoreT1Item.Name = "chkCalcIgnoreT1Item"
         Me.chkCalcIgnoreT1Item.Size = New System.Drawing.Size(62, 17)
@@ -9468,19 +9470,6 @@ Partial Class frmMain
         Me.chkSystems1.Text = "Jita"
         Me.chkSystems1.UseVisualStyleBackColor = true
         '
-        'lstPricesView
-        '
-        Me.lstPricesView.FullRowSelect = true
-        Me.lstPricesView.GridLines = true
-        Me.lstPricesView.HideSelection = false
-        Me.lstPricesView.Location = New System.Drawing.Point(8, 10)
-        Me.lstPricesView.MultiSelect = false
-        Me.lstPricesView.Name = "lstPricesView"
-        Me.lstPricesView.Size = New System.Drawing.Size(691, 321)
-        Me.lstPricesView.TabIndex = 0
-        Me.lstPricesView.UseCompatibleStateImageBehavior = false
-        Me.lstPricesView.View = System.Windows.Forms.View.Details
-        '
         'txtPriceItemFilter
         '
         Me.txtPriceItemFilter.Location = New System.Drawing.Point(80, 581)
@@ -11470,34 +11459,6 @@ Partial Class frmMain
         Me.lblBPSelectBlueprint.TabIndex = 0
         Me.lblBPSelectBlueprint.Text = "Selected Blueprint"
         '
-        'lstBPComponentMats
-        '
-        Me.lstBPComponentMats.FullRowSelect = true
-        Me.lstBPComponentMats.GridLines = true
-        Me.lstBPComponentMats.HideSelection = false
-        Me.lstBPComponentMats.Location = New System.Drawing.Point(4, 258)
-        Me.lstBPComponentMats.MultiSelect = false
-        Me.lstBPComponentMats.Name = "lstBPComponentMats"
-        Me.lstBPComponentMats.Size = New System.Drawing.Size(562, 329)
-        Me.lstBPComponentMats.TabIndex = 35
-        Me.lstBPComponentMats.TabStop = false
-        Me.lstBPComponentMats.UseCompatibleStateImageBehavior = false
-        Me.lstBPComponentMats.View = System.Windows.Forms.View.Details
-        '
-        'lstBPRawMats
-        '
-        Me.lstBPRawMats.FullRowSelect = true
-        Me.lstBPRawMats.GridLines = true
-        Me.lstBPRawMats.HideSelection = false
-        Me.lstBPRawMats.Location = New System.Drawing.Point(569, 258)
-        Me.lstBPRawMats.MultiSelect = false
-        Me.lstBPRawMats.Name = "lstBPRawMats"
-        Me.lstBPRawMats.Size = New System.Drawing.Size(562, 329)
-        Me.lstBPRawMats.TabIndex = 34
-        Me.lstBPRawMats.TabStop = false
-        Me.lstBPRawMats.UseCompatibleStateImageBehavior = false
-        Me.lstBPRawMats.View = System.Windows.Forms.View.Details
-        '
         'gbBPInventionStats
         '
         Me.gbBPInventionStats.BackColor = System.Drawing.Color.Transparent
@@ -11883,9 +11844,9 @@ Partial Class frmMain
         '
         Me.tabBPInventionEquip.Alignment = System.Windows.Forms.TabAlignment.Right
         Me.tabBPInventionEquip.Controls.Add(Me.tabFacility)
-        Me.tabBPInventionEquip.Controls.Add(Me.tabInventionCalcs)
         Me.tabBPInventionEquip.Controls.Add(Me.tabT3Calcs)
-        Me.tabBPInventionEquip.Controls.Add(Me.tabOptions)
+        Me.tabBPInventionEquip.Controls.Add(Me.tabBPOptions)
+        Me.tabBPInventionEquip.Controls.Add(Me.tabInventionCalcs)
         Me.tabBPInventionEquip.ItemSize = New System.Drawing.Size(49, 20)
         Me.tabBPInventionEquip.Location = New System.Drawing.Point(140, 73)
         Me.tabBPInventionEquip.Multiline = true
@@ -12177,8 +12138,9 @@ Partial Class frmMain
         Me.lblBPT2InventStatus.ForeColor = System.Drawing.Color.Black
         Me.lblBPT2InventStatus.Location = New System.Drawing.Point(1, 4)
         Me.lblBPT2InventStatus.Name = "lblBPT2InventStatus"
-        Me.lblBPT2InventStatus.Size = New System.Drawing.Size(0, 13)
+        Me.lblBPT2InventStatus.Size = New System.Drawing.Size(114, 13)
         Me.lblBPT2InventStatus.TabIndex = 19
+        Me.lblBPT2InventStatus.Text = "Invention Calculations:"
         '
         'lblBPCopyCosts
         '
@@ -12200,26 +12162,29 @@ Partial Class frmMain
         'lblBPInventionLines
         '
         Me.lblBPInventionLines.AutoSize = true
-        Me.lblBPInventionLines.Location = New System.Drawing.Point(2, 22)
+        Me.lblBPInventionLines.Location = New System.Drawing.Point(3, 22)
         Me.lblBPInventionLines.Name = "lblBPInventionLines"
-        Me.lblBPInventionLines.Size = New System.Drawing.Size(0, 13)
+        Me.lblBPInventionLines.Size = New System.Drawing.Size(35, 13)
         Me.lblBPInventionLines.TabIndex = 23
+        Me.lblBPInventionLines.Text = "Lines:"
         '
         'lblInventionChance1
         '
         Me.lblInventionChance1.AutoSize = true
         Me.lblInventionChance1.Location = New System.Drawing.Point(2, 60)
         Me.lblInventionChance1.Name = "lblInventionChance1"
-        Me.lblInventionChance1.Size = New System.Drawing.Size(0, 13)
+        Me.lblInventionChance1.Size = New System.Drawing.Size(47, 13)
         Me.lblInventionChance1.TabIndex = 27
+        Me.lblInventionChance1.Text = "Chance:"
         '
         'lblBPDecryptor
         '
         Me.lblBPDecryptor.AutoSize = true
         Me.lblBPDecryptor.Location = New System.Drawing.Point(38, 22)
         Me.lblBPDecryptor.Name = "lblBPDecryptor"
-        Me.lblBPDecryptor.Size = New System.Drawing.Size(0, 13)
+        Me.lblBPDecryptor.Size = New System.Drawing.Size(89, 13)
         Me.lblBPDecryptor.TabIndex = 25
+        Me.lblBPDecryptor.Text = "Select Decryptor:"
         '
         'lblBPInventionTime
         '
@@ -12335,8 +12300,9 @@ Partial Class frmMain
         Me.lblBPT3Decryptor.AutoSize = true
         Me.lblBPT3Decryptor.Location = New System.Drawing.Point(69, 94)
         Me.lblBPT3Decryptor.Name = "lblBPT3Decryptor"
-        Me.lblBPT3Decryptor.Size = New System.Drawing.Size(0, 13)
+        Me.lblBPT3Decryptor.Size = New System.Drawing.Size(89, 13)
         Me.lblBPT3Decryptor.TabIndex = 53
+        Me.lblBPT3Decryptor.Text = "Select Decryptor:"
         '
         'cmbBPT3Decryptor
         '
@@ -12361,8 +12327,9 @@ Partial Class frmMain
         Me.lblBPRelic.AutoSize = true
         Me.lblBPRelic.Location = New System.Drawing.Point(38, 22)
         Me.lblBPRelic.Name = "lblBPRelic"
-        Me.lblBPRelic.Size = New System.Drawing.Size(0, 13)
+        Me.lblBPRelic.Size = New System.Drawing.Size(67, 13)
         Me.lblBPRelic.TabIndex = 41
+        Me.lblBPRelic.Text = "Select Relic:"
         '
         'txtBPRelicLines
         '
@@ -12377,8 +12344,9 @@ Partial Class frmMain
         Me.lblBPRelicLines.AutoSize = true
         Me.lblBPRelicLines.Location = New System.Drawing.Point(2, 22)
         Me.lblBPRelicLines.Name = "lblBPRelicLines"
-        Me.lblBPRelicLines.Size = New System.Drawing.Size(0, 13)
+        Me.lblBPRelicLines.Size = New System.Drawing.Size(35, 13)
         Me.lblBPRelicLines.TabIndex = 40
+        Me.lblBPRelicLines.Text = "Lines:"
         '
         'lblBPRETime
         '
@@ -12422,8 +12390,9 @@ Partial Class frmMain
         Me.lblBPT3InventionChance1.AutoSize = true
         Me.lblBPT3InventionChance1.Location = New System.Drawing.Point(2, 60)
         Me.lblBPT3InventionChance1.Name = "lblBPT3InventionChance1"
-        Me.lblBPT3InventionChance1.Size = New System.Drawing.Size(0, 13)
+        Me.lblBPT3InventionChance1.Size = New System.Drawing.Size(47, 13)
         Me.lblBPT3InventionChance1.TabIndex = 45
+        Me.lblBPT3InventionChance1.Text = "Chance:"
         '
         'lblT3InventStatus
         '
@@ -12432,6 +12401,7 @@ Partial Class frmMain
         Me.lblT3InventStatus.Name = "lblT3InventStatus"
         Me.lblT3InventStatus.Size = New System.Drawing.Size(185, 13)
         Me.lblT3InventStatus.TabIndex = 37
+        Me.lblT3InventStatus.Text = "T3 Invention Calculations:"
         '
         'chkBPIncludeT3Time
         '
@@ -12453,16 +12423,16 @@ Partial Class frmMain
         Me.chkBPIncludeT3Costs.Text = "Invention Costs:"
         Me.chkBPIncludeT3Costs.UseVisualStyleBackColor = true
         '
-        'tabOptions
+        'tabBPOptions
         '
-        Me.tabOptions.Controls.Add(Me.gbBPIgnoreinCalcs)
-        Me.tabOptions.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
-        Me.tabOptions.Location = New System.Drawing.Point(4, 4)
-        Me.tabOptions.Name = "tabOptions"
-        Me.tabOptions.Size = New System.Drawing.Size(261, 139)
-        Me.tabOptions.TabIndex = 3
-        Me.tabOptions.Text = "Options"
-        Me.tabOptions.UseVisualStyleBackColor = true
+        Me.tabBPOptions.Controls.Add(Me.gbBPIgnoreinCalcs)
+        Me.tabBPOptions.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.tabBPOptions.Location = New System.Drawing.Point(4, 4)
+        Me.tabBPOptions.Name = "tabBPOptions"
+        Me.tabBPOptions.Size = New System.Drawing.Size(261, 139)
+        Me.tabBPOptions.TabIndex = 3
+        Me.tabBPOptions.Text = "Options"
+        Me.tabBPOptions.UseVisualStyleBackColor = true
         '
         'gbBPIgnoreinCalcs
         '
@@ -12479,6 +12449,7 @@ Partial Class frmMain
         'chkBPIgnoreMinerals
         '
         Me.chkBPIgnoreMinerals.AutoSize = true
+        Me.chkBPIgnoreMinerals.Enabled = false
         Me.chkBPIgnoreMinerals.Location = New System.Drawing.Point(9, 35)
         Me.chkBPIgnoreMinerals.Name = "chkBPIgnoreMinerals"
         Me.chkBPIgnoreMinerals.Size = New System.Drawing.Size(65, 17)
@@ -12489,6 +12460,7 @@ Partial Class frmMain
         'chkBPIgnoreT1Item
         '
         Me.chkBPIgnoreT1Item.AutoSize = true
+        Me.chkBPIgnoreT1Item.Enabled = false
         Me.chkBPIgnoreT1Item.Location = New System.Drawing.Point(9, 52)
         Me.chkBPIgnoreT1Item.Name = "chkBPIgnoreT1Item"
         Me.chkBPIgnoreT1Item.Size = New System.Drawing.Size(62, 17)
@@ -12977,20 +12949,6 @@ Partial Class frmMain
         Me.tabPI.Text = "Planetary Interaction"
         Me.tabPI.UseVisualStyleBackColor = true
         '
-        'MyListView6
-        '
-        Me.MyListView6.FullRowSelect = true
-        Me.MyListView6.GridLines = true
-        Me.MyListView6.HideSelection = false
-        Me.MyListView6.Location = New System.Drawing.Point(9, 294)
-        Me.MyListView6.MultiSelect = false
-        Me.MyListView6.Name = "MyListView6"
-        Me.MyListView6.Size = New System.Drawing.Size(398, 311)
-        Me.MyListView6.TabIndex = 75
-        Me.MyListView6.TabStop = false
-        Me.MyListView6.UseCompatibleStateImageBehavior = false
-        Me.MyListView6.View = System.Windows.Forms.View.Details
-        '
         'btnPISaveSettings
         '
         Me.btnPISaveSettings.Location = New System.Drawing.Point(315, 47)
@@ -13106,6 +13064,83 @@ Partial Class frmMain
         Me.btnPIReset.Text = "Reset"
         Me.btnPIReset.UseVisualStyleBackColor = true
         '
+        'cmbCalcManufacturingTeamActivity
+        '
+        Me.cmbCalcManufacturingTeamActivity.FormattingEnabled = true
+        Me.cmbCalcManufacturingTeamActivity.Items.AddRange(New Object() {"Manufacturing", "Invention", "Copying", "RE"})
+        Me.cmbCalcManufacturingTeamActivity.Location = New System.Drawing.Point(3, 9)
+        Me.cmbCalcManufacturingTeamActivity.Name = "cmbCalcManufacturingTeamActivity"
+        Me.cmbCalcManufacturingTeamActivity.Size = New System.Drawing.Size(92, 21)
+        Me.cmbCalcManufacturingTeamActivity.TabIndex = 20
+        Me.cmbCalcManufacturingTeamActivity.Text = "Select Activity"
+        '
+        'ListOptionsMenu
+        '
+        Me.ListOptionsMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.OpenMarketDataToolStripMenuItem})
+        Me.ListOptionsMenu.Name = "ListOptionsMenu"
+        Me.ListOptionsMenu.Size = New System.Drawing.Size(167, 26)
+        '
+        'OpenMarketDataToolStripMenuItem
+        '
+        Me.OpenMarketDataToolStripMenuItem.Name = "OpenMarketDataToolStripMenuItem"
+        Me.OpenMarketDataToolStripMenuItem.Size = New System.Drawing.Size(166, 22)
+        Me.OpenMarketDataToolStripMenuItem.Text = "View Market Data"
+        '
+        'lstBPComponentMats
+        '
+        Me.lstBPComponentMats.FullRowSelect = true
+        Me.lstBPComponentMats.GridLines = true
+        Me.lstBPComponentMats.HideSelection = false
+        Me.lstBPComponentMats.Location = New System.Drawing.Point(4, 258)
+        Me.lstBPComponentMats.MultiSelect = false
+        Me.lstBPComponentMats.Name = "lstBPComponentMats"
+        Me.lstBPComponentMats.Size = New System.Drawing.Size(562, 329)
+        Me.lstBPComponentMats.TabIndex = 35
+        Me.lstBPComponentMats.TabStop = false
+        Me.lstBPComponentMats.UseCompatibleStateImageBehavior = false
+        Me.lstBPComponentMats.View = System.Windows.Forms.View.Details
+        '
+        'lstBPRawMats
+        '
+        Me.lstBPRawMats.FullRowSelect = true
+        Me.lstBPRawMats.GridLines = true
+        Me.lstBPRawMats.HideSelection = false
+        Me.lstBPRawMats.Location = New System.Drawing.Point(569, 258)
+        Me.lstBPRawMats.MultiSelect = false
+        Me.lstBPRawMats.Name = "lstBPRawMats"
+        Me.lstBPRawMats.Size = New System.Drawing.Size(562, 329)
+        Me.lstBPRawMats.TabIndex = 34
+        Me.lstBPRawMats.TabStop = false
+        Me.lstBPRawMats.UseCompatibleStateImageBehavior = false
+        Me.lstBPRawMats.View = System.Windows.Forms.View.Details
+        '
+        'lstPricesView
+        '
+        Me.lstPricesView.FullRowSelect = true
+        Me.lstPricesView.GridLines = true
+        Me.lstPricesView.HideSelection = false
+        Me.lstPricesView.Location = New System.Drawing.Point(8, 10)
+        Me.lstPricesView.MultiSelect = false
+        Me.lstPricesView.Name = "lstPricesView"
+        Me.lstPricesView.Size = New System.Drawing.Size(691, 321)
+        Me.lstPricesView.TabIndex = 0
+        Me.lstPricesView.UseCompatibleStateImageBehavior = false
+        Me.lstPricesView.View = System.Windows.Forms.View.Details
+        '
+        'MyListView6
+        '
+        Me.MyListView6.FullRowSelect = true
+        Me.MyListView6.GridLines = true
+        Me.MyListView6.HideSelection = false
+        Me.MyListView6.Location = New System.Drawing.Point(9, 294)
+        Me.MyListView6.MultiSelect = false
+        Me.MyListView6.Name = "MyListView6"
+        Me.MyListView6.Size = New System.Drawing.Size(398, 311)
+        Me.MyListView6.TabIndex = 75
+        Me.MyListView6.TabStop = false
+        Me.MyListView6.UseCompatibleStateImageBehavior = false
+        Me.MyListView6.View = System.Windows.Forms.View.Details
+        '
         'MyListView5
         '
         Me.MyListView5.FullRowSelect = true
@@ -13175,28 +13210,6 @@ Partial Class frmMain
         Me.MyListView1.TabStop = false
         Me.MyListView1.UseCompatibleStateImageBehavior = false
         Me.MyListView1.View = System.Windows.Forms.View.Details
-        '
-        'cmbCalcManufacturingTeamActivity
-        '
-        Me.cmbCalcManufacturingTeamActivity.FormattingEnabled = true
-        Me.cmbCalcManufacturingTeamActivity.Items.AddRange(New Object() {"Manufacturing", "Invention", "Copying", "RE"})
-        Me.cmbCalcManufacturingTeamActivity.Location = New System.Drawing.Point(3, 9)
-        Me.cmbCalcManufacturingTeamActivity.Name = "cmbCalcManufacturingTeamActivity"
-        Me.cmbCalcManufacturingTeamActivity.Size = New System.Drawing.Size(92, 21)
-        Me.cmbCalcManufacturingTeamActivity.TabIndex = 20
-        Me.cmbCalcManufacturingTeamActivity.Text = "Select Activity"
-        '
-        'ListOptionsMenu
-        '
-        Me.ListOptionsMenu.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.OpenMarketDataToolStripMenuItem})
-        Me.ListOptionsMenu.Name = "ListOptionsMenu"
-        Me.ListOptionsMenu.Size = New System.Drawing.Size(167, 26)
-        '
-        'OpenMarketDataToolStripMenuItem
-        '
-        Me.OpenMarketDataToolStripMenuItem.Name = "OpenMarketDataToolStripMenuItem"
-        Me.OpenMarketDataToolStripMenuItem.Size = New System.Drawing.Size(166, 22)
-        Me.OpenMarketDataToolStripMenuItem.Text = "View Market Data"
         '
         'frmMain
         '
@@ -13417,7 +13430,7 @@ Partial Class frmMain
         Me.tabInventionCalcs.PerformLayout
         Me.tabT3Calcs.ResumeLayout(false)
         Me.tabT3Calcs.PerformLayout
-        Me.tabOptions.ResumeLayout(false)
+        Me.tabBPOptions.ResumeLayout(false)
         Me.gbBPIgnoreinCalcs.ResumeLayout(false)
         Me.gbBPIgnoreinCalcs.PerformLayout
         CType(Me.pictBP,System.ComponentModel.ISupportInitialize).EndInit
@@ -14536,7 +14549,7 @@ End Sub
     Friend WithEvents chkCalcIgnoreMinerals As System.Windows.Forms.CheckBox
     Friend WithEvents chkCalcIgnoreT1Item As System.Windows.Forms.CheckBox
     Friend WithEvents chkCalcIgnoreInvention As System.Windows.Forms.CheckBox
-    Friend WithEvents tabOptions As System.Windows.Forms.TabPage
+    Friend WithEvents tabBPOptions As System.Windows.Forms.TabPage
     Friend WithEvents gbBPIgnoreinCalcs As System.Windows.Forms.GroupBox
     Friend WithEvents chkBPIgnoreMinerals As System.Windows.Forms.CheckBox
     Friend WithEvents chkBPIgnoreT1Item As System.Windows.Forms.CheckBox
