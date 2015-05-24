@@ -294,7 +294,7 @@ Public Class frmMain
     Private CalcCapitalComponentFacilityLoaded As Boolean
     Private CalcSuperFacilityLoaded As Boolean
     Private CalcCapitalFacilityLoaded As Boolean
-    Private TempCalcT3FacilityLoaded As Boolean
+    Private TempCalcT3FacilityLoaded As Boolean ' Need to set this for both
     Private CalcT3FacilityLoaded As Boolean
     Private CalcT3DestroyerFacilityLoaded As Boolean
     Private CalcSubsystemFacilityLoaded As Boolean
@@ -16467,7 +16467,8 @@ CheckTechs:
                               lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, _
                               lblCalcComponentFacilityManualTax, txtCalcComponentFacilityManualTax, _
                               btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, CalcTab, _
-                              chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, Nothing, TempCalcComponentFacilityLoaded)
+                              chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, Nothing, TempCalcComponentFacilityLoaded, _
+                              Nothing, 3, 0, ComponentCategoryID)
             Call SetComponentFacilityLoaded(chkCalcComponentFacilityIncludeUsage.Checked, TempCalcComponentFacilityLoaded)
         End If
 
@@ -16481,7 +16482,8 @@ CheckTechs:
                               lblCalcComponentFacilityManualTE, txtCalcComponentFacilityManualTE, _
                               lblCalcComponentFacilityManualTax, txtCalcComponentFacilityManualTax, _
                               btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, CalcTab, _
-                              chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, Nothing, TempCalcComponentFacilityLoaded)
+                              chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, Nothing, TempCalcComponentFacilityLoaded, _
+                              Nothing, 3, 0, CapitalComponentGroupID)
             Call SetComponentFacilityLoaded(chkCalcComponentFacilityIncludeUsage.Checked, TempCalcComponentFacilityLoaded)
         End If
 
@@ -16547,7 +16549,8 @@ CheckTechs:
                               lblCalcCapitalFacilityManualTE, txtCalcCapitalFacilityManualTE, _
                               lblCalcCapitalFacilityManualTax, txtCalcCapitalFacilityManualTax, _
                               btnCalcCapitalFacilitySave, lblCalcCapitalFacilityTaxRate, CalcTab, _
-                              chkCalcCapitalFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcCapitalFacilityLoaded)
+                              chkCalcCapitalFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcCapitalFacilityLoaded, _
+                              Nothing, 3, 0, CapitalIndustrialShipGroupID)
         End If
 
         ' Super
@@ -16560,7 +16563,8 @@ CheckTechs:
                               lblCalcSuperFacilityManualTE, txtCalcSuperFacilityManualTE, _
                               lblCalcSuperFacilityManualTax, txtCalcSuperFacilityManualTax, _
                               btnCalcSuperFacilitySave, lblCalcSuperFacilityTaxRate, CalcTab, _
-                              chkCalcSuperFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcSuperFacilityLoaded)
+                              chkCalcSuperFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcSuperFacilityLoaded, _
+                              Nothing, 3, 0, SupercarrierGroupID)
         End If
 
         ' T3 Cruisers
@@ -16573,7 +16577,8 @@ CheckTechs:
                               lblCalcT3FacilityManualTE, txtCalcT3FacilityManualTE, _
                               lblCalcT3FacilityManualTax, txtCalcT3FacilityManualTax, _
                               btnCalcT3FacilitySave, lblCalcT3FacilityTaxRate, CalcTab, _
-                              chkCalcT3FacilityIncludeUsage, Nothing, Nothing, Nothing, TempCalcT3FacilityLoaded)
+                              chkCalcT3FacilityIncludeUsage, Nothing, Nothing, Nothing, TempCalcT3FacilityLoaded, _
+                              Nothing, 3, StrategicCruiserGroupID, 0)
             Call SetT3FacilityLoaded(chkCalcT3DestroyersFacility.Checked, TempCalcT3FacilityLoaded)
         End If
 
@@ -16587,7 +16592,8 @@ CheckTechs:
                               lblCalcT3FacilityManualTE, txtCalcT3FacilityManualTE, _
                               lblCalcT3FacilityManualTax, txtCalcT3FacilityManualTax, _
                               btnCalcT3FacilitySave, lblCalcT3FacilityTaxRate, CalcTab, _
-                              chkCalcT3FacilityIncludeUsage, Nothing, Nothing, Nothing, TempCalcT3FacilityLoaded)
+                              chkCalcT3FacilityIncludeUsage, Nothing, Nothing, Nothing, TempCalcT3FacilityLoaded, _
+                              Nothing, 3, TacticalDestroyerGroupID, 0)
             Call SetT3FacilityLoaded(chkCalcT3DestroyersFacility.Checked, TempCalcT3FacilityLoaded)
         End If
 
@@ -16601,7 +16607,8 @@ CheckTechs:
                               lblCalcSubsystemFacilityManualTE, txtCalcSubsystemFacilityManualTE, _
                               lblCalcSubsystemFacilityManualTax, txtCalcSubsystemFacilityManualTax, _
                               btnCalcSubsystemFacilitySave, lblCalcSubsystemFacilityTaxRate, CalcTab, _
-                              chkCalcSubsystemFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcSubsystemFacilityLoaded)
+                              chkCalcSubsystemFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcSubsystemFacilityLoaded, _
+                              Nothing, 3, 0, SubsystemCategoryID)
         End If
 
         ' Booster
@@ -16614,7 +16621,8 @@ CheckTechs:
                               lblCalcBoosterFacilityManualTE, txtCalcBoosterFacilityManualTE, _
                               lblCalcBoosterFacilityManualTax, txtCalcBoosterFacilityManualTax, _
                               btnCalcBoosterFacilitySave, lblCalcBoosterFacilityTaxRate, CalcTab, _
-                              chkCalcBoosterFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcBoosterFacilityLoaded)
+                              chkCalcBoosterFacilityIncludeUsage, Nothing, Nothing, Nothing, CalcBoosterFacilityLoaded, _
+                              Nothing, 3, BoosterGroupID, 0)
         End If
 
         If Not SavedRefreshValue Then
