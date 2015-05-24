@@ -107,7 +107,7 @@ Public Class Blueprint
     Private InventionChance As Double
     Private InventionDecryptor As Decryptor
     Private Relic As String ' Name of relic
-    Private TotalInventedRuns As Integer ' Number of runs an invention job will produce
+    Private TotalInventedRuns As Integer ' Number of runs all the invention jobs will produce
     Private SingleInventedBPCRuns As Integer ' The runs on one bp invented
     Private NumInventionJobs As Integer ' Number of invention jobs we will do
 
@@ -119,11 +119,9 @@ Public Class Blueprint
     Private IncludeCopyCosts As Boolean
     Private IncludeCopyUsage As Boolean
 
+    Private InventionCost As Double ' Total cost for all the invention runs to get enough successful inventions for these runs
     Private InventionTime As Double ' Total time in seconds to invent this bp
-    Private InventionCosts As Double ' Total cost for all the invention runs to get enough successful inventions for these runs
     Private InventionUsage As Double ' Total cost to do this activity in a facility
-
-    Private TotalInventionCost As Double ' Total cost to run this invention job for this bp
 
     Private IncludeInventionCosts As Boolean
     Private IncludeInventionTime As Boolean
@@ -218,7 +216,6 @@ Public Class Blueprint
 
         CopyCost = 0
         CopyTime = 0
-        TotalInventionCost = 0
         InventionTime = 0
 
         ManufacturingFacilityUsage = 0
@@ -325,7 +322,6 @@ Public Class Blueprint
         IncludeCopyTime = False
         IncludeCopyUsage = False
 
-        TotalInventionCost = 0
         InventionChance = 0
 
         TotalInventedRuns = 0
@@ -336,7 +332,7 @@ Public Class Blueprint
         CopyTime = 0
         CopyUsage = 0
 
-        InventionCosts = 0
+        InventionCost = 0
         InventionTime = 0
         InventionUsage = 0
 
@@ -466,7 +462,9 @@ Public Class Blueprint
             RunsPerLine = CInt(Math.Floor(UserRuns / NumberofBPs))
             ExtraRuns = CInt(UserRuns - (RunsPerLine * NumberofBPs))
 
-            ' if batches = 1, then easy case - just take all unique runs per bp and group
+
+            ' To track how many runs we have used in the batch setup
+            Dim RunTracker As Long = 0
 
             ' Fill a list of runs per bp
             For i = 0 To Batches - 1
@@ -483,16 +481,24 @@ Public Class Blueprint
 
                     BatchList.Add(AdjRunsperBP)
 
+                    ' If we have used up all the runs, then exit the loop
+                    RunTracker += AdjRunsperBP
+                    If RunTracker = UserRuns Then
+                        Exit For
+                    End If
+
                     If AdjRunsperBP = MaxRunsPerBP Then
                         ' Reset the adjusteded runs per bp to match invented amount, or if zero let it keep summing up for T1
                         AdjRunsperBP = 0
                     End If
 
                 Next
+
                 ' Add the above batchlist to the chain
                 ProductionChain.Add(BatchList)
                 ' Reset the batch list
                 BatchList = New List(Of Integer)
+
             Next
 
             ' Now we just build each BP for the runs in the batch and total up all the variables - apply additional costs per batch
@@ -514,10 +520,6 @@ Public Class Blueprint
                         If BatchBlueprint.HasBuildableComponents And HasBuildableComponents = False Then
                             HasBuildableComponents = True
                         End If
-
-                        'If BatchBlueprint.CanInventRE And CanInventRE = False Then
-                        '    CanInventRE = True
-                        'End If
 
                         ' Assumption is that we can build the bp
                         If Not BatchBlueprint.CanBuildBP And CanBuildBP = True Then
@@ -557,10 +559,8 @@ Public Class Blueprint
                         ' Base Fees for activity
                         JobFee += .GetJobFee
 
-                        ' How much it costs to use each facility to manufacture items and parts
+                        ' How much it costs to use each facility to manufacture items 
                         ManufacturingFacilityUsage += .GetManufacturingFacilityUsage
-                        ComponentFacilityUsage += .GetComponentFacilityUsage
-                        CapComponentFacilityUsage += .GetCapComponentFacilityUsage
 
                         ' Team costs
                         ManufacturingTeamFee += .GetManufacturingTeamFee
@@ -586,11 +586,39 @@ Public Class Blueprint
 
             ' Now build the components as x runs, with 1 bp
             For i = 0 To BuiltComponentList.GetBuiltItemList.Count - 1
+
+                Dim TempComponentFacility As IndustryFacility
+                Dim SQL As String
+                Dim rsCheck As SQLiteDataReader
+                Dim CategoryName As String = ""
+                Dim GroupID As Integer = 0
+
                 With BuiltComponentList.GetBuiltItemList(i)
                     Application.DoEvents()
+
+                    Sql = "SELECT ITEM_GROUP_ID, ITEM_CATEGORY FROM ALL_BLUEPRINTS WHERE ITEM_ID = " & .ItemTypeID
+                    DBCommand = New SQLiteCommand(Sql, DB)
+                    rsCheck = DBCommand.ExecuteReader
+
+                    If rsCheck.Read() Then
+                        GroupID = rsCheck.GetInt32(0)
+                        CategoryName = rsCheck.GetString(1)
+                    End If
+
+                    ' Build the T1 component
+                    If GroupID = AdvCapitalComponentGroupID Or GroupID = CapitalComponentGroupID Then
+                        ' Use capital component facility
+                        TempComponentFacility = CapitalComponentManufacturingFacility
+                    ElseIf IsT1BaseItemforT2(CategoryName) Then
+                        ' Want to build this in the manufacturing facility we are using for base T1 items used in T2
+                        TempComponentFacility = ManufacturingFacility
+                    Else ' Components
+                        TempComponentFacility = ComponentManufacturingFacility
+                    End If
+
                     ComponentBlueprint = New Blueprint(.BPTypeID, .ItemQuantity, .BuildME, .BuildTE, 1, _
                                                    NumberofProductionLines, BPCharacter, UserSettings, False, _
-                                                   0, ManufacturingTeam, ManufacturingFacility, ComponentManufacturingTeam, _
+                                                   0, ManufacturingTeam, TempComponentFacility, ComponentManufacturingTeam, _
                                                    ComponentManufacturingFacility, CapitalComponentManufacturingFacility)
 
                     Call ComponentBlueprint.BuildItem(SetTaxes, SetBrokerFees, SetProductionCosts, IgnoreMinerals, IgnoreT1Item)
@@ -605,6 +633,14 @@ Public Class Blueprint
 
                 ' Add the production time of this component to the total production time
                 Call ComponentProductionTimes.Add(ComponentBlueprint.GetProductionTime)
+
+                ' Get the usage
+                If GroupID = AdvCapitalComponentGroupID Or GroupID = CapitalComponentGroupID Then
+                    CapComponentFacilityUsage += ComponentBlueprint.GetManufacturingFacilityUsage
+                Else
+                    ComponentFacilityUsage += ComponentBlueprint.GetManufacturingFacilityUsage
+                End If
+
             Next
 
             ' Update the bp production time to equal the longest runs per line times the number of batches
@@ -1124,6 +1160,8 @@ Public Class Blueprint
     ' Sets all price data for the user to get on this blueprint, Set public so can reset with fees/taxes
     Public Sub SetPriceData(ByVal SetTaxes As Boolean, ByVal SetBrokerFees As Boolean)
         Dim TaxesFeesUsage As Double = 0
+        Dim TempInventionCosts As Double = 0
+        Dim TempCopyCosts As Double = 0
 
         If SetTaxes Then
             BPTaxes = Taxes
@@ -1150,11 +1188,27 @@ Public Class Blueprint
         ' Finalize invention and copying usage and total cost of all invention
         Call SetCopyUsage()
         Call SetInventionUsage()
-        Call SetTotalInventionCost()
+
+        ' Set copy and invention costs (total mats needed + usage) for the number of runs they want
+        If IncludeInventionCosts Then
+            ' Set the total cost for the sent runs by totaling all to get success needed, then dividing it by the runs invented
+            ' (some bps have more runs than 1 - i.e. Drones = 10) to get the cost per run, then multiply that cost by the number of runs
+            TempInventionCosts = (InventionCost + InventionUsage) / TotalInventedRuns * UserRuns
+        Else
+            TempInventionCosts = 0
+        End If
+
+        If IncludeCopyCosts Then
+            ' Set the total cost for the sent runs by totaling all to get success needed, then dividing it by the runs invented
+            ' (some bps have more runs than 1 - i.e. Drones = 10) to get the cost per run, then multiply that cost by the number of runs
+            TempCopyCosts = (CopyCost + CopyUsage) / TotalInventedRuns * UserRuns
+        Else
+            TempCopyCosts = 0
+        End If
 
         ' Totals
-        TotalRawCost = RawMaterials.GetTotalMaterialsCost + TotalInventionCost + TaxesFeesUsage + AdditionalCosts
-        TotalComponentCost = ComponentMaterials.GetTotalMaterialsCost + TotalInventionCost + TaxesFeesUsage + AdditionalCosts
+        TotalRawCost = RawMaterials.GetTotalMaterialsCost + TempInventionCosts + TempCopyCosts + TaxesFeesUsage + AdditionalCosts
+        TotalComponentCost = ComponentMaterials.GetTotalMaterialsCost + TempInventionCosts + TempCopyCosts + TaxesFeesUsage + AdditionalCosts
 
         ' Profit market cost - total cost of mats and invention and fees
         TotalRawProfit = ItemMarketCost - TotalRawCost
@@ -1211,6 +1265,7 @@ Public Class Blueprint
 
     End Function
 
+    ' Determines if we should add this material to the list or not, based on passed settings
     Private Function AddMaterial(CategoryName As String, GroupName As String, IgnoreMinerals As Boolean, IgnoreT1BaseItem As Boolean) As Boolean
 
         If IgnoreT1BaseItem And IsT1BaseItemforT2(CategoryName) Then
@@ -1623,7 +1678,7 @@ Public Class Blueprint
                 InventionMaterials.InsertMaterial(New Material(InventionT3BPCTypeID, BPCName & " (" & CStr(1) & " Runs)", BPCGroup, NumInventionJobs, 0, 0, ""))
             End If
 
-            InventionCosts = InventionMaterials.GetTotalMaterialsCost
+            InventionCost = InventionMaterials.GetTotalMaterialsCost
 
         End If
 
@@ -1655,17 +1710,6 @@ Public Class Blueprint
             InventionUsage = 0
         End If
 
-    End Sub
-
-    ' Sets the final Invention Costs which includes usage and copy 
-    Private Sub SetTotalInventionCost()
-        If IncludeInventionCosts Then
-            ' Set the total cost for the sent runs by totaling all to get success needed, then dividing it by the runs invented
-            ' (some bps have more runs than 1 - i.e. Drones = 10) to get the cost per run, then multiply that cost by the number of runs - Later add copy costs here
-            TotalInventionCost = (InventionCosts + InventionUsage + CopyCost + CopyUsage) / TotalInventedRuns * UserRuns
-        Else
-            TotalInventionCost = InventionUsage + CopyUsage
-        End If
     End Sub
 
     ' Sets the invention chance of the blueprint if set
@@ -1855,22 +1899,22 @@ Public Class Blueprint
 #Region "Invention Gets"
 
     ' Returns the copy time for a T1 copy used to make a T2
-    Public Function GetBPCCopyTime() As Double
+    Public Function GetBPCopyTime() As Double
         Return CopyTime
     End Function
 
     ' Returns the total usage cost to make the copy
-    Public Function GetBPCCopyUsage() As Double
-        Return CopyUsage
+    Public Function GetBPCopyUsage() As Double
+        Return CopyUsage / TotalInventedRuns * UserRuns
     End Function
 
-    ' Returns the total cost of materials for the copy - TO DO need to add this, zero for now
-    Public Function GetBPCCopyCost() As Double
-        Return CopyCost ' Only return the cost of the materials
+    ' Returns the total cost of materials for the copy
+    Public Function GetBPCopyCost() As Double
+        Return CopyCost / TotalInventedRuns * UserRuns ' Only return the cost of the materials for making this number of runs
     End Function
 
     ' Returns the list of materials used to make a copy for this BP
-    Public Function GetBPCCopyMaterials() As Materials
+    Public Function GetBPCopyMaterials() As Materials
         Return CopyMaterials
     End Function
 
@@ -1881,17 +1925,12 @@ Public Class Blueprint
 
     ' Gets the invention usage fees for installing this invention job for this BP
     Public Function GetBPInventionUsage() As Double
-        Return InventionUsage
+        Return InventionUsage / TotalInventedRuns * UserRuns
     End Function
 
-    ' Gets the total Invention Cost of this Blueprint if it can be invented
+    ' Gets the total Invention Cost of this Blueprint if it can be invented regardless of runs needed
     Public Function GetBPInventionCost() As Double
-        Return InventionCosts ' Only return the cost of the materials
-    End Function
-
-    ' Gets the total invention costs - usage, costs of copy and invention
-    Public Function GetBPTotalInventionCosts() As Double
-        Return TotalInventionCost
+        Return InventionCost / TotalInventedRuns * UserRuns ' Only return the cost of the materials for making this number of runs
     End Function
 
     ' Returns the list of invention materials used
@@ -1915,8 +1954,13 @@ Public Class Blueprint
     End Function
 
     ' Gets the total invented runs for each BPC
-    Public Function GetInventedRuns() As Integer
+    Public Function GetSingleInventedBPCRuns() As Integer
         Return SingleInventedBPCRuns
+    End Function
+
+    ' Gets the total runs invented for the entire set of runs
+    Public Function GetTotalInventedRuns() As Integer
+        Return TotalInventedRuns
     End Function
 
     ' Returns the number of jobs we'll have to do

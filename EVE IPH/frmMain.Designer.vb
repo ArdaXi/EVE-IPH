@@ -5409,23 +5409,22 @@ Partial Class frmMain
         'chkCalcIgnoreMinerals
         '
         Me.chkCalcIgnoreMinerals.AutoSize = true
-        Me.chkCalcIgnoreMinerals.Enabled = false
-        Me.chkCalcIgnoreMinerals.Location = New System.Drawing.Point(9, 35)
+        Me.chkCalcIgnoreMinerals.CheckAlign = System.Drawing.ContentAlignment.BottomLeft
+        Me.chkCalcIgnoreMinerals.Location = New System.Drawing.Point(9, 34)
         Me.chkCalcIgnoreMinerals.Name = "chkCalcIgnoreMinerals"
         Me.chkCalcIgnoreMinerals.Size = New System.Drawing.Size(65, 17)
         Me.chkCalcIgnoreMinerals.TabIndex = 1
         Me.chkCalcIgnoreMinerals.Text = "Minerals"
-        Me.chkCalcIgnoreMinerals.UseVisualStyleBackColor = true
+        Me.chkCalcIgnoreMinerals.UseVisualStyleBackColor = True
         '
         'chkCalcIgnoreT1Item
         '
-        Me.chkCalcIgnoreT1Item.AutoSize = true
-        Me.chkCalcIgnoreT1Item.Enabled = false
+        Me.chkCalcIgnoreT1Item.AutoSize = True
         Me.chkCalcIgnoreT1Item.Location = New System.Drawing.Point(9, 52)
         Me.chkCalcIgnoreT1Item.Name = "chkCalcIgnoreT1Item"
-        Me.chkCalcIgnoreT1Item.Size = New System.Drawing.Size(62, 17)
+        Me.chkCalcIgnoreT1Item.Size = New System.Drawing.Size(89, 17)
         Me.chkCalcIgnoreT1Item.TabIndex = 2
-        Me.chkCalcIgnoreT1Item.Text = "T1 Item"
+        Me.chkCalcIgnoreT1Item.Text = "T1 Base Item"
         Me.chkCalcIgnoreT1Item.UseVisualStyleBackColor = true
         '
         'chkCalcIgnoreInvention

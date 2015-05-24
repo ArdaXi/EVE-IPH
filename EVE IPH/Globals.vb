@@ -1034,7 +1034,7 @@ Public Module Public_Variables
 
                 ' How many runs do we need to invent this?
                 .AvgInvRunsforSuccess = 1 / SentBlueprint.GetInventionChance
-                .InventedRuns = SentBlueprint.GetInventedRuns
+                .InventedRuns = SentBlueprint.GetSingleInventedBPCRuns
                 .InventionJobs = SentBlueprint.GetInventionJobs
 
                 ' Decryptor if used
@@ -1102,7 +1102,7 @@ Public Module Public_Variables
                 SizesClause = SizesClause & "((ITEM_NAME LIKE '% S' OR ITEM_NAME Like '%Small%' OR (ITEM_NAME Like '%Micro%' AND ITEM_GROUP <> 'Propulsion Module' AND ITEM_NAME NOT LIKE 'Microwave%') OR ITEM_NAME Like '%Defender%' OR ITEM_NAME IN ('Cap Booster 25 Item','Cap Booster 50 Item')) "
                 SizesClause = SizesClause & "OR (ITEM_CATEGORY = 'Drone' AND volume = 5 ) "
                 SizesClause = SizesClause & "OR (ITEM_GROUP = 'Propulsion Module' AND ITEM_NAME Like '1MN%') "
-                SizesClause = SizesClause & "OR (ITEM_CATEGORY = 'Module' AND marketGroupID IN (561,564,567,570,574,577,1671,1672)) "
+                SizesClause = SizesClause & "OR (ITEM_CATEGORY = 'Module' AND marketGroupID IN (561,564,567,570,574,577,1671,1672, 1037)) "
                 SizesClause = SizesClause & "OR (ITEM_CATEGORY IN ('Charge','Module') AND (ITEM_NAME Like '%Rocket%' OR ITEM_NAME Like '%Light Missile%') AND ITEM_GROUP NOT IN ('Propulsion Module', 'Rig Launcher')) "
                 SizesClause = SizesClause & "OR (ITEM_CATEGORY = 'Ship' AND volume < 10000)) OR "
             Case ItemSize.Medium

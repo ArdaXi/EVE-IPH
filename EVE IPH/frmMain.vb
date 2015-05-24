@@ -3689,7 +3689,7 @@ NoBonus:
             If SelectedBlueprint.GetTechLevel = BlueprintTechLevel.T2 Then
                 ' Copy Facility
                 RawCostSplit.UsageName = "Copy Usage"
-                RawCostSplit.UsageValue = SelectedBlueprint.GetBPCCopyUsage
+                RawCostSplit.UsageValue = SelectedBlueprint.GetBPCopyUsage
                 f1.UsageSplits.Add(RawCostSplit)
             End If
 
@@ -3712,6 +3712,8 @@ NoBonus:
                     f1.MatType = f1.MatType & " Runs"
                 End If
                 f1.MaterialList = SelectedBlueprint.GetInventionMaterials
+                f1.TotalInventedRuns = SelectedBlueprint.GetTotalInventedRuns
+                f1.UserRuns = SelectedBlueprint.GetUserRuns
             End If
             Me.Cursor = Cursors.Default
             f1.Show()
@@ -3731,8 +3733,7 @@ NoBonus:
                 Else
                     f1.MatType = f1.MatType & " Runs"
                 End If
-                f1.MaterialList = SelectedBlueprint.GetBPCCopyMaterials
-                'f1.InventionUsage = SelectedBlueprint.GetBPCCopyUsage
+                f1.MaterialList = SelectedBlueprint.GetBPCopyMaterials
             End If
             f1.Show()
         End If
@@ -3823,9 +3824,23 @@ NoBonus:
 
             If SelectedBlueprint.GetTechLevel <> BlueprintTechLevel.T1 Then
                 ' Total Invention Costs
-                RawCostSplit.SplitName = "Total Invention Costs"
-                RawCostSplit.SplitValue = SelectedBlueprint.GetBPTotalInventionCosts
+                RawCostSplit.SplitName = "Invention Costs"
+                RawCostSplit.SplitValue = SelectedBlueprint.GetBPInventionCost
                 f1.CostSplits.Add(RawCostSplit)
+
+                RawCostSplit.SplitName = "Invention Usage"
+                RawCostSplit.SplitValue = SelectedBlueprint.GetBPInventionUsage
+                f1.CostSplits.Add(RawCostSplit)
+
+                ' Total Copy Costs
+                RawCostSplit.SplitName = "Copy Costs"
+                RawCostSplit.SplitValue = SelectedBlueprint.GetBPCopyCost
+                f1.CostSplits.Add(RawCostSplit)
+
+                RawCostSplit.SplitName = "Copy Usage"
+                RawCostSplit.SplitValue = SelectedBlueprint.GetBPCopyUsage
+                f1.CostSplits.Add(RawCostSplit)
+
             End If
 
             f1.Show()
@@ -5202,6 +5217,11 @@ Tabs:
                                   chkBPFacilityIncludeUsage, Nothing, CostCheck, TimeCheck, FullyLoadedBPFacility,
                                   cmbBPFacilityActivities, SelectedBlueprint.GetTechLevel, CurrentBPGroupID, CurrentBPCategoryID, False)
                 PreviousIndustryType = CurrentIndustryType
+                ' Reset all previous to current list, since all the combos should be loaded
+                PreviousFacilityType = cmbBPFacilityType.Text
+                PreviousFacilityEquipment = cmbBPFacilityorArray.Text
+                PreviousFacilityRegion = cmbBPFacilityRegion.Text
+                PreviousFacilitySystem = cmbBPFacilitySystem.Text
             End If
 
             Call cmbBPFacilityType.Focus()
@@ -7739,19 +7759,19 @@ Tabs:
                 End If
 
                 ' Invention cost to get enough success for the runs entered
-                lblBPInventionCost.Text = FormatNumber(SelectedBlueprint.GetBPTotalInventionCosts(), 2)
+                lblBPInventionCost.Text = FormatNumber(SelectedBlueprint.GetBPInventionCost(), 2)
+
+                ' Add copy costs for enough succesful runs
+                lblBPCopyCosts.Text = FormatNumber(SelectedBlueprint.GetBPCopyCost, 2)
 
                 ' Invention Chance
                 lblBPInventionChance.Text = FormatPercent(SelectedBlueprint.GetInventionChance(), 2)
 
                 ' Update the decryptor stats box ME: -4, TE: -3, Runs: +9
-                lblBPDecryptorStats.Text = "ME: " & CStr(SelectedDecryptor.MEMod) & ", TE: " & CStr(SelectedDecryptor.TEMod) & vbCrLf & "BP Runs: " & CStr(SelectedBlueprint.GetInventedRuns)
-
-                ' Add copy costs
-                lblBPCopyCosts.Text = FormatNumber(SelectedBlueprint.GetBPCCopyCost)
+                lblBPDecryptorStats.Text = "ME: " & CStr(SelectedDecryptor.MEMod) & ", TE: " & CStr(SelectedDecryptor.TEMod) & vbCrLf & "BP Runs: " & CStr(SelectedBlueprint.GetSingleInventedBPCRuns)
 
                 ' Show the copy time if they want it
-                lblBPCopyTime.Text = FormatIPHTime(SelectedBlueprint.GetBPCCopyTime)
+                lblBPCopyTime.Text = FormatIPHTime(SelectedBlueprint.GetBPCopyTime)
 
                 ' Show the invention time if they want it
                 lblBPInventionTime.Text = FormatIPHTime(SelectedBlueprint.GetBPInventionTime)
@@ -7798,11 +7818,11 @@ Tabs:
             End If
 
             ' RE Cost and time
-            lblBPRECost.Text = FormatNumber(SelectedBlueprint.GetBPTotalInventionCosts(), 2)
+            lblBPRECost.Text = FormatNumber(SelectedBlueprint.GetBPInventionCost(), 2)
             lblBPRETime.Text = FormatIPHTime(SelectedBlueprint.GetBPInventionTime())
 
             ' Update the decryptor stats box ME: -4, TE: -3, Runs: +9
-            lblBPT3Stats.Text = "ME: " & CStr(SelectedDecryptor.MEMod) & ", TE: " & CStr(SelectedDecryptor.TEMod) & ", End Runs: " & CStr(SelectedBlueprint.GetInventedRuns)
+            lblBPT3Stats.Text = "ME: " & CStr(SelectedDecryptor.MEMod) & ", TE: " & CStr(SelectedDecryptor.TEMod) & ", End Runs: " & CStr(SelectedBlueprint.GetSingleInventedBPCRuns)
 
             If SelectedBlueprint.UserCanInventRE Then
                 lblT3InventStatus.Text = "Reverse Engineering Calculations:"
@@ -8287,7 +8307,7 @@ ExitForm:
                     lblBPFacilityUsage.Text = FormatNumber(SelectedBlueprint.GetBPInventionUsage() / DivideUnits, 2)
                     ttMain.SetToolTip(lblBPFacilityUsage, GetUsageToolTipText(SelectedBlueprint.GetInventionFacility, False))
                 Case ActivityCopying
-                    lblBPFacilityUsage.Text = FormatNumber(SelectedBlueprint.GetBPCCopyUsage() / DivideUnits, 2)
+                    lblBPFacilityUsage.Text = FormatNumber(SelectedBlueprint.GetBPCopyUsage() / DivideUnits, 2)
                     ttMain.SetToolTip(lblBPFacilityUsage, GetUsageToolTipText(SelectedBlueprint.GetCopyFacility, False))
                 Case ActivityComponentManufacturing
                     lblBPFacilityUsage.Text = FormatNumber(SelectedBlueprint.GetComponentFacilityUsage() / DivideUnits, 2)
@@ -11416,7 +11436,7 @@ ExitSub:
         Else
             chkCalcComponentFacilityIncludeUsage.Checked = DefaultCalcComponentManufacturingFacility.IncludeActivityUsage
         End If
-        Call SetComponentFacilityLoaded(chkCalcComponentFacilityIncludeUsage.Checked, False)
+        Call SetComponentFacilityLoaded(chkCalcCapComponentsFacility.Checked, False)
         Call LoadFacility(GetComponentsIndustryType(chkCalcCapComponentsFacility.Checked), False, False, _
                           GetComponentActivityType(chkCalcCapComponentsFacility.Checked), cmbCalcComponentFacilityType, _
                           cmbCalcComponentFacilityRegion, cmbCalcComponentFacilitySystem, cmbCalcComponentFacilityorArray, _
@@ -11427,7 +11447,7 @@ ExitSub:
                           btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, _
                           CalcTab, chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, Nothing, TempCalcComponentFacilityLoaded, _
                           Nothing, 1, GetComponentsGroupID(chkCalcCapComponentsFacility.Checked), -1, False)
-        Call SetComponentFacilityLoaded(chkCalcComponentFacilityIncludeUsage.Checked, TempCalcComponentFacilityLoaded) ' Set if the facility loaded here
+        Call SetComponentFacilityLoaded(chkCalcCapComponentsFacility.Checked, TempCalcComponentFacilityLoaded) ' Set if the facility loaded here
         LoadingFacilityActivities = False
         CalcComponentFacilitiesLoaded = False ' Reset dropdowns
     End Sub
@@ -11459,7 +11479,7 @@ ExitSub:
                                         lblCalcComponentFacilityManualME, lblCalcComponentFacilityManualTE, _
                                         txtCalcComponentFacilityManualME, txtCalcComponentFacilityManualTE, _
                                         lblCalcComponentFacilityManualTax, txtCalcComponentFacilityManualTax)
-            Call SetComponentFacilityLoaded(chkCalcComponentFacilityIncludeUsage.Checked, False)
+            Call SetComponentFacilityLoaded(chkCalcCapComponentsFacility.Checked, False)
             PreviousFacilityType = cmbCalcComponentFacilityType.Text
         End If
     End Sub
@@ -11496,7 +11516,7 @@ ExitSub:
                             lblCalcBaseFacilityManualME, lblCalcBaseFacilityManualTE, _
                             txtCalcBaseFacilityManualME, txtCalcBaseFacilityManualTE, _
                             lblCalcBaseFacilityManualTax, txtCalcBaseFacilityManualTax)
-            Call SetComponentFacilityLoaded(chkCalcComponentFacilityIncludeUsage.Checked, False)
+            Call SetComponentFacilityLoaded(chkCalcCapComponentsFacility.Checked, False)
         End If
     End Sub
 
@@ -11539,6 +11559,7 @@ ExitSub:
                 CalcComponentFacilitiesLoaded = False
             End If
             PreviousCalcComponentFacilitySystem = cmbCalcComponentFacilitySystem.Text
+            Call SetComponentFacilityLoaded(chkCalcCapComponentsFacility.Checked, False)
         End If
 
     End Sub
@@ -11576,7 +11597,7 @@ ExitSub:
                                       lblCalcComponentFacilityManualTax, txtCalcComponentFacilityManualTax, _
                                       btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, _
                                       chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, CalcTab, TempCalcComponentFacilityLoaded, chkCalcComponentFacilityIncludeUsage.Checked)
-            Call SetComponentFacilityLoaded(chkCalcComponentFacilityIncludeUsage.Checked, TempCalcComponentFacilityLoaded)
+            Call SetComponentFacilityLoaded(chkCalcCapComponentsFacility.Checked, TempCalcComponentFacilityLoaded)
             If txtCalcComponentFacilityManualME.Visible Then
                 Call txtCalcComponentFacilityManualME.Focus()
             End If
@@ -14327,6 +14348,18 @@ CheckTechs:
         Call ResetRefresh()
     End Sub
 
+    Private Sub chkCalcIgnoreInvention_CheckedChanged_1(sender As System.Object, e As System.EventArgs) Handles chkCalcIgnoreInvention.CheckedChanged
+        Call ResetRefresh()
+    End Sub
+
+    Private Sub chkCalcIgnoreMinerals_CheckedChanged_1(sender As System.Object, e As System.EventArgs) Handles chkCalcIgnoreMinerals.CheckedChanged
+        Call ResetRefresh()
+    End Sub
+
+    Private Sub chkCalcIgnoreT1Item_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkCalcIgnoreT1Item.CheckedChanged
+        Call ResetRefresh()
+    End Sub
+
     Private Sub rbtnCalcCompareAll_CheckedChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles rbtnCalcCompareAll.CheckedChanged
         Call ResetRefresh()
     End Sub
@@ -15919,7 +15952,7 @@ CheckTechs:
 
             ' Based on the settings, load either the cap stuff or the base component stuff
             LoadingFacilityActivities = True
-            Call SetComponentFacilityLoaded(chkCalcComponentFacilityIncludeUsage.Checked, False)
+            Call SetComponentFacilityLoaded(chkCalcCapComponentsFacility.Checked, False)
             If .CheckCapitalComponentsFacility Then
                 chkCalcComponentFacilityIncludeUsage.Checked = DefaultCalcCapitalComponentManufacturingFacility.IncludeActivityUsage
             Else
@@ -15934,7 +15967,9 @@ CheckTechs:
                               btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, _
                               CalcTab, chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, Nothing, TempCalcComponentFacilityLoaded, _
                               Nothing, 1, GetComponentsGroupID(.CheckCapitalComponentsFacility), -1, False)
-            Call SetComponentFacilityLoaded(chkCalcComponentFacilityIncludeUsage.Checked, TempCalcComponentFacilityLoaded)
+            Call SetComponentFacilityLoaded(chkCalcCapComponentsFacility.Checked, TempCalcComponentFacilityLoaded)
+            ' Need to set the other facility as loaded to ensure it doesn't get reloaded on tab, if any changes are made it will reload
+            Call SetComponentFacilityLoaded(Not chkCalcCapComponentsFacility.Checked, TempCalcComponentFacilityLoaded)
             LoadingFacilityActivities = False
 
             LoadingFacilityActivities = True
@@ -16040,6 +16075,8 @@ CheckTechs:
                               CalcTab, chkCalcT3FacilityIncludeUsage, Nothing, Nothing, Nothing, TempCalcT3FacilityLoaded, Nothing, _
                               1, GetT3ShipGroupID(.CheckT3DestroyerFacility), -1, False)
             Call SetT3FacilityLoaded(chkCalcT3DestroyersFacility.Checked, TempCalcT3FacilityLoaded)
+            ' Need to set the other facility as loaded to ensure it doesn't get reloaded on tab, if any changes are made it will reload
+            Call SetComponentFacilityLoaded(Not chkCalcT3DestroyersFacility.Checked, TempCalcT3FacilityLoaded)
             LoadingFacilityActivities = False
 
             LoadingFacilityActivities = True
@@ -16469,7 +16506,7 @@ CheckTechs:
                               btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, CalcTab, _
                               chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, Nothing, TempCalcComponentFacilityLoaded, _
                               Nothing, 3, 0, ComponentCategoryID)
-            Call SetComponentFacilityLoaded(chkCalcComponentFacilityIncludeUsage.Checked, TempCalcComponentFacilityLoaded)
+            Call SetComponentFacilityLoaded(False, TempCalcComponentFacilityLoaded)
         End If
 
         ' Capital Component
@@ -16484,7 +16521,7 @@ CheckTechs:
                               btnCalcComponentFacilitySave, lblCalcComponentFacilityTaxRate, CalcTab, _
                               chkCalcComponentFacilityIncludeUsage, Nothing, Nothing, Nothing, TempCalcComponentFacilityLoaded, _
                               Nothing, 3, 0, CapitalComponentGroupID)
-            Call SetComponentFacilityLoaded(chkCalcComponentFacilityIncludeUsage.Checked, TempCalcComponentFacilityLoaded)
+            Call SetComponentFacilityLoaded(True, TempCalcComponentFacilityLoaded)
         End If
 
         ' Invention
@@ -16579,7 +16616,7 @@ CheckTechs:
                               btnCalcT3FacilitySave, lblCalcT3FacilityTaxRate, CalcTab, _
                               chkCalcT3FacilityIncludeUsage, Nothing, Nothing, Nothing, TempCalcT3FacilityLoaded, _
                               Nothing, 3, StrategicCruiserGroupID, 0)
-            Call SetT3FacilityLoaded(chkCalcT3DestroyersFacility.Checked, TempCalcT3FacilityLoaded)
+            Call SetT3FacilityLoaded(False, TempCalcT3FacilityLoaded)
         End If
 
         ' T3 Destroyers
@@ -16594,7 +16631,7 @@ CheckTechs:
                               btnCalcT3FacilitySave, lblCalcT3FacilityTaxRate, CalcTab, _
                               chkCalcT3FacilityIncludeUsage, Nothing, Nothing, Nothing, TempCalcT3FacilityLoaded, _
                               Nothing, 3, TacticalDestroyerGroupID, 0)
-            Call SetT3FacilityLoaded(chkCalcT3DestroyersFacility.Checked, TempCalcT3FacilityLoaded)
+            Call SetT3FacilityLoaded(True, TempCalcT3FacilityLoaded)
         End If
 
         ' Subsystem
@@ -17210,11 +17247,11 @@ CheckTechs:
                                 InsertItem.Taxes = ManufacturingBlueprint.GetBPTaxes
                                 InsertItem.BrokerFees = ManufacturingBlueprint.GetBPBrokerFees
 
-                                InsertItem.SingleInventedBPCRunsperBPC = ManufacturingBlueprint.GetInventedRuns
+                                InsertItem.SingleInventedBPCRunsperBPC = ManufacturingBlueprint.GetSingleInventedBPCRuns
 
                                 InsertItem.BPProductionTime = FormatIPHTime(ManufacturingBlueprint.GetProductionTime)
                                 InsertItem.TotalProductionTime = FormatIPHTime(ManufacturingBlueprint.GetProductionTime) ' Total production time for components only is always the bp production time
-                                InsertItem.CopyTime = FormatIPHTime(ManufacturingBlueprint.GetBPCCopyTime)
+                                InsertItem.CopyTime = FormatIPHTime(ManufacturingBlueprint.GetBPCopyTime)
                                 InsertItem.InventionTime = FormatIPHTime(ManufacturingBlueprint.GetBPInventionTime)
 
                                 InsertItem.BaseJobCost = ManufacturingBlueprint.GetBaseJobCost
@@ -17233,7 +17270,7 @@ CheckTechs:
                                 End If
 
                                 If ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T2 Then
-                                    InsertItem.CopyCost = ManufacturingBlueprint.GetBPCCopyCost
+                                    InsertItem.CopyCost = ManufacturingBlueprint.GetBPCopyCost
                                 Else
                                     InsertItem.CopyCost = 0
                                 End If
@@ -17242,7 +17279,7 @@ CheckTechs:
                                 InsertItem.ManufacturingFacilityUsage = ManufacturingBlueprint.GetManufacturingFacilityUsage
                                 InsertItem.ComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetComponentFacilityUsage
                                 InsertItem.CapComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetCapComponentFacilityUsage
-                                InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetBPCCopyUsage
+                                InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetBPCopyUsage
                                 InsertItem.InventionFacilityUsage = ManufacturingBlueprint.GetBPInventionUsage
 
                                 ' Insert Components Item
@@ -17261,11 +17298,11 @@ CheckTechs:
                             InsertItem.Taxes = ManufacturingBlueprint.GetBPTaxes
                             InsertItem.BrokerFees = ManufacturingBlueprint.GetBPBrokerFees
 
-                            InsertItem.SingleInventedBPCRunsperBPC = ManufacturingBlueprint.GetInventedRuns
+                            InsertItem.SingleInventedBPCRunsperBPC = ManufacturingBlueprint.GetSingleInventedBPCRuns
 
                             InsertItem.BPProductionTime = FormatIPHTime(ManufacturingBlueprint.GetProductionTime)
                             InsertItem.TotalProductionTime = FormatIPHTime(ManufacturingBlueprint.GetTotalProductionTime)
-                            InsertItem.CopyTime = FormatIPHTime(ManufacturingBlueprint.GetBPCCopyTime)
+                            InsertItem.CopyTime = FormatIPHTime(ManufacturingBlueprint.GetBPCopyTime)
                             InsertItem.InventionTime = FormatIPHTime(ManufacturingBlueprint.GetBPInventionTime)
 
                             InsertItem.BaseJobCost = ManufacturingBlueprint.GetBaseJobCost
@@ -17284,7 +17321,7 @@ CheckTechs:
                             End If
 
                             If ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T2 Then
-                                InsertItem.CopyCost = ManufacturingBlueprint.GetBPCCopyCost
+                                InsertItem.CopyCost = ManufacturingBlueprint.GetBPCopyCost
                             Else
                                 InsertItem.CopyCost = 0
                             End If
@@ -17293,7 +17330,7 @@ CheckTechs:
                             InsertItem.ManufacturingFacilityUsage = ManufacturingBlueprint.GetManufacturingFacilityUsage
                             InsertItem.ComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetComponentFacilityUsage
                             InsertItem.CapComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetCapComponentFacilityUsage
-                            InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetBPCCopyUsage
+                            InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetBPCopyUsage
                             InsertItem.InventionFacilityUsage = ManufacturingBlueprint.GetBPInventionUsage
 
                             ' Insert Raw Mats item
@@ -17330,11 +17367,11 @@ CheckTechs:
 
                                 InsertItem.Taxes = ManufacturingBlueprint.GetBPTaxes
                                 InsertItem.BrokerFees = ManufacturingBlueprint.GetBPBrokerFees
-                                InsertItem.SingleInventedBPCRunsperBPC = ManufacturingBlueprint.GetInventedRuns
+                                InsertItem.SingleInventedBPCRunsperBPC = ManufacturingBlueprint.GetSingleInventedBPCRuns
 
                                 InsertItem.BPProductionTime = FormatIPHTime(ManufacturingBlueprint.GetProductionTime)
                                 InsertItem.TotalProductionTime = FormatIPHTime(ManufacturingBlueprint.GetTotalProductionTime)
-                                InsertItem.CopyTime = FormatIPHTime(ManufacturingBlueprint.GetBPCCopyTime)
+                                InsertItem.CopyTime = FormatIPHTime(ManufacturingBlueprint.GetBPCopyTime)
                                 InsertItem.InventionTime = FormatIPHTime(ManufacturingBlueprint.GetBPInventionTime)
 
                                 InsertItem.BaseJobCost = ManufacturingBlueprint.GetBaseJobCost
@@ -17353,7 +17390,7 @@ CheckTechs:
                                 End If
 
                                 If ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T2 Then
-                                    InsertItem.CopyCost = ManufacturingBlueprint.GetBPCCopyCost
+                                    InsertItem.CopyCost = ManufacturingBlueprint.GetBPCopyCost
                                 Else
                                     InsertItem.CopyCost = 0
                                 End If
@@ -17362,7 +17399,7 @@ CheckTechs:
                                 InsertItem.ManufacturingFacilityUsage = ManufacturingBlueprint.GetManufacturingFacilityUsage
                                 InsertItem.ComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetComponentFacilityUsage
                                 InsertItem.CapComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetCapComponentFacilityUsage
-                                InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetBPCCopyUsage
+                                InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetBPCopyUsage
                                 InsertItem.InventionFacilityUsage = ManufacturingBlueprint.GetBPInventionUsage
 
                                 ' Insert Build/Buy item
@@ -17406,7 +17443,7 @@ CheckTechs:
                             InsertItem.Taxes = ManufacturingBlueprint.GetBPTaxes
                             InsertItem.BrokerFees = ManufacturingBlueprint.GetBPBrokerFees
 
-                            InsertItem.SingleInventedBPCRunsperBPC = ManufacturingBlueprint.GetInventedRuns
+                            InsertItem.SingleInventedBPCRunsperBPC = ManufacturingBlueprint.GetSingleInventedBPCRuns
 
                             InsertItem.BPProductionTime = FormatIPHTime(ManufacturingBlueprint.GetProductionTime)
                             If rbtnCalcCompareComponents.Checked Then
@@ -17416,7 +17453,7 @@ CheckTechs:
                                 InsertItem.TotalProductionTime = FormatIPHTime(ManufacturingBlueprint.GetTotalProductionTime)
                             End If
 
-                            InsertItem.CopyTime = FormatIPHTime(ManufacturingBlueprint.GetBPCCopyTime)
+                            InsertItem.CopyTime = FormatIPHTime(ManufacturingBlueprint.GetBPCopyTime)
                             InsertItem.InventionTime = FormatIPHTime(ManufacturingBlueprint.GetBPInventionTime)
 
                             InsertItem.BaseJobCost = ManufacturingBlueprint.GetBaseJobCost
@@ -17435,7 +17472,7 @@ CheckTechs:
                             End If
 
                             If ManufacturingBlueprint.GetTechLevel = BlueprintTechLevel.T2 Then
-                                InsertItem.CopyCost = ManufacturingBlueprint.GetBPCCopyCost
+                                InsertItem.CopyCost = ManufacturingBlueprint.GetBPCopyCost
                             Else
                                 InsertItem.CopyCost = 0
                             End If
@@ -17444,7 +17481,7 @@ CheckTechs:
                             InsertItem.ManufacturingFacilityUsage = ManufacturingBlueprint.GetManufacturingFacilityUsage
                             InsertItem.ComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetComponentFacilityUsage
                             InsertItem.CapComponentManufacturingFacilityUsage = ManufacturingBlueprint.GetCapComponentFacilityUsage
-                            InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetBPCCopyUsage
+                            InsertItem.CopyFacilityUsage = ManufacturingBlueprint.GetBPCopyUsage
                             InsertItem.InventionFacilityUsage = ManufacturingBlueprint.GetBPInventionUsage
 
                             ' Insert the chosen item
@@ -18963,6 +19000,15 @@ ExitCalc:
         End If
     End Sub
 
+    ' Sets the type of facility loaded for components
+    Private Sub SetComponentFacilityLoaded(CapitalComponentCheck As Boolean, LoadedValue As Boolean)
+        If CapitalComponentCheck Then
+            CalcCapitalComponentFacilityLoaded = LoadedValue
+        Else
+            CalcComponentFacilityLoaded = LoadedValue
+        End If
+    End Sub
+
     ' Gets the industry type for components
     Private Function GetComponentsIndustryType(CapitalComponentCheck As Boolean) As IndustryType
         If CapitalComponentCheck Then
@@ -18990,14 +19036,6 @@ ExitCalc:
         End If
     End Function
 
-    ' Sets the type of facility loaded for components
-    Private Sub SetComponentFacilityLoaded(CapitalComponentCheck As Boolean, LoadedValue As Boolean)
-        If CapitalComponentCheck Then
-            CalcCapitalComponentFacilityLoaded = LoadedValue
-        Else
-            CalcComponentFacilityLoaded = LoadedValue
-        End If
-    End Sub
 
 #Region "List Options Menu"
 
