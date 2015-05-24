@@ -10,8 +10,6 @@ Imports System.IO
 Public Class frmMain
     Inherits System.Windows.Forms.Form
 
-    ' Variables for making object arrays
-
     ' Update Prices Variables
     Private m_ControlsCollection As ControlsCollection
     Private RegionCheckBoxes() As CheckBox
@@ -806,6 +804,7 @@ Public Class frmMain
         '****************************************
         '**** Mining Tab Initializations ********
         '****************************************
+        lstMineGrid.Columns.Add("Ore ID", 0, HorizontalAlignment.Right) ' Hidden
         lstMineGrid.Columns.Add("Ore Name", MineOreNameColumnWidth, HorizontalAlignment.Left)
         lstMineGrid.Columns.Add("Refine Type", 70, HorizontalAlignment.Left)
         lstMineGrid.Columns.Add("Unit Price", 100, HorizontalAlignment.Right)
@@ -4706,7 +4705,7 @@ NoBonus:
         ' See which column has been clicked
         iSubIndex = CurrentRow.SubItems.IndexOf(CurrentCell)
 
-        If ListRef.Name <> lstPricesView.Name Then
+        If ListRef.Name <> lstPricesView.Name And ListRef.Name <> lstMineGrid.Name Then
             ' Set the columns that can be edited, just ME and Price
             If iSubIndex = 2 Or iSubIndex = 3 Then
 
@@ -4732,6 +4731,12 @@ NoBonus:
             End If
 
         Else ' Price update
+
+            ' Only process the price box logic on rows that are unrefined and compressed ore on mining tab
+            If ListRef.Name = lstMineGrid.Name And CurrentRow.SubItems(2).Text = "Refined" Then
+                Exit Sub
+            End If
+
             ' Set the columns that can be edited, just Price
             If iSubIndex = 3 Then
                 Call ShowMEPETextBox(ListRef)
@@ -4780,7 +4785,7 @@ NoBonus:
             End If
 
             ' Now do the update for the grids
-            If ListRef.Name <> lstPricesView.Name Then
+            If ListRef.Name <> lstPricesView.Name And ListRef.Name <> lstMineGrid.Name Then
                 ' BP Grid update
 
                 ' Check the numbers, if the same then don't update
@@ -4950,7 +4955,7 @@ Tabs:
             PreviousRow = ListRef.Items.Item(CurrentRow.Index - 1)
         End If
 
-        If ListRef.Name <> lstPricesView.Name Then
+        If ListRef.Name <> lstPricesView.Name And ListRef.Name <> lstMineGrid.Name Then
 
             ' For the update grids in the Blueprint Tab, only show the box if
             ' 1 - If the ME is clicked and it has something other than a '-' in it (meaning no BP)
@@ -4992,7 +4997,7 @@ Tabs:
                 CurrentCell = Nothing
             End If
 
-        Else ' Price list
+        Else ' Price list 
             ' For this, just go up and down the rows
             NextCell = NextRow.SubItems.Item(3)
             NextCellRow = NextRow
@@ -6308,6 +6313,9 @@ Tabs:
                 End If
             End If
 
+            ' In both cases, disable the num bps box
+            txtBPNumBPs.Enabled = False
+
         Else ' Set it on the user settings
             If tabBPInventionEquip.Contains(tabInventionCalcs) Then
                 ' Enable all first
@@ -6345,6 +6353,9 @@ Tabs:
                     chkBPFacilityIncludeUsage.Checked = SelectedBPT3InventionFacility.IncludeActivityUsage
                 End If
             End If
+
+            txtBPNumBPs.Enabled = True
+
         End If
 
         UpdatingInventionChecks = False
@@ -7587,8 +7598,12 @@ Tabs:
             End If
 
             ' invent this bp
-            Call SelectedBlueprint.InventBlueprint(CInt(txtBPInventionLines.Text), SelectedDecryptor, _
-                                  InventionFacility, SelectedBPInventionTeam, SelectedBPCopyFacility, SelectedBPCopyTeam, GetInventItemTypeID(BPID, RelicName))
+            txtBPNumBPs.Text = CStr(SelectedBlueprint.InventBlueprint(CInt(txtBPInventionLines.Text), SelectedDecryptor, _
+                                  InventionFacility, SelectedBPInventionTeam, SelectedBPCopyFacility, SelectedBPCopyTeam, GetInventItemTypeID(BPID, RelicName)))
+            ' Disable the num bps box
+            txtBPNumBPs.Enabled = False
+        Else
+            txtBPNumBPs.Enabled = True
         End If
 
         ' Build the item and get the list of materials
@@ -7724,7 +7739,7 @@ Tabs:
                 End If
 
                 ' Invention cost to get enough success for the runs entered
-                lblBPInventionCost.Text = FormatNumber(SelectedBlueprint.GetBPInventionCost(), 2)
+                lblBPInventionCost.Text = FormatNumber(SelectedBlueprint.GetBPTotalInventionCosts(), 2)
 
                 ' Invention Chance
                 lblBPInventionChance.Text = FormatPercent(SelectedBlueprint.GetInventionChance(), 2)
@@ -7783,7 +7798,7 @@ Tabs:
             End If
 
             ' RE Cost and time
-            lblBPRECost.Text = FormatNumber(SelectedBlueprint.GetBPInventionCost(), 2)
+            lblBPRECost.Text = FormatNumber(SelectedBlueprint.GetBPTotalInventionCosts(), 2)
             lblBPRETime.Text = FormatIPHTime(SelectedBlueprint.GetBPInventionTime())
 
             ' Update the decryptor stats box ME: -4, TE: -3, Runs: +9
@@ -8476,8 +8491,9 @@ ExitForm:
 
         ' Just add it to shopping list with options
         Call AddToShoppingList(SelectedBlueprint, chkBPBuildBuy.Checked, rbtnBPRawmatCopy.Checked, rbtnBPComponentCopy.Checked, _
-                               BlueprintBuildFacility.MaterialMultiplier,  _
-                               POSFlag, False, rbtnBPCopyInvREMats.Checked)
+                               BlueprintBuildFacility.MaterialMultiplier, POSFlag, _
+                               chkBPIgnoreInvention.Checked, chkBPIgnoreMinerals.Checked, chkBPIgnoreT1Item.Checked, _
+                               False, rbtnBPCopyInvREMats.Checked)
 
         If TotalShoppingList.GetNumShoppingItems > 0 Then
             ' Add the final item and mark as items in list
@@ -15011,7 +15027,6 @@ CheckTechs:
             ColumnPositions(.LaboratoryLines) = ProgramSettings.LaboratoryLinesColumnName
             ColumnPositions(.TotalInventionCost) = ProgramSettings.TotalInventionCostColumnName
             ColumnPositions(.TotalCopyCost) = ProgramSettings.TotalCopyCostColumnName
-            ColumnPositions(.TotalManufacturingCost) = ProgramSettings.TotalManufacturingCostColumnName
             ColumnPositions(.Taxes) = ProgramSettings.TaxesColumnName
             ColumnPositions(.BrokerFees) = ProgramSettings.BrokerFeesColumnName
             ColumnPositions(.BPProductionTime) = ProgramSettings.BPProductionTimeColumnName
@@ -15023,6 +15038,7 @@ CheckTechs:
             ColumnPositions(.ProfitPercentage) = ProgramSettings.ProfitPercentageColumnName
             ColumnPositions(.IskperHour) = ProgramSettings.IskperHourColumnName
             ColumnPositions(.SVR) = ProgramSettings.SVRColumnName
+            ColumnPositions(.SVRxIPH) = ProgramSettings.SVRxIPHColumnName
             ColumnPositions(.TotalCost) = ProgramSettings.TotalCostColumnName
             ColumnPositions(.BaseJobCost) = ProgramSettings.BaseJobCostColumnName
             ColumnPositions(.NumBPs) = ProgramSettings.NumBPsColumnName
@@ -15106,8 +15122,6 @@ CheckTechs:
                     Return .TotalInventionCostWidth
                 Case ProgramSettings.TotalCopyCostColumnName
                     Return .TotalCopyCostWidth
-                Case ProgramSettings.TotalManufacturingCostColumnName
-                    Return .TotalManufacturingCostWidth
                 Case ProgramSettings.TaxesColumnName
                     Return .TaxesWidth
                 Case ProgramSettings.BrokerFeesColumnName
@@ -15130,6 +15144,8 @@ CheckTechs:
                     Return .IskperHourWidth
                 Case ProgramSettings.SVRColumnName
                     Return .SVRWidth
+                Case ProgramSettings.SVRxIPHColumnName
+                    Return .SVRxIPHWidth
                 Case ProgramSettings.TotalCostColumnName
                     Return .TotalCostWidth
                 Case ProgramSettings.BaseJobCostColumnName
@@ -15253,8 +15269,6 @@ CheckTechs:
                 Return HorizontalAlignment.Right
             Case ProgramSettings.TotalCopyCostColumnName
                 Return HorizontalAlignment.Right
-            Case ProgramSettings.TotalManufacturingCostColumnName
-                Return HorizontalAlignment.Right
             Case ProgramSettings.TaxesColumnName
                 Return HorizontalAlignment.Right
             Case ProgramSettings.BrokerFeesColumnName
@@ -15276,6 +15290,8 @@ CheckTechs:
             Case ProgramSettings.IskperHourColumnName
                 Return HorizontalAlignment.Right
             Case ProgramSettings.SVRColumnName
+                Return HorizontalAlignment.Right
+            Case ProgramSettings.SVRxIPHColumnName
                 Return HorizontalAlignment.Right
             Case ProgramSettings.TotalCostColumnName
                 Return HorizontalAlignment.Right
@@ -15453,8 +15469,6 @@ CheckTechs:
                         .TotalInventionCost = i
                     Case ProgramSettings.TotalCopyCostColumnName
                         .TotalCopyCost = i
-                    Case ProgramSettings.TotalManufacturingCostColumnName
-                        .TotalManufacturingCost = i
                     Case ProgramSettings.TaxesColumnName
                         .Taxes = i
                     Case ProgramSettings.BrokerFeesColumnName
@@ -15477,6 +15491,8 @@ CheckTechs:
                         .IskperHour = i
                     Case ProgramSettings.SVRColumnName
                         .SVR = i
+                    Case ProgramSettings.SVRxIPHColumnName
+                        .SVRxIPH = i
                     Case ProgramSettings.TotalCostColumnName
                         .TotalCost = i
                     Case ProgramSettings.BaseJobCostColumnName
@@ -15610,8 +15626,6 @@ CheckTechs:
                         .TotalInventionCostWidth = NewWidth
                     Case ProgramSettings.TotalCopyCostColumnName
                         .TotalCopyCostWidth = NewWidth
-                    Case ProgramSettings.TotalManufacturingCostColumnName
-                        .TotalManufacturingCostWidth = NewWidth
                     Case ProgramSettings.TaxesColumnName
                         .TaxesWidth = NewWidth
                     Case ProgramSettings.BrokerFeesColumnName
@@ -15634,6 +15648,8 @@ CheckTechs:
                         .IskperHourWidth = NewWidth
                     Case ProgramSettings.SVRColumnName
                         .SVRWidth = NewWidth
+                    Case ProgramSettings.SVRxIPHColumnName
+                        .SVRxIPHWidth = NewWidth
                     Case ProgramSettings.TotalCostColumnName
                         .TotalCostWidth = NewWidth
                     Case ProgramSettings.BaseJobCostColumnName
@@ -16330,8 +16346,6 @@ CheckTechs:
         ' Number of blueprints used
         Dim NumberofBlueprints As Integer
 
-        Dim TaxesFeesUsage As Double
-
         ' If they entered an ME/TE value make sure it's ok
         If Not CorrectMETE(txtCalcTempME.Text, txtCalcTempTE.Text, txtCalcTempME, txtCalcTempTE) Then
             Exit Sub
@@ -16446,7 +16460,7 @@ CheckTechs:
         ' Component
         If Not CalcComponentFacilityLoaded Then
             ' Get the type of facility we are doing
-            Call LoadFacility(IndustryType.Manufacturing, True, True, _
+            Call LoadFacility(IndustryType.ComponentManufacturing, True, True, _
                               ActivityComponentManufacturing, cmbCalcComponentFacilityType, cmbCalcComponentFacilityRegion, cmbCalcComponentFacilitySystem, cmbCalcComponentFacilityorArray, _
                               lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, _
                               lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
@@ -16460,7 +16474,7 @@ CheckTechs:
         ' Capital Component
         If Not CalcCapitalComponentFacilityLoaded Then
             ' Get the type of facility we are doing
-            Call LoadFacility(IndustryType.Manufacturing, True, True, _
+            Call LoadFacility(IndustryType.CapitalComponentManufacturing, True, True, _
                               ActivityCapComponentManufacturing, cmbCalcComponentFacilityType, cmbCalcComponentFacilityRegion, cmbCalcComponentFacilitySystem, cmbCalcComponentFacilityorArray, _
                               lblCalcComponentFacilityBonus, lblCalcComponentFacilityDefault, _
                               lblCalcComponentFacilityManualME, txtCalcComponentFacilityManualME, _
@@ -16526,7 +16540,7 @@ CheckTechs:
         ' Capital
         If Not CalcCapitalFacilityLoaded Then
             ' Get the type of facility we are doing
-            Call LoadFacility(IndustryType.Manufacturing, True, True, _
+            Call LoadFacility(IndustryType.CapitalManufacturing, True, True, _
                               ActivityManufacturing, cmbCalcCapitalFacilityType, cmbCalcCapitalFacilityRegion, cmbCalcCapitalFacilitySystem, cmbCalcCapitalFacilityorArray, _
                               lblCalcCapitalFacilityBonus, lblCalcCapitalFacilityDefault, _
                               lblCalcCapitalFacilityManualME, txtCalcCapitalFacilityManualME, _
@@ -16539,7 +16553,7 @@ CheckTechs:
         ' Super
         If Not CalcSuperFacilityLoaded Then
             ' Get the type of facility we are doing
-            Call LoadFacility(IndustryType.Manufacturing, True, True, _
+            Call LoadFacility(IndustryType.SuperManufacturing, True, True, _
                               ActivityManufacturing, cmbCalcSuperFacilityType, cmbCalcSuperFacilityRegion, cmbCalcSuperFacilitySystem, cmbCalcSuperFacilityorArray, _
                               lblCalcSuperFacilityBonus, lblCalcSuperFacilityDefault, _
                               lblCalcSuperFacilityManualME, txtCalcSuperFacilityManualME, _
@@ -16552,7 +16566,7 @@ CheckTechs:
         ' T3 Cruisers
         If Not CalcT3FacilityLoaded Then
             ' Get the type of facility we are doing
-            Call LoadFacility(IndustryType.Manufacturing, True, True, _
+            Call LoadFacility(IndustryType.T3CruiserManufacturing, True, True, _
                               ActivityManufacturing, cmbCalcT3FacilityType, cmbCalcT3FacilityRegion, cmbCalcT3FacilitySystem, cmbCalcT3FacilityorArray, _
                               lblCalcT3FacilityBonus, lblCalcT3FacilityDefault, _
                               lblCalcT3FacilityManualME, txtCalcT3FacilityManualME, _
@@ -16566,7 +16580,7 @@ CheckTechs:
         ' T3 Destroyers
         If Not CalcT3DestroyerFacilityLoaded Then
             ' Get the type of facility we are doing
-            Call LoadFacility(IndustryType.Manufacturing, True, True, _
+            Call LoadFacility(IndustryType.T3DestroyerManufacturing, True, True, _
                               ActivityManufacturing, cmbCalcT3FacilityType, cmbCalcT3FacilityRegion, cmbCalcT3FacilitySystem, cmbCalcT3FacilityorArray, _
                               lblCalcT3FacilityBonus, lblCalcT3FacilityDefault, _
                               lblCalcT3FacilityManualME, txtCalcT3FacilityManualME, _
@@ -16580,7 +16594,7 @@ CheckTechs:
         ' Subsystem
         If Not CalcSubsystemFacilityLoaded Then
             ' Get the type of facility we are doing
-            Call LoadFacility(IndustryType.Manufacturing, True, True, _
+            Call LoadFacility(IndustryType.SubsystemManufacturing, True, True, _
                               ActivityManufacturing, cmbCalcSubsystemFacilityType, cmbCalcSubsystemFacilityRegion, cmbCalcSubsystemFacilitySystem, cmbCalcSubsystemFacilityorArray, _
                               lblCalcSubsystemFacilityBonus, lblCalcSubsystemFacilityDefault, _
                               lblCalcSubsystemFacilityManualME, txtCalcSubsystemFacilityManualME, _
@@ -16593,7 +16607,7 @@ CheckTechs:
         ' Booster
         If Not CalcBoosterFacilityLoaded Then
             ' Get the type of facility we are doing
-            Call LoadFacility(IndustryType.Manufacturing, True, True, _
+            Call LoadFacility(IndustryType.BoosterManufacturing, True, True, _
                               ActivityManufacturing, cmbCalcBoosterFacilityType, cmbCalcBoosterFacilityRegion, cmbCalcBoosterFacilitySystem, cmbCalcBoosterFacilityorArray, _
                               lblCalcBoosterFacilityBonus, lblCalcBoosterFacilityDefault, _
                               lblCalcBoosterFacilityManualME, txtCalcBoosterFacilityManualME, _
@@ -17183,7 +17197,8 @@ CheckTechs:
                                 InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourComponents
                                 InsertItem.CalcType = "Components"
                                 InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetProductionTime, ManufacturingBlueprint.GetTotalUnits)
-                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalComponentCost + TaxesFeesUsage
+                                InsertItem.SVRxIPH = IIf(IsNothing(InsertItem.SVR), 0, CType(InsertItem.SVR, Double) * InsertItem.IPH)
+                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalComponentCost
                                 InsertItem.Taxes = ManufacturingBlueprint.GetBPTaxes
                                 InsertItem.BrokerFees = ManufacturingBlueprint.GetBPBrokerFees
 
@@ -17233,6 +17248,7 @@ CheckTechs:
                             InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourRaw
                             InsertItem.CalcType = "Raw Materials"
                             InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetTotalProductionTime, ManufacturingBlueprint.GetTotalUnits)
+                            InsertItem.SVRxIPH = IIf(IsNothing(InsertItem.SVR), 0, CType(InsertItem.SVR, Double) * InsertItem.IPH)
                             InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost
                             InsertItem.Taxes = ManufacturingBlueprint.GetBPTaxes
                             InsertItem.BrokerFees = ManufacturingBlueprint.GetBPBrokerFees
@@ -17283,7 +17299,7 @@ CheckTechs:
                                            InsertItem.ManufacturingFacility, InsertItem.ComponentTeam, _
                                            InsertItem.ComponentManufacturingFacility, InsertItem.CapComponentManufacturingFacility)
 
-                            If InsertItem.TechLevel <> "T1" And chkCalcIgnoreInvention.Checked Then
+                            If InsertItem.TechLevel <> "T1" And chkCalcIgnoreInvention.Checked = False Then
                                 ' Construct the T2/T3 BP
                                 ManufacturingBlueprint.InventBlueprint(CInt(txtCalcLabLines.Text), SelectedDecryptor, InsertItem.InventionFacility, InsertItem.InventionTeam, _
                                                                        InsertItem.CopyFacility, InsertItem.CopyTeam, GetInventItemTypeID(InsertItem.BPID, InsertItem.Relic))
@@ -17293,20 +17309,19 @@ CheckTechs:
                             ' Get the list of materials
                             Call ManufacturingBlueprint.BuildItems(chkCalcTaxes.Checked, chkCalcFees.Checked, chkCalcBaseFacilityIncludeUsage.Checked, chkCalcIgnoreMinerals.Checked, chkCalcIgnoreT1Item.Checked)
 
-                            TaxesFeesUsage = ManufacturingBlueprint.GetBPTaxes + ManufacturingBlueprint.GetBPBrokerFees + ManufacturingBlueprint.GetManufacturingFacilityUsage
-
                             ' Build/Buy (add only if it has components we build)
                             If ManufacturingBlueprint.HasComponents Then
-                                InsertItem.ItemMarketPrice = ManufacturingBlueprint.GetItemMarketPrice
                                 InsertItem.ProfitPercent = ManufacturingBlueprint.GetTotalRawProfitPercent
                                 InsertItem.Profit = ManufacturingBlueprint.GetTotalRawProfit
                                 InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourRaw
                                 InsertItem.CalcType = "Build/Buy"
                                 InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetTotalProductionTime, ManufacturingBlueprint.GetTotalUnits)
-                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost + TaxesFeesUsage
+                                InsertItem.SVRxIPH = IIf(IsNothing(InsertItem.SVR), 0, CType(InsertItem.SVR, Double) * InsertItem.IPH)
+                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost
+                                InsertItem.ItemMarketPrice = ManufacturingBlueprint.GetItemMarketPrice
+
                                 InsertItem.Taxes = ManufacturingBlueprint.GetBPTaxes
                                 InsertItem.BrokerFees = ManufacturingBlueprint.GetBPBrokerFees
-
                                 InsertItem.SingleInventedBPCRunsperBPC = ManufacturingBlueprint.GetInventedRuns
 
                                 InsertItem.BPProductionTime = FormatIPHTime(ManufacturingBlueprint.GetProductionTime)
@@ -17347,6 +17362,7 @@ CheckTechs:
 
                             End If
                         Else
+
                             ' Just look at each one individually
                             If rbtnCalcCompareComponents.Checked Then
                                 ' Use the Component values
@@ -17355,7 +17371,8 @@ CheckTechs:
                                 InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourComponents
                                 InsertItem.CalcType = "Components"
                                 InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetProductionTime, ManufacturingBlueprint.GetTotalUnits)
-                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalComponentCost + TaxesFeesUsage
+                                InsertItem.SVRxIPH = IIf(IsNothing(InsertItem.SVR), 0, CType(InsertItem.SVR, Double) * InsertItem.IPH)
+                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalComponentCost
                             ElseIf rbtnCalcCompareRawMats.Checked Then
                                 ' Use the Raw values 
                                 InsertItem.ProfitPercent = ManufacturingBlueprint.GetTotalRawProfitPercent
@@ -17363,7 +17380,8 @@ CheckTechs:
                                 InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourRaw
                                 InsertItem.CalcType = "Raw Materials"
                                 InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetTotalProductionTime, ManufacturingBlueprint.GetTotalUnits)
-                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost + TaxesFeesUsage
+                                InsertItem.SVRxIPH = IIf(IsNothing(InsertItem.SVR), 0, CType(InsertItem.SVR, Double) * InsertItem.IPH)
+                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost
                             ElseIf rbtnCalcCompareBuildBuy.Checked Then
                                 ' Use the Build/Buy best rate values (the blueprint was set to get these values above)
                                 InsertItem.ProfitPercent = ManufacturingBlueprint.GetTotalRawProfitPercent
@@ -17371,7 +17389,8 @@ CheckTechs:
                                 InsertItem.IPH = ManufacturingBlueprint.GetTotalIskperHourRaw
                                 InsertItem.CalcType = "Build/Buy"
                                 InsertItem.SVR = GetItemSVR(InsertItem.ItemTypeID, AveragePriceRegionID, AveragePriceDays, ManufacturingBlueprint.GetTotalProductionTime, ManufacturingBlueprint.GetTotalUnits)
-                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost + TaxesFeesUsage
+                                InsertItem.SVRxIPH = IIf(IsNothing(InsertItem.SVR), 0, CType(InsertItem.SVR, Double) * InsertItem.IPH)
+                                InsertItem.TotalCost = ManufacturingBlueprint.GetTotalRawCost
                             End If
 
                             InsertItem.ItemMarketPrice = ManufacturingBlueprint.GetItemMarketPrice
@@ -17545,8 +17564,6 @@ DisplayResults:
                         BPList.SubItems.Add(FormatNumber(FinalItemList(i).InventionCost, 2))
                     Case ProgramSettings.TotalCopyCostColumnName
                         BPList.SubItems.Add(FormatNumber(FinalItemList(i).CopyCost, 2))
-                    Case ProgramSettings.TotalManufacturingCostColumnName
-                        BPList.SubItems.Add(FormatNumber(FinalItemList(i).ManufacturingFacilityUsage, 2))
                     Case ProgramSettings.TaxesColumnName
                         BPList.SubItems.Add(FormatNumber(FinalItemList(i).Taxes, 2))
                     Case ProgramSettings.BrokerFeesColumnName
@@ -17572,6 +17589,12 @@ DisplayResults:
                             BPList.SubItems.Add("")
                         Else
                             BPList.SubItems.Add(FormatNumber(FinalItemList(i).SVR, 2))
+                        End If
+                    Case ProgramSettings.SVRxIPHColumnName
+                        If IsNothing(FinalItemList(i).SVRxIPH) Then
+                            BPList.SubItems.Add("")
+                        Else
+                            BPList.SubItems.Add(FormatNumber(FinalItemList(i).SVRxIPH, 2))
                         End If
                     Case ProgramSettings.TotalCostColumnName
                         BPList.SubItems.Add(FormatNumber(FinalItemList(i).TotalCost, 2))
@@ -18011,8 +18034,6 @@ ExitCalc:
                 ExportData = Format(DataText, "Fixed") & Separator
             Case ProgramSettings.TotalCopyCostColumnName
                 ExportData = Format(DataText, "Fixed") & Separator
-            Case ProgramSettings.TotalManufacturingCostColumnName
-                ExportData = Format(DataText, "Fixed") & Separator
             Case ProgramSettings.TaxesColumnName
                 ExportData = Format(DataText, "Fixed") & Separator
             Case ProgramSettings.BrokerFeesColumnName
@@ -18024,6 +18045,8 @@ ExitCalc:
             Case ProgramSettings.IskperHourColumnName
                 ExportData = Format(DataText, "Fixed") & Separator
             Case ProgramSettings.SVRColumnName
+                ExportData = Format(DataText, "Fixed") & Separator
+            Case ProgramSettings.SVRxIPHColumnName
                 ExportData = Format(DataText, "Fixed") & Separator
             Case ProgramSettings.TotalCostColumnName
                 ExportData = Format(DataText, "Fixed") & Separator
@@ -18664,6 +18687,7 @@ ExitCalc:
         Public CanRE As Boolean
 
         Public SVR As Object ' Sales volume ratio, set to an object because this can be Nothing
+        Public SVRxIPH As Object ' could be nothing
 
         Public ManufacturingFacility As IndustryFacility
         Public ManufacturingFacilityUsage As Double
@@ -18750,7 +18774,7 @@ ExitCalc:
             CopyofMe.CanRE = CanRE
 
             CopyofMe.SVR = SVR
-
+            CopyofMe.SVRxIPH = SVRxIPH
             CopyofMe.CopyCost = CopyCost
             CopyofMe.InventionCost = InventionCost
             CopyofMe.ManufacturingFacilityUsage = ManufacturingFacilityUsage
@@ -18886,16 +18910,16 @@ ExitCalc:
             Dim SVRIPH2 As Double
 
             ' swap p2 and p1 to do decending sort
-            If IsNothing(p1.SVR) Then
+            If IsNothing(p1.SVRxIPH) Then
                 SVRIPH1 = 0
             Else
-                SVRIPH1 = p1.IPH * CDbl(p1.SVR)
+                SVRIPH1 = CDbl(p1.SVRxIPH)
             End If
 
             If IsNothing(p1.SVR) Then
                 SVRIPH2 = 0
             Else
-                SVRIPH2 = p2.IPH * CDbl(p2.SVR)
+                SVRIPH2 = CDbl(p2.SVRxIPH)
             End If
 
             Return SVRIPH2.CompareTo(SVRIPH1)
@@ -21066,6 +21090,10 @@ Leave:
 
 #Region "Mining Object Functions"
 
+    Private Sub lstMineGrid_MouseClick(sender As System.Object, e As System.Windows.Forms.MouseEventArgs) Handles lstMineGrid.MouseClick
+        Call ListClicked(lstMineGrid, sender, e)
+    End Sub
+
     Private Sub chkMineRorqDeployedMode_CheckedChanged(sender As System.Object, e As System.EventArgs) Handles chkMineRorqDeployedMode.CheckedChanged
         If chkMineRorqDeployedMode.Checked = True Then
             lblMineIndustrialReconfig.Enabled = True
@@ -21210,7 +21238,7 @@ Leave:
             chkMineIncludeHighSec.Text = "High Sec Ice"
             chkMineIncludeLowSec.Text = "Low Sec Ice"
             chkMineIncludeNullSec.Text = "Null Sec Ice"
-            lstMineGrid.Columns(0).Text = "Ice Name"
+            lstMineGrid.Columns(1).Text = "Ice Name"
             gbMineMiningDroneM3.Enabled = False ' drones don't apply to ice
             rbtnMineIceRig.Enabled = True
             If UserMiningTabSettings.IceMiningRig Then
@@ -21245,7 +21273,7 @@ Leave:
             chkMineIncludeHighSec.Text = "High Sec Ore"
             chkMineIncludeLowSec.Text = "Low Sec Ore"
             chkMineIncludeNullSec.Text = "Null Sec Ore"
-            lstMineGrid.Columns(0).Text = "Ore Name"
+            lstMineGrid.Columns(1).Text = "Ore Name"
             gbMineMiningDroneM3.Enabled = True
             rbtnMineMercoxitRig.Enabled = True
             rbtnMineIceRig.Enabled = False
@@ -21279,7 +21307,7 @@ Leave:
             chkMineIncludeHighSec.Text = "High Sec Gas"
             chkMineIncludeLowSec.Text = "Low Sec Gas"
             chkMineIncludeNullSec.Text = "Null Sec Gas"
-            lstMineGrid.Columns(0).Text = "Gas Name"
+            lstMineGrid.Columns(1).Text = "Gas Name"
             gbMineMiningDroneM3.Enabled = False
             rbtnMineMercoxitRig.Enabled = False
             rbtnMineIceRig.Enabled = False
@@ -23409,17 +23437,17 @@ Leave:
         ' Update column widths based on type - Ice, don't show Crystal, Gas, don't show Refine or Crystal
         Select Case cmbMineOreType.Text
             Case "Ore"
-                lstMineGrid.Columns(0).Width = MineOreNameColumnWidth
-                lstMineGrid.Columns(3).Width = MineRefineYieldColumnWidth
-                lstMineGrid.Columns(4).Width = MineCrystalColumnWidth
+                lstMineGrid.Columns(1).Width = MineOreNameColumnWidth
+                lstMineGrid.Columns(4).Width = MineRefineYieldColumnWidth
+                lstMineGrid.Columns(5).Width = MineCrystalColumnWidth
             Case "Ice"
-                lstMineGrid.Columns(0).Width = MineOreNameColumnWidth + MineCrystalColumnWidth
-                lstMineGrid.Columns(3).Width = MineRefineYieldColumnWidth
-                lstMineGrid.Columns(4).Width = 0 ' Hide
+                lstMineGrid.Columns(1).Width = MineOreNameColumnWidth + MineCrystalColumnWidth
+                lstMineGrid.Columns(4).Width = MineRefineYieldColumnWidth
+                lstMineGrid.Columns(5).Width = 0 ' Hide
             Case "Gas"
-                lstMineGrid.Columns(0).Width = MineOreNameColumnWidth + MineCrystalColumnWidth + MineRefineYieldColumnWidth
-                lstMineGrid.Columns(3).Width = 0
-                lstMineGrid.Columns(4).Width = 0 ' Hide
+                lstMineGrid.Columns(1).Width = MineOreNameColumnWidth + MineCrystalColumnWidth + MineRefineYieldColumnWidth
+                lstMineGrid.Columns(4).Width = 0
+                lstMineGrid.Columns(5).Width = 0 ' Hide
         End Select
 
         ' Determine multiplier - assume all additional mining ships have the same yield and other costs
@@ -23430,8 +23458,9 @@ Leave:
         For i = 0 To OreList.Count - 1
             ' Make sure we want to add Mercoxit
             If Not OreList(i).OreName.Contains("Mercoxit") Or (OreList(i).OreName.Contains("Mercoxit") And cmbMineMiningLaser.Text.Contains("Deep Core")) Then
-                lstOreRow = lstMineGrid.Items.Add(OreList(i).OreName)
+                lstOreRow = lstMineGrid.Items.Add(CStr(OreList(i).OreID))
                 'The remaining columns are subitems  
+                lstOreRow.SubItems.Add(OreList(i).OreName)
                 lstOreRow.SubItems.Add(OreList(i).RefineType)
                 lstOreRow.SubItems.Add(FormatNumber(OreList(i).OreUnitPrice, 2))
                 If OreList(i).RefineYield = 0 Then

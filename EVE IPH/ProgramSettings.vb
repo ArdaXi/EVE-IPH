@@ -465,7 +465,6 @@ Public Class ProgramSettings
     Dim DefaultMTLaboratoryLines As Integer = 0
     Dim DefaultMTTotalInventionCost As Integer = 0
     Dim DefaultMTTotalCopyCost As Integer = 0
-    Dim DefaultMTTotalManufacturingCost As Integer = 0
     Dim DefaultMTTaxes As Integer = 0
     Dim DefaultMTBrokerFees As Integer = 0
     Dim DefaultMTBPProductionTime As Integer = 0
@@ -477,6 +476,7 @@ Public Class ProgramSettings
     Dim DefaultMTProfitPercentage As Integer = 0
     Dim DefaultMTIskperHour As Integer = 10
     Dim DefaultMTSVR As Integer = 11
+    Dim DefaultMTSVRxIPH As Integer = 0
     Dim DefaultMTTotalCost As Integer = 12
     Dim DefaultMTBaseJobCost As Integer = 0
     Dim DefaultMTNumBPs As Integer = 0
@@ -534,7 +534,6 @@ Public Class ProgramSettings
     Dim DefaultMTLaboratoryLinesWidth As Integer = 92
     Dim DefaultMTTotalInventionCostWidth As Integer = 107
     Dim DefaultMTTotalCopyCostWidth As Integer = 88
-    Dim DefaultMTTotalManufacturingCostWidth As Integer = 131
     Dim DefaultMTTaxesWidth As Integer = 91
     Dim DefaultMTBrokerFeesWidth As Integer = 100
     Dim DefaultMTBPProductionTimeWidth As Integer = 106
@@ -546,6 +545,7 @@ Public Class ProgramSettings
     Dim DefaultMTProfitPercentageWidth As Integer = 100
     Dim DefaultMTIskperHourWidth As Integer = 100
     Dim DefaultMTSVRWidth As Integer = 100
+    Dim DefaultMTSVRxIPHWidth As Integer = 100
     Dim DefaultMTTotalCostWidth As Integer = 102
     Dim DefaultMTBaseJobCostWidth As Integer = 100
     Dim DefaultMTNumBPsWidth As Integer = 57
@@ -607,7 +607,7 @@ Public Class ProgramSettings
     Public Const LaboratoryLinesColumnName As String = "Laboratory Lines"
     Public Const TotalInventionCostColumnName As String = "Total Invention Cost"
     Public Const TotalCopyCostColumnName As String = "Total Copy Cost"
-    Public Const TotalManufacturingCostColumnName As String = "Total Manufacturing Cost"
+    Public Const SVRxIPHColumnName As String = "SVR * IPH"
     Public Const TaxesColumnName As String = "Taxes"
     Public Const BrokerFeesColumnName As String = "Broker Fees"
     Public Const BPProductionTimeColumnName As String = "BP Production Time"
@@ -2664,7 +2664,6 @@ Public Class ProgramSettings
                     .LaboratoryLines = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "LaboratoryLines", DefaultMTLaboratoryLines))
                     .TotalInventionCost = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "TotalInventionCost", DefaultMTTotalInventionCost))
                     .TotalCopyCost = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "TotalCopyCost", DefaultMTTotalCopyCost))
-                    .TotalManufacturingCost = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "TotalManufacturingCost", DefaultMTTotalManufacturingCost))
                     .Taxes = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "Taxes", DefaultMTTaxes))
                     .BrokerFees = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "BrokerFees", DefaultMTBrokerFees))
                     .BPProductionTime = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "BPProductionTime", DefaultMTBPProductionTime))
@@ -2676,6 +2675,7 @@ Public Class ProgramSettings
                     .ProfitPercentage = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "ProfitPercentage", DefaultMTProfitPercentage))
                     .IskperHour = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "IskperHour", DefaultMTIskperHour))
                     .SVR = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "SVR", DefaultMTSVR))
+                    .SVRxIPH = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "SVRxIPH", DefaultMTSVRxIPH))
                     .TotalCost = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "TotalCost", DefaultMTTotalCost))
                     .BaseJobCost = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "BaseJobCost", DefaultMTBaseJobCost))
                     .NumBPs = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "NumBPs", DefaultMTNumBPs))
@@ -2733,7 +2733,6 @@ Public Class ProgramSettings
                     .LaboratoryLinesWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "LaboratoryLinesWidth", DefaultMTLaboratoryLinesWidth))
                     .TotalInventionCostWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "TotalInventionCostWidth", DefaultMTTotalInventionCostWidth))
                     .TotalCopyCostWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "TotalCopyCostWidth", DefaultMTTotalCopyCostWidth))
-                    .TotalManufacturingCostWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "TotalManufacturingCostWidth", DefaultMTTotalManufacturingCostWidth))
                     .TaxesWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "TaxesWidth", DefaultMTTaxesWidth))
                     .BrokerFeesWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "BrokerFeesWidth", DefaultMTBrokerFeesWidth))
                     .BPProductionTimeWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "BPProductionTimeWidth", DefaultMTBPProductionTimeWidth))
@@ -2745,6 +2744,7 @@ Public Class ProgramSettings
                     .ProfitPercentageWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "ProfitPercentageWidth", DefaultMTProfitPercentageWidth))
                     .IskperHourWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "IskperHourWidth", DefaultMTIskperHourWidth))
                     .SVRWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "SVRWidth", DefaultMTSVRWidth))
+                    .SVRxIPHWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "SVRxIPHWidth", DefaultMTSVRxIPHWidth))
                     .TotalCostWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "TotalCostWidth", DefaultMTTotalCostWidth))
                     .BaseJobCostWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "BaseJobCostWidth", DefaultMTBaseJobCostWidth))
                     .NumBPsWidth = CInt(GetSettingValue(ManufacturingTabColumnSettingsFileName, SettingTypes.TypeInteger, "ManufacturingTabColumnSettings", "NumBPsWidth", DefaultMTNumBPsWidth))
@@ -2830,7 +2830,6 @@ Public Class ProgramSettings
             .LaboratoryLines = DefaultMTLaboratoryLines
             .TotalInventionCost = DefaultMTTotalInventionCost
             .TotalCopyCost = DefaultMTTotalCopyCost
-            .TotalManufacturingCost = DefaultMTTotalManufacturingCost
             .Taxes = DefaultMTTaxes
             .BrokerFees = DefaultMTBrokerFees
             .BPProductionTime = DefaultMTBPProductionTime
@@ -2842,6 +2841,7 @@ Public Class ProgramSettings
             .ProfitPercentage = DefaultMTProfitPercentage
             .IskperHour = DefaultMTIskperHour
             .SVR = DefaultMTSVR
+            .SVRxIPH = DefaultMTSVRxIPH
             .TotalCost = DefaultMTTotalCost
             .BaseJobCost = DefaultMTBaseJobCost
             .NumBPs = DefaultMTNumBPs
@@ -2899,7 +2899,6 @@ Public Class ProgramSettings
             .LaboratoryLinesWidth = DefaultMTLaboratoryLinesWidth
             .TotalInventionCostWidth = DefaultMTTotalInventionCostWidth
             .TotalCopyCostWidth = DefaultMTTotalCopyCostWidth
-            .TotalManufacturingCostWidth = DefaultMTTotalManufacturingCostWidth
             .TaxesWidth = DefaultMTTaxesWidth
             .BrokerFeesWidth = DefaultMTBrokerFeesWidth
             .BPProductionTimeWidth = DefaultMTBPProductionTimeWidth
@@ -2911,6 +2910,7 @@ Public Class ProgramSettings
             .ProfitPercentageWidth = DefaultMTProfitPercentageWidth
             .IskperHourWidth = DefaultMTIskperHourWidth
             .SVRWidth = DefaultMTSVRWidth
+            .SVRxIPHWidth = DefaultMTSVRxIPHWidth
             .TotalCostWidth = DefaultMTTotalCostWidth
             .BaseJobCostWidth = DefaultMTBaseJobCostWidth
             .NumBPsWidth = DefaultMTNumBPsWidth
@@ -2984,7 +2984,7 @@ Public Class ProgramSettings
             ManufacturingTabColumnSettingsList(12) = New Setting("LaboratoryLines", CStr(SentSettings.LaboratoryLines))
             ManufacturingTabColumnSettingsList(13) = New Setting("TotalInventionCost", CStr(SentSettings.TotalInventionCost))
             ManufacturingTabColumnSettingsList(14) = New Setting("TotalCopyCost", CStr(SentSettings.TotalCopyCost))
-            ManufacturingTabColumnSettingsList(15) = New Setting("TotalManufacturingCost", CStr(SentSettings.TotalManufacturingCost))
+            ManufacturingTabColumnSettingsList(15) = New Setting("SVRxIPH", CStr(SentSettings.SVRxIPH))
             ManufacturingTabColumnSettingsList(16) = New Setting("Taxes", CStr(SentSettings.Taxes))
             ManufacturingTabColumnSettingsList(17) = New Setting("BrokerFees", CStr(SentSettings.BrokerFees))
             ManufacturingTabColumnSettingsList(18) = New Setting("BPProductionTime", CStr(SentSettings.BPProductionTime))
@@ -5090,7 +5090,6 @@ Public Structure ManufacturingTabColumnSettings
     Dim LaboratoryLines As Integer
     Dim TotalInventionCost As Integer
     Dim TotalCopyCost As Integer
-    Dim TotalManufacturingCost As Integer
     Dim Taxes As Integer
     Dim BrokerFees As Integer
     Dim BPProductionTime As Integer
@@ -5102,6 +5101,7 @@ Public Structure ManufacturingTabColumnSettings
     Dim ProfitPercentage As Integer
     Dim IskperHour As Integer
     Dim SVR As Integer
+    Dim SVRxIPH As Integer
     Dim TotalCost As Integer
     Dim BaseJobCost As Integer
     Dim NumBPs As Integer
@@ -5171,6 +5171,7 @@ Public Structure ManufacturingTabColumnSettings
     Dim ProfitPercentageWidth As Integer
     Dim IskperHourWidth As Integer
     Dim SVRWidth As Integer
+    Dim SVRxIPHWidth As Integer
     Dim TotalCostWidth As Integer
     Dim BaseJobCostWidth As Integer
     Dim NumBPsWidth As Integer

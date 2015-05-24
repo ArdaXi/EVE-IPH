@@ -917,11 +917,6 @@ Public Class EVECREST
                         Application.DoEvents()
                     Next
 
-                    ErrorTracker = "Rebuilding indexes on industry_facilities"
-                    '' Rebuild indexes on INDUSTRY_FACILITIES - might not need to do
-                    'Call ExecuteNonQuerySQL("REINDEX IDX_IF_MAIN")
-                    'Call ExecuteNonQuerySQL("REINDEX IDX_IF_SSID")
-
                     ' Now that everything is inserted update the master station table that we can query for anything
                     StatusText = "Updating Stations Data..."
                     If SplashVisible Then
@@ -979,7 +974,7 @@ Public Class EVECREST
                     DBCommand = Nothing
 
                     '' Update Tax rates - might want to ignore this until they actually could change, NPC is set by CCP and outposts don't get set through CREST
-                    'SQL = "SELECT DISTINCT FACILITY_ID, FACILITY_TAX FROM STATION_FACILITIES WHERE OUTPOST <> 2" ' 2 for outposts means the user has set the data
+                    'SQL = "SELECT DISTINCT FACILITY_ID, FACILITY_TAX FROM STATION_FACILITIES
                     'DBCommand = New SQLiteCommand(SQL, DB)
                     'rsLookup = DBCommand.ExecuteReader
 
@@ -1026,37 +1021,6 @@ Public Class EVECREST
                     rsLookup.Close()
                     DBCommand = Nothing
 
-                    StatusText = "Optimizing Data..."
-                    If SplashVisible Then
-                        Call SetProgress(StatusText)
-                    Else
-                        TempLabel.Text = StatusText
-                    End If
-                    Application.DoEvents()
-
-                    ErrorTracker = "Reindexing Station_facilities"
-                    ' Index the table
-                    SQL = "REINDEX IDX_SF_OP_AID_CID_GID"
-                    Call ExecuteNonQuerySQL(SQL)
-
-                    SQL = "REINDEX IDX_SF_OP_FN_AID_CID_GID"
-                    Call ExecuteNonQuerySQL(SQL)
-
-                    SQL = "REINDEX IDX_SF_GID"
-                    Call ExecuteNonQuerySQL(SQL)
-
-                    SQL = "REINDEX IDX_SF_CID"
-                    Call ExecuteNonQuerySQL(SQL)
-
-                    SQL = "REINDEX IDX_SF_FN"
-                    Call ExecuteNonQuerySQL(SQL)
-
-                    SQL = "REINDEX IDX_SF_FID" ' not sure if I still need these
-                    Call ExecuteNonQuerySQL(SQL)
-
-                    SQL = "REINDEX IDX_SF_SSID_AID" ' not sure if I still need these
-                    Call ExecuteNonQuerySQL(SQL)
-
                     ' Finally, update the stations table for easy look ups in assets
                     ' note some stations may not be in the CREST update since those are just industry facilities but contains all outposts, which we want
                     SQL = "SELECT FACILITY_ID, FACILITY_NAME, FACILITY_TYPE_ID, SOLAR_SYSTEM_ID, SOLAR_SYSTEM_SECURITY, REGION_ID "
@@ -1075,11 +1039,6 @@ Public Class EVECREST
                         ErrorTracker = SQL
                         Call ExecuteNonQuerySQL(SQL)
                     End While
-
-                    ErrorTracker = "Reindexing stations"
-                    ' Index the ID
-                    SQL = "REINDEX IDX_S_FID"
-                    Call ExecuteNonQuerySQL(SQL)
 
                     ' Set the Cache Date to now plus the length since it's not sent in the file
                     Call SetCRESTCacheDate(IndustryFacilitiesField, CacheDate)

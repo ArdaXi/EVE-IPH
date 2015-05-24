@@ -51,18 +51,18 @@
             Call UpdateListCheck(.LaboratoryLines, 12)
             Call UpdateListCheck(.TotalInventionCost, 13)
             Call UpdateListCheck(.TotalCopyCost, 14)
-            Call UpdateListCheck(.TotalManufacturingCost, 15)
-            Call UpdateListCheck(.Taxes, 16)
-            Call UpdateListCheck(.BrokerFees, 17)
-            Call UpdateListCheck(.BPProductionTime, 18)
-            Call UpdateListCheck(.TotalProductionTime, 19)
-            Call UpdateListCheck(.CopyTime, 20)
-            Call UpdateListCheck(.InventionTime, 21)
-            Call UpdateListCheck(.ItemMarketPrice, 22)
-            Call UpdateListCheck(.Profit, 23)
-            Call UpdateListCheck(.ProfitPercentage, 24)
-            Call UpdateListCheck(.IskperHour, 25)
-            Call UpdateListCheck(.SVR, 26)
+            Call UpdateListCheck(.Taxes, 15)
+            Call UpdateListCheck(.BrokerFees, 16)
+            Call UpdateListCheck(.BPProductionTime, 17)
+            Call UpdateListCheck(.TotalProductionTime, 18)
+            Call UpdateListCheck(.CopyTime, 19)
+            Call UpdateListCheck(.InventionTime, 20)
+            Call UpdateListCheck(.ItemMarketPrice, 21)
+            Call UpdateListCheck(.Profit, 22)
+            Call UpdateListCheck(.ProfitPercentage, 23)
+            Call UpdateListCheck(.IskperHour, 24)
+            Call UpdateListCheck(.SVR, 25)
+            Call UpdateListCheck(.SVRxIPH, 26)
             Call UpdateListCheck(.TotalCost, 27)
             Call UpdateListCheck(.BaseJobCost, 28)
             Call UpdateListCheck(.NumBPs, 29)
@@ -177,18 +177,18 @@
             .LaboratoryLines = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(12), .LaboratoryLines)
             .TotalInventionCost = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(13), .TotalInventionCost)
             .TotalCopyCost = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(14), .TotalCopyCost)
-            .TotalManufacturingCost = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(15), .TotalManufacturingCost)
-            .Taxes = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(16), .Taxes)
-            .BrokerFees = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(17), .BrokerFees)
-            .BPProductionTime = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(18), .BPProductionTime)
-            .TotalProductionTime = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(19), .TotalProductionTime)
-            .CopyTime = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(20), .CopyTime)
-            .InventionTime = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(21), .InventionTime)
-            .ItemMarketPrice = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(22), .ItemMarketPrice)
-            .Profit = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(23), .Profit)
-            .ProfitPercentage = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(24), .ProfitPercentage)
-            .IskperHour = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(25), .IskperHour)
-            .SVR = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(26), .SVR)
+            .Taxes = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(15), .Taxes)
+            .BrokerFees = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(16), .BrokerFees)
+            .BPProductionTime = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(17), .BPProductionTime)
+            .TotalProductionTime = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(18), .TotalProductionTime)
+            .CopyTime = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(19), .CopyTime)
+            .InventionTime = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(20), .InventionTime)
+            .ItemMarketPrice = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(21), .ItemMarketPrice)
+            .Profit = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(22), .Profit)
+            .ProfitPercentage = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(23), .ProfitPercentage)
+            .IskperHour = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(24), .IskperHour)
+            .SVR = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(25), .SVR)
+            .SVRxIPH = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(26), .SVRxIPH)
             .TotalCost = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(27), .TotalCost)
             .BaseJobCost = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(28), .BaseJobCost)
             .NumBPs = GetColumnNumber(chkLstBoxColumns.GetItemCheckState(29), .NumBPs)
@@ -253,7 +253,6 @@
                     ColumnPositions(.LaboratoryLines) = ProgramSettings.LaboratoryLinesColumnName
                     ColumnPositions(.TotalInventionCost) = ProgramSettings.TotalInventionCostColumnName
                     ColumnPositions(.TotalCopyCost) = ProgramSettings.TotalCopyCostColumnName
-                    ColumnPositions(.TotalManufacturingCost) = ProgramSettings.TotalManufacturingCostColumnName
                     ColumnPositions(.Taxes) = ProgramSettings.TaxesColumnName
                     ColumnPositions(.BrokerFees) = ProgramSettings.BrokerFeesColumnName
                     ColumnPositions(.BPProductionTime) = ProgramSettings.BPProductionTimeColumnName
@@ -265,6 +264,7 @@
                     ColumnPositions(.ProfitPercentage) = ProgramSettings.ProfitPercentageColumnName
                     ColumnPositions(.IskperHour) = ProgramSettings.IskperHourColumnName
                     ColumnPositions(.SVR) = ProgramSettings.SVRColumnName
+                    ColumnPositions(.SVRxIPH) = ProgramSettings.SVRxIPHColumnName
                     ColumnPositions(.TotalCost) = ProgramSettings.TotalCostColumnName
                     ColumnPositions(.BaseJobCost) = ProgramSettings.BaseJobCostColumnName
                     ColumnPositions(.NumBPs) = ProgramSettings.NumBPsColumnName
@@ -372,8 +372,6 @@
                                 .TotalInventionCost = i
                             Case ProgramSettings.TotalCopyCostColumnName
                                 .TotalCopyCost = i
-                            Case ProgramSettings.TotalManufacturingCostColumnName
-                                .TotalManufacturingCost = i
                             Case ProgramSettings.TaxesColumnName
                                 .Taxes = i
                             Case ProgramSettings.BrokerFeesColumnName
@@ -396,6 +394,8 @@
                                 .IskperHour = i
                             Case ProgramSettings.SVRColumnName
                                 .SVR = i
+                            Case ProgramSettings.SVRxIPHColumnName
+                                .SVRxIPH = i
                             Case ProgramSettings.TotalCostColumnName
                                 .TotalCost = i
                             Case ProgramSettings.BaseJobCostColumnName

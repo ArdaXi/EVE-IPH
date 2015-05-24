@@ -926,6 +926,9 @@ Public Module Public_Variables
                                  ComponentCopy As Boolean, _
                                  FacilityMEModifier As Double, _
                                  BuiltInPOS As Boolean, _
+                                 IgnoreInvention As Boolean, _
+                                 IgnoreMinerals As Boolean, _
+                                 IgnoreT1ITem As Boolean, _
                                  Optional IgnoreRefresh As Boolean = False, _
                                  Optional CopyInventionMatsOnly As Boolean = False)
         Dim TempMats As New Materials
@@ -949,6 +952,12 @@ Public Module Public_Variables
                     .TotalBuildTime = SentBlueprint.GetTotalProductionTime
 
                     .FacilityMEModifier = FacilityMEModifier ' For full item, components will be saved in blueprint class for ComponentList
+                    .BuiltInPOS = BuiltInPOS
+
+                    ' Ignore flags
+                    .IgnoredInvention = IgnoreInvention
+                    .IgnoredMinerals = IgnoreMinerals
+                    .IgnoredT1BaseItem = IgnoreT1ITem
 
                     If BuildBuy Then
                         .BuildType = "Build/Buy"
@@ -979,7 +988,13 @@ Public Module Public_Variables
                     .TotalMarketCost = SentBlueprint.GetItemMarketPrice
                     .TotalBuildTime = SentBlueprint.GetProductionTime
 
-                    .FacilityMEModifier = FacilityMEModifier
+                    .FacilityMEModifier = FacilityMEModifier ' For full item, components will be saved in blueprint class for ComponentList
+                    .BuiltInPOS = BuiltInPOS
+
+                    ' Ignore flags
+                    .IgnoredInvention = IgnoreInvention
+                    .IgnoredMinerals = IgnoreMinerals
+                    .IgnoredT1BaseItem = IgnoreT1ITem
 
                     .NumBPs = SentBlueprint.GetUsedNumBPs
 

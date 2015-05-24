@@ -499,15 +499,11 @@ Public Class Blueprint
             ' Need to revisit for efficiency
             For i = 0 To ProductionChain.Count - 1
                 For j = 0 To ProductionChain(i).Count - 1
+                    Application.DoEvents()
 
                     BatchBlueprint = New Blueprint(BlueprintID, ProductionChain(i)(j), iME, iTE, 1, NumberofProductionLines, BPCharacter, UserSettings, BuildBuy, _
                                                        CDbl(AdditionalCosts / ProductionChain.Count), ManufacturingTeam, ManufacturingFacility, ComponentManufacturingTeam, _
                                                        ComponentManufacturingFacility, CapitalComponentManufacturingFacility)
-
-                    If TechLevel <> 1 Then
-                        Call BatchBlueprint.InventBlueprint(NumberofLaboratoryLines, InventionDecryptor, InventionFacility, _
-                                                           InventionTeam, CopyFacility, CopyTeam, InventionT3BPCTypeID)
-                    End If
 
                     Call BatchBlueprint.BuildItem(SetTaxes, SetBrokerFees, SetProductionCosts, IgnoreMinerals, IgnoreT1Item)
 
@@ -519,9 +515,9 @@ Public Class Blueprint
                             HasBuildableComponents = True
                         End If
 
-                        If BatchBlueprint.CanInventRE And CanInventRE = False Then
-                            CanInventRE = True
-                        End If
+                        'If BatchBlueprint.CanInventRE And CanInventRE = False Then
+                        '    CanInventRE = True
+                        'End If
 
                         ' Assumption is that we can build the bp
                         If Not BatchBlueprint.CanBuildBP And CanBuildBP = True Then
@@ -547,35 +543,10 @@ Public Class Blueprint
                             Call BPRawMats.InsertMaterialList(.GetBPRawMaterials.GetMaterialList)
                         End If
 
-                        ' Copy and invention materials should always correspond to the blueprint invented
-                        If Not IsNothing(.GetInventionMaterials.GetMaterialList) Then
-                            Call InventionMaterials.InsertMaterialList(.GetInventionMaterials.GetMaterialList)
-                        End If
-
-                        If Not IsNothing(.GetBPCCopyMaterials.GetMaterialList) Then
-                            Call CopyMaterials.InsertMaterialList(.GetBPCCopyMaterials.GetMaterialList)
-                        End If
-
                         ' Don't add this, it's only the largest time from the batch session and then multiply it later
                         If .GetProductionTime > BPProductionTime Then
                             BPProductionTime = .GetProductionTime
                         End If
-
-                        CopyCost += .GetBPCCopyCost()
-                        CopyTime += .GetBPCCopyTime()
-                        CopyUsage += .GetBPCCopyUsage()
-
-                        InventionUsage += .GetBPInventionUsage()
-                        InventionCosts += .GetBPInventionCost()
-                        InventionTime += .GetBPInventionTime()
-
-                        TotalInventionCost += .GetBPTotalInventionCosts
-
-                        InventionChance = .GetInventionChance
-                        InventionDecryptor = .GetDecryptor
-                        Relic = .GetRelic()
-                        SingleInventedBPCRuns = .GetInventedRuns
-                        NumInventionJobs += .GetInventionJobs
 
                         Taxes += .GetBPTaxes
                         BrokerFees += .GetBPBrokerFees
@@ -616,7 +587,7 @@ Public Class Blueprint
             ' Now build the components as x runs, with 1 bp
             For i = 0 To BuiltComponentList.GetBuiltItemList.Count - 1
                 With BuiltComponentList.GetBuiltItemList(i)
-
+                    Application.DoEvents()
                     ComponentBlueprint = New Blueprint(.BPTypeID, .ItemQuantity, .BuildME, .BuildTE, 1, _
                                                    NumberofProductionLines, BPCharacter, UserSettings, False, _
                                                    0, ManufacturingTeam, ManufacturingFacility, ComponentManufacturingTeam, _
@@ -793,12 +764,6 @@ Public Class Blueprint
                             TempBuiltItem.BuildMaterials = ComponentBlueprint.GetRawMaterials
                             TempBuiltItem.FacilityMEModifier = ComponentBlueprint.ManufacturingFacility.MaterialMultiplier ' Save MM used on component
 
-                            If ComponentBlueprint.ManufacturingFacility.FacilityType = POSFacility Then
-                                TempBuiltItem.BuiltInPOS = True
-                            Else
-                                TempBuiltItem.BuiltInPOS = False
-                            End If
-
                             BuiltComponentList.AddBuiltItem(CType(TempBuiltItem.Clone, BuiltItem))
 
                         Else ' *** BUY ***
@@ -850,12 +815,6 @@ Public Class Blueprint
                         TempBuiltItem.ItemVolume = CurrentMaterial.GetVolume
                         TempBuiltItem.BuildMaterials = ComponentBlueprint.GetRawMaterials
                         TempBuiltItem.FacilityMEModifier = ComponentBlueprint.ManufacturingFacility.MaterialMultiplier ' Save MM used on component
-
-                        If ComponentBlueprint.ManufacturingFacility.FacilityType = POSFacility Then
-                            TempBuiltItem.BuiltInPOS = True
-                        Else
-                            TempBuiltItem.BuiltInPOS = False
-                        End If
 
                         BuiltComponentList.AddBuiltItem(CType(TempBuiltItem.Clone, BuiltItem))
 
@@ -1470,7 +1429,6 @@ Public Class Blueprint
         Dim SingleInventionMats As New Materials
         Dim SingleCopyMats As New Materials
         Dim NumInventionSessions As Integer = 0 ' How many sessions (runs per set of lines) ie. 10 runs 5 lines = 2 sessions
-        Dim NumberBPsInvented As Integer = -1 ' number of bps needed for runs per bp
 
         ' First select the datacores needed
         SQL = "SELECT MATERIAL_ID, MATERIAL, MATERIAL_CATEGORY, QUANTITY, MATERIAL_VOLUME, PRICE, MATERIAL_GROUP "
@@ -1669,7 +1627,7 @@ Public Class Blueprint
 
         End If
 
-        Return NumberBPsInvented
+        Return CInt(Math.Ceiling(TotalInventedRuns / SingleInventedBPCRuns))
 
     End Function
 

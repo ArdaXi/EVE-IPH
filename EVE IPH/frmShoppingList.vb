@@ -48,22 +48,26 @@ Public Class frmShoppingList
     Private ItemQuantityToFind As ItemQuantity
 
     Private BuyListHeaderCSV As String = "Material,Quantity,Cost Per Item,Min Sell,Max Buy,Buy Type,Total m3,Isk/m3,TotalCost"
-    Private BuildListHeaderCSV As String = "Build Item,Quantity,ME,POS Build"
-    Private ItemsListHeaderCSV As String = "Item,Quantity,ME,NumBps,Build Type,Decryptor,Relic,POS Build,Invented"
+    Private BuildListHeaderCSV As String = "Build Item,Quantity,ME"
+    Private ItemsListHeaderCSV As String = "Item,Quantity,ME,NumBps,Build Type,Decryptor,Relic"
+    Private ItemsListHeaderCSVAdd As String = ",POS Build,IgnoredInvention,IgnoredMinerals,IgnoredT1BaseItem"
 
     Private BuyListHeaderTXT As String = "Material|Quantity|Cost Per Item|Min Sell|Max Buy|Buy Type|Total m3|Isk/m3|TotalCost"
-    Private BuildListHeaderTXT As String = "Build Item|Quantity|ME|POS Build"
-    Private ItemsListHeaderTXT As String = "Item|Quantity|ME|NumBps|Build Type|Decryptor|Relic|POS Build|Invented"
+    Private BuildListHeaderTXT As String = "Build Item|Quantity|ME"
+    Private ItemsListHeaderTXT As String = "Item|Quantity|ME|NumBps|Build Type|Decryptor|Relic"
+    Private ItemsListHeaderTXTAdd As String = "|POS Build|IgnoredInvention|IgnoredMinerals|IgnoredT1BaseItem"
 
     Private BuyListHeaderSSV As String = "Material;Quantity;Cost Per Item;Min Sell;Max Buy;Buy Type;Total m3;Isk/m3;TotalCost"
-    Private BuildListHeaderSSV As String = "Build Item;Quantity;ME;POS Build"
-    Private ItemsListHeaderSSV As String = "Item;Quantity;ME;NumBps;Build Type;Decryptor;Relic;POS Build;Invented"
+    Private BuildListHeaderSSV As String = "Build Item;Quantity;ME"
+    Private ItemsListHeaderSSV As String = "Item;Quantity;ME;NumBps;Build Type;Decryptor;Relic"
+    Private ItemsListHeaderSSVAdd As String = ";POS Build;IgnoredInvention;IgnoredMinerals;IgnoredT1BaseItem"
 
     Private FirstFormLoad As Boolean
 
     Private Structure ItemQuantity
         Dim ItemName As String
         Dim ItemQuantity As Long
+        Dim ItemME As Integer
     End Structure
 
     ' Predicate for finding the item in full list
@@ -85,6 +89,9 @@ Public Class frmShoppingList
         Dim Decryptor As String
         Dim Relic As String
         Dim BuiltInPOS As Boolean
+        Dim IgnoredInvention As Boolean
+        Dim IgnoredMinerals As Boolean
+        Dim IgnoredT1BaseItem As Boolean
     End Structure
 
     Public Sub New()
@@ -111,17 +118,19 @@ Public Class frmShoppingList
         lstBuild.Columns.Add("Build Item", 237, HorizontalAlignment.Left)
         lstBuild.Columns.Add("Quantity", 80, HorizontalAlignment.Right)
         lstBuild.Columns.Add("ME", 30, HorizontalAlignment.Right)
-        lstBuild.Columns.Add("BuildInPOS", 0, HorizontalAlignment.Left) 'Hidden flag for pos building
 
-        ' Item List - What we are building - width = 479 (21 for verticle scroll bar)
+        ' Item List - What we are building - width = 579 (21 for verticle scroll bar)
         lstItems.Columns.Add("TypeID", 0, HorizontalAlignment.Center) ' always left allignment this column for some reason, so add a dummy, store bpID here though
-        lstItems.Columns.Add("Item", 237, HorizontalAlignment.Left) ' 
+        lstItems.Columns.Add("Item", 225, HorizontalAlignment.Left) ' 
         lstItems.Columns.Add("Quantity", 67, HorizontalAlignment.Right) ' 51 min text
         lstItems.Columns.Add("ME", 30, HorizontalAlignment.Right) ' 30 min text
         lstItems.Columns.Add("Num BPs", 60, HorizontalAlignment.Left) ' 60 min text
         lstItems.Columns.Add("Build Type", 71, HorizontalAlignment.Left) ' 71 min text
         lstItems.Columns.Add("Decryptor", 105, HorizontalAlignment.Left) '105 min text
         lstItems.Columns.Add("BuildInPOS", 0, HorizontalAlignment.Left) 'Hidden flag for pos building
+        lstItems.Columns.Add("IgnoredInvention", 0, HorizontalAlignment.Left) 'Hidden flag for ignore variables
+        lstItems.Columns.Add("IgnoredMinerals", 0, HorizontalAlignment.Left) 'Hidden flag for ignore variables
+        lstItems.Columns.Add("IgnoredT1BaseItem", 0, HorizontalAlignment.Left) 'Hidden flag for ignore variables
 
         If UserApplicationSettings.ShowToolTips Then
             ttMain.SetToolTip(btnShowAssets, "Show Assets")
@@ -448,6 +457,9 @@ Public Class frmShoppingList
                 lstItem.SubItems.Add(ItemList(i).BuildType)
                 lstItem.SubItems.Add(ItemList(i).Decryptor)
                 lstItem.SubItems.Add(CStr(CInt(ItemList(i).BuiltInPOS)))
+                lstItem.SubItems.Add(CStr(CInt(ItemList(i).IgnoredInvention)))
+                lstItem.SubItems.Add(CStr(CInt(ItemList(i).IgnoredMinerals)))
+                lstItem.SubItems.Add(CStr(CInt(ItemList(i).IgnoredT1BaseItem)))
             End With
         Next
 
@@ -517,7 +529,6 @@ Public Class frmShoppingList
                     lstBuildItem.SubItems.Add(BuildItems.GetMaterialList(i).GetMaterialName)
                     lstBuildItem.SubItems.Add(CStr(FormatNumber(BuildItems.GetMaterialList(i).GetQuantity, 0)))
                     lstBuildItem.SubItems.Add(BuildItems.GetMaterialList(i).GetItemME)
-                    lstBuildItem.SubItems.Add(CStr(CInt(BuildItems.GetMaterialList(i).GetBuildItem)))
 
                     readerBP.Close()
                     readerBP = Nothing
@@ -864,7 +875,7 @@ Public Class frmShoppingList
             Separator = ","
             BuyListHeader = BuyListHeaderCSV
             BuildListHeader = BuildListHeaderCSV
-            ItemsListHeader = ItemsListHeaderCSV
+            ItemsListHeader = ItemsListHeaderCSV & ItemsListHeaderCSVAdd
             SaveFileDialog.Filter = "csv files (*.csv)|*.csv|All files (*.*)|*.*"
         ElseIf rbtnExportSSV.Checked Then
             ' Save file name with date
@@ -873,7 +884,7 @@ Public Class frmShoppingList
             Separator = ";"
             BuyListHeader = BuyListHeaderSSV
             BuildListHeader = BuildListHeaderSSV
-            ItemsListHeader = ItemsListHeaderSSV
+            ItemsListHeader = ItemsListHeaderSSV & ItemsListHeaderSSVAdd
             SaveFileDialog.Filter = "ssv files (*.ssv*)|*.ssv*|All files (*.*)|*.*"
         Else
             ' Save file name with date
@@ -882,7 +893,7 @@ Public Class frmShoppingList
             Separator = "|"
             BuyListHeader = BuyListHeaderTXT
             BuildListHeader = BuildListHeaderTXT
-            ItemsListHeader = ItemsListHeaderTXT
+            ItemsListHeader = ItemsListHeaderTXT & ItemsListHeaderTXTAdd
             SaveFileDialog.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*"
         End If
 
@@ -923,7 +934,7 @@ Public Class frmShoppingList
                                 OutputText = OutputText & ListItem.SubItems(6).Text & Separator
                                 OutputText = OutputText & ConvertUStoEUDecimal(ListItem.SubItems(7).Text) & Separator
                                 OutputText = OutputText & ConvertUStoEUDecimal(ListItem.SubItems(8).Text) & Separator
-                                OutputText = OutputText & ConvertUStoEUDecimal(ListItem.SubItems(9).Text)
+                                OutputText = OutputText & ConvertUStoEUDecimal(ListItem.SubItems(9).Text) 
                             Else
                                 OutputText = ListItem.SubItems(1).Text & Separator
                                 OutputText = OutputText & Format(ListItem.SubItems(2).Text, "Fixed") & Separator
@@ -933,7 +944,7 @@ Public Class frmShoppingList
                                 OutputText = OutputText & ListItem.SubItems(6).Text & Separator
                                 OutputText = OutputText & Format(ListItem.SubItems(7).Text, "Fixed") & Separator
                                 OutputText = OutputText & Format(ListItem.SubItems(8).Text, "Fixed") & Separator
-                                OutputText = OutputText & Format(ListItem.SubItems(9).Text, "Fixed")
+                                OutputText = OutputText & Format(ListItem.SubItems(9).Text, "Fixed") 
                             End If
 
                             MyStream.Write(OutputText & Environment.NewLine)
@@ -967,8 +978,7 @@ Public Class frmShoppingList
                                 OutputText = OutputText & Format(ListItem.SubItems(2).Text, "Fixed") & Separator
                             End If
 
-                            OutputText = OutputText & ListItem.SubItems(3).Text & Separator
-                            OutputText = OutputText & ListItem.SubItems(4).Text ' POS Flag
+                            OutputText = OutputText & ListItem.SubItems(3).Text 
 
                             MyStream.Write(OutputText & Environment.NewLine)
                         Next
@@ -1016,6 +1026,9 @@ Public Class frmShoppingList
                             OutputText = OutputText & ListItem.SubItems(6).Text & Separator
                             OutputText = OutputText & TempRelic & Separator
                             OutputText = OutputText & ListItem.SubItems(7).Text & Separator
+                            OutputText = OutputText & ListItem.SubItems(8).Text & Separator
+                            OutputText = OutputText & ListItem.SubItems(9).Text & Separator
+                            OutputText = OutputText & ListItem.SubItems(10).Text
                             MyStream.Write(OutputText & Environment.NewLine)
                         Next
 
@@ -1064,6 +1077,7 @@ Public Class frmShoppingList
         Dim BuyListHeader As String
         Dim BuildListHeader As String
         Dim ItemsListHeader As String
+        Dim ItemsListHeaderAdd As String
 
         ' To save the old shopping list in case of an error and to reload
         Dim SavedShoppingList As ShoppingList = CType(TotalShoppingList.Clone, ShoppingList)
@@ -1080,18 +1094,21 @@ Public Class frmShoppingList
             BuyListHeader = BuyListHeaderSSV
             BuildListHeader = BuildListHeaderSSV
             ItemsListHeader = ItemsListHeaderSSV
+            ItemsListHeaderAdd = ItemsListHeaderSSV & ItemsListHeaderSSVAdd
         ElseIf rbtnExportCSV.Checked = True Then
             openFileDialog1.FileName = "*.csv"
             Separator = ","
             BuyListHeader = BuyListHeaderCSV
             BuildListHeader = BuildListHeaderCSV
             ItemsListHeader = ItemsListHeaderCSV
+            ItemsListHeaderAdd = ItemsListHeaderCSV & ItemsListHeaderCSVAdd
         Else
             openFileDialog1.FileName = "*.txt"
             Separator = "|"
             BuyListHeader = BuyListHeaderTXT
             BuildListHeader = BuildListHeaderTXT
             ItemsListHeader = ItemsListHeaderTXT
+            ItemsListHeaderAdd = ItemsListHeaderTXT & ItemsListHeaderTXTAdd
         End If
 
         openFileDialog1.FilterIndex = 2
@@ -1126,7 +1143,8 @@ Public Class frmShoppingList
                         End If
 
                         ' If the line has records, import it into the correct lists
-                        If Line.Contains(Separator) And Not (Line.Contains(BuyListHeader) Or Line.Contains(BuildListHeader) Or Line.Contains(ItemsListHeader)) Then
+                        If Line.Contains(Separator) And _
+                            Not (Line.Contains(BuyListHeader) Or Line.Contains(BuildListHeader) Or Line.Contains(ItemsListHeader) Or Line.Contains(ItemsListHeaderAdd)) Then
                             ' Parse the line
                             Dim Record As String()
 
@@ -1172,9 +1190,11 @@ Public Class frmShoppingList
                                         Else
                                             TempItem.ItemQuantity = CLng(Record(1))
                                         End If
+                                        TempItem.ItemME = CInt(Record(2))
                                         Call BuildList.Add(TempItem)
                                     Case ItemsListLabel
                                         ' Item List Format: Item, Quantity, ME, NumBPs, Build Type, Decryptor, Facility ME Modifier
+                                        ' POS Build, IgnoredInvention, IgnoredMinerals, IgnoredT1BaseItem - might not have these
                                         ' Save all the fields
                                         TempBPItem.ItemName = Record(0)
                                         If Trim(Record(1)) = "" Then
@@ -1187,6 +1207,20 @@ Public Class frmShoppingList
                                         TempBPItem.BuildType = Record(4)
                                         TempBPItem.Decryptor = Record(5)
                                         TempBPItem.Relic = Record(6)
+
+                                        If Record.Count = 11 Then
+                                            ' Add the new records
+                                            TempBPItem.BuiltInPOS = CBool(Record(7))
+                                            TempBPItem.IgnoredInvention = CBool(Record(8))
+                                            TempBPItem.IgnoredMinerals = CBool(Record(9))
+                                            TempBPItem.IgnoredT1BaseItem = CBool(Record(10))
+                                        Else
+                                            TempBPItem.BuiltInPOS = False
+                                            TempBPItem.IgnoredInvention = False
+                                            TempBPItem.IgnoredMinerals = False
+                                            TempBPItem.IgnoredT1BaseItem = False
+                                        End If
+
                                         Call ItemList.Add(TempBPItem)
                                 End Select
                             End If
@@ -1200,7 +1234,7 @@ Public Class frmShoppingList
                     For i = 0 To ItemList.Count - 1
 
                         ' Look up BP data
-                        SQL = "SELECT BLUEPRINT_ID, TECH_LEVEL FROM ALL_BLUEPRINTS WHERE ITEM_NAME = '" & FormatDBString(ItemList(i).ItemName) & "'"
+                        SQL = "SELECT BLUEPRINT_ID, TECH_LEVEL, ITEM_GROUP_ID, ITEM_CATEGORY_ID FROM ALL_BLUEPRINTS WHERE ITEM_NAME = '" & FormatDBString(ItemList(i).ItemName) & "'"
 
                         DBCommand = New SQLiteCommand(SQL, DB)
                         readerBP = DBCommand.ExecuteReader
@@ -1209,6 +1243,7 @@ Public Class frmShoppingList
                         ' Get the decryptor
                         Dim TempDecryptor As Decryptor
                         Dim BuildBuy As Boolean
+                        Dim FacilityType As String
                         Dim InventionDecryptors As New DecryptorList()
                         TempDecryptor = InventionDecryptors.GetDecryptor(ItemList(i).Decryptor)
 
@@ -1218,17 +1253,25 @@ Public Class frmShoppingList
                             BuildBuy = False
                         End If
 
-                        ' Determine the facility 
+                        If ItemList(i).BuiltInPOS Then
+                            FacilityType = POSFacility
+                        Else
+                            FacilityType = StationFacility
+                        End If
+
+                        ' Determine the build facility 
                         Dim TempBuildFacility As IndustryFacility
-                        Dim TempIndyType As IndustryType = GetProductionType(ActivityManufacturing, readerBP.GetInt64(2), readerBP.GetInt64(3), "Facility Type")
+                        Dim TempIndyType As IndustryType
+                        TempIndyType = GetProductionType(ActivityManufacturing, readerBP.GetInt64(2), readerBP.GetInt64(3), FacilityType)
                         TempBuildFacility = GetManufacturingFacility(TempIndyType, BPTab, True)
 
-                        ' Build the BP - use settings from BP tab 
+                        ' Build the Item - use everything we can from file import except the component facilities, that's just too hard to save now
                         TempBP = New Blueprint(CLng(readerBP.GetValue(0)), ItemList(i).ItemQuantity, ItemList(i).ItemME, 0, ItemList(i).NumBPs, 1, _
-                        SelectedCharacter, UserApplicationSettings, False, 0, NoTeam, TempBuildFacility, _
+                        SelectedCharacter, UserApplicationSettings, BuildBuy, 0, NoTeam, TempBuildFacility, _
                         NoTeam, SelectedBPComponentManufacturingFacility, SelectedBPCapitalComponentManufacturingFacility)
 
-                        If readerBP.GetInt32(1) <> 1 Then
+                        ' See if we invent, use selected BP facilities for invention
+                        If readerBP.GetInt32(1) <> 1 And Not ItemList(i).IgnoredInvention Then
                             Dim MaximumLaboratoryLines As Integer = SelectedCharacter.Skills.GetSkillLevel(3406) + SelectedCharacter.Skills.GetSkillLevel(24624) + 1
 
                             TempBP.InventBlueprint(MaximumLaboratoryLines, TempDecryptor, SelectedBPInventionFacility, SelectedBPInventionTeam, _
@@ -1236,11 +1279,12 @@ Public Class frmShoppingList
                         End If
 
                         ' Build the item and get the list of materials
-                        Call TempBP.BuildItems(frmMain.chkBPTaxes.Checked, frmMain.chkBPTaxes.Checked, frmMain.chkBPFacilityIncludeUsage.Checked, False, False)
+                        Call TempBP.BuildItems(frmMain.chkBPTaxes.Checked, frmMain.chkBPTaxes.Checked, frmMain.chkBPFacilityIncludeUsage.Checked, ItemList(i).IgnoredMinerals, ItemList(i).IgnoredT1BaseItem)
 
                         ' Add to shopping list but use BP tab settings
                         Call AddToShoppingList(TempBP, BuildBuy, frmMain.rbtnBPRawmatCopy.Checked, frmMain.rbtnBPComponentCopy.Checked, _
-                                               TempBuildFacility.MaterialMultiplier, True, True)
+                                               TempBuildFacility.MaterialMultiplier, ItemList(i).BuiltInPOS, ItemList(i).IgnoredInvention, _
+                                               ItemList(i).IgnoredMinerals, ItemList(i).IgnoredT1BaseItem, True)
 
                     Next
 

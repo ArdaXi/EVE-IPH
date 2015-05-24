@@ -159,7 +159,6 @@ Public Class ShoppingList
                                     TempBuiltItem.ItemName = .ItemName
                                     TempBuiltItem.ItemQuantity = .ItemQuantity
                                     TempBuiltItem.ItemVolume = .ItemVolume
-                                    TempBuiltItem.BuiltInPOS = .BuiltInPOS
                                     TempBuiltItem.FacilityMEModifier = .FacilityMEModifier
 
                                     TempBuiltItem.BuildME = .BuildME
@@ -321,7 +320,6 @@ Public Class ShoppingList
             UpdateItem.ItemName = FoundItem.ItemName
             UpdateItem.ItemVolume = FoundItem.ItemVolume
             UpdateItem.FacilityMEModifier = FoundItem.FacilityMEModifier
-            UpdateItem.BuiltInPOS = FoundItem.BuiltInPOS
 
             ' Update the new built list quantity
             UpdateItem.ItemQuantity = UpdateItemQuantity
@@ -833,8 +831,8 @@ Public Class ShoppingList
         For j = 0 To TotalBuildList.GetBuiltItemList.Count - 1
             If Not IsNothing(TotalBuildList.GetBuiltItemList(j)) Then
                 TempBuiltItem = TotalBuildList.GetBuiltItemList(j)
-                ' Use the BuildItem for built in pos (since we are always setting this to true here anyway - built items), and use  Volume for the facility ME value, since this isn't used (also ignore total volume)
-                TempMat = New Material(TempBuiltItem.ItemTypeID, TempBuiltItem.ItemName, "Built Item", TempBuiltItem.ItemQuantity, TempBuiltItem.FacilityMEModifier, 0, CStr(TempBuiltItem.BuildME), TempBuiltItem.BuiltInPOS)
+                ' Use Volume for the facility ME value, since this isn't used (also ignore total volume)
+                TempMat = New Material(TempBuiltItem.ItemTypeID, TempBuiltItem.ItemName, "Built Item", TempBuiltItem.ItemQuantity, TempBuiltItem.FacilityMEModifier, 0, CStr(TempBuiltItem.BuildME))
 
                 Call ReturnBuildItems.InsertMaterial(TempMat)
 
@@ -1274,6 +1272,10 @@ Public Class ShoppingListItem
     Public FacilityMEModifier As Double
     ' Flag to tell if the item is built in a POS or not
     Public BuiltInPOS As Boolean
+    ' Ignore Variables
+    Public IgnoredInvention As Boolean
+    Public IgnoredMinerals As Boolean
+    Public IgnoredT1BaseItem As Boolean
 
     Public Sub New()
 
@@ -1303,6 +1305,12 @@ Public Class ShoppingListItem
         ItemUsage = 0
         ItemMarketCost = 0
         ItemBuildTime = 0
+
+        FacilityMEModifier = 1
+        BuiltInPOS = False
+        IgnoredInvention = False
+        IgnoredMinerals = False
+        IgnoredT1BaseItem = False
 
     End Sub
 
@@ -1360,7 +1368,6 @@ Public Class BuiltItemList
             UpdateItem.BuildTE = AddItem.BuildTE
             UpdateItem.ItemVolume = AddItem.ItemVolume
             UpdateItem.FacilityMEModifier = AddItem.FacilityMEModifier
-            UpdateItem.BuiltInPOS = AddItem.BuiltInPOS
 
             ' Combine the materials
             CombinedMaterials.InsertMaterialList(FoundItem.BuildMaterials.GetMaterialList)
@@ -1471,7 +1478,6 @@ Public Class BuiltItem
     Public BuildMaterials As Materials
     ' These two fields are for shopping list update functions
     Public FacilityMEModifier As Double
-    Public BuiltInPOS As Boolean
 
     Public Sub New()
         ItemTypeID = 0
@@ -1494,7 +1500,6 @@ Public Class BuiltItem
         CopyOfMe.BuildTE = Me.BuildTE
         CopyOfMe.BuildMaterials = Me.BuildMaterials
         CopyOfMe.FacilityMEModifier = Me.FacilityMEModifier
-        CopyOfMe.BuiltInPOS = Me.BuiltInPOS
         Return CopyOfMe
     End Function
 

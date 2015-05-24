@@ -5399,7 +5399,6 @@ Partial Class frmMain
         Me.gbCalcIgnoreinCalcs.Controls.Add(Me.chkCalcIgnoreMinerals)
         Me.gbCalcIgnoreinCalcs.Controls.Add(Me.chkCalcIgnoreT1Item)
         Me.gbCalcIgnoreinCalcs.Controls.Add(Me.chkCalcIgnoreInvention)
-        Me.gbCalcIgnoreinCalcs.Enabled = false
         Me.gbCalcIgnoreinCalcs.Location = New System.Drawing.Point(850, 222)
         Me.gbCalcIgnoreinCalcs.Name = "gbCalcIgnoreinCalcs"
         Me.gbCalcIgnoreinCalcs.Size = New System.Drawing.Size(165, 72)
