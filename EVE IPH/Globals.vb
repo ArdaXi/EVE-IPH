@@ -177,12 +177,13 @@ Public Module Public_Variables
     Public Const JumpFreighterGroupID As Integer = 902
     Public Const SupercarrierGroupID As Integer = 659
     Public Const TitanGroupID As Integer = 30
-
     Public Const BoosterGroupID As Integer = 303
 
     Public Const StrategicCruiserGroupID As Integer = 963
     Public Const TacticalDestroyerGroupID As Integer = 1305
     Public Const SubsystemCategoryID As Integer = 32
+
+    Public Const ShipCategoryID As Integer = 6 ' for loading invention and copying 
 
     ' T3 Bps for facility updates
     Public Const StrategicCruiserBPGroupID As Integer = 996

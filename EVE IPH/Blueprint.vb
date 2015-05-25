@@ -413,11 +413,13 @@ Public Class Blueprint
         ' Set the invention flag
         CanInventRE = UserHasReqSkills(BPCharacter.Skills, ReqInventionSkills)
 
+        ' Use typical invention costs to invent this
+        Dim InventedBPs As Integer = InventREBlueprint(Not CanInventRE)
+
         ' Save the max runs per invented bpc
         MaxRunsPerBP = SingleInventedBPCRuns
 
-        ' Use typical invention costs to invent this
-        Return InventREBlueprint(Not CanInventRE)
+        Return InventedBPs
 
     End Function
 
@@ -461,7 +463,6 @@ Public Class Blueprint
             ' set the minimum per bp, shouldn't go over the runs per bp since the user sends in the total numbps they need
             RunsPerLine = CInt(Math.Floor(UserRuns / NumberofBPs))
             ExtraRuns = CInt(UserRuns - (RunsPerLine * NumberofBPs))
-
 
             ' To track how many runs we have used in the batch setup
             Dim RunTracker As Long = 0
@@ -641,6 +642,13 @@ Public Class Blueprint
                     ComponentFacilityUsage += ComponentBlueprint.GetManufacturingFacilityUsage
                 End If
 
+            Next
+
+            ' Add any items that are not built but could be to the raw list
+            For j = 0 To ComponentMaterials.GetMaterialList.Count - 1
+                If ComponentMaterials.GetMaterialList(j).GetBuildItem = False Then
+                    Call RawMaterials.InsertMaterial(ComponentMaterials.GetMaterialList(j))
+                End If
             Next
 
             ' Update the bp production time to equal the longest runs per line times the number of batches
@@ -1198,7 +1206,7 @@ Public Class Blueprint
             TempInventionCosts = 0
         End If
 
-        If IncludeCopyCosts Then
+        If IncludeCopyCosts And TechLevel <> BlueprintTechLevel.T3 Then
             ' Set the total cost for the sent runs by totaling all to get success needed, then dividing it by the runs invented
             ' (some bps have more runs than 1 - i.e. Drones = 10) to get the cost per run, then multiply that cost by the number of runs
             TempCopyCosts = (CopyCost + CopyUsage) / TotalInventedRuns * UserRuns

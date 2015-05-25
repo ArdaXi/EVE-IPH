@@ -64,7 +64,7 @@ Partial Class frmSettings
         Me.lblDefaultRefiningEfficiency = New System.Windows.Forms.Label()
         Me.cmbRefiningEfficiency = New System.Windows.Forms.ComboBox()
         Me.gbShoppingList = New System.Windows.Forms.GroupBox()
-        Me.chkIncludeShopListREMats = New System.Windows.Forms.CheckBox()
+        Me.chkIncludeShopListT3InventionMats = New System.Windows.Forms.CheckBox()
         Me.chkIncludeShopListInventMats = New System.Windows.Forms.CheckBox()
         Me.gbEVECentral = New System.Windows.Forms.GroupBox()
         Me.txtEVECentralInterval = New System.Windows.Forms.TextBox()
@@ -239,9 +239,9 @@ Partial Class frmSettings
         Me.gbStationStandings.Controls.Add(Me.chkBrokerCorpStanding)
         Me.gbStationStandings.Controls.Add(Me.txtBrokerFactionStanding)
         Me.gbStationStandings.Controls.Add(Me.chkBrokerFactionStanding)
-        Me.gbStationStandings.Location = New System.Drawing.Point(248, 218)
+        Me.gbStationStandings.Location = New System.Drawing.Point(246, 218)
         Me.gbStationStandings.Name = "gbStationStandings"
-        Me.gbStationStandings.Size = New System.Drawing.Size(157, 86)
+        Me.gbStationStandings.Size = New System.Drawing.Size(160, 86)
         Me.gbStationStandings.TabIndex = 7
         Me.gbStationStandings.TabStop = False
         Me.gbStationStandings.Text = "Station Standings:"
@@ -314,7 +314,7 @@ Partial Class frmSettings
         Me.gbBuildBuySettings.Controls.Add(Me.chkSaveBPRelicsDecryptors)
         Me.gbBuildBuySettings.Controls.Add(Me.chkBuildBuyDefault)
         Me.gbBuildBuySettings.Controls.Add(Me.chkSuggestBuildwhenBPnotOwned)
-        Me.gbBuildBuySettings.Location = New System.Drawing.Point(411, 231)
+        Me.gbBuildBuySettings.Location = New System.Drawing.Point(410, 231)
         Me.gbBuildBuySettings.Name = "gbBuildBuySettings"
         Me.gbBuildBuySettings.Size = New System.Drawing.Size(250, 73)
         Me.gbBuildBuySettings.TabIndex = 9
@@ -378,9 +378,9 @@ Partial Class frmSettings
         Me.gbDefaultMEPE.Controls.Add(Me.chkDefaultTE)
         Me.gbDefaultMEPE.Controls.Add(Me.txtDefaultME)
         Me.gbDefaultMEPE.Controls.Add(Me.chkDefaultME)
-        Me.gbDefaultMEPE.Location = New System.Drawing.Point(248, 12)
+        Me.gbDefaultMEPE.Location = New System.Drawing.Point(246, 12)
         Me.gbDefaultMEPE.Name = "gbDefaultMEPE"
-        Me.gbDefaultMEPE.Size = New System.Drawing.Size(157, 63)
+        Me.gbDefaultMEPE.Size = New System.Drawing.Size(160, 63)
         Me.gbDefaultMEPE.TabIndex = 34
         Me.gbDefaultMEPE.TabStop = False
         Me.gbDefaultMEPE.Text = "Default ME/TE:"
@@ -425,7 +425,7 @@ Partial Class frmSettings
         Me.gbRefining.Controls.Add(Me.chkRefineStationTax)
         Me.gbRefining.Controls.Add(Me.lblDefaultRefiningEfficiency)
         Me.gbRefining.Controls.Add(Me.cmbRefiningEfficiency)
-        Me.gbRefining.Location = New System.Drawing.Point(411, 169)
+        Me.gbRefining.Location = New System.Drawing.Point(410, 169)
         Me.gbRefining.Name = "gbRefining"
         Me.gbRefining.Size = New System.Drawing.Size(250, 63)
         Me.gbRefining.TabIndex = 36
@@ -473,24 +473,24 @@ Partial Class frmSettings
         '
         'gbShoppingList
         '
-        Me.gbShoppingList.Controls.Add(Me.chkIncludeShopListREMats)
         Me.gbShoppingList.Controls.Add(Me.chkIncludeShopListInventMats)
-        Me.gbShoppingList.Location = New System.Drawing.Point(248, 83)
+        Me.gbShoppingList.Controls.Add(Me.chkIncludeShopListT3InventionMats)
+        Me.gbShoppingList.Location = New System.Drawing.Point(246, 83)
         Me.gbShoppingList.Name = "gbShoppingList"
-        Me.gbShoppingList.Size = New System.Drawing.Size(157, 63)
+        Me.gbShoppingList.Size = New System.Drawing.Size(160, 63)
         Me.gbShoppingList.TabIndex = 37
         Me.gbShoppingList.TabStop = False
         Me.gbShoppingList.Text = "Shopping List:"
         '
-        'chkIncludeShopListREMats
+        'chkIncludeShopListT3InventionMats
         '
-        Me.chkIncludeShopListREMats.AutoSize = True
-        Me.chkIncludeShopListREMats.Location = New System.Drawing.Point(9, 40)
-        Me.chkIncludeShopListREMats.Name = "chkIncludeShopListREMats"
-        Me.chkIncludeShopListREMats.Size = New System.Drawing.Size(105, 17)
-        Me.chkIncludeShopListREMats.TabIndex = 1
-        Me.chkIncludeShopListREMats.Text = "Include RE Mats"
-        Me.chkIncludeShopListREMats.UseVisualStyleBackColor = True
+        Me.chkIncludeShopListT3InventionMats.AutoSize = True
+        Me.chkIncludeShopListT3InventionMats.Location = New System.Drawing.Point(9, 40)
+        Me.chkIncludeShopListT3InventionMats.Name = "chkIncludeShopListT3InventionMats"
+        Me.chkIncludeShopListT3InventionMats.Size = New System.Drawing.Size(150, 17)
+        Me.chkIncludeShopListT3InventionMats.TabIndex = 1
+        Me.chkIncludeShopListT3InventionMats.Text = "Include T3 Invention Mats"
+        Me.chkIncludeShopListT3InventionMats.UseVisualStyleBackColor = True
         '
         'chkIncludeShopListInventMats
         '
@@ -506,9 +506,9 @@ Partial Class frmSettings
         '
         Me.gbEVECentral.Controls.Add(Me.txtEVECentralInterval)
         Me.gbEVECentral.Controls.Add(Me.chkEVECentralInterval)
-        Me.gbEVECentral.Location = New System.Drawing.Point(248, 154)
+        Me.gbEVECentral.Location = New System.Drawing.Point(246, 154)
         Me.gbEVECentral.Name = "gbEVECentral"
-        Me.gbEVECentral.Size = New System.Drawing.Size(157, 56)
+        Me.gbEVECentral.Size = New System.Drawing.Size(160, 56)
         Me.gbEVECentral.TabIndex = 38
         Me.gbEVECentral.TabStop = False
         Me.gbEVECentral.Text = "EVE Central Price Updates:"
@@ -538,7 +538,7 @@ Partial Class frmSettings
         Me.gbImplants.Controls.Add(Me.chkBeanCounterRefining)
         Me.gbImplants.Controls.Add(Me.cmbBeanCounterCopy)
         Me.gbImplants.Controls.Add(Me.cmbBeanCounterRefining)
-        Me.gbImplants.Location = New System.Drawing.Point(411, 12)
+        Me.gbImplants.Location = New System.Drawing.Point(410, 12)
         Me.gbImplants.Name = "gbImplants"
         Me.gbImplants.Size = New System.Drawing.Size(250, 157)
         Me.gbImplants.TabIndex = 36
@@ -640,7 +640,7 @@ Partial Class frmSettings
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(667, 357)
+        Me.ClientSize = New System.Drawing.Size(665, 357)
         Me.Controls.Add(Me.gbExportOptions)
         Me.Controls.Add(Me.gbStartupOptions)
         Me.Controls.Add(Me.gbImplants)
@@ -717,7 +717,7 @@ Partial Class frmSettings
     Friend WithEvents cmbRefiningEfficiency As System.Windows.Forms.ComboBox
     Friend WithEvents chkRefineStationTax As System.Windows.Forms.CheckBox
     Friend WithEvents gbShoppingList As System.Windows.Forms.GroupBox
-    Friend WithEvents chkIncludeShopListREMats As System.Windows.Forms.CheckBox
+    Friend WithEvents chkIncludeShopListT3InventionMats As System.Windows.Forms.CheckBox
     Friend WithEvents chkIncludeShopListInventMats As System.Windows.Forms.CheckBox
     Friend WithEvents chkSuggestBuildwhenBPnotOwned As System.Windows.Forms.CheckBox
     Friend WithEvents gbEVECentral As System.Windows.Forms.GroupBox

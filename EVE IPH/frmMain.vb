@@ -635,7 +635,7 @@ Public Class frmMain
             ttMain.SetToolTip(lblBPTotalCompCost, "Total Cost of Component Materials, InventionCosts, Usage, Taxes and Fees - Double Click for list of costs")
             ttMain.SetToolTip(lblBPRawTotalCost, "Total Cost of Raw Materials, InventionCosts, Usage, Taxes and Fees - Double Click for list of costs")
             ttMain.SetToolTip(lblBPPT, "This is the time to build the item (including skill and implant modifiers) from the blueprint after all materials are gathered")
-            ttMain.SetToolTip(lblBPCPTPT, "This is the total time to build the item and components and if selected, time to complete invention, copy and RE")
+            ttMain.SetToolTip(lblBPCPTPT, "This is the total time to build the item and components and if selected, time to complete invention and copying")
             ttMain.SetToolTip(lblBPCanMakeBP, "Double-Click here to see required skills to make this BP")
             ttMain.SetToolTip(lblBPCanMakeBPAll, "Double-Click here to see required skills to make all the items for this BP")
             ttMain.SetToolTip(lblBPT2InventStatus, "Double-Click here to see required skills to invent this BP")
@@ -708,7 +708,7 @@ Public Class frmMain
 
             ttMain.SetToolTip(lblCalcColorCode1, "Beige Background: Owned Blueprint")
             ttMain.SetToolTip(lblCalcColorCode2, "Light Blue Background: T2 item with Owned T1 Blueprint (for invention)")
-            ttMain.SetToolTip(lblCalcColorCode5, "Green Text: Unable to RE Item")
+            ttMain.SetToolTip(lblCalcColorCode5, "Green Text: Unable to T3 Invent Item")
             ttMain.SetToolTip(lblCalcColorCode4, "Orange Text: Unable to Invent Item")
             ttMain.SetToolTip(lblCalcColorCode3, "Red Text: Unable to Build Item")
 
@@ -721,7 +721,7 @@ Public Class frmMain
             ttMain.SetToolTip(rbtnCalcSortSVR, "Sales Volume Ratio (SVR) is the ratio of daily volume divided by the number of this item you can make in a day.")
             ttMain.SetToolTip(rbtnCalcSortSVRIPH, "Sales Volume Ratio (SVR) is the ratio of daily volume divided by the number of this item you can make in a day.")
             ttMain.SetToolTip(txtCalcProdLines, "Enter the number of Manufacturing Lines you have to build items per day for calculations. Calculations will assume the same number of BPs used." & vbCrLf & "Calculations for components will also use this value. Double-Click to enter max runs for this character.")
-            ttMain.SetToolTip(txtCalcLabLines, "Enter the number of Laboratory Lines you have to invent or RE per day for calculations. Double-Click to enter max runs for this character.")
+            ttMain.SetToolTip(txtCalcLabLines, "Enter the number of Laboratory Lines you have to invent per day for calculations. Double-Click to enter max runs for this character.")
 
             ttMain.SetToolTip(txtCalcSVRThreshold, "No results with an SVR lower than the number entered will be returned.")
         End If
@@ -3714,6 +3714,7 @@ NoBonus:
                 f1.MaterialList = SelectedBlueprint.GetInventionMaterials
                 f1.TotalInventedRuns = SelectedBlueprint.GetTotalInventedRuns
                 f1.UserRuns = SelectedBlueprint.GetUserRuns
+                f1.ListType = "Invention"
             End If
             Me.Cursor = Cursors.Default
             f1.Show()
@@ -3734,6 +3735,8 @@ NoBonus:
                     f1.MatType = f1.MatType & " Runs"
                 End If
                 f1.MaterialList = SelectedBlueprint.GetBPCopyMaterials
+                f1.TotalInventedRuns = SelectedBlueprint.GetInventionJobs
+                f1.ListType = "Copying"
             End If
             f1.Show()
         End If
@@ -3753,7 +3756,9 @@ NoBonus:
                     f1.MatType = f1.MatType & " Runs"
                 End If
                 f1.MaterialList = SelectedBlueprint.GetInventionMaterials
-                'f1.InventionUsage = SelectedBlueprint.GetBPInventionUsage
+                f1.TotalInventedRuns = SelectedBlueprint.GetTotalInventedRuns
+                f1.UserRuns = SelectedBlueprint.GetUserRuns
+                f1.ListType = "T3 Invention"
             End If
             f1.Show()
         End If
@@ -5603,8 +5608,8 @@ Tabs:
         End If
 
         ' Update only the outpost values for the activity type 
-        SQL = "UPDATE STATION_FACILITIES SET BASE_MM = " & CStr(SentFacility.MaterialMultiplier)
-        SQL = SQL & ", BASE_TM = " & CStr(SentFacility.TimeMultiplier)
+        SQL = "UPDATE STATION_FACILITIES SET MATERIAL_MULTIPLIER = " & CStr(SentFacility.MaterialMultiplier)
+        SQL = SQL & ", TIME_MULTIPLIER = " & CStr(SentFacility.TimeMultiplier)
         SQL = SQL & ", FACILITY_TAX = " & CStr(SentFacility.TaxRate)
         SQL = SQL & ", OUTPOST = " & CStr(StationType.Outpost) & " "
         SQL = SQL & "WHERE FACILITY_NAME = '" & SentFacility.FacilityName & "' "
@@ -5910,7 +5915,7 @@ Tabs:
         ' Disable the choice for raw or components for shopping list and just add components
         If Not FirstLoad Then
             If chkBPBuildBuy.Checked Then
-                rbtnBPComponentCopy.Enabled = False
+                rbtnBPComponentCopy.Enabled = True
                 rbtnBPRawmatCopy.Enabled = False
             Else
                 If Not IsNothing(SelectedBlueprint) Then
@@ -7022,7 +7027,7 @@ Tabs:
 
         If Trim(txtBPRelicLines.Text) <> "" Then
             If Not IsNumeric(txtBPRelicLines.Text) Then
-                MsgBox("Invalid RE Lines value", vbExclamation, Application.ProductName)
+                MsgBox("Invalid T3 Invention Lines value", vbExclamation, Application.ProductName)
                 txtBPRelicLines.Focus()
                 Exit Sub
             End If
@@ -7526,7 +7531,7 @@ Tabs:
         End If
 
         If Not IsNumeric(txtBPRelicLines.Text) Or Val(txtBPRelicLines.Text) <= 0 Then
-            MsgBox("You must enter a valid number of RE Lines", vbExclamation, Application.ProductName)
+            MsgBox("You must enter a valid number of T3 Invention Lines", vbExclamation, Application.ProductName)
             txtBPRuns.SelectAll()
             txtBPRelicLines.Focus()
             Exit Sub
@@ -7693,20 +7698,29 @@ Tabs:
 
             ' Enable the raw and component selector radio for exporting to shopping list (only if we don't have calc build/buy checked)
             If chkBPBuildBuy.Checked = True Then
-                rbtnBPComponentCopy.Enabled = False
                 rbtnBPRawmatCopy.Enabled = False
-            Else
                 rbtnBPComponentCopy.Enabled = True
+            Else
                 rbtnBPRawmatCopy.Enabled = True
+                rbtnBPComponentCopy.Enabled = True
             End If
 
+            rbtnBPComponentCopy.Checked = True
             lstBPComponentMats.Enabled = True
 
         Else ' No components
             ' Disable the raw and component selector radio for exporting to shopping list, the button will still just pull the data from the list anyway though
             rbtnBPComponentCopy.Enabled = False
-            rbtnBPRawmatCopy.Enabled = False
+            rbtnBPRawmatCopy.Enabled = True
+            rbtnBPRawmatCopy.Checked = True
             lstBPComponentMats.Enabled = False
+        End If
+
+        If SelectedBlueprint.GetTechLevel <> BlueprintTechLevel.T1 Then
+            ' Enable the invention mats
+            rbtnBPCopyInvREMats.Enabled = True
+        Else
+            rbtnBPCopyInvREMats.Enabled = False
         End If
 
         If Not IsNothing(BPRawMats) Then
@@ -7825,10 +7839,10 @@ Tabs:
             lblBPT3Stats.Text = "ME: " & CStr(SelectedDecryptor.MEMod) & ", TE: " & CStr(SelectedDecryptor.TEMod) & ", End Runs: " & CStr(SelectedBlueprint.GetSingleInventedBPCRuns)
 
             If SelectedBlueprint.UserCanInventRE Then
-                lblT3InventStatus.Text = "Reverse Engineering Calculations:"
+                lblT3InventStatus.Text = "T3 Invention Calculations:"
                 lblT3InventStatus.ForeColor = Color.Black
             Else
-                lblT3InventStatus.Text = "Cannot RE - Typical Cost Shown"
+                lblT3InventStatus.Text = "Cannot Invent - Typical Cost Shown"
                 lblT3InventStatus.ForeColor = Color.Red
             End If
 
@@ -7852,7 +7866,7 @@ Tabs:
             If ZeroCostToolTipText <> "" Then
                 ' We have a few zero priced items
                 ZeroCostToolTipText = ZeroCostToolTipText.Substring(0, Len(ZeroCostToolTipText) - 2)
-                ZeroCostToolTipText = "RE Costs may be inaccurate; the following items have 0.00 for price: " & ZeroCostToolTipText
+                ZeroCostToolTipText = "T3 Invention Costs may be inaccurate; the following items have 0.00 for price: " & ZeroCostToolTipText
                 lblT3InventStatus.ForeColor = Color.Red
                 ttMain.SetToolTip(lblT3InventStatus, ZeroCostToolTipText)
             Else
@@ -11796,7 +11810,7 @@ ExitSub:
         If Not LoadingFacilitySystems And Not FirstLoad And PreviousFacilitySystem <> cmbCalcInventionFacilitySystem.Text Then
 
             ' Load the facility
-            Call LoadFacilities(-1, -1, False, _
+            Call LoadFacilities(0, ShipCategoryID, False, _
                                 ActivityInvention, cmbCalcInventionFacilityType, cmbCalcInventionFacilityRegion, cmbCalcInventionFacilitySystem, cmbCalcInventionFacilityorArray, _
                                 lblCalcInventionFacilityBonus, lblCalcInventionFacilityDefault, _
                                 lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
@@ -11818,7 +11832,7 @@ ExitSub:
 
     Private Sub cmbCalcInventionFacilityorArray_DropDown(sender As Object, e As System.EventArgs) Handles cmbCalcInventionFacilityorArray.DropDown
         If Not CalcInventionFacilitiesLoaded And Not FirstLoad Then
-            Call LoadFacilities(-1, -1, False, _
+            Call LoadFacilities(0, ShipCategoryID, False, _
                                 ActivityInvention, cmbCalcInventionFacilityType, cmbCalcInventionFacilityRegion, cmbCalcInventionFacilitySystem, cmbCalcInventionFacilityorArray, _
                                 lblCalcInventionFacilityBonus, lblCalcInventionFacilityDefault, _
                                 lblCalcInventionFacilityManualME, txtCalcInventionFacilityManualME, _
@@ -12340,7 +12354,7 @@ ExitSub:
         If Not LoadingFacilitySystems And Not FirstLoad And PreviousFacilitySystem <> cmbCalcCopyFacilitySystem.Text Then
 
             ' Load the facility
-            Call LoadFacilities(-1, -1, False, _
+            Call LoadFacilities(0, ShipCategoryID, False, _
                                 ActivityCopying, cmbCalcCopyFacilityType, cmbCalcCopyFacilityRegion, cmbCalcCopyFacilitySystem, cmbCalcCopyFacilityorArray, _
                                 lblCalcCopyFacilityBonus, lblCalcCopyFacilityDefault, _
                                 lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
@@ -12362,7 +12376,7 @@ ExitSub:
 
     Private Sub cmbCalcCopyFacilityorArray_DropDown(sender As Object, e As System.EventArgs) Handles cmbCalcCopyFacilityorArray.DropDown
         If Not CalcCopyFacilitiesLoaded And Not FirstLoad Then
-            Call LoadFacilities(-1, -1, False, _
+            Call LoadFacilities(0, ShipCategoryID, False, _
                                 ActivityCopying, cmbCalcCopyFacilityType, cmbCalcCopyFacilityRegion, cmbCalcCopyFacilitySystem, cmbCalcCopyFacilityorArray, _
                                 lblCalcCopyFacilityBonus, lblCalcCopyFacilityDefault, _
                                 lblCalcCopyFacilityManualME, txtCalcCopyFacilityManualME, _
@@ -16777,10 +16791,10 @@ CheckTechs:
 
                 ' ME value, either what the entered or in the table
                 Select Case TempItemType
-                    Case 14, 15, 16
+                    Case 3, 15, 16
                         ' Storyline, Pirate, and Navy can't be updated
                         InsertItem.BPME = 0
-                    Case 2, 3 ' T2 or T3 - either Invented, or BPO
+                    Case 2, 14 ' T2 or T3 - either Invented, or BPO
                         If InsertItem.Owned = "No" Then
                             InsertItem.BPME = BaseT2T3ME
                         Else
@@ -16799,10 +16813,10 @@ CheckTechs:
 
                 ' TE value, either what the entered or in the table
                 Select Case TempItemType
-                    Case 14, 15, 16
+                    Case 3, 15, 16
                         ' Storyline, Pirate, and Navy can't be updated
                         InsertItem.BPTE = 0
-                    Case 2, 3 ' T2 or T3 - either Invented, or BPO
+                    Case 2, 14 ' T2 or T3 - either Invented, or BPO
                         If InsertItem.Owned = "No" Then
                             InsertItem.BPTE = BaseT2T3TE
                         Else
@@ -21277,9 +21291,7 @@ Leave:
 
         If cmbMineOreType.Text = "Ice" Then
             chkMineIncludeHighYieldOre.Enabled = False
-            chkMineRefinedOre.Enabled = True
-            chkMineUnrefinedOre.Enabled = True
-            chkMineCompressedOre.Enabled = True
+            gbMineOreProcessingType.Enabled = True
             chkMineIncludeHighYieldOre.Text = "High Yield Ice"
             chkMineIncludeHighSec.Text = "High Sec Ice"
             chkMineIncludeLowSec.Text = "Low Sec Ice"
@@ -21312,9 +21324,7 @@ Leave:
 
         ElseIf cmbMineOreType.Text = "Ore" Then
             chkMineIncludeHighYieldOre.Enabled = True
-            chkMineRefinedOre.Enabled = True
-            chkMineUnrefinedOre.Enabled = True
-            chkMineCompressedOre.Enabled = True
+            gbMineOreProcessingType.Enabled = True
             chkMineIncludeHighYieldOre.Text = "High Yield Ores"
             chkMineIncludeHighSec.Text = "High Sec Ore"
             chkMineIncludeLowSec.Text = "Low Sec Ore"
@@ -21346,9 +21356,7 @@ Leave:
 
         ElseIf cmbMineOreType.Text = "Gas" Then
             chkMineIncludeHighYieldOre.Enabled = False
-            chkMineRefinedOre.Enabled = False
-            chkMineUnrefinedOre.Enabled = False
-            chkMineCompressedOre.Enabled = False
+            gbMineOreProcessingType.Enabled = False
             chkMineIncludeHighYieldOre.Text = "High Yield Gas"
             chkMineIncludeHighSec.Text = "High Sec Gas"
             chkMineIncludeLowSec.Text = "Low Sec Gas"
@@ -23597,8 +23605,8 @@ Leave:
             Return False
         End If
 
-        ' Make sure a refine type is selected
-        If chkMineRefinedOre.Checked = False And chkMineCompressedOre.Checked = False And chkMineUnrefinedOre.Checked = False Then
+        ' Make sure a refine type is selected for ice and ore
+        If chkMineRefinedOre.Checked = False And chkMineCompressedOre.Checked = False And chkMineUnrefinedOre.Checked = False And cmbMineOreType.Text <> "Gas" Then
             ' Can't calculate nothing
             MsgBox("You must select one ore type to calculate.", vbExclamation, Application.ProductName)
             chkMineRefinedOre.Focus()
@@ -23639,13 +23647,6 @@ Leave:
         If CStr(cmbMineMiningLaser.Text) = "" Then
             MsgBox("No mining laser selected. Check ship type and skills selected.", vbExclamation, Application.ProductName)
             cmbMineMiningLaser.Focus()
-            Return False
-        End If
-
-        ' Make sure they have one of the three types checked
-        If Not cmbMineOreType.Text <> "Gas" And chkMineRefinedOre.Checked = False And chkMineUnrefinedOre.Checked = False And chkMineCompressedOre.Checked = False Then
-            MsgBox("You must select a type of Ore Processing to calculate.", vbExclamation, Application.ProductName)
-            gbMineOreProcessingType.Focus()
             Return False
         End If
 

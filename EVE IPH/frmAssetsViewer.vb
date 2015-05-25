@@ -772,7 +772,7 @@ Public Class frmAssetsViewer
                 SQL = "SELECT BLUEPRINT_ID, ITEM_NAME FROM ALL_BLUEPRINTS "
                 ' Search based on text
                 If txtItemFilter.Text <> "" Then
-                    SQL = SQL & " AND ITEM_NAME LIKE '%" & FormatDBString(Trim(txtItemFilter.Text)) & "%' "
+                    SQL = SQL & " WHERE ITEM_NAME LIKE '%" & FormatDBString(Trim(txtItemFilter.Text)) & "%' "
                 End If
 
                 DBCommand = New SQLiteCommand(SQL, DB)

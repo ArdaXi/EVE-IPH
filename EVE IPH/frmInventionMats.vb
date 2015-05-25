@@ -4,6 +4,7 @@
     Public TotalInventedRuns As Integer
     Public UserRuns As Long
     Public MatType As String
+    Public ListType As String
 
     Public Sub New()
 
@@ -59,20 +60,22 @@
         End If
 
         ' Add the total cost
-        MatList = lstMats.Items.Add("Total Invention Cost")
+        MatList = lstMats.Items.Add("Total " & ListType & " Cost")
         ' Color this last line grey
         MatList.BackColor = Color.WhiteSmoke
         MatList.SubItems.Add("")
         MatList.SubItems.Add(FormatNumber(TotalCost, 2)) ' Put in the Total Cost column
         MatList.SubItems.Add(FormatNumber(TotalInventedRuns, 0))
 
-        ' Finally add the cost per bp
-        MatList = lstMats.Items.Add("Total Invention Cost for " & CStr(UserRuns) & " Runs")
-        ' Color this last line grey
-        MatList.BackColor = Color.LightGray
-        MatList.SubItems.Add("")
-        MatList.SubItems.Add(FormatNumber(TotalCost / TotalInventedRuns * UserRuns, 2))
-        MatList.SubItems.Add(FormatNumber(UserRuns, 0))
+        If ListType.Contains("Invention") Then
+            ' Finally add the cost per bp
+            MatList = lstMats.Items.Add("Total Invention Cost for " & CStr(UserRuns) & " Runs")
+            ' Color this last line grey
+            MatList.BackColor = Color.LightGray
+            MatList.SubItems.Add("")
+            MatList.SubItems.Add(FormatNumber(TotalCost / TotalInventedRuns * UserRuns, 2))
+            MatList.SubItems.Add(FormatNumber(UserRuns, 0))
+        End If
 
         Application.UseWaitCursor = False
 
