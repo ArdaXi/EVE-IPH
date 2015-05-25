@@ -646,7 +646,7 @@ Public Class Blueprint
 
             ' Add any items that are not built but could be to the raw list
             For j = 0 To ComponentMaterials.GetMaterialList.Count - 1
-                If ComponentMaterials.GetMaterialList(j).GetBuildItem = False Then
+                If ComponentMaterials.GetMaterialList(j).GetBuildItem = False And ComponentMaterials.GetMaterialList(j).GetItemME <> "-" Then
                     Call RawMaterials.InsertMaterial(ComponentMaterials.GetMaterialList(j))
                 End If
             Next

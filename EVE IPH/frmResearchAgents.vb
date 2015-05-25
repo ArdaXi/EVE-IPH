@@ -63,7 +63,14 @@ Public Class frmResearchAgents
             With SelectedCharacter.GetResearchAgents
                 For i = 0 To .GetResearchAgents.Count - 1
                     ' Get the total value of the datacores if I were to cash them in today - Price minus the DataCoreRedeemCost
-                    SQL = "SELECT PRICE FROM ITEM_PRICES WHERE ITEM_NAME ='Datacore - " & .GetResearchAgents(i).Field & "'"
+                    If .GetResearchAgents(i).Field.Contains("Gallente Starship") Then
+                        SQL = "SELECT PRICE FROM ITEM_PRICES WHERE ITEM_NAME ='Datacore - Gallentean Starship Engineering'"
+                    ElseIf .GetResearchAgents(i).Field.Contains("Amarr Starship") Then
+                        SQL = "SELECT PRICE FROM ITEM_PRICES WHERE ITEM_NAME ='Datacore - Amarian Starship Engineering'"
+                    Else
+                        SQL = "SELECT PRICE FROM ITEM_PRICES WHERE ITEM_NAME ='Datacore - " & .GetResearchAgents(i).Field & "'"
+                    End If
+
                     DBCommand = New SQLiteCommand(SQL, DB)
                     readerPriceLookup = DBCommand.ExecuteReader()
 

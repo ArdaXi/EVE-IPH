@@ -4622,16 +4622,16 @@ Partial Class frmMain
         Me.lblDatacore3.Name = "lblDatacore3"
         Me.lblDatacore3.Size = New System.Drawing.Size(158, 13)
         Me.lblDatacore3.TabIndex = 3
-        Me.lblDatacore3.Text = "Gallentean Starship Engineering"
+        Me.lblDatacore3.Text = "Gallente Starship Engineering"
         '
         'chkDC8
         '
-        Me.chkDC8.AutoSize = true
+        Me.chkDC8.AutoSize = True
         Me.chkDC8.Location = New System.Drawing.Point(7, 172)
         Me.chkDC8.Name = "chkDC8"
         Me.chkDC8.Size = New System.Drawing.Size(15, 14)
         Me.chkDC8.TabIndex = 29
-        Me.chkDC8.UseVisualStyleBackColor = true
+        Me.chkDC8.UseVisualStyleBackColor = True
         '
         'lblDatacore13
         '
@@ -4651,21 +4651,21 @@ Partial Class frmMain
         '
         'chkDC7
         '
-        Me.chkDC7.AutoSize = true
+        Me.chkDC7.AutoSize = True
         Me.chkDC7.Location = New System.Drawing.Point(7, 150)
         Me.chkDC7.Name = "chkDC7"
         Me.chkDC7.Size = New System.Drawing.Size(15, 14)
         Me.chkDC7.TabIndex = 28
-        Me.chkDC7.UseVisualStyleBackColor = true
+        Me.chkDC7.UseVisualStyleBackColor = True
         '
         'chkDC6
         '
-        Me.chkDC6.AutoSize = true
+        Me.chkDC6.AutoSize = True
         Me.chkDC6.Location = New System.Drawing.Point(7, 127)
         Me.chkDC6.Name = "chkDC6"
         Me.chkDC6.Size = New System.Drawing.Size(15, 14)
         Me.chkDC6.TabIndex = 27
-        Me.chkDC6.UseVisualStyleBackColor = true
+        Me.chkDC6.UseVisualStyleBackColor = True
         '
         'lblDatacore1
         '
@@ -4673,16 +4673,16 @@ Partial Class frmMain
         Me.lblDatacore1.Name = "lblDatacore1"
         Me.lblDatacore1.Size = New System.Drawing.Size(158, 13)
         Me.lblDatacore1.TabIndex = 1
-        Me.lblDatacore1.Text = "Amarrian Starship Engineering"
+        Me.lblDatacore1.Text = "Amarr Starship Engineering"
         '
         'chkDC5
         '
-        Me.chkDC5.AutoSize = true
+        Me.chkDC5.AutoSize = True
         Me.chkDC5.Location = New System.Drawing.Point(7, 105)
         Me.chkDC5.Name = "chkDC5"
         Me.chkDC5.Size = New System.Drawing.Size(15, 14)
         Me.chkDC5.TabIndex = 26
-        Me.chkDC5.UseVisualStyleBackColor = true
+        Me.chkDC5.UseVisualStyleBackColor = True
         '
         'lblDatacore5
         '
@@ -4760,11 +4760,11 @@ Partial Class frmMain
         Me.gbDCCodes.Name = "gbDCCodes"
         Me.gbDCCodes.Size = New System.Drawing.Size(224, 30)
         Me.gbDCCodes.TabIndex = 56
-        Me.gbDCCodes.TabStop = false
+        Me.gbDCCodes.TabStop = False
         '
         'lblDCColors
         '
-        Me.lblDCColors.AutoSize = true
+        Me.lblDCColors.AutoSize = True
         Me.lblDCColors.Location = New System.Drawing.Point(8, 11)
         Me.lblDCColors.Name = "lblDCColors"
         Me.lblDCColors.Size = New System.Drawing.Size(63, 13)
@@ -4847,7 +4847,7 @@ Partial Class frmMain
         Me.gbDCCorpMinmatar.Name = "gbDCCorpMinmatar"
         Me.gbDCCorpMinmatar.Size = New System.Drawing.Size(228, 122)
         Me.gbDCCorpMinmatar.TabIndex = 64
-        Me.gbDCCorpMinmatar.TabStop = false
+        Me.gbDCCorpMinmatar.TabStop = False
         Me.gbDCCorpMinmatar.Text = "Minmatar Republic/Thukker Tribe/Khanid"
         '
         'lblDCCorp13
@@ -4860,12 +4860,12 @@ Partial Class frmMain
         '
         'chkDCCorp13
         '
-        Me.chkDCCorp13.AutoSize = true
+        Me.chkDCCorp13.AutoSize = True
         Me.chkDCCorp13.Location = New System.Drawing.Point(12, 100)
         Me.chkDCCorp13.Name = "chkDCCorp13"
         Me.chkDCCorp13.Size = New System.Drawing.Size(15, 14)
         Me.chkDCCorp13.TabIndex = 47
-        Me.chkDCCorp13.UseVisualStyleBackColor = true
+        Me.chkDCCorp13.UseVisualStyleBackColor = True
         '
         'txtDCStanding13
         '
@@ -4877,8 +4877,8 @@ Partial Class frmMain
         '
         'lblDCCorpLabel4
         '
-        Me.lblDCCorpLabel4.AutoSize = true
-        Me.lblDCCorpLabel4.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.lblDCCorpLabel4.AutoSize = True
+        Me.lblDCCorpLabel4.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblDCCorpLabel4.Location = New System.Drawing.Point(33, 16)
         Me.lblDCCorpLabel4.Name = "lblDCCorpLabel4"
         Me.lblDCCorpLabel4.Size = New System.Drawing.Size(72, 13)
@@ -4912,30 +4912,30 @@ Partial Class frmMain
         '
         'chkDCCorp10
         '
-        Me.chkDCCorp10.AutoSize = true
+        Me.chkDCCorp10.AutoSize = True
         Me.chkDCCorp10.Location = New System.Drawing.Point(12, 34)
         Me.chkDCCorp10.Name = "chkDCCorp10"
         Me.chkDCCorp10.Size = New System.Drawing.Size(15, 14)
         Me.chkDCCorp10.TabIndex = 27
-        Me.chkDCCorp10.UseVisualStyleBackColor = true
+        Me.chkDCCorp10.UseVisualStyleBackColor = True
         '
         'chkDCCorp11
         '
-        Me.chkDCCorp11.AutoSize = true
+        Me.chkDCCorp11.AutoSize = True
         Me.chkDCCorp11.Location = New System.Drawing.Point(12, 56)
         Me.chkDCCorp11.Name = "chkDCCorp11"
         Me.chkDCCorp11.Size = New System.Drawing.Size(15, 14)
         Me.chkDCCorp11.TabIndex = 28
-        Me.chkDCCorp11.UseVisualStyleBackColor = true
+        Me.chkDCCorp11.UseVisualStyleBackColor = True
         '
         'chkDCCorp12
         '
-        Me.chkDCCorp12.AutoSize = true
+        Me.chkDCCorp12.AutoSize = True
         Me.chkDCCorp12.Location = New System.Drawing.Point(12, 78)
         Me.chkDCCorp12.Name = "chkDCCorp12"
         Me.chkDCCorp12.Size = New System.Drawing.Size(15, 14)
         Me.chkDCCorp12.TabIndex = 29
-        Me.chkDCCorp12.UseVisualStyleBackColor = true
+        Me.chkDCCorp12.UseVisualStyleBackColor = True
         '
         'txtDCStanding10
         '
@@ -4963,7 +4963,7 @@ Partial Class frmMain
         '
         'lblDCStanding4
         '
-        Me.lblDCStanding4.AutoSize = true
+        Me.lblDCStanding4.AutoSize = True
         Me.lblDCStanding4.Location = New System.Drawing.Point(169, 16)
         Me.lblDCStanding4.Name = "lblDCStanding4"
         Me.lblDCStanding4.Size = New System.Drawing.Size(49, 13)
@@ -4978,7 +4978,7 @@ Partial Class frmMain
         Me.btnDCExporttoClip.Size = New System.Drawing.Size(138, 35)
         Me.btnDCExporttoClip.TabIndex = 68
         Me.btnDCExporttoClip.Text = "Copy Selected to Clipboard"
-        Me.btnDCExporttoClip.UseVisualStyleBackColor = true
+        Me.btnDCExporttoClip.UseVisualStyleBackColor = True
         '
         'gbDCCorpAmarr
         '
@@ -4997,13 +4997,13 @@ Partial Class frmMain
         Me.gbDCCorpAmarr.Name = "gbDCCorpAmarr"
         Me.gbDCCorpAmarr.Size = New System.Drawing.Size(222, 100)
         Me.gbDCCorpAmarr.TabIndex = 63
-        Me.gbDCCorpAmarr.TabStop = false
+        Me.gbDCCorpAmarr.TabStop = False
         Me.gbDCCorpAmarr.Text = "Amarr Empire/Ammatar Mandate"
         '
         'lblDCCorpLabel1
         '
-        Me.lblDCCorpLabel1.AutoSize = true
-        Me.lblDCCorpLabel1.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.lblDCCorpLabel1.AutoSize = True
+        Me.lblDCCorpLabel1.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblDCCorpLabel1.Location = New System.Drawing.Point(33, 15)
         Me.lblDCCorpLabel1.Name = "lblDCCorpLabel1"
         Me.lblDCCorpLabel1.Size = New System.Drawing.Size(72, 13)
@@ -5037,30 +5037,30 @@ Partial Class frmMain
         '
         'chkDCCorp1
         '
-        Me.chkDCCorp1.AutoSize = true
+        Me.chkDCCorp1.AutoSize = True
         Me.chkDCCorp1.Location = New System.Drawing.Point(12, 33)
         Me.chkDCCorp1.Name = "chkDCCorp1"
         Me.chkDCCorp1.Size = New System.Drawing.Size(15, 14)
         Me.chkDCCorp1.TabIndex = 27
-        Me.chkDCCorp1.UseVisualStyleBackColor = true
+        Me.chkDCCorp1.UseVisualStyleBackColor = True
         '
         'chkDCCorp2
         '
-        Me.chkDCCorp2.AutoSize = true
+        Me.chkDCCorp2.AutoSize = True
         Me.chkDCCorp2.Location = New System.Drawing.Point(12, 55)
         Me.chkDCCorp2.Name = "chkDCCorp2"
         Me.chkDCCorp2.Size = New System.Drawing.Size(15, 14)
         Me.chkDCCorp2.TabIndex = 28
-        Me.chkDCCorp2.UseVisualStyleBackColor = true
+        Me.chkDCCorp2.UseVisualStyleBackColor = True
         '
         'chkDCCorp3
         '
-        Me.chkDCCorp3.AutoSize = true
+        Me.chkDCCorp3.AutoSize = True
         Me.chkDCCorp3.Location = New System.Drawing.Point(12, 77)
         Me.chkDCCorp3.Name = "chkDCCorp3"
         Me.chkDCCorp3.Size = New System.Drawing.Size(15, 14)
         Me.chkDCCorp3.TabIndex = 29
-        Me.chkDCCorp3.UseVisualStyleBackColor = true
+        Me.chkDCCorp3.UseVisualStyleBackColor = True
         '
         'txtDCStanding1
         '
@@ -5088,7 +5088,7 @@ Partial Class frmMain
         '
         'lblDCStanding1
         '
-        Me.lblDCStanding1.AutoSize = true
+        Me.lblDCStanding1.AutoSize = True
         Me.lblDCStanding1.Location = New System.Drawing.Point(165, 14)
         Me.lblDCStanding1.Name = "lblDCStanding1"
         Me.lblDCStanding1.Size = New System.Drawing.Size(49, 13)
@@ -5103,7 +5103,7 @@ Partial Class frmMain
         Me.btnDCReset.Size = New System.Drawing.Size(138, 30)
         Me.btnDCReset.TabIndex = 67
         Me.btnDCReset.Text = "Reset"
-        Me.btnDCReset.UseVisualStyleBackColor = true
+        Me.btnDCReset.UseVisualStyleBackColor = True
         '
         'gbDCCorpsCaldari
         '
@@ -5122,13 +5122,13 @@ Partial Class frmMain
         Me.gbDCCorpsCaldari.Name = "gbDCCorpsCaldari"
         Me.gbDCCorpsCaldari.Size = New System.Drawing.Size(222, 100)
         Me.gbDCCorpsCaldari.TabIndex = 62
-        Me.gbDCCorpsCaldari.TabStop = false
+        Me.gbDCCorpsCaldari.TabStop = False
         Me.gbDCCorpsCaldari.Text = "Caldari State"
         '
         'lblDCCorpLabel2
         '
-        Me.lblDCCorpLabel2.AutoSize = true
-        Me.lblDCCorpLabel2.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.lblDCCorpLabel2.AutoSize = True
+        Me.lblDCCorpLabel2.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblDCCorpLabel2.Location = New System.Drawing.Point(33, 16)
         Me.lblDCCorpLabel2.Name = "lblDCCorpLabel2"
         Me.lblDCCorpLabel2.Size = New System.Drawing.Size(72, 13)
@@ -5162,30 +5162,30 @@ Partial Class frmMain
         '
         'chkDCCorp4
         '
-        Me.chkDCCorp4.AutoSize = true
+        Me.chkDCCorp4.AutoSize = True
         Me.chkDCCorp4.Location = New System.Drawing.Point(10, 33)
         Me.chkDCCorp4.Name = "chkDCCorp4"
         Me.chkDCCorp4.Size = New System.Drawing.Size(15, 14)
         Me.chkDCCorp4.TabIndex = 27
-        Me.chkDCCorp4.UseVisualStyleBackColor = true
+        Me.chkDCCorp4.UseVisualStyleBackColor = True
         '
         'chkDCCorp5
         '
-        Me.chkDCCorp5.AutoSize = true
+        Me.chkDCCorp5.AutoSize = True
         Me.chkDCCorp5.Location = New System.Drawing.Point(10, 55)
         Me.chkDCCorp5.Name = "chkDCCorp5"
         Me.chkDCCorp5.Size = New System.Drawing.Size(15, 14)
         Me.chkDCCorp5.TabIndex = 28
-        Me.chkDCCorp5.UseVisualStyleBackColor = true
+        Me.chkDCCorp5.UseVisualStyleBackColor = True
         '
         'chkDCCorp6
         '
-        Me.chkDCCorp6.AutoSize = true
+        Me.chkDCCorp6.AutoSize = True
         Me.chkDCCorp6.Location = New System.Drawing.Point(10, 77)
         Me.chkDCCorp6.Name = "chkDCCorp6"
         Me.chkDCCorp6.Size = New System.Drawing.Size(15, 14)
         Me.chkDCCorp6.TabIndex = 29
-        Me.chkDCCorp6.UseVisualStyleBackColor = true
+        Me.chkDCCorp6.UseVisualStyleBackColor = True
         '
         'txtDCStanding4
         '
@@ -5213,7 +5213,7 @@ Partial Class frmMain
         '
         'lblDCStanding2
         '
-        Me.lblDCStanding2.AutoSize = true
+        Me.lblDCStanding2.AutoSize = True
         Me.lblDCStanding2.Location = New System.Drawing.Point(163, 16)
         Me.lblDCStanding2.Name = "lblDCStanding2"
         Me.lblDCStanding2.Size = New System.Drawing.Size(49, 13)
@@ -5238,13 +5238,13 @@ Partial Class frmMain
         Me.gbDCCorpsGallente.Name = "gbDCCorpsGallente"
         Me.gbDCCorpsGallente.Size = New System.Drawing.Size(226, 100)
         Me.gbDCCorpsGallente.TabIndex = 61
-        Me.gbDCCorpsGallente.TabStop = false
+        Me.gbDCCorpsGallente.TabStop = False
         Me.gbDCCorpsGallente.Text = "Gallente Federation"
         '
         'lblDCCorpLabel3
         '
-        Me.lblDCCorpLabel3.AutoSize = true
-        Me.lblDCCorpLabel3.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0,Byte))
+        Me.lblDCCorpLabel3.AutoSize = True
+        Me.lblDCCorpLabel3.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
         Me.lblDCCorpLabel3.Location = New System.Drawing.Point(33, 16)
         Me.lblDCCorpLabel3.Name = "lblDCCorpLabel3"
         Me.lblDCCorpLabel3.Size = New System.Drawing.Size(72, 13)
@@ -5278,30 +5278,30 @@ Partial Class frmMain
         '
         'chkDCCorp7
         '
-        Me.chkDCCorp7.AutoSize = true
+        Me.chkDCCorp7.AutoSize = True
         Me.chkDCCorp7.Location = New System.Drawing.Point(12, 34)
         Me.chkDCCorp7.Name = "chkDCCorp7"
         Me.chkDCCorp7.Size = New System.Drawing.Size(15, 14)
         Me.chkDCCorp7.TabIndex = 27
-        Me.chkDCCorp7.UseVisualStyleBackColor = true
+        Me.chkDCCorp7.UseVisualStyleBackColor = True
         '
         'chkDCCorp8
         '
-        Me.chkDCCorp8.AutoSize = true
+        Me.chkDCCorp8.AutoSize = True
         Me.chkDCCorp8.Location = New System.Drawing.Point(12, 56)
         Me.chkDCCorp8.Name = "chkDCCorp8"
         Me.chkDCCorp8.Size = New System.Drawing.Size(15, 14)
         Me.chkDCCorp8.TabIndex = 28
-        Me.chkDCCorp8.UseVisualStyleBackColor = true
+        Me.chkDCCorp8.UseVisualStyleBackColor = True
         '
         'chkDCCorp9
         '
-        Me.chkDCCorp9.AutoSize = true
+        Me.chkDCCorp9.AutoSize = True
         Me.chkDCCorp9.Location = New System.Drawing.Point(12, 78)
         Me.chkDCCorp9.Name = "chkDCCorp9"
         Me.chkDCCorp9.Size = New System.Drawing.Size(15, 14)
         Me.chkDCCorp9.TabIndex = 29
-        Me.chkDCCorp9.UseVisualStyleBackColor = true
+        Me.chkDCCorp9.UseVisualStyleBackColor = True
         '
         'txtDCStanding7
         '
@@ -5329,7 +5329,7 @@ Partial Class frmMain
         '
         'lblDCStanding3
         '
-        Me.lblDCStanding3.AutoSize = true
+        Me.lblDCStanding3.AutoSize = True
         Me.lblDCStanding3.Location = New System.Drawing.Point(169, 15)
         Me.lblDCStanding3.Name = "lblDCStanding3"
         Me.lblDCStanding3.Size = New System.Drawing.Size(49, 13)
@@ -5344,7 +5344,7 @@ Partial Class frmMain
         Me.btnDCRefresh.Size = New System.Drawing.Size(138, 30)
         Me.btnDCRefresh.TabIndex = 66
         Me.btnDCRefresh.Text = "Refresh"
-        Me.btnDCRefresh.UseVisualStyleBackColor = true
+        Me.btnDCRefresh.UseVisualStyleBackColor = True
         '
         'tabManufacturing
         '
@@ -5355,7 +5355,7 @@ Partial Class frmMain
         Me.tabManufacturing.Size = New System.Drawing.Size(1137, 615)
         Me.tabManufacturing.TabIndex = 2
         Me.tabManufacturing.Text = "Manufacturing List"
-        Me.tabManufacturing.UseVisualStyleBackColor = true
+        Me.tabManufacturing.UseVisualStyleBackColor = True
         '
         'gbCalcBPSelectOptions
         '
@@ -5391,7 +5391,7 @@ Partial Class frmMain
         Me.gbCalcBPSelectOptions.Name = "gbCalcBPSelectOptions"
         Me.gbCalcBPSelectOptions.Size = New System.Drawing.Size(1121, 300)
         Me.gbCalcBPSelectOptions.TabIndex = 0
-        Me.gbCalcBPSelectOptions.TabStop = false
+        Me.gbCalcBPSelectOptions.TabStop = False
         Me.gbCalcBPSelectOptions.Text = "Blueprint Filters:"
         '
         'gbCalcIgnoreinCalcs
@@ -5403,12 +5403,12 @@ Partial Class frmMain
         Me.gbCalcIgnoreinCalcs.Name = "gbCalcIgnoreinCalcs"
         Me.gbCalcIgnoreinCalcs.Size = New System.Drawing.Size(165, 72)
         Me.gbCalcIgnoreinCalcs.TabIndex = 19
-        Me.gbCalcIgnoreinCalcs.TabStop = false
+        Me.gbCalcIgnoreinCalcs.TabStop = False
         Me.gbCalcIgnoreinCalcs.Text = "Ignore in Calculations:"
         '
         'chkCalcIgnoreMinerals
         '
-        Me.chkCalcIgnoreMinerals.AutoSize = true
+        Me.chkCalcIgnoreMinerals.AutoSize = True
         Me.chkCalcIgnoreMinerals.CheckAlign = System.Drawing.ContentAlignment.BottomLeft
         Me.chkCalcIgnoreMinerals.Location = New System.Drawing.Point(9, 34)
         Me.chkCalcIgnoreMinerals.Name = "chkCalcIgnoreMinerals"
