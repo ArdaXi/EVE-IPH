@@ -168,6 +168,7 @@ Public Class frmUpdaterMain
         Dim DBCommand As SQLiteCommand
         Dim readerUpdate As SQLiteDataReader
         Dim readerCheck As SQLiteDataReader
+        Dim readerCheck2 As SQLiteDataReader
         Dim DBOLD As New SQLiteConnection
         Dim DBNEW As New SQLiteConnection
 
@@ -1484,10 +1485,51 @@ Public Class frmUpdaterMain
                     readerUpdate = DBCommand.ExecuteReader
                     On Error GoTo 0
 
+                    On Error Resume Next
+                    ProgramErrorLocation = "Cannot copy STATION_FACILITIES Data table"
+                    SQL = "SELECT MATERIAL_MULTIPLIER FROM STATION_FACILITIES"
+                    DBCommand = New SQLiteCommand(SQL, DBOLD)
+                    readerCheck2 = DBCommand.ExecuteReader
+                    On Error GoTo 0
+
+                    Dim Have6ModifierFields As Boolean
+                    ' See if they have this change to make the multiplers into 1 field instead of 2
+                    If Not IsNothing(readerCheck2) Then
+                        Have6ModifierFields = False
+                    Else
+                        Have6ModifierFields = True
+                    End If
+
                     ' They might not have this table yet.
                     If Not IsNothing(readerUpdate) Then
                         Call BeginSQLiteTransaction(DBNEW)
                         ' They have the new table, but whatever is in the new database needs to be updated or inserted (if not there)
+
+                        ' Drop indexes
+                        SQL = "DROP INDEX IF EXISTS IDX_SF_FN;"
+                        Call ExecuteNonQuerySQL(SQL, DBNEW)
+
+                        SQL = "DROP INDEX IF EXISTS IDX_SF_FID;" ' not sure if I still need these
+                        Call ExecuteNonQuerySQL(SQL, DBNEW)
+
+                        SQL = "DROP INDEX IF EXISTS IDX_SF_SSID_AID;" ' not sure if I still need these
+                        Call ExecuteNonQuerySQL(SQL, DBNEW)
+
+                        SQL = "DROP INDEX IF EXISTS IDX_SF_GID;"
+                        Call ExecuteNonQuerySQL(SQL, DBNEW)
+
+                        SQL = "DROP INDEX IF EXISTS IDX_SF_OP_AID_CID_GID;"
+                        Call ExecuteNonQuerySQL(SQL, DBNEW)
+
+                        SQL = "DROP INDEX IF EXISTS IDX_SF_CID;"
+                        Call ExecuteNonQuerySQL(SQL, DBNEW)
+
+                        SQL = "DROP INDEX IF EXISTS IDX_SF_OP_FN_AID_CID_GID;"
+                        Call ExecuteNonQuerySQL(SQL, DBNEW)
+
+                        Call CommitSQLiteTransaction(DBNEW)
+                        Call BeginSQLiteTransaction(DBNEW)
+
                         While readerUpdate.Read
                             Dim TempID As String = CStr(readerUpdate.GetInt64(0))
                             Dim TempSQL As String = "SELECT 'X' FROM STATION_FACILITIES WHERE FACILITY_ID = " & TempID
@@ -1507,15 +1549,45 @@ Public Class frmUpdaterMain
                                 SQL = SQL & "ACTIVITY_ID = " & BuildInsertFieldString(readerUpdate.GetInt64(9)) & ","
                                 SQL = SQL & "ACTIVITY_NAME = " & BuildInsertFieldString(readerUpdate.GetString(10)) & ","
                                 SQL = SQL & "FACILITY_TAX = " & BuildInsertFieldString(readerUpdate.GetDouble(11)) & ","
-                                SQL = SQL & "MATERIAL_MULTIPLIER = " & BuildInsertFieldString(readerUpdate.GetDouble(12)) & ","
-                                SQL = SQL & "TIME_MULTIPLIER = " & BuildInsertFieldString(readerUpdate.GetDouble(13)) & ","
-                                SQL = SQL & "COST_MULTIPLIER = " & BuildInsertFieldString(readerUpdate.GetDouble(14)) & ","
-                                SQL = SQL & "GROUP_ID = " & BuildInsertFieldString(readerUpdate.GetInt64(15)) & ","
-                                SQL = SQL & "GROUP_NAME = " & BuildInsertFieldString(readerUpdate.GetString(16)) & ","
-                                SQL = SQL & "CATEGORY_ID = " & BuildInsertFieldString(readerUpdate.GetInt64(17)) & ","
-                                SQL = SQL & "CATEGORY_NAME = " & BuildInsertFieldString(readerUpdate.GetString(18)) & ","
-                                SQL = SQL & "COST_INDEX = " & BuildInsertFieldString(readerUpdate.GetDouble(19)) & ","
-                                SQL = SQL & "OUTPOST = " & BuildInsertFieldString(readerUpdate.GetInt32(20)) & " "
+                                If Have6ModifierFields Then
+                                    ' Need to combine the 6 fields into 3
+                                    SQL = SQL & "MATERIAL_MULTIPLIER = " & BuildInsertFieldString(readerUpdate.GetDouble(12) * readerUpdate.GetDouble(15)) & ","
+                                    SQL = SQL & "TIME_MULTIPLIER = " & BuildInsertFieldString(readerUpdate.GetDouble(13) * readerUpdate.GetDouble(16)) & ","
+                                    SQL = SQL & "COST_MULTIPLIER = " & BuildInsertFieldString(readerUpdate.GetDouble(14) * readerUpdate.GetDouble(17)) & ","
+                                    SQL = SQL & "GROUP_ID = " & BuildInsertFieldString(readerUpdate.GetInt64(18)) & ","
+                                    If Not IsDBNull(readerUpdate.GetValue(19)) Then
+                                        SQL = SQL & "GROUP_NAME = " & BuildInsertFieldString(readerUpdate.GetString(19)) & ","
+                                    Else
+                                        SQL = SQL & "GROUP_NAME = NULL, "
+                                    End If
+                                    SQL = SQL & "CATEGORY_ID = " & BuildInsertFieldString(readerUpdate.GetInt64(20)) & ","
+                                    If Not IsDBNull(readerUpdate.GetValue(21)) Then
+                                        SQL = SQL & "CATEGORY_NAME = " & BuildInsertFieldString(readerUpdate.GetString(21)) & ","
+                                    Else
+                                        SQL = SQL & "CATEGORY_NAME = NULL, "
+                                    End If
+                                    SQL = SQL & "COST_INDEX = " & BuildInsertFieldString(readerUpdate.GetDouble(22)) & ","
+                                    SQL = SQL & "OUTPOST = " & BuildInsertFieldString(readerUpdate.GetInt32(23)) & " "
+                                Else
+                                    SQL = SQL & "MATERIAL_MULTIPLIER = " & BuildInsertFieldString(readerUpdate.GetDouble(12)) & ","
+                                    SQL = SQL & "TIME_MULTIPLIER = " & BuildInsertFieldString(readerUpdate.GetDouble(13)) & ","
+                                    SQL = SQL & "COST_MULTIPLIER = " & BuildInsertFieldString(readerUpdate.GetDouble(14)) & ","
+                                    SQL = SQL & "GROUP_ID = " & BuildInsertFieldString(readerUpdate.GetInt64(15)) & ","
+                                    If Not IsDBNull(readerUpdate.GetValue(16)) Then
+                                        SQL = SQL & "GROUP_NAME = " & BuildInsertFieldString(readerUpdate.GetString(16)) & ","
+                                    Else
+                                        SQL = SQL & "GROUP_NAME = NULL, "
+                                    End If
+                                    SQL = SQL & "CATEGORY_ID = " & BuildInsertFieldString(readerUpdate.GetInt64(17)) & ","
+                                    If Not IsDBNull(readerUpdate.GetValue(18)) Then
+                                        SQL = SQL & "CATEGORY_NAME = " & BuildInsertFieldString(readerUpdate.GetString(18)) & ","
+                                    Else
+                                        SQL = SQL & "CATEGORY_NAME = NULL, "
+                                    End If
+                                    SQL = SQL & "COST_INDEX = " & BuildInsertFieldString(readerUpdate.GetDouble(19)) & ","
+                                    SQL = SQL & "OUTPOST = " & BuildInsertFieldString(readerUpdate.GetInt32(20)) & " "
+                                End If
+
                                 SQL = SQL & "WHERE FACILITY_ID = " & TempID
                             Else
                                 ' Insert
@@ -1532,24 +1604,58 @@ Public Class frmUpdaterMain
                                 SQL = SQL & BuildInsertFieldString(readerUpdate.Item(9)) & ","
                                 SQL = SQL & BuildInsertFieldString(readerUpdate.Item(10)) & ","
                                 SQL = SQL & BuildInsertFieldString(readerUpdate.Item(11)) & ","
-                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(12)) & ","
-                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(13)) & ","
-                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(14)) & ","
-                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(15)) & ","
-                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(16)) & ","
-                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(17)) & ","
-                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(18)) & ","
-                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(19)) & ","
-                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(20)) & ","
-                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(21)) & ","
-                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(22)) & ","
-                                SQL = SQL & BuildInsertFieldString(readerUpdate.Item(23))
+                                If Have6ModifierFields Then
+                                    SQL = SQL & BuildInsertFieldString(readerUpdate.Item(12) * readerUpdate.Item(15)) & ","
+                                    SQL = SQL & BuildInsertFieldString(readerUpdate.Item(13) * readerUpdate.Item(16)) & ","
+                                    SQL = SQL & BuildInsertFieldString(readerUpdate.Item(14) * readerUpdate.Item(17)) & ","
+                                    SQL = SQL & BuildInsertFieldString(readerUpdate.Item(18)) & ","
+                                    SQL = SQL & BuildInsertFieldString(readerUpdate.Item(19)) & ","
+                                    SQL = SQL & BuildInsertFieldString(readerUpdate.Item(20)) & ","
+                                    SQL = SQL & BuildInsertFieldString(readerUpdate.Item(21)) & ","
+                                    SQL = SQL & BuildInsertFieldString(readerUpdate.Item(22)) & ","
+                                    SQL = SQL & BuildInsertFieldString(readerUpdate.Item(23))
+                                Else
+                                    SQL = SQL & BuildInsertFieldString(readerUpdate.Item(12)) & ","
+                                    SQL = SQL & BuildInsertFieldString(readerUpdate.Item(13)) & ","
+                                    SQL = SQL & BuildInsertFieldString(readerUpdate.Item(14)) & ","
+                                    SQL = SQL & BuildInsertFieldString(readerUpdate.Item(15)) & ","
+                                    SQL = SQL & BuildInsertFieldString(readerUpdate.Item(16)) & ","
+                                    SQL = SQL & BuildInsertFieldString(readerUpdate.Item(17)) & ","
+                                    SQL = SQL & BuildInsertFieldString(readerUpdate.Item(18)) & ","
+                                    SQL = SQL & BuildInsertFieldString(readerUpdate.Item(19)) & ","
+                                    SQL = SQL & BuildInsertFieldString(readerUpdate.Item(20))
+                                End If
+
                                 SQL = SQL & ")"
                             End If
 
                             Call ExecuteNonQuerySQL(SQL, DBNEW)
 
                         End While
+
+                        Me.Invoke(UpdateStatusDelegate, False, "Optimizing Data...")
+
+                        ' Finally restore indexes
+                        SQL = "CREATE INDEX IDX_SF_FN ON STATION_FACILITIES (FACILITY_NAME);"
+                        Call ExecuteNonQuerySQL(SQL, DBNEW)
+
+                        SQL = "CREATE INDEX IDX_SF_FID ON STATION_FACILITIES (FACILITY_ID);"
+                        Call ExecuteNonQuerySQL(SQL, DBNEW)
+
+                        SQL = "CREATE INDEX IDX_SF_SSID_AID ON STATION_FACILITIES (SOLAR_SYSTEM_ID, ACTIVITY_ID);"
+                        Call ExecuteNonQuerySQL(SQL, DBNEW)
+
+                        SQL = "CREATE INDEX IDX_SF_GID ON STATION_FACILITIES (GROUP_ID);"
+                        Call ExecuteNonQuerySQL(SQL, DBNEW)
+
+                        SQL = "CREATE INDEX IDX_SF_OP_AID_CID_GID ON STATION_FACILITIES (OUTPOST, ACTIVITY_ID, CATEGORY_ID, GROUP_ID, REGION_NAME, SOLAR_SYSTEM_NAME);"
+                        Call ExecuteNonQuerySQL(SQL, DBNEW)
+
+                        SQL = "CREATE INDEX IDX_SF_CID ON STATION_FACILITIES (CATEGORY_ID);"
+                        Call ExecuteNonQuerySQL(SQL, DBNEW)
+
+                        SQL = "CREATE INDEX IDX_SF_OP_FN_AID_CID_GID ON STATION_FACILITIES (OUTPOST, FACILITY_NAME, ACTIVITY_ID, CATEGORY_ID, GROUP_ID, REGION_NAME, SOLAR_SYSTEM_NAME);"
+                        Call ExecuteNonQuerySQL(SQL, DBNEW)
 
                         Call CommitSQLiteTransaction(DBNEW)
 
