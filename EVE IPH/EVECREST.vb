@@ -928,6 +928,10 @@ Public Class EVECREST
                     TimeCounter = 0
                     Application.DoEvents()
 
+                    ' Temp hack fix, I set the outpost field to 2 when users updated the ME/TE/Tax data and now I don't use the flag (ME/TE/Tax is saved and not updated)
+                    ' Remove this in like 6 months and suggest people reset their industry facility data if it comes up again after that
+                    Call ExecuteNonQuerySQL("UPDATE STATION_FACILITIES SET OUTPOST = 1 WHERE OUTPOST = 2")
+
                     ' Find all facilities not already in the stations table and loop through to add them
                     SQL = "SELECT DISTINCT FACILITY_ID FROM INDUSTRY_FACILITIES WHERE FACILITY_ID NOT IN (SELECT DISTINCT FACILITY_ID FROM STATION_FACILITIES) "
                     SQL = SQL & "AND (FACILITY_ID IN (SELECT stationID FROM RAM_ASSEMBLY_LINE_STATIONS) " ' Stations with assembly lines
@@ -937,6 +941,7 @@ Public Class EVECREST
                     rsLookup = DBCommand.ExecuteReader
 
                     While rsLookup.Read
+
                         Call SetStationFacilityData(rsLookup.GetInt64(0))
 
                         ' Add some updates to the splash screen if it takes longer than 30 seconds to update
@@ -973,8 +978,8 @@ Public Class EVECREST
                     rsLookup.Close()
                     DBCommand = Nothing
 
-                    '' Update Tax rates - might want to ignore this until they actually could change, NPC is set by CCP and outposts don't get set through CREST
-                    'SQL = "SELECT DISTINCT FACILITY_ID, FACILITY_TAX FROM STATION_FACILITIES
+                    '' Update Tax rates - ignore this until they actually could change, NPC is set by CCP and outposts don't get set through CREST
+                    'SQL = "SELECT DISTINCT FACILITY_ID, FACILITY_TAX FROM STATION_FACILITIES WHERE OUTPOST = 0
                     'DBCommand = New SQLiteCommand(SQL, DB)
                     'rsLookup = DBCommand.ExecuteReader
 

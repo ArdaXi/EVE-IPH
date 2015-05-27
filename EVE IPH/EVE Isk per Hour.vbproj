@@ -399,6 +399,9 @@
     <Compile Include="TopMostMessageBox.vb" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="frmCRESTMarketViewer.resx">
+      <DependentUpon>frmCRESTMarketViewer.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="frmUsageViewer.resx">
       <DependentUpon>frmUsageViewer.vb</DependentUpon>
       <SubType>Designer</SubType>

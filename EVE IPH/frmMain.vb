@@ -3933,6 +3933,10 @@ NoBonus:
             ' Reset all the cache dates
             Call ResetCRESTDates()
 
+            ' Reset CREST data
+            Call ResetCRESTIndustryFacilities()
+            Call ResetCRESTAdjustedMarketPrices()
+
             CharactersLoaded = False ' Just deleted all the data
             FirstLoad = True ' Temporarily just to get screen to show correctly
 
@@ -4007,6 +4011,30 @@ NoBonus:
         ExecuteNonQuerySQL(SQL)
 
         MsgBox("CREST cache dates reset", vbInformation, Application.ProductName)
+
+    End Sub
+
+    Private Sub ResetCRESTIndustryFacilities()
+
+        ' Need to delete all outpost data, clear out the industry facilities table and set up for a rebuild
+        Call ExecuteNonQuerySQL("DELETE FROM INDUSTRY_FACILITIES")
+        Call ExecuteNonQuerySQL("DELETE FROM STATION_FACILITIES WHERE OUTPOST <> 0")
+
+        ' Simple update, just set all the CREST cache dates to null
+        Call ExecuteNonQuerySQL("UPDATE CREST_CACHE_DATES SET CREST_INDUSTRY_SYSTEMS_CACHED_UNTIL = NULL")
+        Call ExecuteNonQuerySQL("UPDATE CREST_CACHE_DATES SET CREST_INDUSTRY_FACILITIES_CACHED_UNTIL = NULL")
+
+        MsgBox("CREST Industry Facilities reset", vbInformation, Application.ProductName)
+
+    End Sub
+
+    Public Sub ResetCRESTAdjustedMarketPrices()
+
+        ' Simple update, just set all the data back to zero
+        Call ExecuteNonQuerySQL("UPDATE ITEM_PRICES SET ADJUSTED_PRICE = 0, AVERAGE_PRICE = 0")
+        Call ExecuteNonQuerySQL("UPDATE CREST_CACHE_DATES SET CREST_MARKET_PRICES_CACHED_UNTIL = NULL")
+
+        MsgBox("CREST Adjusted Market Prices reset", vbInformation, Application.ProductName)
 
     End Sub
 
@@ -4116,6 +4144,14 @@ NoBonus:
     Private Sub mnuCurrentIndustryJobs_Click(sender As System.Object, e As System.EventArgs) Handles mnuCurrentIndustryJobs.Click
         Dim f1 As New frmIndustryJobsViewer
         f1.Show()
+    End Sub
+
+    Private Sub mnuResetCRESTMarketPrices_Click(sender As System.Object, e As System.EventArgs) Handles mnuResetCRESTMarketPrices.Click
+        Call ResetCRESTAdjustedMarketPrices()
+    End Sub
+
+    Private Sub mnuResetCRESTIndustryFacilities_Click(sender As System.Object, e As System.EventArgs) Handles mnuResetCRESTIndustryFacilities.Click
+        Call ResetCRESTIndustryFacilities()
     End Sub
 
     ' Checks the ME and TE boxes to make sure they are ok and errors if not
@@ -5612,7 +5648,7 @@ Tabs:
         SQL = SQL & ", TIME_MULTIPLIER = " & CStr(SentFacility.TimeMultiplier)
         SQL = SQL & ", FACILITY_TAX = " & CStr(SentFacility.TaxRate)
         SQL = SQL & ", OUTPOST = " & CStr(StationType.Outpost) & " "
-        SQL = SQL & "WHERE FACILITY_NAME = '" & SentFacility.FacilityName & "' "
+        SQL = SQL & "WHERE FACILITY_NAME = '" & FormatDBString(SentFacility.FacilityName) & "' "
         SQL = SQL & "AND ACTIVITY_ID = " & CStr(Activity)
 
         Call ExecuteNonQuerySQL(SQL)
@@ -6046,10 +6082,12 @@ Tabs:
 
     Private Sub txtBPRuns_KeyUp(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtBPRuns.KeyUp
         If Not EnterKeyPressed Then
-            Call UpdateBPLinesandBPs()
-        Else
             EnterKeyPressed = False
         End If
+    End Sub
+
+    Private Sub txtBPRuns_LostFocus(sender As Object, e As System.EventArgs) Handles txtBPRuns.LostFocus
+        Call UpdateBPLinesandBPs()
     End Sub
 
     Private Sub txtBPAddlCosts_KeyDown(sender As Object, e As System.Windows.Forms.KeyEventArgs) Handles txtBPAddlCosts.KeyDown
@@ -7484,6 +7522,10 @@ Tabs:
         If Trim(txtBPRuns.Text) = "" Then
             txtBPRuns.Text = "1"
         End If
+
+        ' Update the num bps here instead of when they enter data
+        ' this is really just a visual thing since the blueprint will determine the correct number and set it later
+        Call UpdateBPLinesandBPs()
 
         ' Check the quantity
         If Not IsNumeric(txtBPRuns.Text) Or Val(txtBPRuns.Text) <= 0 Then
@@ -11168,6 +11210,7 @@ ExitSub:
     End Sub
 
     Private Sub cmbCalcBaseFacilityRegion_SelectedIndexChanged(sender As System.Object, e As System.EventArgs) Handles cmbCalcBaseFacilityRegion.SelectedIndexChanged
+
         If Not LoadingFacilityRegions And Not FirstLoad And PreviousCalcBaseFacilityRegion <> cmbCalcBaseFacilityRegion.Text Then
             Call LoadFacilitySystems(0, 0, True, _
                                      ActivityManufacturing, cmbCalcBaseFacilityType, cmbCalcBaseFacilityRegion, cmbCalcBaseFacilitySystem, cmbCalcBaseFacilityorArray, _
@@ -11207,7 +11250,7 @@ ExitSub:
         Dim OverrideFacilityName As String = ""
         Dim Autoload As Boolean = False
 
-        If Not LoadingFacilitySystems And Not FirstLoad And PreviousFacilitySystem <> cmbCalcBaseFacilitySystem.Text Then
+        If Not LoadingFacilitySystems And Not FirstLoad And PreviousCalcBaseFacilitySystem <> cmbCalcBaseFacilitySystem.Text Then
 
             If cmbCalcBaseFacilityType.Text = OutpostFacility Then
                 OverrideFacilityName = ""
@@ -11554,7 +11597,7 @@ ExitSub:
     Private Sub cmbCalcComponentFacilitySystem_SelectedIndexChanged(sender As System.Object, e As System.EventArgs) Handles cmbCalcComponentFacilitySystem.SelectedIndexChanged
         Dim Autoload As Boolean = False
 
-        If Not LoadingFacilitySystems And Not FirstLoad And PreviousFacilitySystem <> cmbCalcComponentFacilitySystem.Text Then
+        If Not LoadingFacilitySystems And Not FirstLoad And PreviousCalcComponentFacilitySystem <> cmbCalcComponentFacilitySystem.Text Then
 
             ' Load the facility
             Call LoadFacilities(GetComponentsGroupID(chkCalcCapComponentsFacility.Checked), -1, False, _
@@ -11807,7 +11850,7 @@ ExitSub:
     Private Sub cmbCalcInventionFacilitySystem_SelectedIndexChanged(sender As System.Object, e As System.EventArgs) Handles cmbCalcInventionFacilitySystem.SelectedIndexChanged
         Dim Autoload As Boolean = False
 
-        If Not LoadingFacilitySystems And Not FirstLoad And PreviousFacilitySystem <> cmbCalcInventionFacilitySystem.Text Then
+        If Not LoadingFacilitySystems And Not FirstLoad And PreviousCalcInventionFacilitySystem <> cmbCalcInventionFacilitySystem.Text Then
 
             ' Load the facility
             Call LoadFacilities(0, ShipCategoryID, False, _
@@ -12078,7 +12121,7 @@ ExitSub:
     Private Sub cmbCalcT3InventionFacilitySystem_SelectedIndexChanged(sender As System.Object, e As System.EventArgs) Handles cmbCalcT3InventionFacilitySystem.SelectedIndexChanged
         Dim Autoload As Boolean = False
 
-        If Not LoadingFacilitySystems And Not FirstLoad And PreviousFacilitySystem <> cmbCalcT3InventionFacilitySystem.Text Then
+        If Not LoadingFacilitySystems And Not FirstLoad And PreviousCalcT3InventionFacilitySystem <> cmbCalcT3InventionFacilitySystem.Text Then
 
             ' Load the facility
             Call LoadFacilities(StrategicCruiserGroupID, SubsystemCategoryID, False, _
@@ -12351,7 +12394,7 @@ ExitSub:
     Private Sub cmbCalcCopyFacilitySystem_SelectedIndexChanged(sender As System.Object, e As System.EventArgs) Handles cmbCalcCopyFacilitySystem.SelectedIndexChanged
         Dim Autoload As Boolean = False
 
-        If Not LoadingFacilitySystems And Not FirstLoad And PreviousFacilitySystem <> cmbCalcCopyFacilitySystem.Text Then
+        If Not LoadingFacilitySystems And Not FirstLoad And PreviousCalcCopyFacilitySystem <> cmbCalcCopyFacilitySystem.Text Then
 
             ' Load the facility
             Call LoadFacilities(0, ShipCategoryID, False, _
@@ -12596,7 +12639,7 @@ ExitSub:
 
         Dim Autoload As Boolean = False
 
-        If Not LoadingFacilitySystems And Not FirstLoad And PreviousFacilitySystem <> cmbCalcNoPOSFacilitySystem.Text Then
+        If Not LoadingFacilitySystems And Not FirstLoad And PreviousCalcNoPOSFacilitySystem <> cmbCalcNoPOSFacilitySystem.Text Then
 
             ' Load the facility
             Call LoadFacilities(-1, SovStructureCategoryID, False, _
@@ -12614,7 +12657,7 @@ ExitSub:
             Else
                 CalcNoPOSFacilitiesLoaded = False
             End If
-            PreviousFacilitySystem = cmbCalcNoPOSFacilitySystem.Text
+            PreviousCalcNoPOSFacilitySystem = cmbCalcNoPOSFacilitySystem.Text
         End If
 
     End Sub
@@ -12813,7 +12856,7 @@ ExitSub:
     Private Sub cmbCalcSuperFacilitySystem_SelectedIndexChanged(sender As System.Object, e As System.EventArgs) Handles cmbCalcSuperFacilitySystem.SelectedIndexChanged
         Dim Autoload As Boolean = False
 
-        If Not LoadingFacilitySystems And Not FirstLoad And PreviousFacilitySystem <> cmbCalcSuperFacilitySystem.Text Then
+        If Not LoadingFacilitySystems And Not FirstLoad And PreviousCalcSuperFacilitySystem <> cmbCalcSuperFacilitySystem.Text Then
 
             ' Load the facility
             Call LoadFacilities(SupercarrierGroupID, -1, False, _
@@ -13029,7 +13072,7 @@ ExitSub:
     Private Sub cmbCalcCapitalFacilitySystem_SelectedIndexChanged(sender As System.Object, e As System.EventArgs) Handles cmbCalcCapitalFacilitySystem.SelectedIndexChanged
         Dim Autoload As Boolean = False
 
-        If Not LoadingFacilitySystems And Not FirstLoad And PreviousFacilitySystem <> cmbCalcCapitalFacilitySystem.Text Then
+        If Not LoadingFacilitySystems And Not FirstLoad And PreviousCalcCapitalFacilitySystem <> cmbCalcCapitalFacilitySystem.Text Then
 
             ' Load the facility
             Call LoadFacilities(DreadnoughtGroupID, -1, False, _
@@ -13267,7 +13310,7 @@ ExitSub:
     Private Sub cmbCalcT3FacilitySystem_SelectedIndexChanged(sender As System.Object, e As System.EventArgs) Handles cmbCalcT3FacilitySystem.SelectedIndexChanged
         Dim Autoload As Boolean = False
 
-        If Not LoadingFacilitySystems And Not FirstLoad And PreviousFacilitySystem <> cmbCalcT3FacilitySystem.Text Then
+        If Not LoadingFacilitySystems And Not FirstLoad And PreviousCalcT3FacilitySystem <> cmbCalcT3FacilitySystem.Text Then
 
             ' Load the facility
             Call LoadFacilities(GetT3ShipGroupID(chkCalcT3DestroyersFacility.Checked), -1, False, _
@@ -13518,7 +13561,7 @@ ExitSub:
     Private Sub cmbCalcSubsystemFacilitySystem_SelectedIndexChanged(sender As System.Object, e As System.EventArgs) Handles cmbCalcSubsystemFacilitySystem.SelectedIndexChanged
         Dim Autoload As Boolean = False
 
-        If Not LoadingFacilitySystems And Not FirstLoad And PreviousFacilitySystem <> cmbCalcSubsystemFacilitySystem.Text Then
+        If Not LoadingFacilitySystems And Not FirstLoad And PreviousCalcSubsystemFacilitySystem <> cmbCalcSubsystemFacilitySystem.Text Then
 
             ' Load the facility
             Call LoadFacilities(-1, SubsystemCategoryID, False, _
@@ -13734,7 +13777,7 @@ ExitSub:
     Private Sub cmbCalcBoosterFacilitySystem_SelectedIndexChanged(sender As System.Object, e As System.EventArgs) Handles cmbCalcBoosterFacilitySystem.SelectedIndexChanged
         Dim Autoload As Boolean = False
 
-        If Not LoadingFacilitySystems And Not FirstLoad And PreviousFacilitySystem <> cmbCalcBoosterFacilitySystem.Text Then
+        If Not LoadingFacilitySystems And Not FirstLoad And PreviousCalcBoosterFacilitySystem <> cmbCalcBoosterFacilitySystem.Text Then
 
             ' Load the facility
             Call LoadFacilities(BoosterGroupID, -1, False, _
@@ -17194,7 +17237,7 @@ CheckTechs:
                                    InsertItem.ComponentTeam, InsertItem.ComponentManufacturingFacility, InsertItem.CapComponentManufacturingFacility)
 
                     ' Set the T2 and T3 inputs if necessary
-                    If InsertItem.TechLevel <> "T1" And chkCalcIgnoreInvention.Checked = False Then
+                    If (InsertItem.TechLevel = "T2" Or InsertItem.TechLevel = "T3") And chkCalcIgnoreInvention.Checked = False Then
 
                         ' Strip off the relic if in here for the decryptor
                         If InsertItem.Inputs.Contains("-") Then
@@ -17358,7 +17401,7 @@ CheckTechs:
                                            InsertItem.ManufacturingFacility, InsertItem.ComponentTeam, _
                                            InsertItem.ComponentManufacturingFacility, InsertItem.CapComponentManufacturingFacility)
 
-                            If InsertItem.TechLevel <> "T1" And chkCalcIgnoreInvention.Checked = False Then
+                            If (InsertItem.TechLevel = "T2" Or InsertItem.TechLevel = "T3") And chkCalcIgnoreInvention.Checked = False Then
                                 ' Construct the T2/T3 BP
                                 ManufacturingBlueprint.InventBlueprint(CInt(txtCalcLabLines.Text), SelectedDecryptor, InsertItem.InventionFacility, InsertItem.InventionTeam, _
                                                                        InsertItem.CopyFacility, InsertItem.CopyTeam, GetInventItemTypeID(InsertItem.BPID, InsertItem.Relic))
@@ -17764,11 +17807,11 @@ DisplayResults:
                 BPList.ForeColor = Color.DarkRed
             End If
 
-            If Not FinalItemList(i).CanInvent And FinalItemList(i).TechLevel = "T2" Then
+            If Not FinalItemList(i).CanInvent And FinalItemList(i).TechLevel = "T2" And Not chkCalcIgnoreInvention.Checked Then
                 BPList.ForeColor = Color.DarkOrange
             End If
 
-            If Not FinalItemList(i).CanRE And FinalItemList(i).TechLevel = "T3" Then
+            If Not FinalItemList(i).CanRE And FinalItemList(i).TechLevel = "T3" And Not chkCalcIgnoreInvention.Checked Then
                 BPList.ForeColor = Color.DarkGreen
             End If
 

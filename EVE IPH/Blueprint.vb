@@ -369,7 +369,7 @@ Public Class Blueprint
                    ByVal BPCopyFacility As IndustryFacility, ByVal BPCopyTeam As IndustryTeam, ByVal InventionItemTypeID As Long) As Integer
 
         ' Don't invent these
-        If BlueprintName.Contains("Edition") Or BlueprintName.Contains("Polarized") Or BlueprintName.Contains("Augmented") Then
+        If BlueprintName.Contains("Edition") Or BlueprintName.Contains("Polarized") Or BlueprintName.Contains("'Augmented'") Then
             Return 0
         End If
 

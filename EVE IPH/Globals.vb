@@ -379,11 +379,15 @@ Public Module Public_Variables
     Public Sub ExecuteNonQuerySQL(ByVal SQL As String)
         Dim DBExecuteCmd As SQLiteCommand
 
+        ErrorTracker = SQL
+
         DBExecuteCmd = DB.CreateCommand
         DBExecuteCmd.CommandText = SQL
         DBExecuteCmd.ExecuteNonQuery()
 
         DBExecuteCmd.Dispose()
+
+        ErrorTracker = ""
 
     End Sub
 

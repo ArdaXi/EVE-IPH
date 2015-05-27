@@ -1693,9 +1693,9 @@ Public Class ProgramSettings
                     .CheckCapitalComponentsFacility = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "CheckCapitalComponentsFacility", DefaultCheckT3Destroyers))
                     .CheckT3DestroyerFacility = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "CheckT3DestroyerFacility", DefaultCheckCapComponents))
                     .CheckAutoCalcNumBPs = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "CheckAutoCalcNumBPs", DefaultCheckAutoCalcNumBPs))
-                    .IgnoreInvention = CBool(GetSettingValue(BPSettingsFileName, SettingTypes.TypeBoolean, "BPSettings", "IgnoreInvention", DefaultCalcIgnoreInvention))
-                    .IgnoreMinerals = CBool(GetSettingValue(BPSettingsFileName, SettingTypes.TypeBoolean, "BPSettings", "IgnoreMinerals", DefaultCalcIgnoreMinerals))
-                    .IgnoreT1Item = CBool(GetSettingValue(BPSettingsFileName, SettingTypes.TypeBoolean, "BPSettings", "IgnoreT1Item", DefaultCalcIgnoreT1Item))
+                    .IgnoreInvention = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "IgnoreInvention", DefaultCalcIgnoreInvention))
+                    .IgnoreMinerals = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "IgnoreMinerals", DefaultCalcIgnoreMinerals))
+                    .IgnoreT1Item = CBool(GetSettingValue(ManufacturingSettingsFileName, SettingTypes.TypeBoolean, "ManufacturingSettings", "IgnoreT1Item", DefaultCalcIgnoreT1Item))
                 End With
 
             Else
