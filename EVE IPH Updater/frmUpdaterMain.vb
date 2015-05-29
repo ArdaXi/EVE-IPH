@@ -1500,12 +1500,15 @@ Public Class frmUpdaterMain
                         Have6ModifierFields = True
                     End If
 
+                    readerCheck2.Close()
+                    readerCheck2 = Nothing
+
                     ' They might not have this table yet.
                     If Not IsNothing(readerUpdate) Then
                         Call BeginSQLiteTransaction(DBNEW)
                         ' They have the new table, but whatever is in the new database needs to be updated or inserted (if not there)
 
-                        ' Drop indexes
+                        ' Drop indexes for faster inserts
                         SQL = "DROP INDEX IF EXISTS IDX_SF_FN;"
                         Call ExecuteNonQuerySQL(SQL, DBNEW)
 
@@ -1585,7 +1588,13 @@ Public Class frmUpdaterMain
                                         SQL = SQL & "CATEGORY_NAME = NULL, "
                                     End If
                                     SQL = SQL & "COST_INDEX = " & BuildInsertFieldString(readerUpdate.GetDouble(19)) & ","
-                                    SQL = SQL & "OUTPOST = " & BuildInsertFieldString(readerUpdate.GetInt32(20)) & " "
+
+                                    ' Reset the 2 here so we don't have to have special processing later
+                                    If readerUpdate.GetInt32(20) = 2 Then
+                                        SQL = SQL & "OUTPOST = 1 "
+                                    Else
+                                        SQL = SQL & "OUTPOST = " & BuildInsertFieldString(readerUpdate.GetInt32(20)) & " "
+                                    End If
                                 End If
 
                                 SQL = SQL & "WHERE FACILITY_ID = " & TempID
