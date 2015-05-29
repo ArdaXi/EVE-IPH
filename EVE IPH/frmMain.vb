@@ -2745,7 +2745,7 @@ NoBonus:
                     End If
                 Case IndustryType.POSFuelBlockManufacturing
                     SelectedCalcPOSFuelBlockFacility = SelectedFacility
-                    If SelectedCalcPOSFuelBlockFacility.IsEqual(DefaultCalcPOSFuelBlockFacility) Then
+                    If SelectedCalcPOSFuelBlockFacility.IsEqual(DefaultCalcPOSFuelBlockFacility) And DefaultCalcBaseManufacturingFacility.FacilityType = POSFacility Then
                         SelectedCalcPOSFuelBlockFacility.IsDefault = True
                         SelectedFacility.IsDefault = True
                     Else
@@ -2754,7 +2754,7 @@ NoBonus:
                     End If
                 Case IndustryType.POSLargeShipManufacturing
                     SelectedCalcPOSLargeShipFacility = SelectedFacility
-                    If SelectedCalcPOSLargeShipFacility.IsEqual(DefaultCalcPOSLargeShipFacility) Then
+                    If SelectedCalcPOSLargeShipFacility.IsEqual(DefaultCalcPOSLargeShipFacility) And DefaultCalcBaseManufacturingFacility.FacilityType = POSFacility Then
                         SelectedCalcPOSLargeShipFacility.IsDefault = True
                         SelectedFacility.IsDefault = True
                     Else
@@ -2763,7 +2763,7 @@ NoBonus:
                     End If
                 Case IndustryType.POSModuleManufacturing
                     SelectedCalcPOSModuleFacility = SelectedFacility
-                    If SelectedCalcPOSModuleFacility.IsEqual(DefaultCalcPOSModuleFacility) Then
+                    If SelectedCalcPOSModuleFacility.IsEqual(DefaultCalcPOSModuleFacility) And DefaultCalcBaseManufacturingFacility.FacilityType = POSFacility Then
                         SelectedCalcPOSModuleFacility.IsDefault = True
                         SelectedFacility.IsDefault = True
                     Else
@@ -11413,6 +11413,8 @@ ExitSub:
         End If
 
         lblCalcBaseFacilityDefault.Visible = True
+        ' They just saved it
+        btnCalcBaseFacilitySave.Enabled = False
 
         MsgBox("Default Facility Saved", vbInformation, Application.ProductName)
 
@@ -11679,6 +11681,8 @@ ExitSub:
         End If
 
         lblCalcComponentFacilityDefault.Visible = True
+        ' They just saved it
+        btnCalcComponentFacilitySave.Enabled = False
 
         MsgBox("Default Facility Saved", vbInformation, Application.ProductName)
 
@@ -11926,6 +11930,8 @@ ExitSub:
         DefaultCalcInventionFacility = CType(SelectedCalcInventionFacility.Clone, IndustryFacility)
 
         lblCalcInventionFacilityDefault.Visible = True
+        ' They just saved it
+        btnCalcInventionFacilitySave.Enabled = False
 
         MsgBox("Default Facility Saved", vbInformation, Application.ProductName)
 
@@ -12198,6 +12204,8 @@ ExitSub:
         DefaultCalcT3InventionFacility = CType(SelectedCalcT3InventionFacility.Clone, IndustryFacility)
 
         lblCalcT3InventionFacilityDefault.Visible = True
+        ' They just saved it
+        btnCalcT3InventionFacilitySave.Enabled = False
 
         MsgBox("Default Facility Saved", vbInformation, Application.ProductName)
 
@@ -12471,8 +12479,11 @@ ExitSub:
         DefaultCalcCopyFacility = CType(SelectedCalcCopyFacility.Clone, IndustryFacility)
 
         lblCalcCopyFacilityDefault.Visible = True
+        ' They just saved it
+        btnCalcCopyFacilitySave.Enabled = False
 
         MsgBox("Default Facility Saved", vbInformation, Application.ProductName)
+
 
     End Sub
 
@@ -12713,6 +12724,8 @@ ExitSub:
         DefaultCalcNoPOSFacility = CType(SelectedCalcNoPOSFacility.Clone, IndustryFacility)
 
         lblCalcNoPOSFacilityDefault.Visible = True
+        ' They just saved it
+        btnCalcNoPOSFacilitySave.Enabled = False
 
         MsgBox("Default Facility Saved", vbInformation, Application.ProductName)
 
@@ -12930,6 +12943,8 @@ ExitSub:
         DefaultCalcSuperManufacturingFacility = CType(SelectedCalcSuperManufacturingFacility.Clone, IndustryFacility)
 
         lblCalcSuperFacilityDefault.Visible = True
+        ' They just saved it
+        btnCalcSuperFacilitySave.Enabled = False
 
         MsgBox("Default Facility Saved", vbInformation, Application.ProductName)
 
@@ -13146,6 +13161,8 @@ ExitSub:
         DefaultCalcCapitalManufacturingFacility = CType(SelectedCalcCapitalManufacturingFacility.Clone, IndustryFacility)
 
         lblCalcCapitalFacilityDefault.Visible = True
+        ' They just saved it
+        btnCalcCapitalFacilitySave.Enabled = False
 
         MsgBox("Default Facility Saved", vbInformation, Application.ProductName)
 
@@ -13391,6 +13408,8 @@ ExitSub:
         End If
 
         lblCalcT3FacilityDefault.Visible = True
+        ' They just saved it
+        btnCalcT3FacilitySave.Enabled = False
 
         MsgBox("Default Facility Saved", vbInformation, Application.ProductName)
 
@@ -13635,6 +13654,8 @@ ExitSub:
         DefaultCalcSubsystemManufacturingFacility = CType(SelectedCalcSubsystemManufacturingFacility.Clone, IndustryFacility)
 
         lblCalcSubsystemFacilityDefault.Visible = True
+        ' They just saved it
+        btnCalcSubsystemFacilitySave.Enabled = False
 
         MsgBox("Default Facility Saved", vbInformation, Application.ProductName)
 
@@ -13851,6 +13872,8 @@ ExitSub:
         DefaultCalcBoosterManufacturingFacility = CType(SelectedCalcBoosterManufacturingFacility.Clone, IndustryFacility)
 
         lblCalcBoosterFacilityDefault.Visible = True
+        ' They just saved it
+        btnCalcBoosterFacilitySave.Enabled = False
 
         MsgBox("Default Facility Saved", vbInformation, Application.ProductName)
 
